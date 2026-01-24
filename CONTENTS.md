@@ -25,7 +25,7 @@ metadata/ taxonomy bucket definitions used in the bucketing script (bucket\_taxo
 
 config/ pipeline and other configuration files (centrifuge_bucketing.config, centrifuge_bucketing.env.yml)
 
-pipelines/ wrapper scripts and workflows (centrifuge_bucketing.sh, centrifuge_bucketing.nf)
+pipelines/ wrapper scripts and workflows (centrifuge_bucketing.sh, centrifuge_bucketing.nf, centrifuge_bucketing_all.nf)
 
 scripts/ reusable Python scripts for LCA, bucketing, FASTQ splitting, and strain summaries
   (compute_lca.py, assign_to_buckets.py, bucketize_fastq.py, aggregate_bucket_counts.py, identify_top_strains.py)
