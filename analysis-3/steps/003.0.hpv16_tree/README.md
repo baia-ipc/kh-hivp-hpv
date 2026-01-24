@@ -30,28 +30,18 @@ Download sequence metadata in TSV format, use custom fields definition
 
 (4) select and prepare NCBI Virus genomes
   create a selection table with Accession and Country (two columns)
-    cut -f 1,10 input/HPV16-NCBIVirus.tsv > input/selected
+    scripts/step4_select_ncbi_genomes.sh --init-selection
   manually edit input/selected to keep the genomes to include
-  seqkit grep -f <(cut -f 1 input/selected) -r input/HPV16-NCBIVirus.fasta > input/selected.fasta
-  python3 scripts/rename_lineages.py input/selected 1 2 input/selected.fasta input/selected_renamed.fasta
-  # if needed, remove spaces in FASTA IDs and drop duplicate genomes manually
+  re-run scripts/step4_select_ncbi_genomes.sh
+  # this writes input/selected.fasta and input/selected_renamed.fasta
 
 (5) prepare outgroups.fasta (and distant_outgroups.fasta)
   select outgroup HPV reference genomes from PAVE or GenBank
   download as FASTA, rename to HPVxx/Accession, and save under input/
 
 (6) prepare samples.fasta
-  extract the reference sequence from the downloaded PAVE:
-  seqkit grep -r -p "HPV16REF.*" analysis-3/steps/002.0.mapping_vs_pave/index/pave_hsa.fas > input/HPV16REF.fas
-  in the directory containing the BCF files (example):
-    analysis-3/steps/002.0.mapping_vs_pave/output/<RUNID>
-    for sample in <SAMPLES>; do
-      bcftools consensus -f /path/to/analysis-3/steps/003.0.hpv16_tree/input/HPV16REF.fas \
-        KHCA-$sample.bcf.gz > /path/to/analysis-3/steps/003.0.hpv16_tree/input/KHCA-$sample.HPV16REF.consensus.fa
-    done
-  manually change the Fasta IDs to KHCA-$sample-HPV16
-  concatenate them into input/samples.fasta
-    cat input/KHCA-*.HPV16REF.consensus.fa > input/samples.fasta
+  run scripts/step6_prepare_samples.sh
+  # this writes input/HPV16REF.fas, the consensus FASTAs (with KHCA-<sample>-HPV16 IDs), and input/samples.fasta
 
 (7) build the tree
   run scripts/1_cat_all.sh, scripts/2_run_mafft.sh, scripts/3_run_trimal.sh, scripts/4_run_iqtree.sh
