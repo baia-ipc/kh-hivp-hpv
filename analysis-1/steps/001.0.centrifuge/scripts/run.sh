@@ -108,8 +108,8 @@ function split_readset_into_buckets {
   done
 }
 
-#align
-#make_kraken_style_report
-#make_krona_plots
+align
+make_kraken_style_report
+make_krona_plots
 assign_to_buckets
 split_readset_into_buckets
