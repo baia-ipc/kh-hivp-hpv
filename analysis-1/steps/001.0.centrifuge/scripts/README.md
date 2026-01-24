@@ -54,5 +54,5 @@ It runs:
 
 # Metadata
 
-The `metadata` directory of this step contains bucket definitions
-used by the scripts.
+The sample list lives in `metadata/centrifuge_samples.tsv`.
+Bucket definitions are stored at the repository root in `metadata/bucket_taxonomy_ids.tsv`.
