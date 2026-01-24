@@ -39,6 +39,12 @@ workflow {
     if (!params.reads) {
         error "params.reads is required. Set it in the config file."
     }
+    if (!params.outdir) {
+        error "params.outdir is required. Set it in the config file or on the command line."
+    }
+    if (!params.buckets) {
+        error "params.buckets is required. Set it in the config file or on the command line."
+    }
     if (!params.conda_env) {
         params.conda_env = "${workflow.projectDir}/../config/centrifuge_bucketing.env.yml"
     }
