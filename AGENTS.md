@@ -1,6 +1,6 @@
-- CONTENTS.md describes what is in each directory of the project;
-  Whenever the content of the repository is reordered, reflect the changes in CONTENTS.md;
-  do not list individual files in this document.
+- CONTENTS.md describes what is in each directory of the project
+  - whenever the content of the repository is reordered, reflect the changes in CONTENTS.md
+  - individual files are NOT listed in CONTENTS.md
 
 - INVENTORY.md tracks the current analysis steps/scripts and any manual commands; read it before making refactors.
 
