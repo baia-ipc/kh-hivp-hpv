@@ -6,6 +6,7 @@ SCRIPTSDIR=$DIR
 STEPDIR=$DIR/..
 METADATA_DIR=$STEPDIR/metadata
 PRJROOT=$DIR/../../../..
+REPOSCRIPTS=$PRJROOT/scripts
 
 function run01 {
   echo "# RUN01"
@@ -50,12 +51,12 @@ function run03 {
 }
 
 function aggregate_counts {
-  $SCRIPTSDIR/aggregate_bucket_counts.py --skip 9606,2886930,2759 \
+  $REPOSCRIPTS/aggregate_bucket_counts.py --skip 9606,2886930,2759 \
     --no-abs --rel-fname relative_counts.wo_human.tsv \
     $METADATA_DIR/bucket_taxonomy_ids.tsv \
-    output reports
-  $SCRIPTSDIR/aggregate_bucket_counts.py --skip 2886930,2759 \
-    $METADATA_DIR/bucket_taxonomy_ids.tsv output reports
+    $STEPDIR/output $STEPDIR/reports
+  $REPOSCRIPTS/aggregate_bucket_counts.py --skip 2886930,2759 \
+    $METADATA_DIR/bucket_taxonomy_ids.tsv $STEPDIR/output $STEPDIR/reports
 }
 
 run01
