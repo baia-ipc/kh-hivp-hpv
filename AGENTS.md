@@ -11,3 +11,5 @@
 
 - hard coded data, such as sample numbers are put into metadata files under the metadata directory
   under the repository root and are removed from the scripts.
+
+- you are allowed to run nextflow if necessary to test that the pipelines work correctly
