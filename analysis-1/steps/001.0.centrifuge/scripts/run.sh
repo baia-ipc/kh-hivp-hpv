@@ -8,6 +8,7 @@ PIPELINESDIR=$PRJROOT/pipelines
 BUCKETS=$STEPDIR/metadata/bucket_taxonomy_ids.tsv
 OUTDIR=$STEPDIR/output
 SCRIPTS_DIR=$PRJROOT/scripts
+CONDA_ENV=$PRJROOT/config/centrifuge_bucketing.env.yml
 PIPELINE_NF=$PIPELINESDIR/centrifuge_bucketing.nf
 PIPELINE_CONFIG=$PRJROOT/config/centrifuge_bucketing.config
 
@@ -44,4 +45,5 @@ nextflow run "$PIPELINE_NF" \
   --outdir "$OUTDIR" \
   --buckets "$BUCKETS" \
   --scripts_dir "$SCRIPTS_DIR" \
+  --conda_env "$CONDA_ENV" \
   "$@"
