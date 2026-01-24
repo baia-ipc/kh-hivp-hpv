@@ -16,6 +16,12 @@ function run_pipeline {
   done
 }
 
+function aggregate_results {
+  mkdir -p "$STEPDIR/reports"
+  OUTFILE="$STEPDIR/reports/strains.tsv"
+  $SCRIPTSDIR/aggregate_results.py "$STEPDIR/output/" > "$OUTFILE"
+}
+
 function create_index {
   if [ ! -e "$STEPDIR/index/virstrain" ]; then
     $SCRIPTSDIR/create-index.sh
@@ -24,3 +30,4 @@ function create_index {
 
 create_index
 run_pipeline
+aggregate_results
