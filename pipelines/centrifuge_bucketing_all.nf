@@ -15,7 +15,7 @@ def normalizeSampleId(String filename) {
 
 def projectRoot = Paths.get(workflow.projectDir).resolve('..').normalize().toString()
 
-params.samples_tsv = params.samples_tsv ?: "${projectRoot}/analysis-1/steps/001.0.centrifuge/metadata/centrifuge_samples.tsv"
+params.samples_tsv = params.samples_tsv ?: "${projectRoot}/metadata/samples-input1.tsv"
 params.reports_dir = params.reports_dir ?: "${projectRoot}/analysis-1/steps/001.0.centrifuge/reports"
 params.outdir = params.outdir ?: "${projectRoot}/analysis-1/steps/001.0.centrifuge/output"
 params.buckets = params.buckets ?: "${projectRoot}/metadata/bucket_taxonomy_ids.tsv"

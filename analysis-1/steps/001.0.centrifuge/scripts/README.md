@@ -43,7 +43,7 @@ It runs:
 
 `run_all.sh` is a wrapper that runs the Nextflow pipeline
 `pipelines/centrifuge_bucketing_all.nf` for all samples.
-It reads the sample list from `metadata/centrifuge_samples.tsv`.
+It reads the sample list from `metadata/samples-input1.tsv`.
 
 It runs:
 
@@ -55,5 +55,5 @@ It runs:
 
 # Metadata
 
-The sample list lives in `metadata/centrifuge_samples.tsv`.
+The sample list lives in `metadata/samples-input1.tsv`.
 Bucket definitions are stored at the repository root in `metadata/bucket_taxonomy_ids.tsv`.

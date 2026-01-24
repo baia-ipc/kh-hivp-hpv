@@ -21,7 +21,7 @@ input/ symlinks to external raw data locations (not stored in-repo):
    /srv/vireak/HPV\_11092024 --> analysis-3
    /storage/virology/janin/rawdata/hpv\_miseq --> analysis-1 and analysis-2
 
-metadata/ taxonomy bucket definitions used in the bucketing script (bucket\_taxonomy\_ids.tsv)
+metadata/ taxonomy bucket definitions and sample lists (bucket\_taxonomy\_ids.tsv, samples-input1.tsv)
 
 config/ pipeline and other configuration files (centrifuge_bucketing.config, centrifuge_bucketing.env.yml)
 
