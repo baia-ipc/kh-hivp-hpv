@@ -9,7 +9,7 @@ BUCKETS=$STEPDIR/metadata/bucket_taxonomy_ids.tsv
 OUTDIR=$STEPDIR/output
 SCRIPTS_DIR=$PRJROOT/scripts
 PIPELINE_NF=$PIPELINESDIR/centrifuge_bucketing.nf
-PIPELINE_CONFIG=$PIPELINESDIR/centrifuge_bucketing.config
+PIPELINE_CONFIG=$PRJROOT/config/centrifuge_bucketing.config
 
 if [ $# -lt 1 ]; then
   echo "Usage: $0 <READSETPFX> [nextflow args...]"
