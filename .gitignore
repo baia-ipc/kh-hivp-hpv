@@ -2,3 +2,5 @@
 *.DS_Store
 *.bt2
 *.fai
+output/
+dev/
