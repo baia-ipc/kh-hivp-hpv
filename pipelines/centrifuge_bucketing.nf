@@ -25,7 +25,7 @@ workflow CENTRIFUGE_BUCKETING {
 
     bucketize_in = buckets_out
         .join(reads_ch, by: [0, 1])
-        .map { run_id, sample_id, bkt, bsz, run_id2, sample_id2, r1, r2 ->
+        .map { run_id, sample_id, bkt, bsz, r1, r2 ->
             tuple(run_id, sample_id, bkt, r1, r2)
         }
 
