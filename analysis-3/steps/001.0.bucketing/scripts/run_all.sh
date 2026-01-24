@@ -7,7 +7,7 @@ STEPDIR=$DIR/..
 PRJROOT=$DIR/../../../..
 PIPELINE_NF=$PRJROOT/pipelines/centrifuge_bucketing_all.nf
 PIPELINE_CONFIG=$PRJROOT/config/centrifuge_bucketing.config
-SAMPLES_TSV=$PRJROOT/metadata/samples-input3.tsv
+SAMPLES_TSV=$PRJROOT/metadata/samples-input2.tsv
 
 if ! command -v nextflow >/dev/null 2>&1; then
   echo "Error: nextflow was not found in PATH" > /dev/stderr
