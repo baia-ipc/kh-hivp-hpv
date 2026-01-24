@@ -23,7 +23,7 @@ workflow {
                 error "Could not find R1/R2 pair for ${reads*.name}"
             }
             def sample_id = normalizeSampleId(r1.name)
-            def run_id = r1.getParentFile().getParentFile().getName()
+            def run_id = r1.parent.parent.name
             tuple(run_id, sample_id, r1, r2)
         }
 
