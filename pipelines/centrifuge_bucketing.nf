@@ -49,6 +49,14 @@ workflow {
     if (!buckets_file.exists()) {
         error "Bucket metadata not found: ${buckets_file} (check params.buckets)"
     }
+    def required_tools = ['centrifuge', 'centrifuge-kreport', 'ktImportTaxonomy']
+    def missing_tools = required_tools.findAll { tool ->
+        def proc = ['bash', '-lc', "command -v ${tool} >/dev/null 2>&1"].execute()
+        proc.waitFor() != 0
+    }
+    if (missing_tools) {
+        error "Missing required tools in PATH: ${missing_tools.join(', ')}"
+    }
 
     reads_ch = Channel
         .fromFilePairs(params.reads, size: 2)
