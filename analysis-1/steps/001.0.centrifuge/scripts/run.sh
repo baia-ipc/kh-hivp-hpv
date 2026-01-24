@@ -5,7 +5,6 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 STEPDIR=$DIR/..
 PRJROOT=$DIR/../../../..
 PIPELINESDIR=$PRJROOT/pipelines
-BUCKETS=$STEPDIR/metadata/bucket_taxonomy_ids.tsv
 OUTDIR=$STEPDIR/output
 PIPELINE_NF=$PIPELINESDIR/centrifuge_bucketing.nf
 PIPELINE_CONFIG=$PRJROOT/config/centrifuge_bucketing.config
@@ -41,5 +40,4 @@ nextflow run "$PIPELINE_NF" \
   -c "$PIPELINE_CONFIG" \
   --reads "$READS_GLOB" \
   --outdir "$OUTDIR" \
-  --buckets "$BUCKETS" \
   "$@"
