@@ -2,6 +2,8 @@
 
 SCRIPTSDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 STEPDIR=$SCRIPTSDIR/..
+PRJROOT=$SCRIPTSDIR/../../../..
+REPOSCRIPTS=$PRJROOT/scripts
 INDEXDIR=$STEPDIR/index
 
 if [ $# -ne 3 ]; then
@@ -29,7 +31,7 @@ function post_alignment {
 }
 
 function identify_top_strains {
-  $SCRIPTSDIR/identify_top_strains.py $out.idxstats > $out.top_strains
+  $REPOSCRIPTS/identify_top_strains.py $out.idxstats > $out.top_strains
 }
 
 align
