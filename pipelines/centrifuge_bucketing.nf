@@ -15,7 +15,7 @@ workflow {
     }
 
     reads_ch = Channel
-        .fromFilePairs(params.reads, size: 2, flat: true)
+        .fromFilePairs(params.reads, size: 2)
         .map { sample_key, reads ->
             def r1 = reads.find { it.name.contains('_R1') }
             def r2 = reads.find { it.name.contains('_R2') }
