@@ -7,4 +7,5 @@ dev/
 .nextflow/
 .nextflow.log
 .nextflow.log.*
+.conda/
 work

@@ -37,6 +37,9 @@ workflow {
     if (!params.reads) {
         error "params.reads is required. Set it in the config file."
     }
+    if (!params.conda_env) {
+        params.conda_env = "${workflow.projectDir}/../config/centrifuge_bucketing.env.yml"
+    }
     def index_file = new File("${params.index}.1.cf")
     if (!index_file.exists()) {
         error "Centrifuge index not found: ${index_file} (check params.index)"
@@ -49,13 +52,9 @@ workflow {
     if (!buckets_file.exists()) {
         error "Bucket metadata not found: ${buckets_file} (check params.buckets)"
     }
-    def required_tools = ['centrifuge', 'centrifuge-kreport', 'ktImportTaxonomy']
-    def missing_tools = required_tools.findAll { tool ->
-        def proc = ['bash', '-lc', "command -v ${tool} >/dev/null 2>&1"].execute()
-        proc.waitFor() != 0
-    }
-    if (missing_tools) {
-        error "Missing required tools in PATH: ${missing_tools.join(', ')}"
+    def conda_env_file = new File("${params.conda_env}")
+    if (!conda_env_file.exists()) {
+        error "Conda env definition not found: ${conda_env_file} (check params.conda_env)"
     }
 
     reads_ch = Channel
@@ -76,6 +75,7 @@ workflow {
 
 process CENTRIFUGE_ALIGN {
     tag "${run_id}:${sample_id}"
+    conda params.conda_env
     publishDir "${params.outdir}/${run_id}/alignments", mode: 'copy', pattern: "*.aln.tsv"
     publishDir "${params.outdir}/${run_id}/reports", mode: 'copy', pattern: "*.report.tsv"
 
@@ -96,6 +96,7 @@ process CENTRIFUGE_ALIGN {
 
 process CENTRIFUGE_KREPORT {
     tag "${run_id}:${sample_id}"
+    conda params.conda_env
     publishDir "${params.outdir}/${run_id}/kreports", mode: 'copy', pattern: "*.kreport.tsv"
 
     input:
@@ -112,6 +113,7 @@ process CENTRIFUGE_KREPORT {
 
 process KRONA_PLOTS {
     tag "${run_id}:${sample_id}"
+    conda params.conda_env
     publishDir "${params.outdir}/${run_id}/krona", mode: 'copy', pattern: "*.krona.html"
     publishDir "${params.outdir}/${run_id}/krona_wo_human", mode: 'copy', pattern: "*.krona_wo_human.html"
 
@@ -135,6 +137,7 @@ process KRONA_PLOTS {
 
 process COMPUTE_LCA {
     tag "${run_id}:${sample_id}"
+    conda params.conda_env
     publishDir "${params.outdir}/${run_id}/lca", mode: 'copy', pattern: "*.lca.tsv"
 
     input:
@@ -152,6 +155,7 @@ process COMPUTE_LCA {
 
 process ASSIGN_BUCKETS {
     tag "${run_id}:${sample_id}"
+    conda params.conda_env
     publishDir "${params.outdir}/${run_id}/bucket_assignments", mode: 'copy', pattern: "*.bkt.tsv"
     publishDir "${params.outdir}/${run_id}/bucket_sizes", mode: 'copy', pattern: "*.bsz.tsv"
 
@@ -171,6 +175,7 @@ process ASSIGN_BUCKETS {
 
 process BUCKETIZE_READS {
     tag "${run_id}:${sample_id}"
+    conda params.conda_env
     publishDir "${params.outdir}/${run_id}/buckets", mode: 'copy', pattern: "*.fastq.gz"
 
     input:

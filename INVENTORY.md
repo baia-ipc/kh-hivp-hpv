@@ -14,7 +14,7 @@
 - `analysis-3/steps/002.0.mapping_vs_pave/scripts`: run.sh, run_all.sh, create-index.sh, identify_top_strains.py, covstats.py, covplot.py, aggregate_covstats.py, make_all_covplots.sh, report_E6_E7_variants.sh, README.md
 - `analysis-3/steps/003.0.hpv16_tree/scripts`: 1_cat_all.sh, 2_run_mafft.sh, 3_run_trimal.sh, 4_run_iqtree.sh, extract_lineages_fasta.sh, rename_lineages.py, step4_select_ncbi_genomes.sh, step6_prepare_samples.sh, upcase.sh
 - `analysis-3/steps/004.0.hpv18_tree/scripts`: 1_extract_lineages_ref_fasta.sh, 2_rename_lineage_ref_fasta.sh, 3_cat_all.sh, 4_run_mafft.sh, 5_run_trimal.sh, 6_run_iqtree.sh, assign_hpv18_lineages.py, rename_lineages.py, step4_select_ncbi_genomes.sh, step6_prepare_samples.sh
-- `config/`: centrifuge_bucketing.config
+- `config/`: centrifuge_bucketing.config, centrifuge_bucketing.env.yml
 - `scripts/`: bucketize_fastq.py, assign_to_buckets.py, compute_lca.py, aggregate_bucket_counts.py, identify_top_strains.py
 - `pipelines/`: centrifuge_bucketing.sh, centrifuge_bucketing.nf
 
