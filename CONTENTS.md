@@ -23,7 +23,7 @@ input/ symlinks to external raw data locations (not stored in-repo):
 
 metadata/ taxonomy bucket definitions used in the bucketing script (bucket\_taxonomy\_ids.tsv)
 
-config/ pipeline and other configuration files (centrifuge_bucketing.config)
+config/ pipeline and other configuration files (centrifuge_bucketing.config, centrifuge_bucketing.env.yml)
 
 pipelines/ wrapper scripts and workflows (centrifuge_bucketing.sh, centrifuge_bucketing.nf)
 

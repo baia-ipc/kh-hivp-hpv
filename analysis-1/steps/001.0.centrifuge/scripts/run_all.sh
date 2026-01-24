@@ -20,6 +20,7 @@ params.reports_dir = params.reports_dir ?: "${projectRoot}/analysis-1/steps/001.
 params.outdir = params.outdir ?: "${projectRoot}/analysis-1/steps/001.0.centrifuge/output"
 params.buckets = params.buckets ?: "${projectRoot}/analysis-1/steps/001.0.centrifuge/metadata/bucket_taxonomy_ids.tsv"
 params.scripts_dir = params.scripts_dir ?: "${projectRoot}/scripts"
+params.conda_env = params.conda_env ?: "${projectRoot}/config/centrifuge_bucketing.env.yml"
 params.index = params.index ?: "/srv/databases/centrifuge/hpvc/latest/hpvc"
 params.taxdump = params.taxdump ?: "/srv/databases/centrifuge/hpvc/latest/factory/taxonomy-2023-10-30"
 params.homo_sapiens_tid = params.homo_sapiens_tid ?: 9606
