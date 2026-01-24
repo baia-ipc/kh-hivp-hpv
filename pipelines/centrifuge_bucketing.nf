@@ -37,6 +37,18 @@ workflow {
     if (!params.reads) {
         error "params.reads is required. Set it in the config file."
     }
+    def index_file = new File("${params.index}.1.cf")
+    if (!index_file.exists()) {
+        error "Centrifuge index not found: ${index_file} (check params.index)"
+    }
+    def nodes_file = new File("${params.taxdump}/nodes.dmp")
+    if (!nodes_file.exists()) {
+        error "Taxdump nodes.dmp not found: ${nodes_file} (check params.taxdump)"
+    }
+    def buckets_file = new File("${params.buckets}")
+    if (!buckets_file.exists()) {
+        error "Bucket metadata not found: ${buckets_file} (check params.buckets)"
+    }
 
     reads_ch = Channel
         .fromFilePairs(params.reads, size: 2)
