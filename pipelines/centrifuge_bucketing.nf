@@ -162,7 +162,7 @@ process KRONA_PLOTS {
 
     script:
     """
-    if ! awk -F'\\t' '\$2 ~ /^[0-9]+$/ {found=1; exit} END {exit !found}' "$report"; then
+    if ! awk -F'\\t' '\$2 ~ /^[0-9]+\$/ {found=1; exit} END {exit !found}' "$report"; then
       cat > "${sample_id}.krona.html" <<'EOF'
     <html><body><p>No taxonomic assignments found.</p></body></html>
 EOF
@@ -193,7 +193,7 @@ process COMPUTE_LCA {
 
     script:
     """
-    if awk -F'\\t' '\$3 ~ /^[0-9]+$/ {found=1; exit} END {exit !found}' "$aln"; then
+    if awk -F'\\t' '\$3 ~ /^[0-9]+\$/ {found=1; exit} END {exit !found}' "$aln"; then
       "${params.scripts_dir}/compute_lca.py" "${params.taxdump}/nodes.dmp" \\
         "$aln" "${sample_id}.lca.tsv"
     else
