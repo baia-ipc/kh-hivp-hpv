@@ -9,6 +9,30 @@ def normalizeSampleId(String filename) {
     return base
 }
 
+workflow CENTRIFUGE_BUCKETING {
+    take:
+    reads_ch
+
+    main:
+    align_out = CENTRIFUGE_ALIGN(reads_ch)
+    CENTRIFUGE_KREPORT(align_out)
+    KRONA_PLOTS(align_out)
+
+    lca_out = COMPUTE_LCA(align_out)
+    buckets_out = ASSIGN_BUCKETS(lca_out)
+
+    bucketize_in = buckets_out
+        .join(reads_ch, by: [0, 1])
+        .map { run_id, sample_id, bkt, bsz, run_id2, sample_id2, r1, r2 ->
+            tuple(run_id, sample_id, bkt, r1, r2)
+        }
+
+    bucketized = BUCKETIZE_READS(bucketize_in)
+
+    emit:
+    bucketized
+}
+
 workflow {
     if (!params.reads) {
         error "params.reads is required. Set it in the config file."
@@ -27,20 +51,7 @@ workflow {
             tuple(run_id, sample_id, r1, r2)
         }
 
-    align_out = CENTRIFUGE_ALIGN(reads_ch)
-    CENTRIFUGE_KREPORT(align_out)
-    KRONA_PLOTS(align_out)
-
-    lca_out = COMPUTE_LCA(align_out)
-    buckets_out = ASSIGN_BUCKETS(lca_out)
-
-    bucketize_in = buckets_out
-        .join(reads_ch, by: [0, 1])
-        .map { run_id, sample_id, bkt, bsz, run_id2, sample_id2, r1, r2 ->
-            tuple(run_id, sample_id, bkt, r1, r2)
-        }
-
-    BUCKETIZE_READS(bucketize_in)
+    CENTRIFUGE_BUCKETING(reads_ch)
 }
 
 process CENTRIFUGE_ALIGN {

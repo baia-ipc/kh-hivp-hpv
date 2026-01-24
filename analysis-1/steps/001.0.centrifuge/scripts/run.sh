@@ -18,6 +18,7 @@ fi
 
 READSETPFX=$1
 shift
+READSETPFX=$(cd "$(dirname "$READSETPFX")" && pwd)/$(basename "$READSETPFX")
 READS_GLOB="${READSETPFX}"*_R{1,2}_*.fastq.gz
 R1_GLOB="${READSETPFX}"*_R1_*.fastq.gz
 R2_GLOB="${READSETPFX}"*_R2_*.fastq.gz
