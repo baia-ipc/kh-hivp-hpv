@@ -132,7 +132,19 @@ process CENTRIFUGE_KREPORT {
 
     script:
     """
-    centrifuge-kreport -x "${params.index}" "$aln" > "${sample_id}.kreport.tsv"
+    set +e
+    centrifuge-kreport -x "${params.index}" "$aln" > "${sample_id}.kreport.tsv" 2> kreport.err
+    status=\$?
+    set -e
+    if [ "\$status" -ne 0 ]; then
+      if [ "\$status" -eq 255 ] && grep -q "No sequence matches" kreport.err; then
+        echo "No sequence matches for ${sample_id}; writing empty kreport." >&2
+        : > "${sample_id}.kreport.tsv"
+      else
+        cat kreport.err >&2
+        exit "\$status"
+      fi
+    fi
     """
 }
 
@@ -150,6 +162,14 @@ process KRONA_PLOTS {
 
     script:
     """
+    if ! awk -F'\\t' '\$2 ~ /^[0-9]+$/ {found=1; exit} END {exit !found}' "$report"; then
+      cat > "${sample_id}.krona.html" <<'EOF'
+    <html><body><p>No taxonomic assignments found.</p></body></html>
+EOF
+      cp "${sample_id}.krona.html" "${sample_id}.krona_wo_human.html"
+      exit 0
+    fi
+
     ktImportTaxonomy -m 6 -t 2 \\
       -o "${sample_id}.krona.html" \\
       "$report"
@@ -173,8 +193,13 @@ process COMPUTE_LCA {
 
     script:
     """
-    "${params.scripts_dir}/compute_lca.py" "${params.taxdump}/nodes.dmp" \\
-      "$aln" "${sample_id}.lca.tsv"
+    if awk -F'\\t' '\$3 ~ /^[0-9]+$/ {found=1; exit} END {exit !found}' "$aln"; then
+      "${params.scripts_dir}/compute_lca.py" "${params.taxdump}/nodes.dmp" \\
+        "$aln" "${sample_id}.lca.tsv"
+    else
+      echo "No taxonomy assignments for ${sample_id}; writing empty LCA." >&2
+      : > "${sample_id}.lca.tsv"
+    fi
     """
 }
 
