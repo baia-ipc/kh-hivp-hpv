@@ -41,7 +41,8 @@ It runs:
 
 ## All samples
 
-`run_all.sh` is a Nextflow script running the pipeline for all samples.
+`run_all.sh` is a wrapper that runs the Nextflow pipeline
+`pipelines/centrifuge_bucketing_all.nf` for all samples.
 It reads the sample list from `metadata/centrifuge_samples.tsv`.
 
 It runs:

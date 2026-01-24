@@ -1,109 +1,16 @@
-#!/usr/bin/env nextflow
-nextflow.enable.dsl=2
+#!/usr/bin/env bash
+set -euo pipefail
 
-import java.nio.file.Paths
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+PRJROOT=$DIR/../../../..
+PIPELINE_NF=$PRJROOT/pipelines/centrifuge_bucketing_all.nf
+PIPELINE_CONFIG=$PRJROOT/config/centrifuge_bucketing.config
 
-include { CENTRIFUGE_BUCKETING } from '../../../../pipelines/centrifuge_bucketing.nf'
+if ! command -v nextflow >/dev/null 2>&1; then
+  echo "Error: nextflow was not found in PATH" > /dev/stderr
+  exit 1
+fi
 
-def normalizeSampleId(String filename) {
-    def base = filename
-    base = base.replaceFirst(/\.fastq(\.gz)?$/, '')
-    base = base.replaceFirst(/_R[12].*/, '')
-    base = base.replaceFirst(/_S\d+_.*/, '')
-    return base
-}
-
-def projectRoot = Paths.get(workflow.projectDir).resolve('../../../..').normalize().toString()
-
-params.samples_tsv = params.samples_tsv ?: "${projectRoot}/analysis-1/steps/001.0.centrifuge/metadata/centrifuge_samples.tsv"
-params.reports_dir = params.reports_dir ?: "${projectRoot}/analysis-1/steps/001.0.centrifuge/reports"
-params.outdir = params.outdir ?: "${projectRoot}/analysis-1/steps/001.0.centrifuge/output"
-params.buckets = params.buckets ?: "${projectRoot}/metadata/bucket_taxonomy_ids.tsv"
-params.scripts_dir = params.scripts_dir ?: "${projectRoot}/scripts"
-params.conda_env = params.conda_env ?: "${projectRoot}/config/centrifuge_bucketing.env.yml"
-params.index = params.index ?: "/srv/databases/centrifuge/hpvc/latest/hpvc"
-params.taxdump = params.taxdump ?: "/srv/databases/centrifuge/hpvc/latest/factory/taxonomy-2023-10-30"
-params.homo_sapiens_tid = params.homo_sapiens_tid ?: 9606
-params.threads = params.threads ?: 64
-params.aggregate_skip_wo_human = params.aggregate_skip_wo_human ?: "9606,2886930,2759"
-params.aggregate_skip = params.aggregate_skip ?: "2886930,2759"
-
-def loadSamples(String samplesPath) {
-    def samplesFile = new File(samplesPath)
-    if (!samplesFile.exists()) {
-        error "samples file not found: ${samplesPath}"
-    }
-    def rows = samplesFile.readLines()
-        .findAll { it && !it.startsWith('#') }
-        .collect { it.split('\t') as List }
-    rows.eachWithIndex { cols, idx ->
-        if (cols.size() < 3) {
-            error "invalid line ${idx + 1} in ${samplesPath}: ${cols.join('\t')}"
-        }
-    }
-    return rows
-}
-
-def findReadPair(String fastqDir, String samplePrefix) {
-    def dir = new File(fastqDir)
-    if (!dir.isDirectory()) {
-        error "fastq directory not found: ${fastqDir}"
-    }
-    def r1 = dir.listFiles().findAll {
-        it.name.startsWith(samplePrefix) &&
-        it.name.contains('_R1_') &&
-        it.name.endsWith('.fastq.gz')
-    }
-    def r2 = dir.listFiles().findAll {
-        it.name.startsWith(samplePrefix) &&
-        it.name.contains('_R2_') &&
-        it.name.endsWith('.fastq.gz')
-    }
-    if (r1.size() != 1 || r2.size() != 1) {
-        error "expected 1 R1/R2 for ${samplePrefix} in ${fastqDir}, got ${r1.size()} R1 and ${r2.size()} R2"
-    }
-    return [r1[0], r2[0]]
-}
-
-process AGGREGATE_COUNTS {
-    tag "aggregate"
-
-    input:
-    val(done)
-
-    output:
-    path("aggregate.done")
-
-    script:
-    """
-    "${params.scripts_dir}/aggregate_bucket_counts.py" --skip "${params.aggregate_skip_wo_human}" \\
-      --no-abs --rel-fname relative_counts.wo_human.tsv \\
-      "${params.buckets}" "${params.outdir}" "${params.reports_dir}"
-
-    "${params.scripts_dir}/aggregate_bucket_counts.py" --skip "${params.aggregate_skip}" \\
-      "${params.buckets}" "${params.outdir}" "${params.reports_dir}"
-
-    touch aggregate.done
-    """
-}
-
-workflow {
-    def rows = loadSamples(params.samples_tsv)
-    if (!rows) {
-        error "no samples found in ${params.samples_tsv}"
-    }
-
-    reads_ch = Channel.from(rows)
-        .map { cols ->
-            def fastq_dir = cols[1]
-            def sample_prefix = cols[2]
-            def fastq_path = new File(projectRoot, fastq_dir).getPath()
-            def (r1File, r2File) = findReadPair(fastq_path, sample_prefix)
-            def sample_id = normalizeSampleId(r1File.name)
-            def run_id = new File(fastq_path).getParentFile().getName()
-            tuple(run_id, sample_id, file(r1File.absolutePath), file(r2File.absolutePath))
-        }
-
-    bucketized = CENTRIFUGE_BUCKETING(reads_ch)
-    AGGREGATE_COUNTS(bucketized.collect())
-}
+nextflow run "$PIPELINE_NF" \
+  -c "$PIPELINE_CONFIG" \
+  "$@"
