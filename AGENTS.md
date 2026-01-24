@@ -4,6 +4,8 @@
 
 - INVENTORY.md tracks the current analysis steps/scripts and any manual commands; read it before making refactors.
 
+- GOALS.md defines shared assumptions (including input naming); read it before making changes.
+
 - create GIT commits, do not push them, but commit the changes
 
 - Pipeline configuration files and other configuration files must be put in a separate directory
