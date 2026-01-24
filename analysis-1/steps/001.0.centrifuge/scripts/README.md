@@ -42,6 +42,7 @@ It runs:
 ## All samples
 
 `run_all.sh` is a wrapper script running run.sh for all samples.
+It reads the sample list from `metadata/centrifuge_samples.tsv`.
 
 It runs:
 
@@ -55,4 +56,3 @@ It runs:
 
 The `metadata` directory of this step contains bucket definitions
 used by the scripts.
-

@@ -4,3 +4,6 @@
 *.fai
 output/
 dev/
+.nextflow/
+.nextflow.log
+.nextflow.log.*
