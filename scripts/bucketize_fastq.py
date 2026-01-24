@@ -26,12 +26,25 @@ def count_lines(file_path):
     line_count = result.stdout.split()[0]
     return int(line_count)
 
-def count_gzipped_lines(file_path):
-    cmd = f'zcat {file_path} | wc -l'
+def is_gzip_file(file_path):
+    with open(file_path, 'rb') as f:
+        magic = f.read(2)
+    return magic == b'\x1f\x8b'
+
+def count_fastq_lines(file_path):
+    if is_gzip_file(file_path):
+        cmd = f'zcat {file_path} | wc -l'
+    else:
+        cmd = f'wc -l {file_path}'
     result = subprocess.run(cmd, shell=True,
                             stdout=subprocess.PIPE, text=True)
-    line_count = result.stdout.strip()
+    line_count = result.stdout.strip().split()[0]
     return int(line_count)
+
+def open_fastq(file_path):
+    if is_gzip_file(file_path):
+        return gzip.open(file_path, 'rt')
+    return open(file_path, 'r')
 
 def read_bucket_assignments(tsv_file, read_id_col, bucket_id_col):
     bucket_dict = {}
@@ -46,8 +59,8 @@ def read_bucket_assignments(tsv_file, read_id_col, bucket_id_col):
 def process_fastq(fastq_file, bucket_dict, bucket_basename, skip):
     bucket_files = {}
     counts = {}
-    with gzip.open(fastq_file, 'rt') as infile:
-        with tqdm(total=count_gzipped_lines(fastq_file)) as pbar:
+    with open_fastq(fastq_file) as infile:
+        with tqdm(total=count_fastq_lines(fastq_file)) as pbar:
             while True:
                 identifier = infile.readline().strip()
                 if not identifier:
