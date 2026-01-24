@@ -14,9 +14,11 @@ workflow CENTRIFUGE_BUCKETING {
     reads_ch
 
     main:
+    krona_ready = KRONA_UPDATE()
     align_out = CENTRIFUGE_ALIGN(reads_ch)
     CENTRIFUGE_KREPORT(align_out)
-    KRONA_PLOTS(align_out)
+    krona_in = align_out.combine(krona_ready)
+    KRONA_PLOTS(krona_in)
 
     lca_out = COMPUTE_LCA(align_out)
     buckets_out = ASSIGN_BUCKETS(lca_out)
@@ -94,6 +96,23 @@ process CENTRIFUGE_ALIGN {
     """
 }
 
+process KRONA_UPDATE {
+    tag "krona_db"
+    conda params.conda_env
+
+    output:
+    path("krona_db.ready")
+
+    script:
+    """
+    if [ ! -e "\$CONDA_PREFIX/opt/krona/taxonomy/taxonomy.tab" ]; then
+      ktUpdateTaxonomy.sh
+    fi
+
+    touch krona_db.ready
+    """
+}
+
 process CENTRIFUGE_KREPORT {
     tag "${run_id}:${sample_id}"
     conda params.conda_env
@@ -118,7 +137,7 @@ process KRONA_PLOTS {
     publishDir "${params.outdir}/${run_id}/krona_wo_human", mode: 'copy', pattern: "*.krona_wo_human.html"
 
     input:
-    tuple val(run_id), val(sample_id), path(aln), path(report)
+    tuple val(run_id), val(sample_id), path(aln), path(report), path(krona_ready)
 
     output:
     tuple val(run_id), val(sample_id), path("${sample_id}.krona.html"), path("${sample_id}.krona_wo_human.html")
