@@ -1,8 +1,5 @@
 # TODO
 
-Based on `GOALS.md`, the cleanup work should include:
-
-- [ ] Inventory all analysis steps and scripts; list manual commands currently documented only in `README.md` files.
 - [ ] Convert manual commands into scripts under `scripts/` or `pipelines/` as appropriate.
 - [ ] Move any scripts living in output directories into `scripts/` or `pipelines/` and wire them in via parameters.
 - [ ] Minimize step-specific scripts so they delegate to shared logic in `scripts/` or `pipelines/`.
