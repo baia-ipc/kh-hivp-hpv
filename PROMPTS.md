@@ -1,0 +1,55 @@
+# PROMPTS
+
+This file collects reusable prompt templates for common tasks in this repository.
+Replace bracketed placeholders before use.
+
+## Repo orientation
+"""
+Read AGENTS.md, GOALS.md, INVENTORY.md, CONTENTS.md, and SKILLS.md. Summarize the repo's current structure, active workflows, and any constraints that matter for edits.
+"""
+
+## Add or modify a pipeline step
+"""
+Update step [STEP_ID] in [analysis-input1|analysis-input2].
+- Keep configuration in config/ and hardcoded data in metadata/.
+- Update CONTENTS.md and INVENTORY.md if the directory layout changes.
+- Provide a commit, do not push.
+"""
+
+## Fix a Nextflow pipeline error
+"""
+Investigate the failing Nextflow process [PROCESS_NAME].
+- Compare the .nf implementation to any prior shell script if relevant.
+- Identify the root cause and propose a minimal fix.
+- Update tests or add validation where appropriate.
+"""
+
+## Add a new metadata list
+"""
+Create or update metadata in metadata/ for [INPUT_NAME].
+- Wire it into the relevant scripts/pipelines.
+- Avoid hardcoding sample IDs in scripts.
+- Update INVENTORY.md if the metadata list is new.
+"""
+
+## Compare outputs between analyses
+"""
+Compare outputs between [ANALYSIS_A] and [ANALYSIS_B].
+- Focus on reports/ outputs first.
+- Summarize differences with file and row-level highlights.
+"""
+
+## Move or rename analysis directories
+"""
+Rename or move analysis directories to [NEW_LAYOUT].
+- Update CONTENTS.md and INVENTORY.md.
+- Fix references in scripts, configs, and docs.
+- Commit changes without pushing.
+"""
+
+## Add documentation
+"""
+Create [DOC_NAME].md describing [TOPIC].
+- Keep it concise and aligned with AGENTS.md constraints.
+- Include paths and expected outputs.
+"""
