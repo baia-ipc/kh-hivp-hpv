@@ -1,17 +1,25 @@
 - CONTENTS.md describes what is in each directory of the project
-  - whenever the content of the repository is reordered, reflect the changes in CONTENTS.md
+  - whenever the content of the repository is reordered, reflect the changes in
+    CONTENTS.md
   - do not list individual files or example filenames/paths in CONTENTS.md
 
-- INVENTORY.md tracks the current analysis steps/scripts and any manual commands; read it before making refactors.
+- INVENTORY.md tracks the current analysis steps/scripts and any manual
+  commands; read it before making refactors.
 
-- GOALS.md defines shared assumptions (including input naming); read it before making changes.
+- GOALS.md defines shared assumptions (including input naming); read it before
+  making changes.
 
 - create GIT commits, do not push them, but commit the changes
 
-- Pipeline configuration files and other configuration files must be put in a separate directory
-  called config directly under the repository root
+- Pipeline configuration files and other configuration files must be put in a
+  separate directory called config directly under the repository root
 
-- hard coded data, such as sample numbers are put into metadata files under the metadata directory
-  under the repository root and are removed from the scripts.
+- hard coded data, such as sample numbers are put into metadata files under the
+  metadata directory under the repository root and are removed from the
+  scripts.
 
-- you are allowed to run nextflow if necessary to test that the pipelines work correctly
+- you are allowed to run nextflow if necessary to test that the pipelines work
+  correctly
+
+- modify the DECISIONS.md, OPERATIONS.md, PROMPTS.md, GOALS.md, CONTENTS.md, and
+  INVENTORY.md files as necessary to reflect changes you made to the repository
