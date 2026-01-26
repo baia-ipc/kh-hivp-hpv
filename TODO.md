@@ -5,6 +5,6 @@
 - [ ] Minimize step-specific scripts so they delegate to shared logic in `scripts/` or `pipelines/`.
 - [ ] Define a conventional `refdata/` location for user-provided inputs (e.g., selected strains for trees).
 - [ ] Create a shared index directory under the repo root for reusable indices (e.g., pave).
-- [ ] Replace `analysis-1/` and `analysis-2/` with `analysis-input1/` and `analysis-input2/`.
+- [x] Replace `analysis-1/` and `analysis-2/` with `analysis-input1/` and `analysis-input2/`.
 - [x] Move HPV16/HPV18 tree steps into `analysis-input2/`.
-- [ ] Update `CONTENTS.md` after any directory reordering.
+- [x] Update `CONTENTS.md` after any directory reordering.

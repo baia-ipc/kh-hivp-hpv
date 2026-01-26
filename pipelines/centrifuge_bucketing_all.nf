@@ -16,8 +16,8 @@ def normalizeSampleId(String filename) {
 def projectRoot = Paths.get(workflow.projectDir).resolve('..').normalize().toString()
 
 params.samples_tsv = params.samples_tsv ?: "${projectRoot}/metadata/samples-input1.tsv"
-params.reports_dir = params.reports_dir ?: "${projectRoot}/analysis-1/steps/001.0.centrifuge/reports"
-params.outdir = params.outdir ?: "${projectRoot}/analysis-1/steps/001.0.centrifuge/output"
+params.reports_dir = params.reports_dir ?: "${projectRoot}/analysis-input1/steps/001.0.centrifuge/reports"
+params.outdir = params.outdir ?: "${projectRoot}/analysis-input1/steps/001.0.centrifuge/output"
 params.buckets = params.buckets ?: "${projectRoot}/metadata/bucket_taxonomy_ids.tsv"
 params.scripts_dir = params.scripts_dir ?: "${projectRoot}/scripts"
 params.conda_env = params.conda_env ?: "${projectRoot}/config/centrifuge_bucketing.env.yml"
