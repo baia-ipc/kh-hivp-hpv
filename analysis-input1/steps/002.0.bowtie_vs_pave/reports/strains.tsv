@@ -1,4 +1,5 @@
 run	sample	n_top_strains	top_strains	top_strains_counts	n_other_strains	nontop_strains	nontop_strains_counts
+*	*	0	NA	0	0	NA	0
 HPV_150123_run01	HVP-110	1	HPV34	12	3	HPV30,HPV16,HPV73	6,4,3
 HPV_150123_run01	KHCA-025	0	NA	0	1	HPV86	2
 HPV_150123_run01	KHCA-029	3	HPV51,HPV90,HPV82	20,19,10	2	HPV69,HPV26	2,2
