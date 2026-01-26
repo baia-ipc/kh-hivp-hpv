@@ -1,34 +1,22 @@
 #!/bin/bash
+set -euo pipefail
 
 SCRIPTSDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 STEPDIR=$SCRIPTSDIR/..
-STEPSDIR=$STEPDIR/..
-READSDIR="$STEPSDIR/001.0.centrifuge/output"
+PRJROOT=$SCRIPTSDIR/../../..
+PIPELINE_NF=$PRJROOT/pipelines/virstrain.nf
+PIPELINE_CONFIG=$PRJROOT/config/virstrain.config
+READSDIR="$PRJROOT/analysis-input1/001.0.centrifuge/output"
 
-function run_pipeline {
-  for RUNDIR in "$READSDIR"/*; do
-    RUNID=$(basename "$RUNDIR")
-    for fwd in "$RUNDIR/buckets"/*.R1.151340.fastq.gz; do
-      rev="${fwd/.R1./.R2.}"
-      pfx=$(basename "$fwd" | cut -f1 -d.)
-      echo $SCRIPTSDIR/run.sh "$fwd" "$rev" "$STEPDIR/output/$RUNID/$pfx"
-      $SCRIPTSDIR/run.sh "$fwd" "$rev" "$STEPDIR/output/$RUNID/$pfx"
-    done
-  done
-}
+if ! command -v nextflow >/dev/null 2>&1; then
+  echo "Error: nextflow was not found in PATH" > /dev/stderr
+  exit 1
+fi
 
-function aggregate_results {
-  mkdir -p "$STEPDIR/reports"
-  OUTFILE="$STEPDIR/reports/strains.tsv"
-  $SCRIPTSDIR/aggregate_results.py "$STEPDIR/output/" > "$OUTFILE"
-}
-
-function create_index {
-  if [ ! -e "$STEPDIR/index/virstrain" ]; then
-    $SCRIPTSDIR/create-index.sh
-  fi
-}
-
-create_index
-run_pipeline
-aggregate_results
+nextflow run "$PIPELINE_NF" \
+  -c "$PIPELINE_CONFIG" \
+  --reads_dir "$READSDIR" \
+  --outdir "$STEPDIR/output" \
+  --reports_dir "$STEPDIR/reports" \
+  --index_dir "$STEPDIR/index" \
+  "$@"

@@ -23,7 +23,8 @@ This file describes the standard workflows and where inputs, outputs, and report
    - Outputs: `analysis-input1/002.0.bowtie_vs_pave/{output,reports}`
 
 3) VirStrain reports
-   - Script: `analysis-input1/003.0.virstrain/scripts/run_all.sh`
+   - Pipeline: `pipelines/virstrain.nf`
+   - Wrapper: `analysis-input1/003.0.virstrain/scripts/run_all.sh`
    - Inputs: buckets from step 001
    - Outputs: `analysis-input1/003.0.virstrain/{output,reports}`
 
