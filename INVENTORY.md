@@ -2,15 +2,15 @@
 
 ## Analysis steps and scripts
 
-- `analysis-input1/steps/001.0.centrifuge/scripts`: run.sh, run_all.sh, README.md
-- `analysis-input1/steps/002.0.bowtie_vs_pave/scripts`: run.sh, run_all.sh, create-index.sh, identify_top_strains.py, covstats.py, covplot.py, aggregate_covstats.py, make_all_covplots.sh, report_E6_E7_variants.sh, README.md
-- `analysis-input1/steps/003.0.virstrain/scripts`: run.sh, run_all.sh, create-index.sh, fix_msa_formatting.py, aggregate_results.py, README.md
-- `analysis-input1/steps/004.0.bowtie_vs_pave.E6/scripts`: run.sh, run_all.sh, create-index.sh, identify_top_strains.py, depth_stats.py, aggregate_depth_stats.py, run_postprocessing.sh, run_all_postprocessing.sh, run_aggregate_depth_stats.sh
-- `analysis-input1/steps/005.0.bowtie_vs_pave.E7/scripts`: run.sh, run_all.sh, create-index.sh, identify_top_strains.py, depth_stats.py, aggregate_depth_stats.py, run_postprocessing.sh, run_all_postprocessing.sh, run_aggregate_depth_stats.sh
-- `analysis-input2/steps/001.0.bucketing/scripts`: run_all.sh
-- `analysis-input2/steps/002.0.mapping_vs_pave/scripts`: run.sh, run_all.sh, create-index.sh, identify_top_strains.py, covstats.py, covplot.py, aggregate_covstats.py, make_all_covplots.sh, report_E6_E7_variants.sh, README.md
-- `analysis-input2/steps/003.0.hpv16_tree/scripts`: 1_cat_all.sh, 2_run_mafft.sh, 3_run_trimal.sh, 4_run_iqtree.sh, extract_lineages_fasta.sh, rename_lineages.py, step4_select_ncbi_genomes.sh, step6_prepare_samples.sh, upcase.sh
-- `analysis-input2/steps/004.0.hpv18_tree/scripts`: 1_extract_lineages_ref_fasta.sh, 2_rename_lineage_ref_fasta.sh, 3_cat_all.sh, 4_run_mafft.sh, 5_run_trimal.sh, 6_run_iqtree.sh, assign_hpv18_lineages.py, rename_lineages.py, step4_select_ncbi_genomes.sh, step6_prepare_samples.sh
+- `analysis-input1/001.0.centrifuge/scripts`: run.sh, run_all.sh, README.md
+- `analysis-input1/002.0.bowtie_vs_pave/scripts`: run.sh, run_all.sh, create-index.sh, identify_top_strains.py, covstats.py, covplot.py, aggregate_covstats.py, make_all_covplots.sh, report_E6_E7_variants.sh, README.md
+- `analysis-input1/003.0.virstrain/scripts`: run.sh, run_all.sh, create-index.sh, fix_msa_formatting.py, aggregate_results.py, README.md
+- `analysis-input1/004.0.bowtie_vs_pave.E6/scripts`: run.sh, run_all.sh, create-index.sh, identify_top_strains.py, depth_stats.py, aggregate_depth_stats.py, run_postprocessing.sh, run_all_postprocessing.sh, run_aggregate_depth_stats.sh
+- `analysis-input1/005.0.bowtie_vs_pave.E7/scripts`: run.sh, run_all.sh, create-index.sh, identify_top_strains.py, depth_stats.py, aggregate_depth_stats.py, run_postprocessing.sh, run_all_postprocessing.sh, run_aggregate_depth_stats.sh
+- `analysis-input2/001.0.bucketing/scripts`: run_all.sh
+- `analysis-input2/002.0.mapping_vs_pave/scripts`: run.sh, run_all.sh, create-index.sh, identify_top_strains.py, covstats.py, covplot.py, aggregate_covstats.py, make_all_covplots.sh, report_E6_E7_variants.sh, README.md
+- `analysis-input2/003.0.hpv16_tree/scripts`: 1_cat_all.sh, 2_run_mafft.sh, 3_run_trimal.sh, 4_run_iqtree.sh, extract_lineages_fasta.sh, rename_lineages.py, step4_select_ncbi_genomes.sh, step6_prepare_samples.sh, upcase.sh
+- `analysis-input2/004.0.hpv18_tree/scripts`: 1_extract_lineages_ref_fasta.sh, 2_rename_lineage_ref_fasta.sh, 3_cat_all.sh, 4_run_mafft.sh, 5_run_trimal.sh, 6_run_iqtree.sh, assign_hpv18_lineages.py, rename_lineages.py, step4_select_ncbi_genomes.sh, step6_prepare_samples.sh
 - `metadata/`: bucket_taxonomy_ids.tsv, samples-input1.tsv, samples-input2.tsv
 - `config/`: centrifuge_bucketing.config, centrifuge_bucketing.env.yml
 - `scripts/`: bucketize_fastq.py, assign_to_buckets.py, compute_lca.py, aggregate_bucket_counts.py, identify_top_strains.py
@@ -18,12 +18,12 @@
 
 ## Manual commands documented only in README.md
 
-- `analysis-input1/steps/001.0.centrifuge/scripts/README.md`: no manual commands (docs only).
-- `analysis-input1/steps/003.0.virstrain/scripts/README.md`: no manual commands (docs only).
-- `analysis-input1/steps/002.0.bowtie_vs_pave/scripts/README.md`: create bowtie2 index; align with `bowtie --all`; count with `samtools idxstats`; run rough strain assignment script.
-- `analysis-input2/steps/002.0.mapping_vs_pave/scripts/README.md`: same as above (create index, bowtie --all, samtools idxstats, rough strain assignment).
-- `analysis-input2/steps/003.0.hpv16_tree/README.md`: manual downloads and prep steps for HPV16 lineages/NCBI data and sample consensus generation.
-- `analysis-input2/steps/004.0.hpv18_tree/README.md`: manual downloads and prep steps, including script-driven selection and consensus generation:
+- `analysis-input1/001.0.centrifuge/scripts/README.md`: no manual commands (docs only).
+- `analysis-input1/003.0.virstrain/scripts/README.md`: no manual commands (docs only).
+- `analysis-input1/002.0.bowtie_vs_pave/scripts/README.md`: create bowtie2 index; align with `bowtie --all`; count with `samtools idxstats`; run rough strain assignment script.
+- `analysis-input2/002.0.mapping_vs_pave/scripts/README.md`: same as above (create index, bowtie --all, samtools idxstats, rough strain assignment).
+- `analysis-input2/003.0.hpv16_tree/README.md`: manual downloads and prep steps for HPV16 lineages/NCBI data and sample consensus generation.
+- `analysis-input2/004.0.hpv18_tree/README.md`: manual downloads and prep steps, including script-driven selection and consensus generation:
 
 ```bash
 scripts/step4_select_ncbi_genomes.sh --init-selection

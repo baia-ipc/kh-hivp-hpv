@@ -2,7 +2,7 @@
 set -euo pipefail
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-PRJROOT=$DIR/../../../..
+PRJROOT=$DIR/../../..
 PIPELINE_NF=$PRJROOT/pipelines/centrifuge_bucketing_all.nf
 PIPELINE_CONFIG=$PRJROOT/config/centrifuge_bucketing.config
 

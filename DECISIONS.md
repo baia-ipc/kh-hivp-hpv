@@ -21,3 +21,9 @@ Format:
   - Decision: keep configuration in config/ and hardcoded data in metadata/.
   - Rationale: improve reuse and reduce step-specific edits.
   - Consequences: pipelines/scripts must read config/metadata and avoid inline literals.
+
+- 2026-01-24: Flatten analysis step directories
+  - Context: analysis-input1/ and analysis-input2/ used a nested steps/ folder.
+  - Decision: move step directories directly under analysis-input1/ and analysis-input2/.
+  - Rationale: simplify paths and reduce redundant nesting.
+  - Consequences: update scripts, pipelines, and docs to remove steps/ from paths.

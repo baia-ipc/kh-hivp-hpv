@@ -4,7 +4,7 @@
  
 
 In the first step the reads are first classified into buckets by centrifuge.
-The results of this step are in tables (TSV) under /srv/giorgio/virology/HPV/analysis-input2/steps/001.0.bucketing/reports
+The results of this step are in tables (TSV) under /srv/giorgio/virology/HPV/analysis-input2/001.0.bucketing/reports
 and I summarize them here:
 - Indeed, while in the first sequencing, without enrichment, all readsets had over 99% of human sequences, here the numbers are lower BUT not to a point that such filtering is not necessary.
 
@@ -12,11 +12,11 @@ and I summarize them here:
 - for the remaining 9 samples there are less human reads, with a variable relative proportion between 53% and 89%. For these samples there are then plently of Papillomaviridae reads to proceed with the next step, ranging from about 128k read pairs of sample 229 to 1,4M read pairs of sample 064.
 - this time some HIV reads were present, but a negligible amount (1 read pair, 6 read pairs), in two of the samples with almost no Papillomaviridae (082, 092)
 - in one case (229) there is a significant amount (2.5% of reads) classified as other viruses. For comparison, in this sample Papillomaviridae is 11.9%. Having a closer look to the assignments, these reads are mostly “Human betaherpesvirus 5”
-(see e.g. /srv/giorgio/virology/HPV/analysis-input2/steps/001.0.bucketing/output/HPV_11092024/krona/KHCA-229.krona.html)
+(see e.g. /srv/giorgio/virology/HPV/analysis-input2/001.0.bucketing/output/HPV_11092024/krona/KHCA-229.krona.html)
 
 # Strain assignment
 
-The results are reported in /srv/giorgio/virology/HPV/analysis-input2/steps/002.0.mapping_vs_pave/reports/strains.tsv
+The results are reported in /srv/giorgio/virology/HPV/analysis-input2/002.0.mapping_vs_pave/reports/strains.tsv
 and summarized here:
 - of the patients mentioned above, with unefficient enrichment, I skip commenting on samples 056, 078, 082, 092, 328, 204 given the negligible counts; I keep considering 152, which has 12.5k read pairs
 - for all these lost samples we didn’t have any usable result also in the first analysis
@@ -82,7 +82,7 @@ but both genes of interested are completely covered, with relatively good depth 
 
 # Variants
 
-The results are found in /srv/giorgio/virology/HPV/analysis-input2/steps/002.0.mapping_vs_pave/reports/E6_E7_variants.tsv and summarized here.
+The results are found in /srv/giorgio/virology/HPV/analysis-input2/002.0.mapping_vs_pave/reports/E6_E7_variants.tsv and summarized here.
 In total only 1 new variant has been found through the new analysis (in KHCA-152, see below)
 
 ## HPV16

@@ -14,7 +14,7 @@ This runbook covers routine operations, troubleshooting, and safe reruns.
 
 - Pipeline: `pipelines/centrifuge_bucketing_all.nf`
 - Inputs: `metadata/samples-input1.tsv`
-- Outputs: `analysis-input1/steps/001.0.centrifuge/{output,reports}`
+- Outputs: `analysis-input1/001.0.centrifuge/{output,reports}`
 
 Example:
 ```
@@ -26,15 +26,15 @@ nextflow run pipelines/centrifuge_bucketing_all.nf \
 
 - Pipeline: `pipelines/centrifuge_bucketing_all.nf`
 - Inputs: `metadata/samples-input2.tsv` (override `--samples_tsv` if needed)
-- Outputs: `analysis-input2/steps/001.0.bucketing/{output,reports}`
+- Outputs: `analysis-input2/001.0.bucketing/{output,reports}`
 
 Example:
 ```
 nextflow run pipelines/centrifuge_bucketing_all.nf \
   -c config/centrifuge_bucketing.config \
   --samples_tsv metadata/samples-input2.tsv \
-  --outdir analysis-input2/steps/001.0.bucketing/output \
-  --reports_dir analysis-input2/steps/001.0.bucketing/reports
+  --outdir analysis-input2/001.0.bucketing/output \
+  --reports_dir analysis-input2/001.0.bucketing/reports
 ```
 
 ## Reruns and resume
