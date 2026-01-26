@@ -27,3 +27,9 @@ Format:
   - Decision: move step directories directly under analysis-input1/ and analysis-input2/.
   - Rationale: simplify paths and reduce redundant nesting.
   - Consequences: update scripts, pipelines, and docs to remove steps/ from paths.
+
+- 2026-01-24: Migrate bowtie vs PAVE mapping to Nextflow
+  - Context: step 002 relied on per-step scripts with hardcoded paths.
+  - Decision: centralize scripts under `scripts/` and run step 002 via `pipelines/bowtie_vs_pave.nf`.
+  - Rationale: reduce duplication and make configuration consistent across analyses.
+  - Consequences: use `config/bowtie_vs_pave.config` and `metadata/pave_bucket_tid.txt` for inputs.

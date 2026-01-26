@@ -20,10 +20,12 @@ This file catalogs the repository's workflows (what exists and where). For how t
 ## Skill: bowtie vs PAVE mapping and reports
 
 - Scope: mapping and rough strain assignment.
+- Pipeline: `pipelines/bowtie_vs_pave.nf` (configured via `config/bowtie_vs_pave.config`).
 - Locations:
   - analysis-input1: `analysis-input1/002.0.bowtie_vs_pave`
   - analysis-input2: `analysis-input2/002.0.mapping_vs_pave`
 - Inputs: bucketed FASTQs from the corresponding step 001 output.
+- Bucket selection: `metadata/pave_bucket_tid.txt`.
 - Outputs: `output/` (per-sample) and `reports/` (aggregates).
 
 ## Skill: VirStrain reports

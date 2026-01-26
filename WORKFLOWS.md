@@ -17,7 +17,8 @@ This file describes the standard workflows and where inputs, outputs, and report
    - Outputs: `analysis-input1/001.0.centrifuge/{output,reports}`
 
 2) Bowtie vs PAVE mapping
-   - Script: `analysis-input1/002.0.bowtie_vs_pave/scripts/run_all.sh`
+   - Pipeline: `pipelines/bowtie_vs_pave.nf`
+   - Wrapper: `analysis-input1/002.0.bowtie_vs_pave/scripts/run_all.sh`
    - Inputs: buckets from step 001
    - Outputs: `analysis-input1/002.0.bowtie_vs_pave/{output,reports}`
 
@@ -37,7 +38,8 @@ This file describes the standard workflows and where inputs, outputs, and report
    - Outputs: `analysis-input2/001.0.bucketing/{output,reports}`
 
 2) Mapping vs PAVE
-   - Script: `analysis-input2/002.0.mapping_vs_pave/scripts/run_all.sh`
+   - Pipeline: `pipelines/bowtie_vs_pave.nf`
+   - Wrapper: `analysis-input2/002.0.mapping_vs_pave/scripts/run_all.sh`
    - Inputs: buckets from step 001
    - Outputs: `analysis-input2/002.0.mapping_vs_pave/{output,reports}`
 

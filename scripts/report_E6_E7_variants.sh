@@ -1,11 +1,19 @@
 #!/bin/bash
 
-if [ $# -ne 1 ]; then
-    echo "Usage: $0 <outputdir>"
+if [ $# -ne 2 ]; then
+    echo "Usage: $0 <outputdir> <bed_dir>"
     exit 1
 fi
 
-for subdir in $1/*; do
+OUTDIR=$1
+BEDDIR=$2
+
+if [ ! -d "$BEDDIR" ]; then
+    echo "Error: bed directory not found: $BEDDIR" >&2
+    exit 1
+fi
+
+for subdir in "$OUTDIR"/*; do
     if [ ! -d $subdir ]; then
         continue
     fi
@@ -16,7 +24,7 @@ for subdir in $1/*; do
     for bcfgz in $subdir/*.bcf.gz; do
         sample=$(basename $bcfgz .bcf.gz)
         for gene in E6 E7; do
-            cmd="bcftools view -R /srv/virology/databases/pave/20240830/host_hsa/bed/pave_hsa.$gene.bed $bcfgz -H"
+            cmd="bcftools view -R $BEDDIR/pave_hsa.$gene.bed $bcfgz -H"
             cmdout=$(eval $cmd)
             if [ -z "$cmdout" ]; then
                 continue
