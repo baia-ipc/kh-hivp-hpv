@@ -25,13 +25,12 @@ Indices which can be re-used (e.g. pave) must be located into a general director
 under the repository root.
 
 In the final product, there shall not be anymore an analysis-1, -2 and -3. Instead
-only an analysis-input-1 which merges analysis-1 and analysis-2
-and an analysis-input-2 which will be the final name for analysis-3
+only an analysis-input1 which merges analysis-1 and analysis-2
+and an analysis-input2 which will be the final name for analysis-3
 
 ----
 
 The final repository will contain Nextflow pipelines:
-- a pipeline for the entire analysis-input-1
-- a pipeline for the entire analysis-input-2, except the phylogenetic trees
+- a pipeline for the entire analysis-input1
+- a pipeline for the entire analysis-input2, except the phylogenetic trees
 - a pipeline for the phylogenetic trees
-
