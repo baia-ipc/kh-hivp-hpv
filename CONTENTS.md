@@ -1,14 +1,11 @@
 
 Contents of the repository:
 
-analysis-\*/ workflows used for the analyses; in total 4 analyses were done
+analysis-\*/ workflows used for the analyses; in total 2 analyses were done
 
 analysis of the first data (Miseq):
 
-analysis-1/ centrifuge + LCA bucketing, bowtie vs PAVE rough strain assignment,
-            and VirStrain reports
-analysis-2/ similar to analysis‑1, plus separate E6/E7 bowtie-vs‑PAVE steps
-analysis-input1/ merged analysis of the first data, combining steps from analysis-1 and analysis-2
+analysis-input1/ merged analysis of the first data, including bucketing, bowtie‑vs‑PAVE, and VirStrain outputs
 
 analysis of the new data, obtained with an updated wet-lab protocol and focused only to some samples:
 
