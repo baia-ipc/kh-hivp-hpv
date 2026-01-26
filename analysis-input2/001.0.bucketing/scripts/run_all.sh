@@ -4,7 +4,7 @@ set -euo pipefail
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 STEPDIR=$DIR/..
-PRJROOT=$DIR/../../../..
+PRJROOT=$DIR/../../..
 PIPELINE_NF=$PRJROOT/pipelines/centrifuge_bucketing_all.nf
 PIPELINE_CONFIG=$PRJROOT/config/centrifuge_bucketing.config
 SAMPLES_TSV=$PRJROOT/metadata/samples-input2.tsv

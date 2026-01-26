@@ -5,11 +5,11 @@ analysis-\*/ workflows used for the analyses; in total 2 analyses were done
 
 analysis of the first data (Miseq):
 
-analysis-input1/ merged analysis of the first data, including bucketing, bowtie‑vs‑PAVE, and VirStrain outputs
+analysis-input1/ merged analysis of the first data; step directories live directly under this folder
 
 analysis of the new data, obtained with an updated wet-lab protocol and focused only to some samples:
 
-analysis-input2/ bucketing reports, bowtie‑vs‑PAVE mapping, and HPV16/HPV18 tree steps
+analysis-input2/ bucketing reports, bowtie‑vs‑PAVE mapping, and HPV16/HPV18 tree steps; step directories live directly under this folder
 
 features\_tsv/ collection of HPV reference feature coordinate tables for all human HPV strains
 
