@@ -8,9 +8,9 @@ STEP_DIR=$(cd "$SCRIPT_DIR/.." && pwd)
 REPO_ROOT=$(cd "$STEP_DIR/../../.." && pwd)
 INPUT_DIR="$STEP_DIR/input"
 
-PAVE_FASTA="${PAVE_FASTA:-$REPO_ROOT/analysis-3/steps/002.0.mapping_vs_pave/index/pave_hsa.fas}"
+PAVE_FASTA="${PAVE_FASTA:-$REPO_ROOT/analysis-input2/steps/002.0.mapping_vs_pave/index/pave_hsa.fas}"
 HPV16REF_FASTA="${HPV16REF_FASTA:-$INPUT_DIR/HPV16REF.fas}"
-BCF_DIR="${BCF_DIR:-$REPO_ROOT/analysis-3/steps/002.0.mapping_vs_pave/output/HPV_11092024}"
+BCF_DIR="${BCF_DIR:-$REPO_ROOT/analysis-input2/steps/002.0.mapping_vs_pave/output/HPV_11092024}"
 OUT_DIR="${OUT_DIR:-$INPUT_DIR}"
 SAMPLES="${SAMPLES:-}"
 SAMPLES_FILE="${SAMPLES_FILE:-}"
