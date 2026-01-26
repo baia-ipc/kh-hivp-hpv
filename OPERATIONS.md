@@ -61,6 +61,17 @@ nextflow run pipelines/bowtie_vs_pave.nf \
   --index_dir analysis-input2/002.0.mapping_vs_pave/index
 ```
 
+### VirStrain reports (Nextflow)
+
+```
+nextflow run pipelines/virstrain.nf \
+  -c config/virstrain.config \
+  --reads_dir analysis-input1/001.0.centrifuge/output \
+  --outdir analysis-input1/003.0.virstrain/output \
+  --reports_dir analysis-input1/003.0.virstrain/reports \
+  --index_dir analysis-input1/003.0.virstrain/index
+```
+
 ## Reruns and resume
 
 - Nextflow: use `-resume` to reuse successful tasks.

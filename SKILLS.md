@@ -31,8 +31,10 @@ This file catalogs the repository's workflows (what exists and where). For how t
 ## Skill: VirStrain reports
 
 - Scope: VirStrain-based strain reports (analysis-input1 only).
+- Pipeline: `pipelines/virstrain.nf` (configured via `config/virstrain.config`).
 - Location: `analysis-input1/003.0.virstrain`.
 - Inputs: bucketed FASTQs from `analysis-input1/001.0.centrifuge/output`.
+- Bucket selection: `metadata/pave_bucket_tid.txt`.
 - Outputs: `output/` and `reports/`.
 
 ## Skill: E6/E7 sub-analyses

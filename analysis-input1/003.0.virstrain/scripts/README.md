@@ -1,3 +1,19 @@
-aggregated results table under .../reports and attached strains_virstrain.tsv
+# Method
 
-The complete list of assignments for each sample can be seen under output/<RUNID>/<SAMPLE>/VirStrain_report.txt; a graph of the alignments for each sample is under output/<RUNID>/<SAMPLE>/VirStrain_report.html 
+This step is implemented as a Nextflow pipeline:
+
+- Pipeline: `pipelines/virstrain.nf`
+- Config: `config/virstrain.config`
+- Bucket selection: `metadata/pave_bucket_tid.txt`
+
+Wrappers:
+
+- `run_all.sh` runs all samples in the bucketed output.
+- `run.sh` runs a single sample pair.
+
+Outputs:
+
+- Aggregated results table under `reports/strains.tsv`.
+- Per-sample results under `output/<RUNID>/<SAMPLE>/`:
+  - `VirStrain_report.txt` (assignments)
+  - `VirStrain_report.html` (alignment graph)
