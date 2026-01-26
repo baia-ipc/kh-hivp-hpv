@@ -47,6 +47,12 @@ nextflow run pipelines/centrifuge_bucketing_all.nf \
 - Check `.nextflow.log` for pipeline errors.
 - Inspect process work directories under `work/` and read `.command.sh`, `.command.err`, `.command.out`.
 - If tools are missing, confirm the Conda env file in `config/` is referenced by the pipeline.
+- Nextflow requires Java 17+; if Conda provides an older Java, use the env in `config/nextflow_java.env.yml`:
+
+```
+conda env create -f config/nextflow_java.env.yml
+conda activate nextflow-java
+```
 
 ## Updating inputs
 
