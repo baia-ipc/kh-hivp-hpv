@@ -5,6 +5,6 @@
 - Move hardcoded values (e.g., sample IDs) into `metadata/` and remove them from
   scripts.
 - Keep docs current when you change the repo: DECISIONS.md, OPERATIONS.md,
-  PROMPTS.md, GOALS.md, CONTENTS.md, INVENTORY.md.
+  PROMPTS.md, GOALS.md, CONTENTS.md, INVENTORY.md, SKILLS.md.
 - Always create git commits; do not push.
 - You may run Nextflow to validate pipelines if needed.
