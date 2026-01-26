@@ -7,6 +7,7 @@ This file defines small, repeatable workflows used in this repository. Use these
 - Configuration lives in `config/` and should not be hardcoded in scripts.
 - Sample lists and other hardcoded data live in `metadata/`.
 - Outputs go under each step's `output/` and `reports/` directories.
+- Use `git grep` for repository searches (preferred search tool here).
 - Update `CONTENTS.md` and `INVENTORY.md` when the directory structure changes.
 - Commit changes locally; do not push.
 
