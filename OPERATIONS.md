@@ -37,6 +37,30 @@ nextflow run pipelines/centrifuge_bucketing_all.nf \
   --reports_dir analysis-input2/001.0.bucketing/reports
 ```
 
+### Bowtie vs PAVE mapping (Nextflow)
+
+analysis-input1:
+
+```
+nextflow run pipelines/bowtie_vs_pave.nf \
+  -c config/bowtie_vs_pave.config \
+  --reads_dir analysis-input1/001.0.centrifuge/output \
+  --outdir analysis-input1/002.0.bowtie_vs_pave/output \
+  --reports_dir analysis-input1/002.0.bowtie_vs_pave/reports \
+  --index_dir analysis-input1/002.0.bowtie_vs_pave/index
+```
+
+analysis-input2:
+
+```
+nextflow run pipelines/bowtie_vs_pave.nf \
+  -c config/bowtie_vs_pave.config \
+  --reads_dir analysis-input2/001.0.bucketing/output \
+  --outdir analysis-input2/002.0.mapping_vs_pave/output \
+  --reports_dir analysis-input2/002.0.mapping_vs_pave/reports \
+  --index_dir analysis-input2/002.0.mapping_vs_pave/index
+```
+
 ## Reruns and resume
 
 - Nextflow: use `-resume` to reuse successful tasks.
