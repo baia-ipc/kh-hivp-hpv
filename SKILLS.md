@@ -1,15 +1,12 @@
 # SKILLS
 
-This file defines small, repeatable workflows used in this repository. Use these as checklists when editing, rerunning, or documenting analyses.
+This file catalogs the repository's workflows (what exists and where). For how to run or troubleshoot them, see `OPERATIONS.md`.
 
-## Core conventions (apply to all skills)
+## Core conventions (scope only)
 
-- Configuration lives in `config/` and should not be hardcoded in scripts.
+- Configuration lives in `config/` (no hardcoded paths in scripts).
 - Sample lists and other hardcoded data live in `metadata/`.
-- Outputs go under each step's `output/` and `reports/` directories.
-- Use `git grep` for repository searches (preferred search tool here).
-- Update `CONTENTS.md` and `INVENTORY.md` when the directory structure changes.
-- Commit changes locally; do not push.
+- Outputs live under each step's `output/` and `reports/` directories.
 
 ## Skill: centrifuge bucketing (Nextflow)
 

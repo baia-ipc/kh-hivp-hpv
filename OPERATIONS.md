@@ -1,6 +1,6 @@
 # OPERATIONS
 
-This runbook covers routine operations, troubleshooting, and safe reruns.
+This runbook covers how to run workflows, troubleshoot issues, and rerun safely. For a catalog of what workflows exist, see `SKILLS.md`.
 
 ## Conventions
 
