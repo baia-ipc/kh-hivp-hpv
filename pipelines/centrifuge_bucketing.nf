@@ -15,7 +15,37 @@ workflow CENTRIFUGE_BUCKETING {
 
     main:
     krona_ready = KRONA_UPDATE()
-    align_out = CENTRIFUGE_ALIGN(reads_ch)
+    /*
+     * Optional: skip the expensive Centrifuge alignment step if the alignment/report files
+     * already exist on disk (e.g. copied into params.outdir).
+     *
+     * Expected layout (default root is params.outdir):
+     *   <root>/<run_id>/alignments/<sample_id>.aln.tsv
+     *   <root>/<run_id>/reports/<sample_id>.report.tsv
+     */
+    def align_out
+    if (params.skip_align) {
+        def precomputed_root = params.precomputed_root ?: params.outdir
+        if (!precomputed_root) {
+            error "params.precomputed_root is required when params.skip_align is set (or set params.outdir)"
+        }
+
+        align_out = reads_ch.map { run_id, sample_id, r1, r2 ->
+            def aln_path = "${precomputed_root}/${run_id}/alignments/${sample_id}.aln.tsv"
+            def report_path = "${precomputed_root}/${run_id}/reports/${sample_id}.report.tsv"
+            def aln_file = file(aln_path)
+            def report_file = file(report_path)
+            if (!aln_file.exists()) {
+                error "Missing precomputed alignment file: ${aln_path} (run_id=${run_id} sample_id=${sample_id})"
+            }
+            if (!report_file.exists()) {
+                error "Missing precomputed report file: ${report_path} (run_id=${run_id} sample_id=${sample_id})"
+            }
+            tuple(run_id, sample_id, aln_file, report_file)
+        }
+    } else {
+        align_out = CENTRIFUGE_ALIGN(reads_ch)
+    }
     CENTRIFUGE_KREPORT(align_out)
     krona_in = align_out.combine(krona_ready)
     KRONA_PLOTS(krona_in)
