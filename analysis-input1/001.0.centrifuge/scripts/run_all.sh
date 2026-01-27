@@ -20,10 +20,6 @@ elif ! command -v conda >/dev/null 2>&1; then
   exit 1
 fi
 
-if [ -z "${CONDA_OVERRIDE_CUDA:-}" ]; then
-  export CONDA_OVERRIDE_CUDA=0
-fi
-
 args=()
 skip_align=false
 outdir_set=false
