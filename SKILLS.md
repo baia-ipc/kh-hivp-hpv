@@ -1,6 +1,10 @@
 # SKILLS
 
-Catalog of what exists (scope + where). This is a map of capabilities and locations, not a how-to. For run commands and troubleshooting, see `OPERATIONS.md`. For the step order, see `WORKFLOWS.md`.
+Catalog of what exists (scope + where). This is a map of capabilities and locations, not a how-to.
+
+Rules:
+- Do not add run commands or troubleshooting here (put them in `OPERATIONS.md`).
+- Do not describe step order/dependencies here (put them in `WORKFLOWS.md`).
 
 ## Core conventions (scope only)
 

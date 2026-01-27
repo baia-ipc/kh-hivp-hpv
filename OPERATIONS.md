@@ -1,6 +1,10 @@
 # OPERATIONS
 
-Runbook with concrete commands and fixes (how to run + troubleshoot). For what exists, see `SKILLS.md`. For the ordered workflow view, see `WORKFLOWS.md`.
+Runbook with concrete commands and fixes (how to run + troubleshoot).
+
+Rules:
+- Put runnable commands and troubleshooting here.
+- Do not turn this into a catalog (keep that in `SKILLS.md`) or an ordered workflow spec (keep that in `WORKFLOWS.md`).
 
 ## Conventions
 
