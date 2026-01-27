@@ -116,6 +116,10 @@ process MULTIQC {
 
     script:
     """
+    cp "${params.reports_dir}/absolute_counts.tsv" .
+    cp "${params.reports_dir}/relative_counts.tsv" .
+    cp "${params.reports_dir}/relative_counts.wo_human.tsv" .
+
     multiqc --force \\
       --config "${params.multiqc_config}" \\
       --outdir . \\
