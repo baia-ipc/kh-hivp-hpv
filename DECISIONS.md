@@ -72,6 +72,6 @@ Format:
 
 - 2026-01-27: Cap Nextflow concurrency by default
   - Context: running many tasks at once can overload shared nodes.
-  - Decision: set `process.maxForks = 32` and `executor.queueSize = 32` in step config files under `config/`.
+  - Decision: set `process.maxForks = 24` and `executor.queueSize = 24` in step config files under `config/`.
   - Rationale: keep default runs bounded while still parallel.
   - Consequences: adjust the cap in config files when running on larger systems.
