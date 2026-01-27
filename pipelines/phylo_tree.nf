@@ -156,6 +156,7 @@ process MULTIQC {
     publishDir "${params.reports_dir}/multiqc", mode: 'copy'
 
     input:
+    path(multiqc_config)
     path(done)
 
     output:
@@ -164,7 +165,7 @@ process MULTIQC {
     script:
     """
     multiqc --force \\
-      --config "${params.multiqc_config}" \\
+      --config "${multiqc_config}" \\
       --outdir . \\
       "${params.outdir}" "${params.reports_dir}"
     """
@@ -180,5 +181,6 @@ workflow {
     def aligned = MAFFT_ALIGN(cat_all)
     def trimmed = TRIMAL(aligned)
     def tree = IQTREE(trimmed.trimal)
-    MULTIQC(tree.collect())
+    def multiqc_config_file = file(params.multiqc_config)
+    MULTIQC(multiqc_config_file, tree.collect())
 }
