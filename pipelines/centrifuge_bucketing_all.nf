@@ -114,7 +114,7 @@ workflow {
             def sample_prefix = cols[2]
             def fastq_path = new File(projectRoot, fastq_dir).getPath()
             def (r1File, r2File) = findReadPair(fastq_path, sample_prefix)
-            def sample_id = normalizeSampleId(r1File.name)
+            def sample_id = sample_prefix
             def run_id = new File(fastq_path).getParentFile().getName()
             tuple(run_id, sample_id, file(r1File.absolutePath), file(r2File.absolutePath))
         }
