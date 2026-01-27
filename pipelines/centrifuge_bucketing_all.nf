@@ -18,14 +18,20 @@ def projectRoot = (workflow.projectDir instanceof java.nio.file.Path \
     : Paths.get(workflow.projectDir.toString())) \
     .resolve('..').normalize().toString()
 
-// Avoid Nextflow warnings when reading unset params (Nextflow 25+ warns on first access).
-if (!params.containsKey('samples_tsv')) params.samples_tsv = null
-if (!params.containsKey('reports_dir')) params.reports_dir = null
-if (!params.containsKey('aggregate_skip_wo_human')) params.aggregate_skip_wo_human = null
-if (!params.containsKey('aggregate_skip')) params.aggregate_skip = null
+// Define optional params exactly once to avoid Nextflow "undefined parameter" and "defined multiple times" warnings.
+if (!params.containsKey('samples_tsv') || !params.samples_tsv) {
+    params.samples_tsv = "${projectRoot}/metadata/samples-input1.tsv"
+}
+if (!params.containsKey('reports_dir') || !params.reports_dir) {
+    params.reports_dir = "${projectRoot}/analysis-input1/001.0.centrifuge/reports"
+}
+if (!params.containsKey('aggregate_skip_wo_human') || !params.aggregate_skip_wo_human) {
+    params.aggregate_skip_wo_human = "9606,2886930,2759"
+}
+if (!params.containsKey('aggregate_skip') || !params.aggregate_skip) {
+    params.aggregate_skip = "2886930,2759"
+}
 
-params.samples_tsv = params.samples_tsv ?: "${projectRoot}/metadata/samples-input1.tsv"
-params.reports_dir = params.reports_dir ?: "${projectRoot}/analysis-input1/001.0.centrifuge/reports"
 params.outdir = params.outdir ?: "${projectRoot}/analysis-input1/001.0.centrifuge/output"
 params.buckets = params.buckets ?: "${projectRoot}/metadata/bucket_taxonomy_ids.tsv"
 params.scripts_dir = params.scripts_dir ?: "${projectRoot}/scripts"
@@ -34,8 +40,6 @@ params.index = params.index ?: "/srv/databases/centrifuge/hpvc/latest/hpvc"
 params.taxdump = params.taxdump ?: "/srv/databases/centrifuge/hpvc/latest/factory/taxonomy-2023-10-30"
 params.homo_sapiens_tid = params.homo_sapiens_tid ?: 9606
 params.threads = params.threads ?: 64
-params.aggregate_skip_wo_human = params.aggregate_skip_wo_human ?: "9606,2886930,2759"
-params.aggregate_skip = params.aggregate_skip ?: "2886930,2759"
 
 def loadSamples(String samplesPath) {
     def samplesFile = new File(samplesPath)
