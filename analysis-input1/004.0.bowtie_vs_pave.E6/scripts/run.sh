@@ -1,38 +1,38 @@
 #!/bin/bash
+set -euo pipefail
 
 SCRIPTSDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 STEPDIR=$SCRIPTSDIR/..
-INDEXDIR=$STEPDIR/index
+PRJROOT=$SCRIPTSDIR/../../..
+PIPELINE_NF=$PRJROOT/pipelines/pave_gene_mapping.nf
+PIPELINE_CONFIG=$PRJROOT/config/pave_e6.config
 
-if [ $# -ne 4 ]; then
-  echo "Usage: $0 <idx> <fwd> <rev> <out>"
+if [ $# -lt 3 ]; then
+  echo "Usage: $0 <fwd> <rev> <out> [nextflow args...]"
   exit 1
 fi
 
-idx=$1
-fwd=$2
-rev=$3
-out=$4
+fwd=$1
+rev=$2
+out=$3
+shift 3
 
-outdir=$(dirname $out)
-mkdir -p $outdir
-cd $outdir
+run_id=$(basename "$(dirname "$out")")
+sample_id=$(basename "$out")
+outdir=$(dirname "$(dirname "$out")")
 
-function align {
-  bowtie2 --all -x $INDEXDIR/$idx -1 $fwd -2 $rev -S $out.sam
-}
+if ! command -v nextflow >/dev/null 2>&1; then
+  echo "Error: nextflow was not found in PATH" > /dev/stderr
+  exit 1
+fi
 
-function post_alignment {
-  samtools view -S -b $out.sam > $out.u.bam
-  samtools sort $out.u.bam -o $out.bam
-  samtools index $out.bam
-  samtools idxstats $out.bam > $out.idxstats
-}
-
-function identify_top_strains {
-  $SCRIPTSDIR/identify_top_strains.py $out.idxstats > $out.top_strains
-}
-
-align
-post_alignment
-identify_top_strains
+nextflow run "$PIPELINE_NF" \
+  -c "$PIPELINE_CONFIG" \
+  --read1 "$fwd" \
+  --read2 "$rev" \
+  --run_id "$run_id" \
+  --sample_id "$sample_id" \
+  --outdir "$outdir" \
+  --reports_dir "$STEPDIR/reports" \
+  --index_dir "$STEPDIR/index" \
+  "$@"
