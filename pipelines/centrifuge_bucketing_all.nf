@@ -31,12 +31,8 @@ if (!params.containsKey('aggregate_skip_wo_human') || !params.aggregate_skip_wo_
 if (!params.containsKey('aggregate_skip') || !params.aggregate_skip) {
     params.aggregate_skip = "2886930,2759"
 }
-if (!params.containsKey('precomputed_root') || !params.precomputed_root) {
-    params.precomputed_root = null
-}
-
 params.outdir = params.outdir ?: "${projectRoot}/analysis-input1/001.0.centrifuge/output"
-if (!params.precomputed_root) {
+if (!params.containsKey('precomputed_root') || !params.precomputed_root) {
     params.precomputed_root = params.outdir
 }
 params.buckets = params.buckets ?: "${projectRoot}/metadata/bucket_taxonomy_ids.tsv"
