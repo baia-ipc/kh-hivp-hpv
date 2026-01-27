@@ -19,6 +19,8 @@ metadata/ taxonomy bucket definitions and sample lists
 
 config/ pipeline and other configuration files
 
+refdata/ curated reference FASTA files used for indices
+
 pipelines/ wrapper scripts and workflows
 
 scripts/ reusable Python scripts for LCA, bucketing, FASTQ splitting, and strain summaries

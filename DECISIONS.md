@@ -39,3 +39,9 @@ Format:
   - Decision: centralize scripts under `scripts/` and run step 003 via `pipelines/virstrain.nf`.
   - Rationale: align with the shared pipeline layout and remove hardcoded paths.
   - Consequences: use `config/virstrain.config` and `metadata/pave_bucket_tid.txt` for inputs.
+
+- 2026-01-24: Migrate E6 mapping to Nextflow
+  - Context: step 004 relied on step-local scripts and per-step index creation.
+  - Decision: move shared scripts to `scripts/` and run E6 mapping via `pipelines/pave_gene_mapping.nf`.
+  - Rationale: standardize mapping steps and remove hardcoded references.
+  - Consequences: use `config/pave_e6.config` and shared metadata for bucket selection.
