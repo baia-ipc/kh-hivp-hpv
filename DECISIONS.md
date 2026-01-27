@@ -75,3 +75,9 @@ Format:
   - Decision: set `process.maxForks = 24` and `executor.queueSize = 24` in step config files under `config/`.
   - Rationale: keep default runs bounded while still parallel.
   - Consequences: adjust the cap in config files when running on larger systems.
+
+- 2026-01-27: Use metadata sample IDs for multi-sample bucketing
+  - Context: legacy centrifuge outputs are named after the sample IDs listed in metadata, not the normalized FASTQ filenames.
+  - Decision: set the sample ID in `pipelines/centrifuge_bucketing_all.nf` from the metadata sample column.
+  - Rationale: keep `--skip-align` compatible with precomputed alignment/report files and historical naming.
+  - Consequences: alignment/report filenames follow metadata sample IDs for multi-sample runs.
