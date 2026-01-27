@@ -6,6 +6,8 @@
   scripts.
 - Never hardcode user-specific absolute paths (e.g., `/home/<user>`). Use PATH,
   env vars, or config options instead.
+- When summarizing results, exclude controls / technical artifacts as defined in
+  GOALS.md (e.g. `H2O`, `HVP-*`, and Illumina `Undetermined` reads) unless doing QC.
 - Strict doc roles:
   - `SKILLS.md`: catalog of what exists (scope + where); no how-to.
   - `OPERATIONS.md`: runbook (how to run + troubleshoot) with concrete commands.
