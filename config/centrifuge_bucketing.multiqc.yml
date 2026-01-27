@@ -8,8 +8,8 @@ custom_data:
     data: |
       <p>
         Paired-end reads were taxonomically classified against an HPV reference index using Centrifuge,
-        producing per-read assignments and summary reports. Taxonomic summaries were rendered both as
-        Kraken-style reports and as interactive Krona plots. To provide downstream grouping, each read was
+        producing per-read assignments and summary reports (Kim et al., 2016). Taxonomic summaries were rendered both as
+        Kraken-style reports and as interactive Krona plots (Ondov et al., 2011). To provide downstream grouping, each read was
         mapped to a predefined taxonomy bucket, and bucket-wise read sets were created to enable
         per-bucket analyses. Aggregate tables of absolute and relative bucket abundance were then computed
         across samples; relative summaries were additionally generated after excluding human assignments.
