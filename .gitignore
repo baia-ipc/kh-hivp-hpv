@@ -4,6 +4,7 @@
 *.fai
 output/
 dev/
+reference-results/
 .nextflow/
 .nextflow.log
 .nextflow.log.*
