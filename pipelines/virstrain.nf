@@ -129,7 +129,7 @@ process AGGREGATE_RESULTS {
 
 process MULTIQC {
     tag "multiqc"
-    conda params.conda_env
+    conda params.multiqc_env
     publishDir "${params.reports_dir}/multiqc", mode: 'copy'
 
     input:
