@@ -256,7 +256,7 @@ process ASSIGN_BUCKETS {
 process BUCKETIZE_READS {
     tag "${run_id}:${sample_id}"
     conda params.conda_env
-    publishDir "${params.outdir}/${run_id}/buckets", mode: 'copy', pattern: "*.fastq.gz"
+    publishDir "${params.outdir}/${run_id}/buckets", mode: 'copy', pattern: "buckets/*"
 
     input:
     tuple val(run_id), val(sample_id), path(bkt), path(r1), path(r2)
