@@ -16,11 +16,7 @@ Rules:
 
 ### analysis-input1 bucketing (Nextflow)
 
-- Pipeline: `pipelines/centrifuge_bucketing_all.nf`
-- Inputs: `metadata/samples-input1.tsv`
-- Outputs: `analysis-input1/001.0.centrifuge/{output,reports}`
-
-Example:
+- Run with Nextflow:
 ```
 nextflow run pipelines/centrifuge_bucketing_all.nf \
   -c config/centrifuge_bucketing.config
@@ -28,11 +24,7 @@ nextflow run pipelines/centrifuge_bucketing_all.nf \
 
 ### analysis-input2 bucketing (Nextflow)
 
-- Pipeline: `pipelines/centrifuge_bucketing_all.nf`
-- Inputs: `metadata/samples-input2.tsv` (override `--samples_tsv` if needed)
-- Outputs: `analysis-input2/001.0.bucketing/{output,reports}`
-
-Example:
+- Run with Nextflow:
 ```
 nextflow run pipelines/centrifuge_bucketing_all.nf \
   -c config/centrifuge_bucketing.config \
@@ -43,7 +35,7 @@ nextflow run pipelines/centrifuge_bucketing_all.nf \
 
 ### Bowtie vs PAVE mapping (Nextflow)
 
-analysis-input1:
+- analysis-input1:
 
 ```
 nextflow run pipelines/bowtie_vs_pave.nf \
@@ -54,7 +46,7 @@ nextflow run pipelines/bowtie_vs_pave.nf \
   --index_dir analysis-input1/002.0.bowtie_vs_pave/index
 ```
 
-analysis-input2:
+- analysis-input2:
 
 ```
 nextflow run pipelines/bowtie_vs_pave.nf \
@@ -67,6 +59,7 @@ nextflow run pipelines/bowtie_vs_pave.nf \
 
 ### VirStrain reports (Nextflow)
 
+- Run with Nextflow:
 ```
 nextflow run pipelines/virstrain.nf \
   -c config/virstrain.config \
@@ -78,6 +71,7 @@ nextflow run pipelines/virstrain.nf \
 
 ### PAVE E6 mapping (Nextflow)
 
+- Run with Nextflow:
 ```
 nextflow run pipelines/pave_gene_mapping.nf \
   -c config/pave_e6.config \
@@ -89,6 +83,7 @@ nextflow run pipelines/pave_gene_mapping.nf \
 
 ### PAVE E7 mapping (Nextflow)
 
+- Run with Nextflow:
 ```
 nextflow run pipelines/pave_gene_mapping.nf \
   -c config/pave_e7.config \
@@ -100,6 +95,7 @@ nextflow run pipelines/pave_gene_mapping.nf \
 
 ### HPV16 phylogenetic tree (Nextflow)
 
+- Run with Nextflow:
 ```
 nextflow run pipelines/phylo_tree.nf \
   -c config/hpv16_tree.config \
@@ -109,6 +105,7 @@ nextflow run pipelines/phylo_tree.nf \
 
 ### HPV18 phylogenetic tree (Nextflow)
 
+- Run with Nextflow:
 ```
 nextflow run pipelines/phylo_tree.nf \
   -c config/hpv18_tree.config \
