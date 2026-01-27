@@ -155,6 +155,7 @@ process MULTIQC {
     publishDir "${params.reports_dir}/multiqc", mode: 'copy'
 
     input:
+    path(multiqc_config)
     path(done)
 
     output:
@@ -163,7 +164,7 @@ process MULTIQC {
     script:
     """
     multiqc --force \\
-      --config "${params.multiqc_config}" \\
+      --config "${multiqc_config}" \\
       --outdir . \\
       "${params.outdir}" "${params.reports_dir}"
     """
@@ -225,5 +226,6 @@ workflow {
     def strains = AGGREGATE_STRAINS(mappedDone)
     def depth_stats = AGGREGATE_DEPTH_STATS(mappedDone)
     def reports_done = strains.mix(depth_stats).collect()
-    MULTIQC(reports_done)
+    def multiqc_config_file = file(params.multiqc_config)
+    MULTIQC(multiqc_config_file, reports_done)
 }

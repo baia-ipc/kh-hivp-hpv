@@ -109,6 +109,7 @@ process MULTIQC {
     publishDir "${params.reports_dir}/multiqc", mode: 'copy'
 
     input:
+    path(multiqc_config)
     path(done)
 
     output:
@@ -121,7 +122,7 @@ process MULTIQC {
     cp "${params.reports_dir}/relative_counts.wo_human.tsv" .
 
     multiqc --force \\
-      --config "${params.multiqc_config}" \\
+      --config "${multiqc_config}" \\
       --outdir . \\
       "${params.outdir}" "${params.reports_dir}"
     """
@@ -150,5 +151,6 @@ workflow {
 
     bucketized = CENTRIFUGE_BUCKETING(reads_ch)
     aggregate_done = AGGREGATE_COUNTS(bucketized.collect())
-    MULTIQC(aggregate_done)
+    def multiqc_config_file = file(params.multiqc_config)
+    MULTIQC(multiqc_config_file, aggregate_done)
 }
