@@ -13,4 +13,4 @@ fi
 
 nextflow run "$PIPELINE_NF" \
   -c "$PIPELINE_CONFIG" \
-  "$@"
+  "$@" -resume
