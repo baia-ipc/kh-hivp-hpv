@@ -18,6 +18,12 @@ def projectRoot = (workflow.projectDir instanceof java.nio.file.Path \
     : Paths.get(workflow.projectDir.toString())) \
     .resolve('..').normalize().toString()
 
+// Avoid Nextflow warnings when reading unset params (Nextflow 25+ warns on first access).
+if (!params.containsKey('samples_tsv')) params.samples_tsv = null
+if (!params.containsKey('reports_dir')) params.reports_dir = null
+if (!params.containsKey('aggregate_skip_wo_human')) params.aggregate_skip_wo_human = null
+if (!params.containsKey('aggregate_skip')) params.aggregate_skip = null
+
 params.samples_tsv = params.samples_tsv ?: "${projectRoot}/metadata/samples-input1.tsv"
 params.reports_dir = params.reports_dir ?: "${projectRoot}/analysis-input1/001.0.centrifuge/reports"
 params.outdir = params.outdir ?: "${projectRoot}/analysis-input1/001.0.centrifuge/output"
