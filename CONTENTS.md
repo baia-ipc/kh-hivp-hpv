@@ -19,14 +19,10 @@
 - scripts/ reusable Python scripts for single operations such as
            LCA computing, bucketing, FASTQ splitting, and strain summaries
 
-- features\_tsv/:
-  collection of HPV reference feature coordinate tables for all human HPV strains
-
 - input/ symlinks to external raw data locations (not stored in-repo)
 
 - metadata/ taxonomy bucket definitions and sample lists
 
 - config/ pipeline and other configuration files
 
-- refdata/ curated reference FASTA files used for indices
-
+- refdata/ curated reference data (FASTA files and HPV feature coordinate tables)
