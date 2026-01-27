@@ -1,0 +1,40 @@
+report_title: "VirStrain - Report"
+
+custom_content:
+  methods_summary:
+    order: 1
+    name: "Methods summary"
+    description: "Summary of VirStrain processing"
+    html: |
+      <ul>
+        <li><strong>Index build:</strong> align PAVE reference with MAFFT and build VirStrain index.</li>
+        <li><strong>VirStrain run:</strong> classify reads and generate per-sample outputs.</li>
+        <li><strong>Aggregation:</strong> summarize strain calls across samples.</li>
+      </ul>
+  output_locations:
+    order: 2
+    name: "Output locations"
+    description: "Default output paths (can be overridden with Nextflow params)"
+    html: |
+      <ul>
+        <li><code>&lt;outdir&gt;/&lt;run_id&gt;/&lt;sample&gt;/</code> for per-sample VirStrain outputs</li>
+        <li><code>&lt;reports_dir&gt;/</code> for aggregate tables and this MultiQC report</li>
+        <li><code>&lt;index_dir&gt;/</code> for the VirStrain index</li>
+      </ul>
+  reports_tables:
+    order: 3
+    name: "Reports tables"
+    description: "Aggregate tables written to the reports directory"
+    html: |
+      <ul>
+        <li><code>strains.tsv</code></li>
+      </ul>
+
+custom_data:
+  strains_table:
+    file_format: "tsv"
+    section_name: "Strain calls"
+    description: "Aggregated VirStrain results"
+    plot_type: "table"
+    files:
+      - "strains.tsv"

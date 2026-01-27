@@ -10,13 +10,18 @@ def projectRoot = (workflow.projectDir instanceof java.nio.file.Path \
 
 params.input_dir = params.input_dir ?: null
 params.outdir = params.outdir ?: null
+params.reports_dir = params.reports_dir ?: null
 params.outgroups_file = params.outgroups_file ?: null
+params.multiqc_config = params.multiqc_config ?: "${projectRoot}/config/phylo_tree.multiqc.yml"
 
 if (!params.input_dir) {
     error "params.input_dir is required"
 }
 if (!params.outdir) {
     error "params.outdir is required"
+}
+if (!params.reports_dir) {
+    params.reports_dir = "${params.outdir}/reports"
 }
 
 def requiredInputs = [
@@ -64,6 +69,11 @@ def iqtreeThreads = params.iqtree_threads ?: "AUTO"
 def iqtreeBootstrap = params.iqtree_bootstrap ?: 1000
 
 def iqtreeAlrt = params.iqtree_alrt ?: 1000
+
+def multiqc_config_file = new File(params.multiqc_config)
+if (!multiqc_config_file.exists()) {
+    error "MultiQC config not found: ${params.multiqc_config}"
+}
 
 process CAT_ALL {
     tag "cat_all"
@@ -140,6 +150,27 @@ process IQTREE {
     """
 }
 
+process MULTIQC {
+    tag "multiqc"
+    conda params.conda_env
+    publishDir "${params.reports_dir}/multiqc", mode: 'copy'
+
+    input:
+    path(done)
+
+    output:
+    path("multiqc/multiqc_report.html")
+
+    script:
+    """
+    mkdir -p multiqc
+    multiqc --force \\
+      --config "${params.multiqc_config}" \\
+      --outdir multiqc \\
+      "${params.outdir}" "${params.reports_dir}"
+    """
+}
+
 workflow {
     def selected = file("${params.input_dir}/selected_renamed.fasta")
     def outgroups = file("${params.input_dir}/outgroups.fasta")
@@ -149,5 +180,6 @@ workflow {
     def cat_all = CAT_ALL(selected, outgroups, lineages, samples)
     def aligned = MAFFT_ALIGN(cat_all)
     def trimmed = TRIMAL(aligned)
-    IQTREE(trimmed.trimal)
+    def tree = IQTREE(trimmed.trimal)
+    MULTIQC(tree.collect())
 }

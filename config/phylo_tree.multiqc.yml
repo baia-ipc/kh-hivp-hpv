@@ -1,0 +1,23 @@
+report_title: "Phylogenetic Tree - Report"
+
+custom_content:
+  methods_summary:
+    order: 1
+    name: "Methods summary"
+    description: "Summary of phylogenetic tree construction"
+    html: |
+      <ul>
+        <li><strong>Concatenate inputs:</strong> combine selected references, outgroups, lineage refs, and samples.</li>
+        <li><strong>Alignment:</strong> MAFFT alignment of concatenated sequences.</li>
+        <li><strong>Trimming:</strong> trim alignment using TrimAl.</li>
+        <li><strong>Tree inference:</strong> IQ-TREE with model selection and bootstrap support.</li>
+      </ul>
+  output_locations:
+    order: 2
+    name: "Output locations"
+    description: "Default output paths (can be overridden with Nextflow params)"
+    html: |
+      <ul>
+        <li><code>&lt;outdir&gt;/</code> for alignment and tree outputs</li>
+        <li><code>&lt;reports_dir&gt;/</code> for this MultiQC report</li>
+      </ul>

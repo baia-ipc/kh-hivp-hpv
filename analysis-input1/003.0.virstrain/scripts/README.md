@@ -17,3 +17,4 @@ Outputs:
 - Per-sample results under `output/<RUNID>/<SAMPLE>/`:
   - `VirStrain_report.txt` (assignments)
   - `VirStrain_report.html` (alignment graph)
+- MultiQC report under `reports/multiqc/multiqc_report.html`.

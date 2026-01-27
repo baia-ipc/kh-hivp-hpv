@@ -14,3 +14,4 @@ Wrappers:
 Outputs:
 
 - Alignment, trimming, and IQ-TREE artifacts under `output/`.
+- MultiQC report under `output/reports/multiqc/multiqc_report.html`.
