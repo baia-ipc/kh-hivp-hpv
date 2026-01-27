@@ -1,11 +1,11 @@
-report_title: "Phylogenetic Tree - Report"
+title: "Phylogenetic Tree - Report"
 
-custom_content:
+custom_data:
   methods_summary:
-    order: 1
-    name: "Methods summary"
+    plot_type: "html"
+    section_name: "Methods summary"
     description: "Summary of phylogenetic tree construction"
-    html: |
+    data: |
       <ul>
         <li><strong>Concatenate inputs:</strong> combine selected references, outgroups, lineage refs, and samples.</li>
         <li><strong>Alignment:</strong> MAFFT alignment of concatenated sequences.</li>
@@ -19,10 +19,10 @@ custom_content:
         <li>Minh et al., 2020. IQ-TREE 2: New models and efficient methods for phylogenetic inference. <em>Molecular Biology and Evolution</em>. DOI: 10.1093/molbev/msaa015.</li>
       </ul>
   output_locations:
-    order: 2
-    name: "Output locations"
+    plot_type: "html"
+    section_name: "Output locations"
     description: "Default output paths (can be overridden with Nextflow params)"
-    html: |
+    data: |
       <ul>
         <li><code>&lt;outdir&gt;/</code> for alignment and tree outputs</li>
         <li><code>&lt;reports_dir&gt;/</code> for this MultiQC report</li>
