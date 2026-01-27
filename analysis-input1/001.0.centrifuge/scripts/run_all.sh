@@ -13,6 +13,12 @@ if ! command -v nextflow >/dev/null 2>&1; then
   exit 1
 fi
 
+if ! command -v conda >/dev/null 2>&1; then
+  if [ -n "${CONDA_EXE:-}" ] && [ -x "$CONDA_EXE" ]; then
+    export PATH="$(dirname "$CONDA_EXE"):$PATH"
+  fi
+fi
+
 args=()
 skip_align=false
 outdir_set=false
