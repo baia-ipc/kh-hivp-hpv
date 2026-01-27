@@ -55,3 +55,5 @@ This file catalogs the repository's workflows (what exists and where). For how t
   - `analysis-input2/004.0.hpv18_tree`
 - Inputs: mapping outputs and curated reference sets in each step's `input/`.
 - Outputs: alignment and tree artifacts under each step directory.
+- Pipeline (HPV16): `pipelines/phylo_tree.nf` (configured via `config/hpv16_tree.config`).
+- HPV18 still uses step scripts until migrated to the same pipeline.

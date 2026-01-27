@@ -3,26 +3,53 @@ set -euo pipefail
 
 # Extract HPV16 reference from PAVE and build consensus sequences for samples.
 
-SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-STEP_DIR=$(cd "$SCRIPT_DIR/.." && pwd)
-REPO_ROOT=$(cd "$STEP_DIR/../../.." && pwd)
-INPUT_DIR="$STEP_DIR/input"
+REPO_ROOT=$(cd "$(dirname "$0")/.." && pwd)
 
-PAVE_FASTA="${PAVE_FASTA:-$REPO_ROOT/analysis-input2/002.0.mapping_vs_pave/index/pave_hsa.fas}"
-HPV16REF_FASTA="${HPV16REF_FASTA:-$INPUT_DIR/HPV16REF.fas}"
-BCF_DIR="${BCF_DIR:-$REPO_ROOT/analysis-input2/002.0.mapping_vs_pave/output/HPV_11092024}"
-OUT_DIR="${OUT_DIR:-$INPUT_DIR}"
-SAMPLES="${SAMPLES:-}"
-SAMPLES_FILE="${SAMPLES_FILE:-}"
+PAVE_FASTA=${PAVE_FASTA:-}
+HPV16REF_FASTA=${HPV16REF_FASTA:-}
+BCF_DIR=${BCF_DIR:-}
+BCF_RUN_ID=${BCF_RUN_ID:-}
+BCF_RUN_ID_FILE=${BCF_RUN_ID_FILE:-$REPO_ROOT/metadata/hpv16_tree_bcf_run.txt}
+OUT_DIR=${OUT_DIR:-}
+SAMPLES=${SAMPLES:-}
+SAMPLES_FILE=${SAMPLES_FILE:-}
 
 if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
-  cat <<'EOF'
-Usage: step6_prepare_samples.sh
+  cat <<'EOFHELP'
+Usage: hpv16_prepare_samples.sh
 
 Environment overrides:
-  PAVE_FASTA, HPV16REF_FASTA, BCF_DIR, OUT_DIR, SAMPLES, SAMPLES_FILE
-EOF
+  PAVE_FASTA, HPV16REF_FASTA, BCF_DIR, BCF_RUN_ID, BCF_RUN_ID_FILE
+  OUT_DIR, SAMPLES, SAMPLES_FILE
+EOFHELP
   exit 0
+fi
+
+if [[ -z "$PAVE_FASTA" ]]; then
+  PAVE_FASTA="$REPO_ROOT/analysis-input2/002.0.mapping_vs_pave/index/pave_hsa.fas"
+fi
+
+if [[ -z "$OUT_DIR" ]]; then
+  echo "Error: OUT_DIR is required." >&2
+  exit 1
+fi
+
+if [[ -z "$HPV16REF_FASTA" ]]; then
+  HPV16REF_FASTA="$OUT_DIR/HPV16REF.fas"
+fi
+
+if [[ -z "$BCF_DIR" ]]; then
+  if [[ -z "$BCF_RUN_ID" && -f "$BCF_RUN_ID_FILE" ]]; then
+    BCF_RUN_ID=$(head -n 1 "$BCF_RUN_ID_FILE" | tr -d '\r')
+  fi
+  if [[ -n "$BCF_RUN_ID" ]]; then
+    BCF_DIR="$REPO_ROOT/analysis-input2/002.0.mapping_vs_pave/output/$BCF_RUN_ID"
+  fi
+fi
+
+if [[ -z "$BCF_DIR" ]]; then
+  echo "Error: BCF_DIR is required (set BCF_DIR or BCF_RUN_ID/BCF_RUN_ID_FILE)." >&2
+  exit 1
 fi
 
 if ! command -v seqkit >/dev/null 2>&1; then
