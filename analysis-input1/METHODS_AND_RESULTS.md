@@ -20,8 +20,9 @@ operations used the NCBI taxonomy dump specified for the analysis.
 Seventy-two samples were processed across three MiSeq runs (HPV_150123_run01,
 n=22; HPV_160823_run03, n=25; HPV_250523_run02, n=25). Five samples were
 controls/technical placeholders (one water control H2O, one HVP control, and
-three Undetermined); proportions below are reported for the remaining 67
-non-control samples unless stated otherwise.
+three “Undetermined” FASTQ sets produced by Illumina demultiplexing for reads
+that were not assigned to any sample); proportions below are reported for the
+remaining 67 non-control samples unless stated otherwise.
 
 Papillomaviridae reads were detected in most non-control samples (51/67, 76%).
 In terms of absolute counts, the typical sample had low to moderate
@@ -50,9 +51,10 @@ table and a further 27/67 had Phi X at ≤1% of non-human assignments (0–0.01)
 One non-control sample showed a very high Phi X fraction (>0.5), consistent with
 a spike-in dominated library.
 
-As expected, the Undetermined technical-placeholder samples were strongly
-dominated by Phi X-174 in the non-human table (Phi X fractions ~0.72–0.98), and
-are therefore excluded from the main proportions above.
+As expected, the “Undetermined” FASTQ sets (unassigned reads from the Illumina
+pipeline) were strongly dominated by Phi X-174 in the non-human table (Phi X
+fractions ~0.72–0.98), and are therefore excluded from the main proportions
+above.
 
 **Notes on sources**
 - Counts and proportions are from:
