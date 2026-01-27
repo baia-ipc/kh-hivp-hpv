@@ -196,8 +196,8 @@ process MULTIQC {
 }
 
 workflow {
-    def multiqc_config_file = new File(params.multiqc_config)
-    if (!multiqc_config_file.exists()) {
+    def multiqc_config_path = new File(params.multiqc_config)
+    if (!multiqc_config_path.exists()) {
         error "MultiQC config not found: ${params.multiqc_config}"
     }
 
