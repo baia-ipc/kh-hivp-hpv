@@ -20,7 +20,8 @@ Rules:
 - Run with Nextflow:
 ```
 nextflow run pipelines/centrifuge_bucketing_all.nf \
-  -c config/centrifuge_bucketing.config
+  -c config/centrifuge_bucketing.config \
+  -resume
 ```
 
 ### analysis-input2 bucketing (Nextflow)
@@ -31,7 +32,8 @@ nextflow run pipelines/centrifuge_bucketing_all.nf \
   -c config/centrifuge_bucketing.config \
   --samples_tsv metadata/samples-input2.tsv \
   --outdir analysis-input2/001.0.bucketing/output \
-  --reports_dir analysis-input2/001.0.bucketing/reports
+  --reports_dir analysis-input2/001.0.bucketing/reports \
+  -resume
 ```
 
 ### Bowtie vs PAVE mapping (Nextflow)
@@ -44,7 +46,8 @@ nextflow run pipelines/bowtie_vs_pave.nf \
   --reads_dir analysis-input1/001.0.centrifuge/output \
   --outdir analysis-input1/002.0.bowtie_vs_pave/output \
   --reports_dir analysis-input1/002.0.bowtie_vs_pave/reports \
-  --index_dir analysis-input1/002.0.bowtie_vs_pave/index
+  --index_dir analysis-input1/002.0.bowtie_vs_pave/index \
+  -resume
 ```
 
 - analysis-input2:
@@ -55,7 +58,8 @@ nextflow run pipelines/bowtie_vs_pave.nf \
   --reads_dir analysis-input2/001.0.bucketing/output \
   --outdir analysis-input2/002.0.mapping_vs_pave/output \
   --reports_dir analysis-input2/002.0.mapping_vs_pave/reports \
-  --index_dir analysis-input2/002.0.mapping_vs_pave/index
+  --index_dir analysis-input2/002.0.mapping_vs_pave/index \
+  -resume
 ```
 
 ### VirStrain reports (Nextflow)
@@ -67,7 +71,8 @@ nextflow run pipelines/virstrain.nf \
   --reads_dir analysis-input1/001.0.centrifuge/output \
   --outdir analysis-input1/003.0.virstrain/output \
   --reports_dir analysis-input1/003.0.virstrain/reports \
-  --index_dir analysis-input1/003.0.virstrain/index
+  --index_dir analysis-input1/003.0.virstrain/index \
+  -resume
 ```
 
 ### PAVE E6 mapping (Nextflow)
@@ -79,7 +84,8 @@ nextflow run pipelines/pave_gene_mapping.nf \
   --reads_dir analysis-input1/001.0.centrifuge/output \
   --outdir analysis-input1/004.0.bowtie_vs_pave.E6/output \
   --reports_dir analysis-input1/004.0.bowtie_vs_pave.E6/reports \
-  --index_dir analysis-input1/004.0.bowtie_vs_pave.E6/index
+  --index_dir analysis-input1/004.0.bowtie_vs_pave.E6/index \
+  -resume
 ```
 
 ### PAVE E7 mapping (Nextflow)
@@ -91,7 +97,8 @@ nextflow run pipelines/pave_gene_mapping.nf \
   --reads_dir analysis-input1/001.0.centrifuge/output \
   --outdir analysis-input1/005.0.bowtie_vs_pave.E7/output \
   --reports_dir analysis-input1/005.0.bowtie_vs_pave.E7/reports \
-  --index_dir analysis-input1/005.0.bowtie_vs_pave.E7/index
+  --index_dir analysis-input1/005.0.bowtie_vs_pave.E7/index \
+  -resume
 ```
 
 ### HPV16 phylogenetic tree (Nextflow)
@@ -101,7 +108,8 @@ nextflow run pipelines/pave_gene_mapping.nf \
 nextflow run pipelines/phylo_tree.nf \
   -c config/hpv16_tree.config \
   --input_dir analysis-input2/003.0.hpv16_tree/input \
-  --outdir analysis-input2/003.0.hpv16_tree/output
+  --outdir analysis-input2/003.0.hpv16_tree/output \
+  -resume
 ```
 
 ### HPV18 phylogenetic tree (Nextflow)
@@ -111,7 +119,8 @@ nextflow run pipelines/phylo_tree.nf \
 nextflow run pipelines/phylo_tree.nf \
   -c config/hpv18_tree.config \
   --input_dir analysis-input2/004.0.hpv18_tree/input \
-  --outdir analysis-input2/004.0.hpv18_tree/output
+  --outdir analysis-input2/004.0.hpv18_tree/output \
+  -resume
 ```
 
 ## Reruns and resume

@@ -19,4 +19,4 @@ nextflow run "$PIPELINE_NF" \
   --samples_tsv "$SAMPLES_TSV" \
   --outdir "$STEPDIR/output" \
   --reports_dir "$STEPDIR/reports" \
-  "$@"
+  "$@" -resume

@@ -19,4 +19,4 @@ nextflow run "$PIPELINE_NF" \
   --outdir "$STEPDIR/output" \
   --reports_dir "$STEPDIR/reports" \
   --index_dir "$STEPDIR/index" \
-  "$@"
+  "$@" -resume
