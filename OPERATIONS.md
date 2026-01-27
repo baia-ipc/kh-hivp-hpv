@@ -103,6 +103,15 @@ nextflow run pipelines/phylo_tree.nf \
   --outdir analysis-input2/003.0.hpv16_tree/output
 ```
 
+### HPV18 phylogenetic tree (Nextflow)
+
+```
+nextflow run pipelines/phylo_tree.nf \
+  -c config/hpv18_tree.config \
+  --input_dir analysis-input2/004.0.hpv18_tree/input \
+  --outdir analysis-input2/004.0.hpv18_tree/output
+```
+
 ## Reruns and resume
 
 - Nextflow: use `-resume` to reuse successful tasks.

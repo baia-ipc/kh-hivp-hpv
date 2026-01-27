@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPTSDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+STEPDIR=$SCRIPTSDIR/..
+PRJROOT=$SCRIPTSDIR/../../..
+PIPELINE_NF=$PRJROOT/pipelines/phylo_tree.nf
+PIPELINE_CONFIG=$PRJROOT/config/hpv18_tree.config
+
+if ! command -v nextflow >/dev/null 2>&1; then
+  echo "Error: nextflow was not found in PATH" > /dev/stderr
+  exit 1
+fi
+
+nextflow run "$PIPELINE_NF" \
+  -c "$PIPELINE_CONFIG" \
+  --input_dir "$STEPDIR/input" \
+  --outdir "$STEPDIR/output" \
+  "$@"

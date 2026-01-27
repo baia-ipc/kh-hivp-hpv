@@ -47,7 +47,7 @@ This file describes the standard workflows and where inputs, outputs, and report
 ## Workflow: phylogenetic trees
 
 - HPV16 (Nextflow): `pipelines/phylo_tree.nf` via `analysis-input2/003.0.hpv16_tree/scripts/run.sh`
-- HPV18 (legacy): `analysis-input2/004.0.hpv18_tree`
+- HPV18 (Nextflow): `pipelines/phylo_tree.nf` via `analysis-input2/004.0.hpv18_tree/scripts/run.sh`
 - Inputs: mapping outputs plus curated references in each step's `input/` directory.
 
 ## Reruns and resume
