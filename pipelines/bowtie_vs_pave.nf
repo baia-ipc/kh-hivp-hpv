@@ -188,6 +188,7 @@ process MULTIQC {
     script:
     """
     multiqc --force \\
+      --filename "multiqc_report.html" \\
       --config "${multiqc_config}" \\
       --outdir . \\
       "${params.outdir}" "${params.reports_dir}"

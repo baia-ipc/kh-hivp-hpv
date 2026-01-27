@@ -122,6 +122,7 @@ process MULTIQC {
     cp "${params.reports_dir}/relative_counts.wo_human.tsv" .
 
     multiqc --force \\
+      --filename "multiqc_report.html" \\
       --config "${multiqc_config}" \\
       --outdir . \\
       "${params.outdir}" "${params.reports_dir}"
