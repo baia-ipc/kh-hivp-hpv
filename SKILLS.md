@@ -15,48 +15,49 @@ Rules:
 ## Skill: centrifuge bucketing (Nextflow)
 
 - Scope: read classification, bucketing, and summary tables.
-- Pipeline: `pipelines/centrifuge_bucketing.nf` and `pipelines/centrifuge_bucketing_all.nf`.
-- Inputs: `metadata/samples-input1.tsv` or `metadata/samples-input2.tsv` plus the Centrifuge index/taxdump.
+- Entry points: `pipelines/centrifuge_bucketing.nf`, `pipelines/centrifuge_bucketing_all.nf`.
+- Where:
+  - analysis-input1: `analysis-input1/001.0.centrifuge`
+  - analysis-input2: `analysis-input2/001.0.bucketing`
+- Inputs: `metadata/samples-input1.tsv` or `metadata/samples-input2.tsv` plus Centrifuge index/taxdump.
 - Outputs:
-  - analysis-input1: `analysis-input1/001.0.centrifuge/output` and `reports`
-  - analysis-input2: `analysis-input2/001.0.bucketing/output` and `reports`
+  - analysis-input1: `analysis-input1/001.0.centrifuge/output`, `analysis-input1/001.0.centrifuge/reports`
+  - analysis-input2: `analysis-input2/001.0.bucketing/output`, `analysis-input2/001.0.bucketing/reports`
 
 ## Skill: bowtie vs PAVE mapping and reports
 
 - Scope: mapping and rough strain assignment.
-- Pipeline: `pipelines/bowtie_vs_pave.nf` (configured via `config/bowtie_vs_pave.config`).
-- Locations:
+- Entry points: `pipelines/bowtie_vs_pave.nf` (config: `config/bowtie_vs_pave.config`).
+- Where:
   - analysis-input1: `analysis-input1/002.0.bowtie_vs_pave`
   - analysis-input2: `analysis-input2/002.0.mapping_vs_pave`
-- Inputs: bucketed FASTQs from the corresponding step 001 output.
-- Bucket selection: `metadata/pave_bucket_tid.txt`.
-- Outputs: `output/` (per-sample) and `reports/` (aggregates).
+- Inputs: bucketed FASTQs from the corresponding step 001 output; bucket selection in `metadata/pave_bucket_tid.txt`.
+- Outputs: per-step `output/` and `reports/` under the locations above.
 
 ## Skill: VirStrain reports
 
 - Scope: VirStrain-based strain reports (analysis-input1 only).
-- Pipeline: `pipelines/virstrain.nf` (configured via `config/virstrain.config`).
-- Location: `analysis-input1/003.0.virstrain`.
-- Inputs: bucketed FASTQs from `analysis-input1/001.0.centrifuge/output`.
-- Bucket selection: `metadata/pave_bucket_tid.txt`.
-- Outputs: `output/` and `reports/`.
+- Entry points: `pipelines/virstrain.nf` (config: `config/virstrain.config`).
+- Where: `analysis-input1/003.0.virstrain`.
+- Inputs: bucketed FASTQs from `analysis-input1/001.0.centrifuge/output`; bucket selection in `metadata/pave_bucket_tid.txt`.
+- Outputs: `analysis-input1/003.0.virstrain/output`, `analysis-input1/003.0.virstrain/reports`.
 
 ## Skill: E6/E7 sub-analyses
 
-- Scope: separate E6 and E7 bowtie analyses (analysis-input1 only).
-- Locations:
-  - `analysis-input1/004.0.bowtie_vs_pave.E6`
-  - `analysis-input1/005.0.bowtie_vs_pave.E7`
-- Inputs: bucketed FASTQs from step 001.
-- Outputs: `output/` and `reports/`.
-- Pipeline: `pipelines/pave_gene_mapping.nf` (configured via `config/pave_e6.config` or `config/pave_e7.config`).
+- Scope: separate E6 and E7 gene-only mapping analyses (analysis-input1 only).
+- Entry points: `pipelines/pave_gene_mapping.nf` (configs: `config/pave_e6.config`, `config/pave_e7.config`).
+- Where:
+  - E6: `analysis-input1/004.0.bowtie_vs_pave.E6`
+  - E7: `analysis-input1/005.0.bowtie_vs_pave.E7`
+- Inputs: bucketed FASTQs from `analysis-input1/001.0.centrifuge/output`; bucket selection in `metadata/pave_bucket_tid.txt`.
+- Outputs: per-step `output/` and `reports/` under the locations above.
 
 ## Skill: phylogenetic trees (HPV16/HPV18)
 
 - Scope: tree generation for HPV16 and HPV18.
-- Locations:
-  - `analysis-input2/003.0.hpv16_tree`
-  - `analysis-input2/004.0.hpv18_tree`
-- Inputs: mapping outputs and curated reference sets in each step's `input/`.
-- Outputs: alignment and tree artifacts under each step directory.
-- Pipeline: `pipelines/phylo_tree.nf` (configured via `config/hpv16_tree.config` or `config/hpv18_tree.config`).
+- Entry points: `pipelines/phylo_tree.nf` (configs: `config/hpv16_tree.config`, `config/hpv18_tree.config`).
+- Where:
+  - HPV16: `analysis-input2/003.0.hpv16_tree`
+  - HPV18: `analysis-input2/004.0.hpv18_tree`
+- Inputs: curated reference sets under each step `input/` plus mapping outputs (see WORKFLOWS.md for dependencies).
+- Outputs: alignment and tree artifacts under each step `output/`.
