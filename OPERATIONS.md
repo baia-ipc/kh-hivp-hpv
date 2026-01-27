@@ -11,6 +11,8 @@ Rules:
 - Configuration is in `config/` and sample lists in `metadata/`.
 - Outputs are written to each step's `output/` and `reports/`.
 - When changing directory layout, update `CONTENTS.md` and `INVENTORY.md`.
+- Avoid user-specific absolute paths in scripts; require tools via PATH or
+  configurable env vars (e.g., `CONDA_EXE`).
 - Default parallelism is capped at 24 concurrent tasks via `process.maxForks` and `executor.queueSize` in the step config files under `config/`.
 - MultiQC reports are written under each step's `reports/multiqc/` (phylo tree steps use `output/reports/multiqc/`). Ensure the MultiQC process outputs files at the process root and publish to `reports/multiqc/` to avoid duplicated `multiqc/multiqc_report.html` paths.
 - MultiQC method summaries should cite the primary tool papers; update the relevant `config/*.multiqc.yml` when pipeline steps change.

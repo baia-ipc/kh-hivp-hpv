@@ -12,6 +12,7 @@ Read AGENTS.md, GOALS.md, INVENTORY.md, CONTENTS.md, and SKILLS.md. Summarize th
 """
 Update step [STEP_ID] in [analysis-input1|analysis-input2].
 - Keep configuration in config/ and hardcoded data in metadata/.
+- Do not hardcode user-specific absolute paths; rely on PATH/env/config.
 - Update CONTENTS.md and INVENTORY.md if the directory layout changes.
 - Provide a commit, do not push.
 """

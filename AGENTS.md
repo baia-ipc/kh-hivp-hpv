@@ -4,6 +4,8 @@
 - Keep configuration in `config/` under the repo root.
 - Move hardcoded values (e.g., sample IDs) into `metadata/` and remove them from
   scripts.
+- Never hardcode user-specific absolute paths (e.g., `/home/<user>`). Use PATH,
+  env vars, or config options instead.
 - Strict doc roles:
   - `SKILLS.md`: catalog of what exists (scope + where); no how-to.
   - `OPERATIONS.md`: runbook (how to run + troubleshoot) with concrete commands.

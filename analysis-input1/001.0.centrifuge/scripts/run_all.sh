@@ -16,12 +16,8 @@ fi
 if [ -n "${CONDA_EXE:-}" ] && [ -x "$CONDA_EXE" ]; then
   export PATH="$(dirname "$CONDA_EXE"):$PATH"
 elif ! command -v conda >/dev/null 2>&1; then
-  for candidate in "$HOME/software/mambaforge/bin/conda" "/home/giorgio/software/mambaforge/bin/conda"; do
-    if [ -x "$candidate" ]; then
-      export PATH="$(dirname "$candidate"):$PATH"
-      break
-    fi
-  done
+  echo "Error: conda was not found in PATH. Set PATH or CONDA_EXE to your conda binary." > /dev/stderr
+  exit 1
 fi
 
 if [ -z "${CONDA_OVERRIDE_CUDA:-}" ]; then
