@@ -6,25 +6,27 @@
     analysis-input2/
 
 - analysis-input\*/\*:
-  - each analysis directory contain subdirectories for each step
+  - each analysis directory contain subdirectories for each step, numbered
+    according to the order in which they were run (01, 02, etc)
   - each step subdirectory contains separate subdirectories for scripts, output
     files and reports and in some cases for config files, metadata files, input
     and reference data
   - most of the code is contained in the scripts and pipelines in the root-level
     directories described below, the step-level scripts are mostly wrappers to call
 
-features\_tsv/ collection of HPV reference feature coordinate tables for all human HPV strains
+- pipelines/ wrapper scripts and Nextflow workflows
 
-input/ symlinks to external raw data locations (not stored in-repo)
+- scripts/ reusable Python scripts for single operations such as
+           LCA computing, bucketing, FASTQ splitting, and strain summaries
 
-metadata/ taxonomy bucket definitions and sample lists
+- features\_tsv/:
+  collection of HPV reference feature coordinate tables for all human HPV strains
 
-config/ pipeline and other configuration files
+- input/ symlinks to external raw data locations (not stored in-repo)
 
-refdata/ curated reference FASTA files used for indices
+- metadata/ taxonomy bucket definitions and sample lists
 
-pipelines/ wrapper scripts and workflows
+- config/ pipeline and other configuration files
 
-scripts/ reusable Python scripts for LCA, bucketing, FASTQ splitting, and strain summaries
+- refdata/ curated reference FASTA files used for indices
 
-reference-results/ snapshot of outputs, reports, and indexes for regression comparisons
