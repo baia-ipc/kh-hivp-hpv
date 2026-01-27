@@ -11,6 +11,7 @@ Rules:
 - Configuration lives in `config/` (no hardcoded paths in scripts).
 - Sample lists and other hardcoded data live in `metadata/`.
 - Outputs live under each step's `output/` and `reports/` directories.
+- MultiQC reports are published to each step’s `reports/multiqc/` (tree steps use `output/reports/multiqc/`), with the process writing `multiqc_report.html` at the workdir root and `publishDir` targeting the final reports directory.
 
 ## Skill: centrifuge bucketing (Nextflow)
 
