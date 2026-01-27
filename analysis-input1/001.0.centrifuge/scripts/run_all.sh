@@ -17,6 +17,7 @@ args=()
 skip_align=false
 outdir_set=false
 precomputed_set=false
+resume_set=false
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -74,6 +75,12 @@ while [ $# -gt 0 ]; do
       ;;
   esac
 done
+for arg in "${args[@]}"; do
+  if [ "$arg" = "-resume" ] || [ "$arg" = "--resume" ]; then
+    resume_set=true
+    break
+  fi
+done
 
 if ! $outdir_set; then
   args+=(--outdir "$OUTDIR")
@@ -83,6 +90,10 @@ if $skip_align && ! $precomputed_set; then
   args+=(--precomputed_root "$OUTDIR")
 fi
 
+if ! $resume_set; then
+  args+=(-resume)
+fi
+
 nextflow run "$PIPELINE_NF" \
   -c "$PIPELINE_CONFIG" \
-  "${args[@]}" -resume
+  "${args[@]}"
