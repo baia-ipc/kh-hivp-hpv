@@ -199,7 +199,7 @@ workflow {
         if (!readsDir.isDirectory()) {
             error "reads_dir not found: ${params.reads_dir}"
         }
-        samples = Channel.fromPath("${params.reads_dir}/*/buckets/*.R1.${params.bucket_tid}.fastq.gz")
+        samples = Channel.fromPath("${params.reads_dir}/*/buckets/*.R1.${bucketTid}.fastq.gz")
             .map { r1 ->
                 def r2 = file(r1.toString().replace('.R1.', '.R2.'))
                 if (!r2.exists()) {
