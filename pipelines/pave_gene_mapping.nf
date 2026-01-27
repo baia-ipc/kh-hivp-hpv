@@ -19,6 +19,7 @@ def projectRoot = (workflow.projectDir instanceof java.nio.file.Path \
 
 params.scripts_dir = params.scripts_dir ?: "${projectRoot}/scripts"
 params.bucket_tid_file = params.bucket_tid_file ?: "${projectRoot}/metadata/pave_bucket_tid.txt"
+params.multiqc_config = params.multiqc_config ?: "${projectRoot}/config/pave_gene_mapping.multiqc.yml"
 
 def bucketTid = params.bucket_tid
 if (!bucketTid) {
@@ -148,7 +149,33 @@ process AGGREGATE_DEPTH_STATS {
     """
 }
 
+process MULTIQC {
+    tag "multiqc"
+    conda params.conda_env
+    publishDir "${params.reports_dir}/multiqc", mode: 'copy'
+
+    input:
+    path(done)
+
+    output:
+    path("multiqc/multiqc_report.html")
+
+    script:
+    """
+    mkdir -p multiqc
+    multiqc --force \\
+      --config "${params.multiqc_config}" \\
+      --outdir multiqc \\
+      "${params.outdir}" "${params.reports_dir}"
+    """
+}
+
 workflow {
+    def multiqc_config_file = new File(params.multiqc_config)
+    if (!multiqc_config_file.exists()) {
+        error "MultiQC config not found: ${params.multiqc_config}"
+    }
+
     if (!indexReady) {
         indexReady = CREATE_INDEX().marker.map { true }
     }
@@ -196,6 +223,8 @@ workflow {
     def mapped = MAP_SAMPLE(samplesWithIndex)
     def mappedDone = mapped.collect()
 
-    AGGREGATE_STRAINS(mappedDone)
-    AGGREGATE_DEPTH_STATS(mappedDone)
+    def strains = AGGREGATE_STRAINS(mappedDone)
+    def depth_stats = AGGREGATE_DEPTH_STATS(mappedDone)
+    def reports_done = strains.mix(depth_stats).collect()
+    MULTIQC(reports_done)
 }

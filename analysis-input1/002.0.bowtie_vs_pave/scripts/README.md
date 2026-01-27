@@ -18,3 +18,5 @@ The pipeline performs:
 3) counting alignments with `samtools idxstats`
 4) rough strain assignment via `scripts/identify_top_strains.py`
 5) coverage summary and variant calling
+
+MultiQC report: `reports/multiqc/multiqc_report.html`.
