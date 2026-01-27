@@ -6,20 +6,14 @@ custom_data:
     section_name: "Methods summary"
     description: "Summary of processing steps for step 001"
     data: |
-      <ul>
-        <li><strong>Centrifuge alignment:</strong> classify reads and write <code>alignments/&lt;sample&gt;.aln.tsv</code> and <code>reports/&lt;sample&gt;.report.tsv</code>.</li>
-        <li><strong>Kraken-style report:</strong> run <code>centrifuge-kreport</code> to create <code>kreports/&lt;sample&gt;.kreport.tsv</code>.</li>
-        <li><strong>Krona plots:</strong> create interactive HTML summaries for all taxa and for non-human taxa.</li>
-        <li><strong>LCA computation:</strong> compute the lowest common ancestor using <code>scripts/compute_lca.py</code>.</li>
-        <li><strong>Bucket assignment:</strong> map reads to taxonomy buckets with <code>scripts/assign_to_buckets.py</code>.</li>
-        <li><strong>Bucketized FASTQ:</strong> split reads into per-bucket FASTQs using <code>scripts/bucketize_fastq.py</code>.</li>
-        <li><strong>Aggregation:</strong> generate aggregate count tables with <code>scripts/aggregate_bucket_counts.py</code>.</li>
-      </ul>
       <p>
-        Alignments are produced with Centrifuge against the configured HPV reference index.
-        Reports and downstream summaries use the taxonomy dump specified in the pipeline config.
-        Bucket assignment uses <code>metadata/bucket_taxonomy_ids.tsv</code> to map reads into taxonomy buckets.
-        Human reads are excluded from the <em>wo_human</em> tables and plots using the configured taxonomy ID.
+        Paired-end reads were taxonomically classified against an HPV reference index using Centrifuge,
+        producing per-read assignments and summary reports. Taxonomic summaries were rendered both as
+        Kraken-style reports and as interactive Krona plots. To provide downstream grouping, each read was
+        mapped to a predefined taxonomy bucket, and bucket-wise read sets were created to enable
+        per-bucket analyses. Aggregate tables of absolute and relative bucket abundance were then computed
+        across samples; relative summaries were additionally generated after excluding human assignments.
+        All taxonomic operations used the corresponding NCBI taxonomy dump specified for the analysis.
       </p>
       <p><strong>References:</strong></p>
       <ul>
