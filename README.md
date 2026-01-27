@@ -1,37 +1,22 @@
 # Kh_HIVp_HPV
 
-## Purpose
-
-This repository contains reproducible workflows for read bucketing, mapping, and downstream reporting for HPV/HIV-related sequencing analyses.
-It is organized to make reruns easier by:
-
-- keeping configuration under `config/`
-- keeping sample lists and other fixed metadata under `metadata/`
-- keeping reusable scripts under `scripts/`
-- writing results for each step under that step’s `output/` and `reports/` directories
+This repository contains a reproducible workflow that we used for
+the analysis of HPV sequencing data in our study.
 
 ## Repository layout (high level)
 
-- `analysis-input1/`: end-to-end analysis for the first input dataset
-- `analysis-input2/`: analysis for the second input dataset (mapping + phylogenetic trees)
+- `analysis-input1/`: analysis for the first input dataset (all patients)
+- `analysis-input2/`: analysis for the second input dataset (HPV16/18-focused)
 - `pipelines/`: Nextflow pipelines
 - `config/`: pipeline configuration files and Conda env definitions
 - `metadata/`: sample lists and other fixed inputs (e.g. bucket taxonomy IDs)
 
 ## Requirements
 
-- Nextflow available in `PATH`
-- Conda available in `PATH` (pipelines use per-process Conda environments)
-- Java 17+ (required by Nextflow)
+- Nextflow installed and available in `PATH`; Java 17+ (required by Nextflow)
 
-If Nextflow fails to start because of Java, create and activate the provided Java environment:
-
-```bash
-conda env create -f config/nextflow_java.env.yml
-conda activate nextflow-java
-```
-
-If Nextflow behaves differently when Conda is activated in your shell, try `conda deactivate` and run Nextflow again.
+- Conda installed and available in `PATH` (pipelines use per-process Conda
+  environments)
 
 ## Configuration you may need to edit
 
@@ -43,27 +28,12 @@ If Nextflow behaves differently when Conda is activated in your shell, try `cond
 
 Run these commands from the repository root.
 
-### Step-by-step (recommended order)
-
 ```bash
 analysis-input1/001.0.centrifuge/scripts/run_all.sh
 analysis-input1/002.0.bowtie_vs_pave/scripts/run_all.sh
 analysis-input1/003.0.virstrain/scripts/run_all.sh
 analysis-input1/004.0.bowtie_vs_pave.E6/scripts/run_all.sh
 analysis-input1/005.0.bowtie_vs_pave.E7/scripts/run_all.sh
-```
-
-### Start/stop at a specific step
-
-- To start at step 2, step 1 must already have created bucket FASTQs under `analysis-input1/001.0.centrifuge/output/`.
-- To stop after any step, simply do not run the subsequent steps.
-
-### Resume after a failure
-
-Re-run the same command with `-resume`:
-
-```bash
-analysis-input1/002.0.bowtie_vs_pave/scripts/run_all.sh -resume
 ```
 
 ### Run a single sample (optional)
@@ -81,8 +51,6 @@ analysis-input1/002.0.bowtie_vs_pave/scripts/run.sh \
 
 Run these commands from the repository root.
 
-### Step-by-step (mapping)
-
 ```bash
 analysis-input2/001.0.bucketing/scripts/run_all.sh
 analysis-input2/002.0.mapping_vs_pave/scripts/run_all.sh
@@ -90,7 +58,9 @@ analysis-input2/002.0.mapping_vs_pave/scripts/run_all.sh
 
 ### Phylogenetic trees (HPV16 and HPV18)
 
-The tree steps require additional inputs under each tree step’s `input/` directory (downloaded manually), and they typically also use mapping outputs from step 002 to build consensus sequences.
+The tree steps require additional inputs under each tree step’s
+`input/` directory (downloaded manually), and they require the
+mapping outputs from step 002 to build consensus sequences.
 
 Tools needed for the preparation commands below:
 - `seqkit`
@@ -210,21 +180,24 @@ scripts/hpv18_prepare_samples.sh
 analysis-input2/004.0.hpv18_tree/scripts/run.sh
 ```
 
-## Reference snapshots
+## Troubleshooting
 
-To keep a frozen copy of outputs for regression checks, copy `output/`, `reports/`, and `index/` directories into `reference-results/`:
+If Nextflow fails to start because of Java, create and activate the provided
+Java environment:
 
 ```bash
-mkdir -p reference-results
-for step in analysis-input1/* analysis-input2/*; do
-  [ -d "$step" ] || continue
-  for sub in output reports index; do
-    src="$step/$sub"
-    if [ -d "$src" ]; then
-      dest="reference-results/$step/$sub"
-      mkdir -p "$dest"
-      cp -a "$src/." "$dest/"
-    fi
-  done
-done
+conda env create -f config/nextflow_java.env.yml
+conda activate nextflow-java
 ```
+
+If Nextflow behaves differently when Conda is activated in your shell, try
+`conda deactivate` and run Nextflow again.
+
+### Resume after a failure
+
+Re-run the same command with `-resume`:
+
+```bash
+analysis-input1/002.0.bowtie_vs_pave/scripts/run_all.sh -resume
+```
+
