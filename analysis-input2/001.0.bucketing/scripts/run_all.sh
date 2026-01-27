@@ -14,9 +14,21 @@ if ! command -v nextflow >/dev/null 2>&1; then
   exit 1
 fi
 
+args=()
+resume_set=false
+for arg in "$@"; do
+  if [ "$arg" = "-resume" ] || [ "$arg" = "--resume" ]; then
+    resume_set=true
+  fi
+  args+=("$arg")
+done
+if ! $resume_set; then
+  args+=(-resume)
+fi
+
 nextflow run "$PIPELINE_NF" \
   -c "$PIPELINE_CONFIG" \
   --samples_tsv "$SAMPLES_TSV" \
   --outdir "$STEPDIR/output" \
   --reports_dir "$STEPDIR/reports" \
-  "$@" -resume
+  "${args[@]}"
