@@ -11,6 +11,21 @@ if ! command -v nextflow >/dev/null 2>&1; then
   exit 1
 fi
 
+args=()
+for arg in "$@"; do
+  case "$arg" in
+    --skip-align)
+      args+=(--skip_align)
+      ;;
+    --skip-align=*)
+      args+=("${arg/--skip-align=/--skip_align=}")
+      ;;
+    *)
+      args+=("$arg")
+      ;;
+  esac
+done
+
 nextflow run "$PIPELINE_NF" \
   -c "$PIPELINE_CONFIG" \
-  "$@" -resume
+  "${args[@]}" -resume
