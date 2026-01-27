@@ -256,24 +256,25 @@ process ASSIGN_BUCKETS {
 process BUCKETIZE_READS {
     tag "${run_id}:${sample_id}"
     conda params.conda_env
-    publishDir "${params.outdir}/${run_id}/buckets", mode: 'copy', pattern: "buckets/*"
+    publishDir "${params.outdir}/${run_id}/buckets", mode: 'copy', pattern: "*.fastq.gz"
+    publishDir "${params.outdir}/${run_id}/buckets", mode: 'copy', pattern: "*.log"
 
     input:
     tuple val(run_id), val(sample_id), path(bkt), path(r1), path(r2)
 
     output:
-    tuple val(run_id), val(sample_id), path("buckets/*")
+    tuple val(run_id), val(sample_id), path("bucketize.done")
 
     script:
     """
-    mkdir -p buckets
+    "${params.scripts_dir}/bucketize_fastq.py" \\
+      "$bkt" 1 3 "$r1" "${sample_id}.R1" \\
+      --skip "${params.homo_sapiens_tid}" > "${sample_id}.R1.log"
 
     "${params.scripts_dir}/bucketize_fastq.py" \\
-      "$bkt" 1 3 "$r1" "buckets/${sample_id}.R1" \\
-      --skip "${params.homo_sapiens_tid}" > "buckets/${sample_id}.R1.log"
+      "$bkt" 1 3 "$r2" "${sample_id}.R2" \\
+      --skip "${params.homo_sapiens_tid}" > "${sample_id}.R2.log"
 
-    "${params.scripts_dir}/bucketize_fastq.py" \\
-      "$bkt" 1 3 "$r2" "buckets/${sample_id}.R2" \\
-      --skip "${params.homo_sapiens_tid}" > "buckets/${sample_id}.R2.log"
+    touch bucketize.done
     """
 }
