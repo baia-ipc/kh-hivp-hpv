@@ -112,14 +112,13 @@ process MULTIQC {
     path(done)
 
     output:
-    path("multiqc/multiqc_report.html")
+    path("multiqc_report.html")
 
     script:
     """
-    mkdir -p multiqc
     multiqc --force \\
       --config "${params.multiqc_config}" \\
-      --outdir multiqc \\
+      --outdir . \\
       "${params.outdir}" "${params.reports_dir}"
     """
 }

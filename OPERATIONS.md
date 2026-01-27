@@ -12,7 +12,7 @@ Rules:
 - Outputs are written to each step's `output/` and `reports/`.
 - When changing directory layout, update `CONTENTS.md` and `INVENTORY.md`.
 - Default parallelism is capped at 24 concurrent tasks via `process.maxForks` and `executor.queueSize` in the step config files under `config/`.
-- MultiQC reports are written under each step's `reports/multiqc/` (phylo tree steps use `output/reports/multiqc/`).
+- MultiQC reports are written under each step's `reports/multiqc/` (phylo tree steps use `output/reports/multiqc/`). Ensure the MultiQC process outputs files at the process root and publish to `reports/multiqc/` to avoid duplicated `multiqc/multiqc_report.html` paths.
 
 ## Running pipelines
 
