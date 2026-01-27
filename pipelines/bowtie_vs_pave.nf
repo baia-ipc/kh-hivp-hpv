@@ -20,6 +20,12 @@ def projectRoot = (workflow.projectDir instanceof java.nio.file.Path \
 params.scripts_dir = params.scripts_dir ?: "${projectRoot}/scripts"
 params.bucket_tid_file = params.bucket_tid_file ?: "${projectRoot}/metadata/pave_bucket_tid.txt"
 params.multiqc_config = params.multiqc_config ?: "${projectRoot}/config/bowtie_vs_pave.multiqc.yml"
+// Avoid "Access to undefined parameter" warnings; these are optional filters/inputs.
+if (!params.containsKey('reads_dir'))  params.reads_dir = null
+if (!params.containsKey('read1'))      params.read1 = null
+if (!params.containsKey('read2'))      params.read2 = null
+if (!params.containsKey('run_id'))     params.run_id = null
+if (!params.containsKey('sample_id'))  params.sample_id = null
 
 def bucketTid = params.bucket_tid
 if (!bucketTid) {
