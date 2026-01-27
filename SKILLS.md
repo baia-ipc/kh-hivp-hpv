@@ -13,6 +13,7 @@ Rules:
 - Outputs live under each step's `output/` and `reports/` directories.
 - MultiQC reports are published to each step’s `reports/multiqc/` (tree steps use `output/reports/multiqc/`), with the process writing `multiqc_report.html` at the workdir root and `publishDir` targeting the final reports directory.
 - MultiQC methods sections include primary literature references for the tools used in each step (see the step-specific `config/*.multiqc.yml`).
+- Custom MultiQC sections and tables are defined in `config/*.multiqc.yml` under `custom_data` with explicit `plot_type`, and TSV tables are wired via `sp:` search patterns.
 
 ## Skill: centrifuge bucketing (Nextflow)
 
