@@ -12,6 +12,12 @@ custom_content:
         <li><strong>Trimming:</strong> trim alignment using TrimAl.</li>
         <li><strong>Tree inference:</strong> IQ-TREE with model selection and bootstrap support.</li>
       </ul>
+      <p><strong>References:</strong></p>
+      <ul>
+        <li>Katoh et al., 2002. MAFFT: a novel method for rapid multiple sequence alignment. <em>Nucleic Acids Research</em>. DOI: 10.1093/nar/gkf436.</li>
+        <li>Capella-Gutiérrez et al., 2009. trimAl: a tool for automated alignment trimming. <em>Bioinformatics</em>. DOI: 10.1093/bioinformatics/btp348.</li>
+        <li>Minh et al., 2020. IQ-TREE 2: New models and efficient methods for phylogenetic inference. <em>Molecular Biology and Evolution</em>. DOI: 10.1093/molbev/msaa015.</li>
+      </ul>
   output_locations:
     order: 2
     name: "Output locations"

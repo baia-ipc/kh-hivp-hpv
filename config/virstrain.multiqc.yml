@@ -11,6 +11,11 @@ custom_content:
         <li><strong>VirStrain run:</strong> classify reads and generate per-sample outputs.</li>
         <li><strong>Aggregation:</strong> summarize strain calls across samples.</li>
       </ul>
+      <p><strong>References:</strong></p>
+      <ul>
+        <li>Li et al., 2022. VirStrain: a strain identification tool for RNA viruses. <em>Genome Biology</em>. DOI: 10.1186/s13059-022-02609-x.</li>
+        <li>Katoh et al., 2002. MAFFT: a novel method for rapid multiple sequence alignment. <em>Nucleic Acids Research</em>. DOI: 10.1093/nar/gkf436.</li>
+      </ul>
   output_locations:
     order: 2
     name: "Output locations"

@@ -11,6 +11,11 @@ custom_content:
         <li><strong>Depth stats:</strong> compute depth profiles and per-feature statistics.</li>
         <li><strong>Aggregation:</strong> summarize strains and depth tables across samples.</li>
       </ul>
+      <p><strong>References:</strong></p>
+      <ul>
+        <li>Langmead &amp; Salzberg, 2012. Fast gapped-read alignment with Bowtie 2. <em>Nature Methods</em>. DOI: 10.1038/nmeth.1923.</li>
+        <li>Li et al., 2009. The Sequence Alignment/Map format and SAMtools. <em>Bioinformatics</em>. DOI: 10.1093/bioinformatics/btp352.</li>
+      </ul>
   output_locations:
     order: 2
     name: "Output locations"

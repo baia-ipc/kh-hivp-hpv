@@ -21,6 +21,11 @@ custom_content:
         Bucket assignment uses <code>metadata/bucket_taxonomy_ids.tsv</code> to map reads into taxonomy buckets.
         Human reads are excluded from the <em>wo_human</em> tables and plots using the configured taxonomy ID.
       </p>
+      <p><strong>References:</strong></p>
+      <ul>
+        <li>Kim et al., 2016. Centrifuge: rapid and sensitive classification of metagenomic sequences. <em>Genome Research</em>. DOI: 10.1101/gr.210641.116.</li>
+        <li>Ondov et al., 2011. Interactive metagenomic visualization in a Web browser (Krona). <em>BMC Bioinformatics</em>. DOI: 10.1186/1471-2105-12-385.</li>
+      </ul>
   output_locations:
     order: 2
     name: "Output locations"
