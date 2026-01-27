@@ -11,6 +11,7 @@ Rules:
 - Configuration is in `config/` and sample lists in `metadata/`.
 - Outputs are written to each step's `output/` and `reports/`.
 - When changing directory layout, update `CONTENTS.md` and `INVENTORY.md`.
+- Default parallelism is capped at 32 concurrent tasks via `process.maxForks` and `executor.queueSize` in the step config files under `config/`.
 
 ## Running pipelines
 
