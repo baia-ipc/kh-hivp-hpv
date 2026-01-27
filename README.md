@@ -36,6 +36,12 @@ analysis-input1/004.0.bowtie_vs_pave.E6/scripts/run_all.sh
 analysis-input1/005.0.bowtie_vs_pave.E7/scripts/run_all.sh
 ```
 
+### Step 001 report (MultiQC)
+
+After running step 001, open the interactive report at:
+
+`analysis-input1/001.0.centrifuge/reports/multiqc/multiqc_report.html`
+
 ### Run a single sample (optional)
 
 Some steps also provide a `run.sh` wrapper for running one sample pair.
@@ -200,4 +206,3 @@ Re-run the same command with `-resume`:
 ```bash
 analysis-input1/002.0.bowtie_vs_pave/scripts/run_all.sh -resume
 ```
-
