@@ -41,8 +41,8 @@ if (!bucketTid) {
     if (!bucketTid) {
         error "bucket tid file contains no value: ${params.bucket_tid_file}"
     }
-    params.bucket_tid = bucketTid
 }
+params.bucket_tid = bucketTid
 
 def requiredParams = [
     'index_dir',
@@ -229,7 +229,7 @@ workflow {
         if (!readsDir.isDirectory()) {
             error "reads_dir not found: ${params.reads_dir}"
         }
-        samples = Channel.fromPath("${params.reads_dir}/*/buckets/*.R1.${params.bucket_tid}.fastq.gz")
+        samples = Channel.fromPath("${params.reads_dir}/*/buckets/*.R1.${bucketTid}.fastq.gz")
             .map { r1 ->
                 def r2 = file(r1.toString().replace('.R1.', '.R2.'))
                 if (!r2.exists()) {
