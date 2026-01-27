@@ -172,8 +172,8 @@ process MULTIQC {
 }
 
 workflow {
-    def multiqc_config_file = new File(params.multiqc_config)
-    if (!multiqc_config_file.exists()) {
+    def multiqc_config_path = new File(params.multiqc_config)
+    if (!multiqc_config_path.exists()) {
         error "MultiQC config not found: ${params.multiqc_config}"
     }
 
@@ -227,6 +227,6 @@ workflow {
     def strains = AGGREGATE_STRAINS(mappedDone)
     def depth_stats = AGGREGATE_DEPTH_STATS(mappedDone)
     def reports_done = strains.mix(depth_stats).collect()
-    def multiqc_config_file = file(params.multiqc_config)
-    MULTIQC(multiqc_config_file, reports_done)
+    def multiqc_config_channel = file(params.multiqc_config)
+    MULTIQC(multiqc_config_channel, reports_done)
 }

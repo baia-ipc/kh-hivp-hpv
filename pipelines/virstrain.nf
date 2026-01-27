@@ -150,8 +150,8 @@ process MULTIQC {
 }
 
 workflow {
-    def multiqc_config_file = new File(params.multiqc_config)
-    if (!multiqc_config_file.exists()) {
+    def multiqc_config_path = new File(params.multiqc_config)
+    if (!multiqc_config_path.exists()) {
         error "MultiQC config not found: ${params.multiqc_config}"
     }
 
@@ -203,6 +203,6 @@ workflow {
     def mappedDone = mapped.collect()
 
     def strains = AGGREGATE_RESULTS(mappedDone)
-    def multiqc_config_file = file(params.multiqc_config)
-    MULTIQC(multiqc_config_file, strains.collect())
+    def multiqc_config_channel = file(params.multiqc_config)
+    MULTIQC(multiqc_config_channel, strains.collect())
 }
