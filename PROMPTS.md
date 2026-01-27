@@ -56,3 +56,20 @@ Create [DOC_NAME].md describing [TOPIC].
 - Keep it concise and aligned with AGENTS.md constraints.
 - Include paths and expected outputs.
 """
+
+## Create a METHODS_AND_RESULTS summary (human-readable)
+"""
+Create or update [analysis-input1|analysis-input2]/METHODS_AND_RESULTS.md for step [STEP_ID].
+
+Constraints:
+- Use the same procedural description as the step MultiQC report Methods section, but written in
+  scientific prose (avoid listing script names/filenames unless essential for reproducibility).
+- Exclude controls / technical artifacts from prevalence/proportion statements unless explicitly doing QC
+  (see GOALS.md: H2O, HVP-*, and Illumina Undetermined/unassigned reads).
+- Summarize results as narrative text with key proportions and ranges; use binning only to support the text.
+- Whenever you mention a small number of samples, list them as `RunID:SampleID`:
+  - If count <= 5: always list.
+  - If the statement is critical/central and count <= 10: list.
+- State the exact report tables used (paths under the step `reports/`) and whether values come from
+  human-excluded or inclusive tables.
+"""
