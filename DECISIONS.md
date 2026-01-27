@@ -63,3 +63,9 @@ Format:
   - Decision: use the shared `pipelines/phylo_tree.nf` pipeline with an HPV18 config.
   - Rationale: keep HPV16/HPV18 tree generation consistent and centralized.
   - Consequences: use `config/hpv18_tree.config` and `metadata/hpv18_tree_outgroups.txt`.
+
+- 2026-01-24: Add reference snapshot directory
+  - Context: need to compare old results vs updated pipelines.
+  - Decision: store a copy of outputs/reports/indexes under `reference-results/` and ignore it in git.
+  - Rationale: enable regression checks without altering tracked outputs.
+  - Consequences: refresh the snapshot when results change.

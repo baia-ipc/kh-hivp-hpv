@@ -129,6 +129,25 @@ conda env create -f config/nextflow_java.env.yml
 conda activate nextflow-java
 ```
 
+## Reference snapshots
+
+To refresh the reference snapshot used for regression checks:
+
+```
+mkdir -p reference-results
+for step in analysis-input1/* analysis-input2/*; do
+  [ -d "$step" ] || continue
+  for sub in output reports index; do
+    src="$step/$sub"
+    if [ -d "$src" ]; then
+      dest="reference-results/$step/$sub"
+      mkdir -p "$dest"
+      cp -a "$src/." "$dest/"
+    fi
+  done
+done
+```
+
 ## Updating inputs
 
 - Update sample lists in `metadata/`.
