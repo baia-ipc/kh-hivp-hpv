@@ -13,7 +13,10 @@ def normalizeSampleId(String filename) {
     return base
 }
 
-def projectRoot = Paths.get(workflow.projectDir).resolve('..').normalize().toString()
+def projectRoot = (workflow.projectDir instanceof java.nio.file.Path \
+    ? workflow.projectDir \
+    : Paths.get(workflow.projectDir.toString())) \
+    .resolve('..').normalize().toString()
 
 params.samples_tsv = params.samples_tsv ?: "${projectRoot}/metadata/samples-input1.tsv"
 params.reports_dir = params.reports_dir ?: "${projectRoot}/analysis-input1/001.0.centrifuge/reports"
