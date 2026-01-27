@@ -42,19 +42,21 @@ around 1–2% of non-human assignments.
 In the non-human normalized table, the majority clustered in a narrow band where
 “Other viruses” represented 1–10% of non-human assignments (45/67). Only one
 sample showed “Other viruses” dominating the non-human fraction (>0.5),
-consistent with a library dominated by non-HPV viral signal.
+consistent with a library dominated by non-HPV viral signal
+(HPV_250523_run02:KHCA191).
 
 Phi X-174 spike-in reads were present in 35/67 non-control samples in absolute
 counts, but for most samples the relative contribution was small when human
 reads were excluded. Specifically, 32/67 samples had zero Phi X in the non-human
 table and a further 27/67 had Phi X at ≤1% of non-human assignments (0–0.01).
 One non-control sample showed a very high Phi X fraction (>0.5), consistent with
-a spike-in dominated library.
+a spike-in dominated library (HPV_160823_run03:KHCA-332).
 
 As expected, the “Undetermined” FASTQ sets (unassigned reads from the Illumina
 pipeline) were strongly dominated by Phi X-174 in the non-human table (Phi X
 fractions ~0.72–0.98), and are therefore excluded from the main proportions
-above.
+above (HPV_150123_run01:Undetermined, HPV_160823_run03:Undetermined,
+HPV_250523_run02:Undetermined).
 
 **Notes on sources**
 - Counts and proportions are from:
