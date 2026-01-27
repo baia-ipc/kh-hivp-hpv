@@ -3,7 +3,10 @@ nextflow.enable.dsl=2
 
 import java.nio.file.Paths
 
-def projectRoot = Paths.get(workflow.projectDir).resolve('..').normalize().toString()
+def projectRoot = (workflow.projectDir instanceof java.nio.file.Path \
+    ? workflow.projectDir \
+    : Paths.get(workflow.projectDir.toString())) \
+    .resolve('..').normalize().toString()
 
 params.input_dir = params.input_dir ?: null
 params.outdir = params.outdir ?: null

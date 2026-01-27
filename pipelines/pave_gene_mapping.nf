@@ -12,7 +12,10 @@ def normalizeSampleId(String filename) {
     return base
 }
 
-def projectRoot = Paths.get(workflow.projectDir).resolve('..').normalize().toString()
+def projectRoot = (workflow.projectDir instanceof java.nio.file.Path \
+    ? workflow.projectDir \
+    : Paths.get(workflow.projectDir.toString())) \
+    .resolve('..').normalize().toString()
 
 params.scripts_dir = params.scripts_dir ?: "${projectRoot}/scripts"
 params.bucket_tid_file = params.bucket_tid_file ?: "${projectRoot}/metadata/pave_bucket_tid.txt"
