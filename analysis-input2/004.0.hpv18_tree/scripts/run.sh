@@ -16,4 +16,4 @@ nextflow run "$PIPELINE_NF" \
   -c "$PIPELINE_CONFIG" \
   --input_dir "$STEPDIR/input" \
   --outdir "$STEPDIR/output" \
-  "$@"
+  "$@" -resume

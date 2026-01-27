@@ -40,4 +40,4 @@ nextflow run "$PIPELINE_NF" \
   -c "$PIPELINE_CONFIG" \
   --reads "$READS_GLOB" \
   --outdir "$OUTDIR" \
-  "$@"
+  "$@" -resume
