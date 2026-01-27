@@ -10,10 +10,10 @@
 - `analysis-input2/001.0.bucketing/scripts`: run_all.sh
 - `analysis-input2/002.0.mapping_vs_pave/scripts`: run.sh, run_all.sh, README.md
 - `analysis-input2/003.0.hpv16_tree/scripts`: run.sh, run_all.sh, README.md
-- `analysis-input2/004.0.hpv18_tree/scripts`: 1_extract_lineages_ref_fasta.sh, 2_rename_lineage_ref_fasta.sh, 3_cat_all.sh, 4_run_mafft.sh, 5_run_trimal.sh, 6_run_iqtree.sh, assign_hpv18_lineages.py, rename_lineages.py, step4_select_ncbi_genomes.sh, step6_prepare_samples.sh
-- `metadata/`: bucket_taxonomy_ids.tsv, hpv16_tree_bcf_run.txt, hpv16_tree_outgroups.txt, samples-input1.tsv, samples-input2.tsv, pave_bucket_tid.txt
-- `config/`: bowtie_vs_pave.config, bowtie_vs_pave.env.yml, centrifuge_bucketing.config, centrifuge_bucketing.env.yml, hpv16_tree.config, nextflow_java.env.yml, pave_e6.config, pave_e7.config, pave_gene_mapping.env.yml, phylo_tree.env.yml, virstrain.config, virstrain.env.yml
-- `scripts/`: aggregate_bucket_counts.py, aggregate_covstats.py, aggregate_depth_stats.py, aggregate_results.py, aggregate_top_strains.sh, assign_to_buckets.py, bucketize_fastq.py, compute_lca.py, covplot.py, covstats.py, depth_stats.py, fix_msa_formatting.py, hpv16_extract_lineages_fasta.sh, hpv16_prepare_samples.sh, hpv16_select_ncbi_genomes.sh, identify_top_strains.py, make_all_covplots.sh, rename_lineages.py, report_E6_E7_variants.sh
+- `analysis-input2/004.0.hpv18_tree/scripts`: run.sh, run_all.sh, README.md
+- `metadata/`: bucket_taxonomy_ids.tsv, hpv16_tree_bcf_run.txt, hpv16_tree_outgroups.txt, hpv18_lineage_refs.tsv, hpv18_tree_bcf_run.txt, hpv18_tree_outgroups.txt, hpv18_tree_samples.txt, samples-input1.tsv, samples-input2.tsv, pave_bucket_tid.txt
+- `config/`: bowtie_vs_pave.config, bowtie_vs_pave.env.yml, centrifuge_bucketing.config, centrifuge_bucketing.env.yml, hpv16_tree.config, hpv18_tree.config, nextflow_java.env.yml, pave_e6.config, pave_e7.config, pave_gene_mapping.env.yml, phylo_tree.env.yml, virstrain.config, virstrain.env.yml
+- `scripts/`: aggregate_bucket_counts.py, aggregate_covstats.py, aggregate_depth_stats.py, aggregate_results.py, aggregate_top_strains.sh, assign_hpv18_lineages.py, assign_to_buckets.py, bucketize_fastq.py, compute_lca.py, covplot.py, covstats.py, depth_stats.py, fix_msa_formatting.py, hpv16_extract_lineages_fasta.sh, hpv16_prepare_samples.sh, hpv16_select_ncbi_genomes.sh, hpv18_extract_lineages_fasta.sh, hpv18_prepare_samples.sh, hpv18_select_ncbi_genomes.sh, identify_top_strains.py, make_all_covplots.sh, rename_lineages.py, report_E6_E7_variants.sh
 - `pipelines/`: bowtie_vs_pave.nf, centrifuge_bucketing.sh, centrifuge_bucketing.nf, centrifuge_bucketing_all.nf, pave_gene_mapping.nf, phylo_tree.nf, virstrain.nf
 
 ## Manual commands documented only in README.md
@@ -28,8 +28,16 @@
 - `analysis-input2/004.0.hpv18_tree/README.md`: manual downloads and prep steps, including script-driven selection and consensus generation:
 
 ```bash
-scripts/step4_select_ncbi_genomes.sh --init-selection
+../../scripts/hpv18_select_ncbi_genomes.sh --init-selection \\
+  input/HPV18-NCBIVirus.tsv input/HPV18-NCBIVirus.fasta \\
+  input/HPV18-NCBIVirus.acc_country.tsv \\
+  input/HPV18-NCBIVirus.acc_country.selected.tsv \\
+  input/selected.fasta input/selected_renamed.fasta
 # edit input/HPV18-NCBIVirus.acc_country.selected.tsv, then:
-scripts/step4_select_ncbi_genomes.sh
-scripts/step6_prepare_samples.sh
+../../scripts/hpv18_select_ncbi_genomes.sh \\
+  input/HPV18-NCBIVirus.tsv input/HPV18-NCBIVirus.fasta \\
+  input/HPV18-NCBIVirus.acc_country.tsv \\
+  input/HPV18-NCBIVirus.acc_country.selected.tsv \\
+  input/selected.fasta input/selected_renamed.fasta
+../../scripts/hpv18_prepare_samples.sh
 ```
