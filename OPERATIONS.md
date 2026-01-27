@@ -22,6 +22,8 @@ Rules:
 nextflow run pipelines/centrifuge_bucketing_all.nf \
   -c config/centrifuge_bucketing.config \
   -resume
+
+MultiQC report is written to `analysis-input1/001.0.centrifuge/reports/multiqc/`.
 ```
 
 ### analysis-input2 bucketing (Nextflow)

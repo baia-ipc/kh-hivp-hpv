@@ -38,6 +38,7 @@ if (!params.containsKey('precomputed_root') || !params.precomputed_root) {
 params.buckets = params.buckets ?: "${projectRoot}/metadata/bucket_taxonomy_ids.tsv"
 params.scripts_dir = params.scripts_dir ?: "${projectRoot}/scripts"
 params.conda_env = params.conda_env ?: "${projectRoot}/config/centrifuge_bucketing.env.yml"
+params.multiqc_config = params.multiqc_config ?: "${projectRoot}/config/centrifuge_bucketing.multiqc.yml"
 params.index = params.index ?: "/srv/databases/centrifuge/hpvc/latest/hpvc"
 params.taxdump = params.taxdump ?: "/srv/databases/centrifuge/hpvc/latest/factory/taxonomy-2023-10-30"
 params.homo_sapiens_tid = params.homo_sapiens_tid ?: 9606
@@ -102,10 +103,35 @@ process AGGREGATE_COUNTS {
     """
 }
 
+process MULTIQC {
+    tag "multiqc"
+    conda params.conda_env
+    publishDir "${params.reports_dir}/multiqc", mode: 'copy'
+
+    input:
+    path(done)
+
+    output:
+    path("multiqc/multiqc_report.html")
+
+    script:
+    """
+    mkdir -p multiqc
+    multiqc --force \\
+      --config "${params.multiqc_config}" \\
+      --outdir multiqc \\
+      "${params.outdir}" "${params.reports_dir}"
+    """
+}
+
 workflow {
     def rows = loadSamples(params.samples_tsv)
     if (!rows) {
         error "no samples found in ${params.samples_tsv}"
+    }
+    def multiqc_config_file = new File(params.multiqc_config)
+    if (!multiqc_config_file.exists()) {
+        error "MultiQC config not found: ${params.multiqc_config}"
     }
 
     reads_ch = Channel.from(rows)
@@ -120,5 +146,6 @@ workflow {
         }
 
     bucketized = CENTRIFUGE_BUCKETING(reads_ch)
-    AGGREGATE_COUNTS(bucketized.collect())
+    aggregate_done = AGGREGATE_COUNTS(bucketized.collect())
+    MULTIQC(aggregate_done)
 }
