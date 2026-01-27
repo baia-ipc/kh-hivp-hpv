@@ -28,6 +28,19 @@ In the final product, there shall be only analysis-input1 and analysis-input2.
 
 ----
 
+## Controls and "Undetermined" reads
+
+Some inputs are not biological samples and should be treated as controls / technical artifacts
+when summarizing results (e.g. exclude them from prevalence/proportion statements unless the
+goal is explicitly QC):
+
+- `H2O`: water / negative control sample.
+- `HVP-*`: control material (treated as a control sample for summaries).
+- `Undetermined`: FASTQ sets produced by Illumina demultiplexing for reads that were not
+  assigned to any sample (unassigned index combinations), i.e. not a biological sample.
+
+----
+
 The final repository will contain Nextflow pipelines:
 - a pipeline for the entire analysis-input1
 - a pipeline for the entire analysis-input2, except the phylogenetic trees

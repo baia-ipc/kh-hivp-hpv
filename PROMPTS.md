@@ -38,6 +38,8 @@ Create or update metadata in metadata/ for [INPUT_NAME].
 Compare outputs between [ANALYSIS_A] and [ANALYSIS_B].
 - Focus on reports/ outputs first.
 - Summarize differences with file and row-level highlights.
+- When computing prevalence/proportions, exclude controls / technical artifacts
+  defined in GOALS.md unless explicitly requested.
 """
 
 ## Move or rename analysis directories
