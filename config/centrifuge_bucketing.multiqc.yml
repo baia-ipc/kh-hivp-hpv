@@ -15,6 +15,12 @@ custom_content:
         <li><strong>Bucketized FASTQ:</strong> split reads into per-bucket FASTQs using <code>scripts/bucketize_fastq.py</code>.</li>
         <li><strong>Aggregation:</strong> generate aggregate count tables with <code>scripts/aggregate_bucket_counts.py</code>.</li>
       </ul>
+      <p>
+        Alignments are produced with Centrifuge against the configured HPV reference index.
+        Reports and downstream summaries use the taxonomy dump specified in the pipeline config.
+        Bucket assignment uses <code>metadata/bucket_taxonomy_ids.tsv</code> to map reads into taxonomy buckets.
+        Human reads are excluded from the <em>wo_human</em> tables and plots using the configured taxonomy ID.
+      </p>
   output_locations:
     order: 2
     name: "Output locations"
@@ -38,3 +44,26 @@ custom_content:
         <li><code>relative_counts.tsv</code></li>
         <li><code>relative_counts.wo_human.tsv</code></li>
       </ul>
+
+custom_data:
+  absolute_counts_table:
+    file_format: "tsv"
+    section_name: "Absolute counts"
+    description: "Aggregate absolute counts per bucket across samples"
+    plot_type: "table"
+    files:
+      - "absolute_counts.tsv"
+  relative_counts_table:
+    file_format: "tsv"
+    section_name: "Relative counts"
+    description: "Aggregate relative counts per bucket across samples"
+    plot_type: "table"
+    files:
+      - "relative_counts.tsv"
+  relative_counts_wo_human_table:
+    file_format: "tsv"
+    section_name: "Relative counts (wo human)"
+    description: "Aggregate relative counts with human bucket excluded"
+    plot_type: "table"
+    files:
+      - "relative_counts.wo_human.tsv"
