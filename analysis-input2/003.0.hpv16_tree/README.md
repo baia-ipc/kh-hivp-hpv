@@ -1,4 +1,3 @@
-
 (files are organized as: input/, scripts/, output/; commands assume this directory as cwd)
 
 (1) HPV16 lineages table HPV16_lineages.tsv downloaded from PAVE
@@ -23,16 +22,20 @@ Download sequence metadata in TSV format, use custom fields definition
   save as input/HPV16-NCBIVirus.tsv
 
 (3) prepare lineages reference fasta
-  run scripts/extract_lineages_fasta.sh
-  this will create input/lineages_ref.fasta
-  run scripts/rename_lineages.py to add lineage prefix from HPV16_lineages.tsv
-    python3 scripts/rename_lineages.py input/HPV16_lineages.tsv 6 4 input/lineages_ref.fasta input/lineages_ref_renamed.fasta
+  run ../../scripts/hpv16_extract_lineages_fasta.sh
+    ../../scripts/hpv16_extract_lineages_fasta.sh \
+      input/HPV16_lineages.tsv input/HPV16-NCBIVirus.fasta input/lineages_ref.fasta
+  run ../../scripts/rename_lineages.py to add lineage prefix from HPV16_lineages.tsv
+    python3 ../../scripts/rename_lineages.py input/HPV16_lineages.tsv 6 4 \
+      input/lineages_ref.fasta input/lineages_ref_renamed.fasta
 
 (4) select and prepare NCBI Virus genomes
   create a selection table with Accession and Country (two columns)
-    scripts/step4_select_ncbi_genomes.sh --init-selection
+    ../../scripts/hpv16_select_ncbi_genomes.sh --init-selection \
+      input/HPV16-NCBIVirus.tsv input/HPV16-NCBIVirus.fasta \
+      input/selected input/selected.fasta input/selected_renamed.fasta
   manually edit input/selected to keep the genomes to include
-  re-run scripts/step4_select_ncbi_genomes.sh
+  re-run ../../scripts/hpv16_select_ncbi_genomes.sh with the same arguments
   # this writes input/selected.fasta and input/selected_renamed.fasta
 
 (5) prepare outgroups.fasta (and distant_outgroups.fasta)
@@ -40,9 +43,10 @@ Download sequence metadata in TSV format, use custom fields definition
   download as FASTA, rename to HPVxx/Accession, and save under input/
 
 (6) prepare samples.fasta
-  run scripts/step6_prepare_samples.sh
+  run ../../scripts/hpv16_prepare_samples.sh
   # this writes input/HPV16REF.fas, the consensus FASTAs (with KHCA-<sample>-HPV16 IDs), and input/samples.fasta
+  # defaults: metadata/hpv16_tree_bcf_run.txt for the run ID
 
 (7) build the tree
-  run scripts/1_cat_all.sh, scripts/2_run_mafft.sh, scripts/3_run_trimal.sh, scripts/4_run_iqtree.sh
+  run scripts/run.sh (Nextflow pipeline)
   outputs go to output/

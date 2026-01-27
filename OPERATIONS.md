@@ -94,6 +94,15 @@ nextflow run pipelines/pave_gene_mapping.nf \
   --index_dir analysis-input1/005.0.bowtie_vs_pave.E7/index
 ```
 
+### HPV16 phylogenetic tree (Nextflow)
+
+```
+nextflow run pipelines/phylo_tree.nf \
+  -c config/hpv16_tree.config \
+  --input_dir analysis-input2/003.0.hpv16_tree/input \
+  --outdir analysis-input2/003.0.hpv16_tree/output
+```
+
 ## Reruns and resume
 
 - Nextflow: use `-resume` to reuse successful tasks.

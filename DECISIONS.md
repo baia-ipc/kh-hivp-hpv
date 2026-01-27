@@ -51,3 +51,9 @@ Format:
   - Decision: use the shared `pipelines/pave_gene_mapping.nf` pipeline with a dedicated config.
   - Rationale: keep the E6/E7 analyses consistent and reduce duplication.
   - Consequences: use `config/pave_e7.config` and shared metadata for bucket selection.
+
+- 2026-01-24: Migrate HPV16 tree build to Nextflow
+  - Context: step 003 relied on multiple per-step scripts for alignment and tree building.
+  - Decision: centralize the tree build as `pipelines/phylo_tree.nf` with step config.
+  - Rationale: standardize tree workflows and reduce step-local scripts.
+  - Consequences: use `config/hpv16_tree.config` and `metadata/hpv16_tree_outgroups.txt`.
