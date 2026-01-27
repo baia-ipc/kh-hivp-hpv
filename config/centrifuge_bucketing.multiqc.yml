@@ -48,21 +48,27 @@ custom_data:
     section_name: "Absolute counts"
     description: "Aggregate absolute counts per bucket across samples"
     plot_type: "table"
+    pconfig:
+      col1_header: "Sample"
   relative_counts_table:
     file_format: "tsv"
     section_name: "Relative counts"
     description: "Aggregate relative counts per bucket across samples"
     plot_type: "table"
+    pconfig:
+      col1_header: "Sample"
   relative_counts_wo_human_table:
     file_format: "tsv"
     section_name: "Relative counts (wo human)"
     description: "Aggregate relative counts with human bucket excluded"
     plot_type: "table"
+    pconfig:
+      col1_header: "Sample"
 
 sp:
   absolute_counts_table:
-    fn: "absolute_counts.tsv"
+    fn: "absolute_counts.multiqc.tsv"
   relative_counts_table:
-    fn: "relative_counts.tsv"
+    fn: "relative_counts.multiqc.tsv"
   relative_counts_wo_human_table:
-    fn: "relative_counts.wo_human.tsv"
+    fn: "relative_counts.wo_human.multiqc.tsv"
