@@ -30,7 +30,7 @@ This file describes the standard workflows and where inputs, outputs, and report
 
 4) E6/E7 sub-analyses
    - E6 (Nextflow): `pipelines/pave_gene_mapping.nf` via `analysis-input1/004.0.bowtie_vs_pave.E6/scripts/run_all.sh`
-   - E7 (legacy): `analysis-input1/005.0.bowtie_vs_pave.E7/scripts/run_all.sh`
+   - E7 (Nextflow): `pipelines/pave_gene_mapping.nf` via `analysis-input1/005.0.bowtie_vs_pave.E7/scripts/run_all.sh`
 
 ## Workflow: analysis-input2 (mapping)
 

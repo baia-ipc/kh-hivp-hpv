@@ -45,8 +45,7 @@ This file catalogs the repository's workflows (what exists and where). For how t
   - `analysis-input1/005.0.bowtie_vs_pave.E7`
 - Inputs: bucketed FASTQs from step 001.
 - Outputs: `output/` and `reports/`.
-- Pipeline (E6): `pipelines/pave_gene_mapping.nf` (configured via `config/pave_e6.config`).
-- E7 still uses step scripts until migrated to the same pipeline.
+- Pipeline: `pipelines/pave_gene_mapping.nf` (configured via `config/pave_e6.config` or `config/pave_e7.config`).
 
 ## Skill: phylogenetic trees (HPV16/HPV18)
 

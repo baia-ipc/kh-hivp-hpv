@@ -83,6 +83,17 @@ nextflow run pipelines/pave_gene_mapping.nf \
   --index_dir analysis-input1/004.0.bowtie_vs_pave.E6/index
 ```
 
+### PAVE E7 mapping (Nextflow)
+
+```
+nextflow run pipelines/pave_gene_mapping.nf \
+  -c config/pave_e7.config \
+  --reads_dir analysis-input1/001.0.centrifuge/output \
+  --outdir analysis-input1/005.0.bowtie_vs_pave.E7/output \
+  --reports_dir analysis-input1/005.0.bowtie_vs_pave.E7/reports \
+  --index_dir analysis-input1/005.0.bowtie_vs_pave.E7/index
+```
+
 ## Reruns and resume
 
 - Nextflow: use `-resume` to reuse successful tasks.

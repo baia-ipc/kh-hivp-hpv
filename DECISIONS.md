@@ -45,3 +45,9 @@ Format:
   - Decision: move shared scripts to `scripts/` and run E6 mapping via `pipelines/pave_gene_mapping.nf`.
   - Rationale: standardize mapping steps and remove hardcoded references.
   - Consequences: use `config/pave_e6.config` and shared metadata for bucket selection.
+
+- 2026-01-24: Migrate E7 mapping to Nextflow
+  - Context: step 005 relied on the same step-local scripts as E6.
+  - Decision: use the shared `pipelines/pave_gene_mapping.nf` pipeline with a dedicated config.
+  - Rationale: keep the E6/E7 analyses consistent and reduce duplication.
+  - Consequences: use `config/pave_e7.config` and shared metadata for bucket selection.
