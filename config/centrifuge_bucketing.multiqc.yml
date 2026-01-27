@@ -1,0 +1,40 @@
+report_title: "Centrifuge Bucketing - Step 001"
+
+custom_content:
+  methods_summary:
+    order: 1
+    name: "Methods summary"
+    description: "Summary of processing steps for step 001"
+    html: |
+      <ul>
+        <li><strong>Centrifuge alignment:</strong> classify reads and write <code>alignments/&lt;sample&gt;.aln.tsv</code> and <code>reports/&lt;sample&gt;.report.tsv</code>.</li>
+        <li><strong>Kraken-style report:</strong> run <code>centrifuge-kreport</code> to create <code>kreports/&lt;sample&gt;.kreport.tsv</code>.</li>
+        <li><strong>Krona plots:</strong> create interactive HTML summaries for all taxa and for non-human taxa.</li>
+        <li><strong>LCA computation:</strong> compute the lowest common ancestor using <code>scripts/compute_lca.py</code>.</li>
+        <li><strong>Bucket assignment:</strong> map reads to taxonomy buckets with <code>scripts/assign_to_buckets.py</code>.</li>
+        <li><strong>Bucketized FASTQ:</strong> split reads into per-bucket FASTQs using <code>scripts/bucketize_fastq.py</code>.</li>
+        <li><strong>Aggregation:</strong> generate aggregate count tables with <code>scripts/aggregate_bucket_counts.py</code>.</li>
+      </ul>
+  output_locations:
+    order: 2
+    name: "Output locations"
+    description: "Default output paths (can be overridden with Nextflow params)"
+    html: |
+      <ul>
+        <li><code>&lt;outdir&gt;/&lt;run_id&gt;/alignments/</code> and <code>reports/</code> for centrifuge outputs</li>
+        <li><code>&lt;outdir&gt;/&lt;run_id&gt;/kreports/</code> for kraken-style reports</li>
+        <li><code>&lt;outdir&gt;/&lt;run_id&gt;/krona/</code> and <code>krona_wo_human/</code> for Krona HTML</li>
+        <li><code>&lt;outdir&gt;/&lt;run_id&gt;/lca/</code>, <code>bucket_assignments/</code>, <code>bucket_sizes/</code></li>
+        <li><code>&lt;outdir&gt;/&lt;run_id&gt;/buckets/</code> for bucketized FASTQs and logs</li>
+        <li><code>&lt;reports_dir&gt;/</code> for aggregate tables and this MultiQC report</li>
+      </ul>
+  reports_tables:
+    order: 3
+    name: "Reports tables"
+    description: "Aggregate tables written to the reports directory"
+    html: |
+      <ul>
+        <li><code>absolute_counts.tsv</code></li>
+        <li><code>relative_counts.tsv</code></li>
+        <li><code>relative_counts.wo_human.tsv</code></li>
+      </ul>

@@ -53,6 +53,10 @@ It runs:
 (2) the own script `aggregate_bucket_counts.py`
     function: collect the counts for all samples and creates tables from it
 
+(3) MultiQC report
+    function: generate an interactive HTML report summarizing the step
+    (==> reports/multiqc/multiqc_report.html)
+
 # Metadata
 
 The sample list lives in `metadata/samples-input1.tsv`.
