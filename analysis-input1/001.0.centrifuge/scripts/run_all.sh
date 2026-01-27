@@ -16,6 +16,13 @@ fi
 if ! command -v conda >/dev/null 2>&1; then
   if [ -n "${CONDA_EXE:-}" ] && [ -x "$CONDA_EXE" ]; then
     export PATH="$(dirname "$CONDA_EXE"):$PATH"
+  else
+    for candidate in "$HOME/software/mambaforge/bin/conda" "/home/giorgio/software/mambaforge/bin/conda"; do
+      if [ -x "$candidate" ]; then
+        export PATH="$(dirname "$candidate"):$PATH"
+        break
+      fi
+    done
   fi
 fi
 
