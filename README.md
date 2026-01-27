@@ -8,13 +8,19 @@ configuration in `config/` so analyses can be rerun consistently.
 
 ## How to run the analyses
 
-Use `WORKFLOWS.md` for the step order and dependencies, and `OPERATIONS.md` for the exact commands.
+Use `WORKFLOWS.md` for step order and dependencies, and `OPERATIONS.md` for exact commands.
 Each step writes to its own `output/` and `reports/` directory, so you can start/stop at any step
 by running only the steps you need and reusing existing outputs.
 
-### analysis-input1 (full analysis)
+### Requirements (overview)
 
-Happy-path steps:
+- Nextflow in `PATH`.
+- Conda (pipelines use per-process Conda envs from `config/*.env.yml`).
+- Java 17+ for Nextflow (see `config/nextflow_java.env.yml` and `OPERATIONS.md`).
+
+### analysis-input1
+
+Recommended step order:
 1) 001.0.centrifuge — bucketing
 2) 002.0.bowtie_vs_pave — mapping vs PAVE
 3) 003.0.virstrain — VirStrain reports
@@ -28,7 +34,7 @@ Start/stop at a single step:
 
 ### analysis-input2 (mapping + phylogenetic trees)
 
-Happy-path steps:
+Recommended step order:
 1) 001.0.bucketing — bucketing
 2) 002.0.mapping_vs_pave — mapping vs PAVE
 3) 003.0.hpv16_tree — HPV16 tree (requires prepared inputs under `input/`)
@@ -38,6 +44,11 @@ Start/stop at a single step:
 - Run the step you want using the commands in `OPERATIONS.md`.
 - Tree steps depend on prepared inputs in each tree step’s `input/` directory and (for consensus
   sequences) on mapping outputs from step 002.
+
+### Re-running and resuming
+
+- To reuse successful Nextflow tasks after fixing an issue, add `-resume` to the command (see `OPERATIONS.md`).
+- To force a full rerun of a step, remove that step’s `output/` directory (or run into a new output directory).
 
 ## Reference snapshots
 
