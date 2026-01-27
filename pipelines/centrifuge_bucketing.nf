@@ -264,6 +264,8 @@ process BUCKETIZE_READS {
 
     output:
     tuple val(run_id), val(sample_id), path("bucketize.done")
+    path("*.fastq.gz")
+    path("*.log")
 
     script:
     """
