@@ -14,6 +14,7 @@ Rules:
 - MultiQC reports are published to each step’s `reports/multiqc/` (tree steps use `output/reports/multiqc/`), with the process writing `multiqc_report.html` at the workdir root and `publishDir` targeting the final reports directory.
 - MultiQC methods sections include primary literature references for the tools used in each step (see the step-specific `config/*.multiqc.yml`).
 - Custom MultiQC sections and tables are defined in `config/*.multiqc.yml` under `custom_data` with explicit `plot_type`, and TSV tables are wired via `sp:` search patterns.
+- Nextflow execution can be sensitive to the caller environment; when documenting run commands, assume Java 17+ and avoid relying on an activated Conda env unless explicitly required (see OPERATIONS.md for the concrete invocation pattern).
 
 ## Skill: centrifuge bucketing (Nextflow)
 

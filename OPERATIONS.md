@@ -148,6 +148,15 @@ conda env create -f config/nextflow_java.env.yml
 conda activate nextflow-java
 ```
 
+If you do not want to activate any env, run with explicit Java (and optionally disable conda's CUDA probing if `conda info --json` fails):
+
+```
+CONDA_OVERRIDE_CUDA=0 \
+JAVA_CMD=/usr/lib/jvm/java-21-openjdk-amd64/bin/java \
+JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64 \
+nextflow run <pipeline> -c <config> -resume
+```
+
 ## Reference snapshots
 
 To refresh the reference snapshot used for regression checks:
