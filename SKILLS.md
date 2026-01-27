@@ -1,6 +1,6 @@
 # SKILLS
 
-This file catalogs the repository's workflows (what exists and where). For how to run or troubleshoot them, see `OPERATIONS.md`.
+Catalog of what exists (scope + where). This is a map of capabilities and locations, not a how-to. For run commands and troubleshooting, see `OPERATIONS.md`. For the step order, see `WORKFLOWS.md`.
 
 ## Core conventions (scope only)
 

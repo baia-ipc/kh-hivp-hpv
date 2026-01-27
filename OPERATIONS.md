@@ -1,6 +1,6 @@
 # OPERATIONS
 
-This runbook covers how to run workflows, troubleshoot issues, and rerun safely. For a catalog of what workflows exist, see `SKILLS.md`.
+Runbook with concrete commands and fixes (how to run + troubleshoot). For what exists, see `SKILLS.md`. For the ordered workflow view, see `WORKFLOWS.md`.
 
 ## Conventions
 
