@@ -2,62 +2,229 @@
 
 ## Purpose
 
-This repository consolidates and cleans up multi-year HPV/HIV pipeline work into a reproducible layout.
-It centralizes scripts and Nextflow pipelines, moves hardcoded values into `metadata/`, and keeps
-configuration in `config/` so analyses can be rerun consistently.
+This repository contains reproducible workflows for read bucketing, mapping, and downstream reporting for HPV/HIV-related sequencing analyses.
+It is organized to make reruns easier by:
 
-## How to run the analyses
+- keeping configuration under `config/`
+- keeping sample lists and other fixed metadata under `metadata/`
+- keeping reusable scripts under `scripts/`
+- writing results for each step under that step’s `output/` and `reports/` directories
 
-Use `WORKFLOWS.md` for step order and dependencies, and `OPERATIONS.md` for exact commands.
-Each step writes to its own `output/` and `reports/` directory, so you can start/stop at any step
-by running only the steps you need and reusing existing outputs.
+## Repository layout (high level)
 
-### Requirements (overview)
+- `analysis-input1/`: end-to-end analysis for the first input dataset
+- `analysis-input2/`: analysis for the second input dataset (mapping + phylogenetic trees)
+- `pipelines/`: Nextflow pipelines
+- `config/`: pipeline configuration files and Conda env definitions
+- `metadata/`: sample lists and other fixed inputs (e.g. bucket taxonomy IDs)
 
-- Nextflow in `PATH`.
-- Conda (pipelines use per-process Conda envs from `config/*.env.yml`).
-- Java 17+ for Nextflow (see `config/nextflow_java.env.yml` and `OPERATIONS.md`).
+## Requirements
 
-### analysis-input1
+- Nextflow available in `PATH`
+- Conda available in `PATH` (pipelines use per-process Conda environments)
+- Java 17+ (required by Nextflow)
 
-Recommended step order:
-1) 001.0.centrifuge — bucketing
-2) 002.0.bowtie_vs_pave — mapping vs PAVE
-3) 003.0.virstrain — VirStrain reports
-4) 004.0.bowtie_vs_pave.E6 — E6 mapping
-5) 005.0.bowtie_vs_pave.E7 — E7 mapping
+If Nextflow fails to start because of Java, create and activate the provided Java environment:
 
-Start/stop at a single step:
-- Run the step you want using the commands in `OPERATIONS.md`.
-- If a step depends on earlier outputs (e.g., bucketing), ensure the required `output/` directories
-  already exist before running that step.
+```bash
+conda env create -f config/nextflow_java.env.yml
+conda activate nextflow-java
+```
 
-### analysis-input2 (mapping + phylogenetic trees)
+If Nextflow behaves differently when Conda is activated in your shell, try `conda deactivate` and run Nextflow again.
 
-Recommended step order:
-1) 001.0.bucketing — bucketing
-2) 002.0.mapping_vs_pave — mapping vs PAVE
-3) 003.0.hpv16_tree — HPV16 tree (requires prepared inputs under `input/`)
-4) 004.0.hpv18_tree — HPV18 tree (requires prepared inputs under `input/`)
+## Configuration you may need to edit
 
-Start/stop at a single step:
-- Run the step you want using the commands in `OPERATIONS.md`.
-- Tree steps depend on prepared inputs in each tree step’s `input/` directory and (for consensus
-  sequences) on mapping outputs from step 002.
+- `metadata/samples-input1.tsv` and `metadata/samples-input2.tsv`: which samples to process and where the FASTQs are
+- `config/centrifuge_bucketing.config`: Centrifuge index/taxdump paths and resource settings
+- `config/bowtie_vs_pave.config`: PAVE reference paths and resource settings
 
-### Re-running and resuming
+## How to run analysis-input1
 
-- To reuse successful Nextflow tasks after fixing an issue, add `-resume` to the command (see `OPERATIONS.md`).
-- To force a full rerun of a step, remove that step’s `output/` directory (or run into a new output directory).
+Run these commands from the repository root.
+
+### Step-by-step (recommended order)
+
+```bash
+analysis-input1/001.0.centrifuge/scripts/run_all.sh
+analysis-input1/002.0.bowtie_vs_pave/scripts/run_all.sh
+analysis-input1/003.0.virstrain/scripts/run_all.sh
+analysis-input1/004.0.bowtie_vs_pave.E6/scripts/run_all.sh
+analysis-input1/005.0.bowtie_vs_pave.E7/scripts/run_all.sh
+```
+
+### Start/stop at a specific step
+
+- To start at step 2, step 1 must already have created bucket FASTQs under `analysis-input1/001.0.centrifuge/output/`.
+- To stop after any step, simply do not run the subsequent steps.
+
+### Resume after a failure
+
+Re-run the same command with `-resume`:
+
+```bash
+analysis-input1/002.0.bowtie_vs_pave/scripts/run_all.sh -resume
+```
+
+### Run a single sample (optional)
+
+Some steps also provide a `run.sh` wrapper for running one sample pair.
+The third argument is an output prefix; use a path that includes a run folder and a sample name, for example:
+
+```bash
+analysis-input1/002.0.bowtie_vs_pave/scripts/run.sh \
+  /path/to/SAMPLE_R1.fastq.gz /path/to/SAMPLE_R2.fastq.gz \
+  analysis-input1/002.0.bowtie_vs_pave/output/RUN_ID/SAMPLE
+```
+
+## How to run analysis-input2
+
+Run these commands from the repository root.
+
+### Step-by-step (mapping)
+
+```bash
+analysis-input2/001.0.bucketing/scripts/run_all.sh
+analysis-input2/002.0.mapping_vs_pave/scripts/run_all.sh
+```
+
+### Phylogenetic trees (HPV16 and HPV18)
+
+The tree steps require additional inputs under each tree step’s `input/` directory (downloaded manually), and they typically also use mapping outputs from step 002 to build consensus sequences.
+
+Tools needed for the preparation commands below:
+- `seqkit`
+- `bcftools`
+- Python 3 with `biopython`, `docopt`, `loguru`
+
+#### HPV16 tree
+
+1) Place these files under `analysis-input2/003.0.hpv16_tree/input/`:
+   - `HPV16_lineages.tsv`
+   - `HPV16-NCBIVirus.fasta`
+   - `HPV16-NCBIVirus.tsv`
+   - `outgroups.fasta`
+
+2) Build lineage reference FASTA and rename headers:
+
+```bash
+scripts/hpv16_extract_lineages_fasta.sh \
+  analysis-input2/003.0.hpv16_tree/input/HPV16_lineages.tsv \
+  analysis-input2/003.0.hpv16_tree/input/HPV16-NCBIVirus.fasta \
+  analysis-input2/003.0.hpv16_tree/input/lineages_ref.fasta
+
+python3 scripts/rename_lineages.py \
+  analysis-input2/003.0.hpv16_tree/input/HPV16_lineages.tsv 6 4 \
+  analysis-input2/003.0.hpv16_tree/input/lineages_ref.fasta \
+  analysis-input2/003.0.hpv16_tree/input/lineages_ref_renamed.fasta
+```
+
+3) Create (then edit) the selection file, and generate `selected_renamed.fasta`:
+
+```bash
+scripts/hpv16_select_ncbi_genomes.sh --init-selection \
+  analysis-input2/003.0.hpv16_tree/input/HPV16-NCBIVirus.tsv \
+  analysis-input2/003.0.hpv16_tree/input/HPV16-NCBIVirus.fasta \
+  analysis-input2/003.0.hpv16_tree/input/selected \
+  analysis-input2/003.0.hpv16_tree/input/selected.fasta \
+  analysis-input2/003.0.hpv16_tree/input/selected_renamed.fasta
+
+# Edit analysis-input2/003.0.hpv16_tree/input/selected, then re-run without --init-selection:
+scripts/hpv16_select_ncbi_genomes.sh \
+  analysis-input2/003.0.hpv16_tree/input/HPV16-NCBIVirus.tsv \
+  analysis-input2/003.0.hpv16_tree/input/HPV16-NCBIVirus.fasta \
+  analysis-input2/003.0.hpv16_tree/input/selected \
+  analysis-input2/003.0.hpv16_tree/input/selected.fasta \
+  analysis-input2/003.0.hpv16_tree/input/selected_renamed.fasta
+```
+
+4) Build `samples.fasta` from mapping results (step 002). Set your sample IDs explicitly:
+
+```bash
+OUT_DIR=analysis-input2/003.0.hpv16_tree/input \
+BCF_RUN_ID=$(cat metadata/hpv16_tree_bcf_run.txt) \
+SAMPLES="<space-separated sample IDs>" \
+scripts/hpv16_prepare_samples.sh
+```
+
+5) Run the tree pipeline:
+
+```bash
+analysis-input2/003.0.hpv16_tree/scripts/run.sh
+```
+
+#### HPV18 tree
+
+1) Place these files under `analysis-input2/004.0.hpv18_tree/input/`:
+   - `HPV18_lineages.tsv`
+   - `HPV18-NCBIVirus.fasta`
+   - `HPV18-NCBIVirus.tsv`
+   - `outgroups.fasta`
+
+2) Build lineage reference FASTA and rename headers:
+
+```bash
+scripts/hpv18_extract_lineages_fasta.sh \
+  analysis-input2/004.0.hpv18_tree/input/HPV18_lineages.tsv \
+  analysis-input2/004.0.hpv18_tree/input/HPV18-NCBIVirus.fasta \
+  analysis-input2/004.0.hpv18_tree/input/lineages_ref.fasta
+
+python3 scripts/rename_lineages.py \
+  analysis-input2/004.0.hpv18_tree/input/HPV18_lineages.tsv 6 4 \
+  analysis-input2/004.0.hpv18_tree/input/lineages_ref.fasta \
+  analysis-input2/004.0.hpv18_tree/input/lineages_ref_renamed.fasta
+```
+
+3) Create (then edit) the selection file, and generate `selected_renamed.fasta`:
+
+```bash
+scripts/hpv18_select_ncbi_genomes.sh --init-selection \
+  analysis-input2/004.0.hpv18_tree/input/HPV18-NCBIVirus.tsv \
+  analysis-input2/004.0.hpv18_tree/input/HPV18-NCBIVirus.fasta \
+  analysis-input2/004.0.hpv18_tree/input/HPV18-NCBIVirus.acc_country.tsv \
+  analysis-input2/004.0.hpv18_tree/input/HPV18-NCBIVirus.acc_country.selected.tsv \
+  analysis-input2/004.0.hpv18_tree/input/selected.fasta \
+  analysis-input2/004.0.hpv18_tree/input/selected_renamed.fasta
+
+# Edit analysis-input2/004.0.hpv18_tree/input/HPV18-NCBIVirus.acc_country.selected.tsv, then re-run without --init-selection:
+scripts/hpv18_select_ncbi_genomes.sh \
+  analysis-input2/004.0.hpv18_tree/input/HPV18-NCBIVirus.tsv \
+  analysis-input2/004.0.hpv18_tree/input/HPV18-NCBIVirus.fasta \
+  analysis-input2/004.0.hpv18_tree/input/HPV18-NCBIVirus.acc_country.tsv \
+  analysis-input2/004.0.hpv18_tree/input/HPV18-NCBIVirus.acc_country.selected.tsv \
+  analysis-input2/004.0.hpv18_tree/input/selected.fasta \
+  analysis-input2/004.0.hpv18_tree/input/selected_renamed.fasta
+```
+
+4) Build `samples.fasta` from mapping results (step 002). The default sample list is in `metadata/hpv18_tree_samples.txt`:
+
+```bash
+OUT_DIR=analysis-input2/004.0.hpv18_tree/input \
+BCF_RUN_ID=$(cat metadata/hpv18_tree_bcf_run.txt) \
+scripts/hpv18_prepare_samples.sh
+```
+
+5) Run the tree pipeline:
+
+```bash
+analysis-input2/004.0.hpv18_tree/scripts/run.sh
+```
 
 ## Reference snapshots
 
-If you need a frozen copy of outputs for regression checks, use the snapshot procedure documented
-in `OPERATIONS.md` (it populates the `reference-results/` directory, which is gitignored).
+To keep a frozen copy of outputs for regression checks, copy `output/`, `reports/`, and `index/` directories into `reference-results/`:
 
-## Related docs
-
-- `SKILLS.md`: what exists (scope + where)
-- `WORKFLOWS.md`: happy-path sequence of steps and dependencies
-- `OPERATIONS.md`: run commands and troubleshooting
-- `INVENTORY.md`: current steps/scripts and manual commands
+```bash
+mkdir -p reference-results
+for step in analysis-input1/* analysis-input2/*; do
+  [ -d "$step" ] || continue
+  for sub in output reports index; do
+    src="$step/$sub"
+    if [ -d "$src" ]; then
+      dest="reference-results/$step/$sub"
+      mkdir -p "$dest"
+      cp -a "$src/." "$dest/"
+    fi
+  done
+done
+```
