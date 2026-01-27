@@ -1,11 +1,11 @@
-report_title: "Centrifuge Bucketing - Step 001"
+title: "Centrifuge Bucketing - Step 001"
 
-custom_content:
+custom_data:
   methods_summary:
-    order: 1
-    name: "Methods summary"
+    plot_type: "html"
+    section_name: "Methods summary"
     description: "Summary of processing steps for step 001"
-    html: |
+    data: |
       <ul>
         <li><strong>Centrifuge alignment:</strong> classify reads and write <code>alignments/&lt;sample&gt;.aln.tsv</code> and <code>reports/&lt;sample&gt;.report.tsv</code>.</li>
         <li><strong>Kraken-style report:</strong> run <code>centrifuge-kreport</code> to create <code>kreports/&lt;sample&gt;.kreport.tsv</code>.</li>
@@ -27,10 +27,10 @@ custom_content:
         <li>Ondov et al., 2011. Interactive metagenomic visualization in a Web browser (Krona). <em>BMC Bioinformatics</em>. DOI: 10.1186/1471-2105-12-385.</li>
       </ul>
   output_locations:
-    order: 2
-    name: "Output locations"
+    plot_type: "html"
+    section_name: "Output locations"
     description: "Default output paths (can be overridden with Nextflow params)"
-    html: |
+    data: |
       <ul>
         <li><code>&lt;outdir&gt;/&lt;run_id&gt;/alignments/</code> and <code>reports/</code> for centrifuge outputs</li>
         <li><code>&lt;outdir&gt;/&lt;run_id&gt;/kreports/</code> for kraken-style reports</li>
@@ -40,35 +40,35 @@ custom_content:
         <li><code>&lt;reports_dir&gt;/</code> for aggregate tables and this MultiQC report</li>
       </ul>
   reports_tables:
-    order: 3
-    name: "Reports tables"
+    plot_type: "html"
+    section_name: "Reports tables"
     description: "Aggregate tables written to the reports directory"
-    html: |
+    data: |
       <ul>
         <li><code>absolute_counts.tsv</code></li>
         <li><code>relative_counts.tsv</code></li>
         <li><code>relative_counts.wo_human.tsv</code></li>
       </ul>
-
-custom_data:
   absolute_counts_table:
     file_format: "tsv"
     section_name: "Absolute counts"
     description: "Aggregate absolute counts per bucket across samples"
     plot_type: "table"
-    files:
-      - "absolute_counts.tsv"
   relative_counts_table:
     file_format: "tsv"
     section_name: "Relative counts"
     description: "Aggregate relative counts per bucket across samples"
     plot_type: "table"
-    files:
-      - "relative_counts.tsv"
   relative_counts_wo_human_table:
     file_format: "tsv"
     section_name: "Relative counts (wo human)"
     description: "Aggregate relative counts with human bucket excluded"
     plot_type: "table"
-    files:
-      - "relative_counts.wo_human.tsv"
+
+sp:
+  absolute_counts_table:
+    fn: "absolute_counts.tsv"
+  relative_counts_table:
+    fn: "relative_counts.tsv"
+  relative_counts_wo_human_table:
+    fn: "relative_counts.wo_human.tsv"
