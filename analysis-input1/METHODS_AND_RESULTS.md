@@ -64,3 +64,76 @@ HPV_250523_run02:Undetermined).
   - `analysis-input1/001.0.centrifuge/reports/relative_counts.tsv`
   - `analysis-input1/001.0.centrifuge/reports/relative_counts.wo_human.tsv`
 - Relative abundance summaries above use the human‑excluded table.
+
+# Methods and Results — analysis-input1 step 002 (bowtie vs PAVE mapping)
+
+## Methods
+Bucketed reads assigned to the HPV taxonomy bucket were mapped to the PAVE
+reference with Bowtie2 (Langmead & Salzberg, 2012). Alignments were processed
+with SAMtools to generate sorted/indexed BAMs and idxstats (Li et al., 2009).
+Coverage depth and breadth were computed from per‑base depth files and
+summarized with covstats. Variants were called with bcftools mpileup/call and
+per‑sample VCF statistics were produced (Li, 2011). Aggregation steps compiled
+top‑strain calls, coverage summaries, and E6/E7 variant tables across samples.
+
+**References**
+- Langmead & Salzberg, 2012. Fast gapped-read alignment with Bowtie 2. *Nature Methods*. DOI: 10.1038/nmeth.1923.
+- Li et al., 2009. The Sequence Alignment/Map format and SAMtools. *Bioinformatics*. DOI: 10.1093/bioinformatics/btp352.
+- Li, 2011. A statistical framework for SNP calling, mutation discovery, association mapping and population genetical parameter estimation from sequencing data. *Bioinformatics*. DOI: 10.1093/bioinformatics/btr509.
+
+## Results (aggregated from step 002 reports)
+
+This step operated on the HPV bucket only; 51 non‑control samples had bucketed
+reads available. Control/technical samples (H2O, HVP‑*, Undetermined) are
+excluded from the summaries below.
+
+Top‑strain calls were present in 34/51 samples, while 17/51 samples had no top
+strain call in the aggregated table, consistent with sparse HPV signal for a
+subset of samples. The most frequently reported top strains were HPV16, HPV58,
+HPV33, HPV18, and HPV66.
+
+Coverage summaries from the filtered table show that 20/51 samples had
+substantial coverage breadth (≥0.5) and 13/51 reached near‑complete breadth
+(≥0.9) for their best‑covered strain. E6 and E7 breadth signals were observed in
+18/51 samples each, indicating detectable coverage across these regions in a
+substantial subset of samples.
+
+Variant calls were reported in E6 for 12 samples and in E7 for 8 samples. The
+E7‑variant samples were: HPV_150123_run01:KHCA-064,
+HPV_160823_run03:KHCA-289, HPV_160823_run03:KHCA-298,
+HPV_160823_run03:KHCA-306, HPV_250523_run02:KHCA151,
+HPV_250523_run02:KHCA152, HPV_250523_run02:KHCA169,
+HPV_250523_run02:KHCA223.
+
+**Notes on sources**
+- `analysis-input1/002.0.bowtie_vs_pave/reports/strains.tsv`
+- `analysis-input1/002.0.bowtie_vs_pave/reports/cov_stats.tsv`
+- `analysis-input1/002.0.bowtie_vs_pave/reports/cov_stats.filtered.tsv`
+- `analysis-input1/002.0.bowtie_vs_pave/reports/E6_E7_variants.tsv`
+
+# Methods and Results — analysis-input1 step 003 (VirStrain)
+
+## Methods
+Bucketed reads were classified with VirStrain using a reference index built
+from the PAVE HPV reference aligned by MAFFT (Li et al., 2022; Katoh et al.,
+2002). VirStrain reports per‑sample strain assignments, which were aggregated
+across samples into a single table for interpretation.
+
+**References**
+- Li et al., 2022. VirStrain: a strain identification tool for RNA viruses. *Genome Biology*. DOI: 10.1186/s13059-022-02609-x.
+- Katoh et al., 2002. MAFFT: a novel method for rapid multiple sequence alignment. *Nucleic Acids Research*. DOI: 10.1093/nar/gkf436.
+
+## Results (aggregated from step 003 reports)
+
+Fifty‑one non‑control samples were processed in this step (HPV bucket only).
+VirStrain reported “No reads or too few reads” for 16/51 samples and “Too many
+possible strains” for 11/51 samples. The remaining 24/51 samples received a
+strain assignment.
+
+Among the assigned samples, 21 had a single strain call and three had multiple
+strain calls. The multi‑strain samples were: HPV_150123_run01:KHCA-037,
+HPV_160823_run03:KHCA-256, HPV_250523_run02:KHCA223. The most frequently
+assigned strains included HPV16, HPV58, HPV18, HPV71, and HPV52.
+
+**Notes on sources**
+- `analysis-input1/003.0.virstrain/reports/strains.tsv`
