@@ -10,6 +10,7 @@ Rules:
 
 - Configuration lives in `config/` (no hardcoded paths in scripts).
 - Sample lists and other hardcoded data live in `metadata/`.
+- Reference datasets live in `refdata/` (do not place reference inputs under analysis step directories).
 - Outputs live under each step's `output/` and `reports/` directories.
 - MultiQC reports are published to each step’s `reports/multiqc/` (tree steps use `output/reports/multiqc/`), with the process writing `multiqc_report.html` at the workdir root and `publishDir` targeting the final reports directory.
 - MultiQC methods sections include primary literature references for the tools used in each step (see the step-specific `config/*.multiqc.yml`).
