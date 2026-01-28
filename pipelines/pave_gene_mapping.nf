@@ -163,11 +163,40 @@ process MULTIQC {
 
     script:
     """
+    cp "${params.reports_dir}/strains.tsv" .
+    cp "${params.reports_dir}/depth_stats.unfiltered.tsv" .
+    cp "${params.reports_dir}/depth_stats.filtered.tsv" .
+
+    python - <<'PY'
+import csv
+import os
+
+def rewrite_with_header(src, dest):
+    if not os.path.exists(src):
+        return
+    with open(src, newline='') as inp, open(dest, 'w', newline='') as out:
+        reader = csv.reader(inp, delimiter='\\t')
+        writer = csv.writer(out, delimiter='\\t')
+        header = next(reader, None)
+        if not header:
+            return
+        writer.writerow(['Sample'] + header)
+        for row in reader:
+            if not row:
+                continue
+            sample = f\"{row[0]}:{row[1]}\" if len(row) > 1 else row[0]
+            writer.writerow([sample] + row)
+
+rewrite_with_header('strains.tsv', 'strains.multiqc.tsv')
+rewrite_with_header('depth_stats.unfiltered.tsv', 'depth_stats.unfiltered.multiqc.tsv')
+rewrite_with_header('depth_stats.filtered.tsv', 'depth_stats.filtered.multiqc.tsv')
+PY
+
     multiqc --force \\
       --filename "multiqc_report.html" \\
       --config "${multiqc_config}" \\
       --outdir . \\
-      "${params.outdir}" "${params.reports_dir}"
+      . "${params.outdir}" "${params.reports_dir}"
     """
 }
 

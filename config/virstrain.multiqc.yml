@@ -44,4 +44,4 @@ custom_data:
 
 sp:
   strains_table:
-    fn: "strains.tsv"
+    fn: "strains.multiqc.tsv"

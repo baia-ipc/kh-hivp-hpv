@@ -193,11 +193,72 @@ process MULTIQC {
 
     script:
     """
+    cp "${params.reports_dir}/strains.tsv" .
+    cp "${params.reports_dir}/cov_stats.tsv" .
+    cp "${params.reports_dir}/cov_stats.filtered.tsv" .
+    cp "${params.reports_dir}/E6_E7_variants.tsv" .
+
+    python - <<'PY'
+import csv
+import os
+
+def normalize_header(header, ncols):
+    if len(header) < ncols:
+        header = header + [f"col{i}" for i in range(len(header) + 1, ncols + 1)]
+    elif len(header) > ncols:
+        header = header[:ncols]
+    return header
+
+def rewrite_with_header(src, dest):
+    if not os.path.exists(src):
+        return
+    with open(src, newline='') as inp, open(dest, 'w', newline='') as out:
+        reader = csv.reader(inp, delimiter='\\t')
+        writer = csv.writer(out, delimiter='\\t')
+        header = next(reader, None)
+        if not header:
+            return
+        writer.writerow(['Sample'] + header)
+        for row in reader:
+            if not row:
+                continue
+            sample = f\"{row[0]}:{row[1]}\" if len(row) > 1 else row[0]
+            writer.writerow([sample] + row)
+
+def rewrite_no_header(src, dest, header):
+    if not os.path.exists(src):
+        return
+    with open(src, newline='') as inp, open(dest, 'w', newline='') as out:
+        reader = csv.reader(inp, delimiter='\\t')
+        writer = csv.writer(out, delimiter='\\t')
+        first = next(reader, None)
+        if not first:
+            return
+        header = normalize_header(header, len(first))
+        writer.writerow(['Sample'] + header)
+        sample = f\"{first[0]}:{first[1]}\" if len(first) > 1 else first[0]
+        writer.writerow([sample] + first)
+        for row in reader:
+            if not row:
+                continue
+            sample = f\"{row[0]}:{row[1]}\" if len(row) > 1 else row[0]
+            writer.writerow([sample] + row)
+
+rewrite_with_header('strains.tsv', 'strains.multiqc.tsv')
+rewrite_with_header('cov_stats.tsv', 'cov_stats.multiqc.tsv')
+rewrite_with_header('cov_stats.filtered.tsv', 'cov_stats.filtered.multiqc.tsv')
+rewrite_no_header(
+    'E6_E7_variants.tsv',
+    'E6_E7_variants.multiqc.tsv',
+    ['run', 'sample', 'gene', 'chrom', 'pos', 'id', 'ref', 'alt', 'qual', 'filter', 'info', 'format', 'sample_field'],
+)
+PY
+
     multiqc --force \\
       --filename "multiqc_report.html" \\
       --config "${multiqc_config}" \\
       --outdir . \\
-      "${params.outdir}" "${params.reports_dir}"
+      . "${params.outdir}" "${params.reports_dir}"
     """
 }
 

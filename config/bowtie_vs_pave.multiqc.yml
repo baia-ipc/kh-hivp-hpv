@@ -70,10 +70,10 @@ custom_data:
 
 sp:
   strains_table:
-    fn: "strains.tsv"
+    fn: "strains.multiqc.tsv"
   cov_stats_table:
-    fn: "cov_stats.tsv"
+    fn: "cov_stats.multiqc.tsv"
   cov_stats_filtered_table:
-    fn: "cov_stats.filtered.tsv"
+    fn: "cov_stats.filtered.multiqc.tsv"
   variants_table:
-    fn: "E6_E7_variants.tsv"
+    fn: "E6_E7_variants.multiqc.tsv"

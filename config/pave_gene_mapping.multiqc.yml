@@ -60,8 +60,8 @@ custom_data:
 
 sp:
   strains_table:
-    fn: "strains.tsv"
+    fn: "strains.multiqc.tsv"
   depth_stats_table:
-    fn: "depth_stats.unfiltered.tsv"
+    fn: "depth_stats.unfiltered.multiqc.tsv"
   depth_stats_filtered_table:
-    fn: "depth_stats.filtered.tsv"
+    fn: "depth_stats.filtered.multiqc.tsv"
