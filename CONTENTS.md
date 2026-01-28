@@ -25,4 +25,4 @@
 
 - config/ pipeline and other configuration files
 
-- refdata/ curated reference data (FASTA files and HPV feature coordinate tables)
+- refdata/ curated reference data (PAVE reference, phylogenetic inputs, feature tables)

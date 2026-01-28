@@ -114,7 +114,7 @@ nextflow run pipelines/pave_gene_mapping.nf \
 ```
 nextflow run pipelines/phylo_tree.nf \
   -c config/hpv16_tree.config \
-  --input_dir analysis-input2/003.0.hpv16_tree/input \
+  --input_dir refdata/hpv16_tree \
   --outdir analysis-input2/003.0.hpv16_tree/output \
   -resume
 ```
@@ -125,7 +125,7 @@ nextflow run pipelines/phylo_tree.nf \
 ```
 nextflow run pipelines/phylo_tree.nf \
   -c config/hpv18_tree.config \
-  --input_dir analysis-input2/004.0.hpv18_tree/input \
+  --input_dir refdata/hpv18_tree \
   --outdir analysis-input2/004.0.hpv18_tree/output \
   -resume
 ```
