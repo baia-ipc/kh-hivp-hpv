@@ -141,11 +141,37 @@ process MULTIQC {
 
     script:
     """
+    cp "${params.reports_dir}/strains.tsv" .
+
+    python - <<'PY'
+import csv
+import os
+
+header = ['run', 'sample', 'strains']
+
+if os.path.exists('strains.tsv'):
+    with open('strains.tsv', newline='') as inp, open('strains.multiqc.tsv', 'w', newline='') as out:
+        reader = csv.reader(inp, delimiter='\\t')
+        writer = csv.writer(out, delimiter='\\t')
+        first = next(reader, None)
+        if first:
+            if len(first) != len(header):
+                header = header + [f\"col{i}\" for i in range(len(header) + 1, len(first) + 1)]
+            writer.writerow(['Sample'] + header[:len(first)])
+            sample = f\"{first[0]}:{first[1]}\" if len(first) > 1 else first[0]
+            writer.writerow([sample] + first)
+            for row in reader:
+                if not row:
+                    continue
+                sample = f\"{row[0]}:{row[1]}\" if len(row) > 1 else row[0]
+                writer.writerow([sample] + row)
+PY
+
     multiqc --force \\
       --filename "multiqc_report.html" \\
       --config "${multiqc_config}" \\
       --outdir . \\
-      "${params.outdir}" "${params.reports_dir}"
+      . "${params.outdir}" "${params.reports_dir}"
     """
 }
 
