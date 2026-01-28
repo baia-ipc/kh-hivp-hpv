@@ -64,4 +64,5 @@ Rules:
   - HPV16: `analysis-input2/003.0.hpv16_tree`
   - HPV18: `analysis-input2/004.0.hpv18_tree`
 - Inputs: curated reference sets under each step `input/` plus mapping outputs (see WORKFLOWS.md for dependencies).
+- Inputs: curated tree inputs under `refdata/hpv16_tree` and `refdata/hpv18_tree`.
 - Outputs: alignment and tree artifacts under each step `output/`.

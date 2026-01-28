@@ -15,7 +15,7 @@
 - `config/`: bowtie_vs_pave.config, bowtie_vs_pave.env.yml, bowtie_vs_pave.multiqc.yml, centrifuge_bucketing.config, centrifuge_bucketing.env.yml, centrifuge_bucketing.multiqc.yml, hpv16_tree.config, hpv18_tree.config, nextflow_java.env.yml, pave_e6.config, pave_e7.config, pave_gene_mapping.env.yml, pave_gene_mapping.multiqc.yml, phylo_tree.env.yml, phylo_tree.multiqc.yml, virstrain.config, virstrain.env.yml, virstrain.multiqc.env.yml, virstrain.multiqc.yml
 - `scripts/`: aggregate_bucket_counts.py, aggregate_covstats.py, aggregate_depth_stats.py, aggregate_results.py, aggregate_top_strains.sh, assign_hpv18_lineages.py, assign_to_buckets.py, bucketize_fastq.py, compute_lca.py, covplot.py, covstats.py, depth_stats.py, fix_msa_formatting.py, hpv16_extract_lineages_fasta.sh, hpv16_prepare_samples.sh, hpv16_select_ncbi_genomes.sh, hpv18_extract_lineages_fasta.sh, hpv18_prepare_samples.sh, hpv18_select_ncbi_genomes.sh, identify_top_strains.py, make_all_covplots.sh, rename_lineages.py, report_E6_E7_variants.sh
 - `pipelines/`: bowtie_vs_pave.nf, centrifuge_bucketing.nf, centrifuge_bucketing_all.nf, pave_gene_mapping.nf, phylo_tree.nf, virstrain.nf
-- `refdata/`: curated reference data used by pipelines
+- `refdata/`: curated reference data used by pipelines (pave reference, phylogenetic input sets)
 - `reference-results/`: snapshot of outputs, reports, and indexes for regression checks (not tracked in git)
 
 ## Manual commands documented only in README.md
@@ -26,20 +26,20 @@
 - `analysis-input1/005.0.bowtie_vs_pave.E7/scripts/README.md`: Nextflow pipeline for E7 mapping and depth reports.
 - `analysis-input1/002.0.bowtie_vs_pave/scripts/README.md`: Nextflow pipeline for bowtie vs PAVE mapping and reports.
 - `analysis-input2/002.0.mapping_vs_pave/scripts/README.md`: same as above (Nextflow pipeline for bowtie vs PAVE mapping and reports).
-- `analysis-input2/003.0.hpv16_tree/README.md`: manual downloads and prep steps for HPV16 lineages/NCBI data and sample consensus generation.
-- `analysis-input2/004.0.hpv18_tree/README.md`: manual downloads and prep steps, including script-driven selection and consensus generation:
+- `analysis-input2/003.0.hpv16_tree/scripts/README.md`: manual downloads and prep steps for HPV16 lineages/NCBI data and sample consensus generation.
+- `analysis-input2/004.0.hpv18_tree/scripts/README.md`: manual downloads and prep steps, including script-driven selection and consensus generation:
 
 ```bash
 ../../scripts/hpv18_select_ncbi_genomes.sh --init-selection \\
-  input/HPV18-NCBIVirus.tsv input/HPV18-NCBIVirus.fasta \\
-  input/HPV18-NCBIVirus.acc_country.tsv \\
-  input/HPV18-NCBIVirus.acc_country.selected.tsv \\
-  input/selected.fasta input/selected_renamed.fasta
-# edit input/HPV18-NCBIVirus.acc_country.selected.tsv, then:
+  refdata/hpv18_tree/HPV18-NCBIVirus.tsv refdata/hpv18_tree/HPV18-NCBIVirus.fasta \\
+  refdata/hpv18_tree/HPV18-NCBIVirus.acc_country.tsv \\
+  refdata/hpv18_tree/HPV18-NCBIVirus.acc_country.selected.tsv \\
+  refdata/hpv18_tree/selected.fasta refdata/hpv18_tree/selected_renamed.fasta
+# edit refdata/hpv18_tree/HPV18-NCBIVirus.acc_country.selected.tsv, then:
 ../../scripts/hpv18_select_ncbi_genomes.sh \\
-  input/HPV18-NCBIVirus.tsv input/HPV18-NCBIVirus.fasta \\
-  input/HPV18-NCBIVirus.acc_country.tsv \\
-  input/HPV18-NCBIVirus.acc_country.selected.tsv \\
-  input/selected.fasta input/selected_renamed.fasta
+  refdata/hpv18_tree/HPV18-NCBIVirus.tsv refdata/hpv18_tree/HPV18-NCBIVirus.fasta \\
+  refdata/hpv18_tree/HPV18-NCBIVirus.acc_country.tsv \\
+  refdata/hpv18_tree/HPV18-NCBIVirus.acc_country.selected.tsv \\
+  refdata/hpv18_tree/selected.fasta refdata/hpv18_tree/selected_renamed.fasta
 ../../scripts/hpv18_prepare_samples.sh
 ```
