@@ -171,7 +171,7 @@ process MULTIQC {
 import csv
 import os
 
-def rewrite_with_header(src, dest):
+def rewrite_with_header(src, dest, use_strain=False):
     if not os.path.exists(src):
         return
     with open(src, newline='') as inp, open(dest, 'w', newline='') as out:
@@ -184,12 +184,19 @@ def rewrite_with_header(src, dest):
         for row in reader:
             if not row:
                 continue
-            sample = f\"{row[0]}:{row[1]}\" if len(row) > 1 else row[0]
+            sample = row[0] if row else ''
+            run = row[0] if len(row) > 0 else ''
+            sid = row[1] if len(row) > 1 else ''
+            strain = row[2] if len(row) > 2 else ''
+            if use_strain:
+                sample = f\"{run}:{sid}:{strain}\"
+            else:
+                sample = f\"{run}:{sid}\" if len(row) > 1 else row[0]
             writer.writerow([sample] + row)
 
 rewrite_with_header('strains.tsv', 'strains.multiqc.tsv')
-rewrite_with_header('depth_stats.unfiltered.tsv', 'depth_stats.unfiltered.multiqc.tsv')
-rewrite_with_header('depth_stats.filtered.tsv', 'depth_stats.filtered.multiqc.tsv')
+rewrite_with_header('depth_stats.unfiltered.tsv', 'depth_stats.unfiltered.multiqc.tsv', use_strain=True)
+rewrite_with_header('depth_stats.filtered.tsv', 'depth_stats.filtered.multiqc.tsv', use_strain=True)
 PY
 
     multiqc --force \\
