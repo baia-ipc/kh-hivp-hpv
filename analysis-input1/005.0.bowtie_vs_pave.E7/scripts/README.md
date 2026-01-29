@@ -18,4 +18,4 @@ Outputs:
   - `strains.tsv`
   - `depth_stats.unfiltered.tsv`
   - `depth_stats.filtered.tsv`
-- MultiQC report under `reports/multiqc/multiqc_report.html`.
+- MultiQC report under `reports/multiqc_report.html`.

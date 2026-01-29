@@ -182,7 +182,7 @@ process AGGREGATE_VARIANTS {
 process MULTIQC {
     tag "multiqc"
     conda params.conda_env
-    publishDir "${params.reports_dir}/multiqc", mode: 'copy'
+    publishDir "${params.reports_dir}", mode: 'copy'
 
     input:
     path(multiqc_config)

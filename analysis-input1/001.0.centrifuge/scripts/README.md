@@ -55,7 +55,7 @@ It runs:
 
 (3) MultiQC report
     function: generate an interactive HTML report summarizing the step
-    (==> reports/multiqc/multiqc_report.html)
+    (==> reports/multiqc_report.html)
 
 # Metadata
 
