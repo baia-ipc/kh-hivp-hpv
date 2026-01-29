@@ -1,22 +1,7 @@
-# Method
+# Documentation
 
-This step is implemented as a Nextflow pipeline:
+The technical documentation for this step is maintained under:
 
-- Pipeline: `pipelines/bowtie_vs_pave.nf`
-- Config: `config/bowtie_vs_pave.config`
-- Bucket selection: `metadata/pave_bucket_tid.txt`
+- `docs/steps/analysis-input1-002.0.bowtie_vs_pave.md`
 
-Wrappers:
-
-- `run_all.sh` runs all samples in the bucketed output.
-- `run.sh` runs a single sample pair.
-
-The pipeline performs:
-
-1) create bowtie2 index (if missing)
-2) alignment using `bowtie2 --all` (allowing multiple matches)
-3) counting alignments with `samtools idxstats`
-4) rough strain assignment via `scripts/identify_top_strains.py`
-5) coverage summary and variant calling
-
-MultiQC report: `reports/multiqc_report.html`.
+For user-facing run instructions, see the repository root `README.md`.

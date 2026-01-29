@@ -1,18 +1,7 @@
-# Method
+# Documentation
 
-This step is implemented as a Nextflow pipeline:
+The technical documentation for this step is maintained under:
 
-- Pipeline: `pipelines/phylo_tree.nf`
-- Config: `config/hpv16_tree.config`
-- Outgroups: `metadata/hpv16_tree_outgroups.txt`
-- Inputs: `refdata/hpv16_tree`
+- `docs/steps/analysis-input2-003.0.hpv16_tree.md`
 
-Wrappers:
-
-- `run_all.sh` runs the tree pipeline for prepared inputs.
-- `run.sh` runs the tree pipeline for prepared inputs.
-
-Outputs:
-
-- Alignment, trimming, and IQ-TREE artifacts under `output/`.
-- MultiQC report under `output/reports/multiqc_report.html`.
+For user-facing run instructions, see the repository root `README.md`.
