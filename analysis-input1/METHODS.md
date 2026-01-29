@@ -10,12 +10,13 @@ al., 2011). To enable downstream analyses targeting HPV reads, read-level
 assignments were reconciled with the NCBI taxonomy to compute a lowest common
 ancestor (LCA) for each read when multiple hits were present. The resulting LCA
 taxon was then matched against a predefined set of taxonomy “buckets”
-(e.g. Papillomaviridae, other viruses, host), with support for nested buckets so
-that reads were assigned to the most specific applicable bucket. Reads assigned
-to the HPV bucket (Papillomaviridae) were extracted into per-sample FASTQ files
-to serve as inputs for subsequent mapping-based analyses, while bucket
-assignment and size tables were retained to summarize the taxonomic composition
-per sample.
+(Homo sapiens, Other Eukaryota, Bacteria, Archaea, Phi X-174 (Spike),
+Lentivirus (HIV), Papillomaviridae, Other viruses), with support for nested
+buckets so that reads were assigned to the most specific applicable bucket.
+Reads assigned to the HPV bucket (Papillomaviridae) were extracted into
+per-sample FASTQ files to serve as inputs for subsequent mapping-based
+analyses, while bucket assignment and size tables were retained to summarize
+the taxonomic composition per sample.
 
 HPV-bucket reads were aligned to the PAVE human HPV reference using Bowtie2
 (Langmead & Salzberg, 2012). Alignments were converted, sorted, and indexed
