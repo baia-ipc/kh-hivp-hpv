@@ -9,10 +9,12 @@ visualizations to support inspection of broad taxonomic composition (Ondov et
 al., 2011). To enable downstream analyses targeting HPV reads, read-level
 assignments were reconciled with the NCBI taxonomy to compute a lowest common
 ancestor (LCA) for each read when multiple hits were present. The resulting LCA
-taxon was then matched against a predefined set of taxonomy “buckets”
-(Homo sapiens, Other Eukaryota, Bacteria, Archaea, Phi X-174 (Spike),
-Lentivirus (HIV), Papillomaviridae, Other viruses), with support for nested
-buckets so that reads were assigned to the most specific applicable bucket.
+taxon was then matched against a predefined set of taxonomy “buckets” defined
+in `metadata/bucket_taxonomy_ids.tsv`: 9606 (Homo sapiens), 2759 (Other
+Eukaryota), 2 (Bacteria), 2157 (Archaea), 10847 (Phi X-174 (Spike)), 11646
+(Lentivirus (HIV)), 151340 (Papillomaviridae), and 10239 (Other viruses), with
+support for nested buckets so that reads were assigned to the most specific
+applicable bucket.
 Reads assigned to the HPV bucket (Papillomaviridae) were extracted into
 per-sample FASTQ files to serve as inputs for subsequent mapping-based
 analyses, while bucket assignment and size tables were retained to summarize
