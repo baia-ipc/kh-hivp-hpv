@@ -20,14 +20,16 @@
 
 ## Manual commands documented only in README.md
 
-- `analysis-input1/001.0.centrifuge/scripts/README.md`: no manual commands (docs only).
-- `analysis-input1/003.0.virstrain/scripts/README.md`: Nextflow pipeline for VirStrain reports.
-- `analysis-input1/004.0.bowtie_vs_pave.E6/scripts/README.md`: Nextflow pipeline for E6 mapping and depth reports.
-- `analysis-input1/005.0.bowtie_vs_pave.E7/scripts/README.md`: Nextflow pipeline for E7 mapping and depth reports.
-- `analysis-input1/002.0.bowtie_vs_pave/scripts/README.md`: Nextflow pipeline for bowtie vs PAVE mapping and reports.
-- `analysis-input2/002.0.mapping_vs_pave/scripts/README.md`: same as above (Nextflow pipeline for bowtie vs PAVE mapping and reports).
-- `analysis-input2/003.0.hpv16_tree/scripts/README.md`: manual downloads and prep steps for HPV16 lineages/NCBI data and sample consensus generation.
-- `analysis-input2/004.0.hpv18_tree/scripts/README.md`: manual downloads and prep steps, including script-driven selection and consensus generation:
+The step-level `analysis-input*/.../scripts/README.md` files are pointers only.
+Technical documentation is maintained under `docs/`.
+
+Step documentation index: `docs/TECHNICAL_DOCUMENTATION.md`
+
+The only steps that typically require manual preparation are the phylogenetic
+tree steps (inputs under `refdata/`). The human-facing preparation commands are
+documented in the repository root `README.md`.
+
+Example (HPV18 selection workflow):
 
 ```bash
 ../../scripts/hpv18_select_ncbi_genomes.sh --init-selection \\

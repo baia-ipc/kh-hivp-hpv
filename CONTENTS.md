@@ -26,3 +26,5 @@
 - config/ pipeline and other configuration files
 
 - refdata/ curated reference data (PAVE reference, phylogenetic inputs, feature tables)
+
+- docs/ technical documentation for the analysis steps (human-readable)
