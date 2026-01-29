@@ -31,6 +31,17 @@ nextflow run pipelines/centrifuge_bucketing_all.nf \
 
 MultiQC report is written to `analysis-input1/001.0.centrifuge/reports/multiqc_report.html`.
 
+### Build the Centrifuge database (human + RefSeq viral)
+
+- Build the index and taxonomy under `refdata/centrifuge/`:
+```
+scripts/build_centrifuge_db.sh --outdir refdata/centrifuge --index-name human_viral --threads 24
+```
+
+- Point `config/centrifuge_bucketing.config` to the resulting paths, for example:
+  - `index = "refdata/centrifuge/human_viral"`
+  - `taxdump = "refdata/centrifuge/taxonomy-YYYY-MM-DD"`
+
 ### analysis-input2 bucketing (Nextflow)
 
 - Run with Nextflow:
