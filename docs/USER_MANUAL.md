@@ -77,17 +77,20 @@ included:
 ```
 scripts/build_centrifuge_db.sh \
   --outdir refdata/centrifuge \
-  --index-name human_viral \
+  --index-name human_abv \
   --threads 24
 ```
 
 Then update `config/centrifuge_bucketing.config`, for example:
 
-- `index = "refdata/centrifuge/human_viral"`
+- `index = "refdata/centrifuge/human_abv"`
 - `taxdump = "refdata/centrifuge/taxonomy-YYYY-MM-DD"`
+
+By default the script builds an index that includes human plus RefSeq
+archaea/bacteria/viral. If you need a different composition, pass
+`--refseq-domains` (e.g., `--refseq-domains viral`).
 
 ## 7) Run the analyses
 
 After the preparation steps above, run the analyses using the wrapper scripts
 listed in the repository root `README.md`.
-

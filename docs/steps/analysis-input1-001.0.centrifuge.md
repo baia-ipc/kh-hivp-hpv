@@ -3,7 +3,7 @@
 ## Overview
 
 This step performs taxonomic classification of paired-end reads using Centrifuge
-against a prebuilt human + RefSeq viral index, and then assigns each read to a set of
+against a prebuilt human + RefSeq archaea/bacteria/viral index, and then assigns each read to a set of
 predefined taxonomy "buckets" (e.g. Papillomaviridae, other viruses, host).
 The result is a per-sample set of bucketed FASTQ files plus summary tables.
 

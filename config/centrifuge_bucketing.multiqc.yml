@@ -7,7 +7,7 @@ custom_data:
     description: "Summary of processing steps for step 001"
     data: |
       <p>
-        Paired-end reads were taxonomically classified against a human + RefSeq viral index using Centrifuge,
+        Paired-end reads were taxonomically classified against a human + RefSeq archaea/bacteria/viral index using Centrifuge,
         producing per-read assignments and summary reports (Kim et al., 2016). Taxonomic summaries were rendered both as
         Kraken-style reports and as interactive Krona plots (Ondov et al., 2011). To provide downstream grouping, each read was
         mapped to a predefined taxonomy bucket, and bucket-wise read sets were created to enable
