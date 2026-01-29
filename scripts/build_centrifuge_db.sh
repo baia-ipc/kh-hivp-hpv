@@ -3,31 +3,35 @@ set -euo pipefail
 
 usage() {
   cat <<'EOF'
-Build a Centrifuge index from human (GRCh) + RefSeq viral sequences.
+Build a Centrifuge index from human (GRCh) + RefSeq archaea/bacteria/viral sequences.
 
 Usage:
   scripts/build_centrifuge_db.sh [--outdir DIR] [--taxonomy-date YYYY-MM-DD]
                                  [--index-name NAME] [--threads N]
+                                 [--refseq-domains LIST]
 
 Defaults:
   --outdir         refdata/centrifuge
   --taxonomy-date  (none; output dir will be refdata/centrifuge/taxonomy/)
-  --index-name     human_viral
+  --index-name     human_abv
   --threads        $THREADS or 24
+  --refseq-domains archaea,bacteria,viral
 
 Notes:
   - Requires centrifuge-download and centrifuge-build in PATH.
   - The resulting index base path will be <outdir>/<index-name>.
   - This script downloads the NCBI taxonomy dump, human reference genome
-    sequences (taxid 9606, RefSeq), and RefSeq viral sequences.
+    sequences (taxid 9606, RefSeq), and RefSeq sequences from the requested
+    domain list (default: archaea, bacteria, viral).
 
 EOF
 }
 
 OUTDIR="refdata/centrifuge"
 TAXONOMY_DATE=""
-INDEX_NAME="human_viral"
+INDEX_NAME="human_abv"
 THREADS="${THREADS:-24}"
+REFSEQ_DOMAINS="archaea,bacteria,viral"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -45,6 +49,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     --threads|-p)
       THREADS="$2"
+      shift 2
+      ;;
+    --refseq-domains)
+      REFSEQ_DOMAINS="$2"
       shift 2
       ;;
     -h|--help)
@@ -80,10 +88,10 @@ centrifuge-download \
   -c "reference genome" \
   refseq >> "${MAP}"
 
-echo "[centrifuge] Downloading RefSeq viral sequences"
+echo "[centrifuge] Downloading RefSeq sequences (${REFSEQ_DOMAINS})"
 centrifuge-download \
-  -o "${LIBDIR}/viral" \
-  -d "viral" \
+  -o "${LIBDIR}/refseq" \
+  -d "${REFSEQ_DOMAINS}" \
   refseq >> "${MAP}"
 
 echo "[centrifuge] Building combined FASTA at ${FASTA}"

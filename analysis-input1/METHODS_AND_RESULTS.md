@@ -1,7 +1,7 @@
 # Methods and Results — analysis-input1 step 001 (centrifuge bucketing)
 
 ## Methods
-Paired-end reads were taxonomically classified against a human + RefSeq viral index
+Paired-end reads were taxonomically classified against a human + RefSeq archaea/bacteria/viral index
 using Centrifuge, producing per-read assignments and summary reports (Kim et
 al., 2016). Taxonomic summaries were rendered both as Kraken-style reports and
 as interactive Krona plots (Ondov et al., 2011). Each read was mapped to a

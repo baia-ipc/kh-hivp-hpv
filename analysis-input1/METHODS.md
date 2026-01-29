@@ -2,7 +2,8 @@
 
 Paired-end Illumina MiSeq reads were first screened for taxonomic composition
 using Centrifuge (Kim et al., 2016), with classification performed against an
-human + RefSeq viral index and interpreted using the corresponding NCBI taxonomy dump.
+human + RefSeq archaea/bacteria/viral index and interpreted using the corresponding
+NCBI taxonomy dump.
 Per-sample summaries were produced as Kraken-style reports and interactive Krona
 visualizations to support inspection of broad taxonomic composition (Ondov et
 al., 2011). To enable downstream analyses targeting HPV reads, individual read
