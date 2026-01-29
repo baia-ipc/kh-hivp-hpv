@@ -1,15 +1,21 @@
 # Methods — analysis-input1
 
 Paired-end Illumina MiSeq reads were first screened for taxonomic composition
-using Centrifuge (Kim et al., 2016), with classification performed against an
+using Centrifuge (Kim et al., 2016), with classification performed against a
 human + RefSeq archaea/bacteria/viral index and interpreted using the corresponding
 NCBI taxonomy dump.
 Per-sample summaries were produced as Kraken-style reports and interactive Krona
 visualizations to support inspection of broad taxonomic composition (Ondov et
-al., 2011). To enable downstream analyses targeting HPV reads, individual read
-assignments were mapped to a predefined set of taxonomy “buckets” and the reads
-assigned to the HPV bucket were extracted into per-sample FASTQ files for
-subsequent mapping-based analyses.
+al., 2011). To enable downstream analyses targeting HPV reads, read-level
+assignments were reconciled with the NCBI taxonomy to compute a lowest common
+ancestor (LCA) for each read when multiple hits were present. The resulting LCA
+taxon was then matched against a predefined set of taxonomy “buckets”
+(e.g. Papillomaviridae, other viruses, host), with support for nested buckets so
+that reads were assigned to the most specific applicable bucket. Reads assigned
+to the HPV bucket (Papillomaviridae) were extracted into per-sample FASTQ files
+to serve as inputs for subsequent mapping-based analyses, while bucket
+assignment and size tables were retained to summarize the taxonomic composition
+per sample.
 
 HPV-bucket reads were aligned to the PAVE human HPV reference using Bowtie2
 (Langmead & Salzberg, 2012). Alignments were converted, sorted, and indexed
