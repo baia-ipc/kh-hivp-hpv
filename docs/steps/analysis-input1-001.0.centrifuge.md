@@ -3,7 +3,7 @@
 ## Overview
 
 This step performs taxonomic classification of paired-end reads using Centrifuge
-against a prebuilt HPV-centric index, and then assigns each read to a set of
+against a prebuilt human + RefSeq viral index, and then assigns each read to a set of
 predefined taxonomy "buckets" (e.g. Papillomaviridae, other viruses, host).
 The result is a per-sample set of bucketed FASTQ files plus summary tables.
 
@@ -25,6 +25,7 @@ Wrappers in the analysis directory call the Nextflow pipelines:
 - Sample list: `metadata/samples-input1.tsv`
 - Bucket definitions: `metadata/bucket_taxonomy_ids.tsv`
 - Centrifuge index + taxonomy: configured in `config/centrifuge_bucketing.config`
+- Optional: build a local index with `scripts/build_centrifuge_db.sh`
 
 ## Outputs
 
@@ -47,4 +48,3 @@ Aggregated, step-level reports (`reports/`):
 
 - The same pipelines are also reused for `analysis-input2/001.0.bucketing/` with a
   different sample list (`metadata/samples-input2.tsv`) and different output paths.
-

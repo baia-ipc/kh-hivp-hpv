@@ -3,8 +3,8 @@
 ## Overview
 
 This step performs the same Centrifuge-based taxonomic bucketing as
-analysis-input1 step 001, but using the analysis-input2 sample list and input
-FASTQ layout.
+analysis-input1 step 001 (human + RefSeq viral index), but using the
+analysis-input2 sample list and input FASTQ layout.
 
 ## Implementation
 
@@ -29,4 +29,3 @@ This is controlled by the sample sheet entries (see `metadata/samples-input2.tsv
 
 - Per-run outputs under `output/<RUN_ID>/` (alignments, reports, buckets, etc.)
 - Aggregated reports under `reports/`, including `reports/multiqc_report.html`
-
