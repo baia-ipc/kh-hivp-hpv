@@ -5,7 +5,7 @@ Replace bracketed placeholders before use.
 
 ## Repo orientation
 """
-Read AGENTS.md, GOALS.md, INVENTORY.md, CONTENTS.md, and SKILLS.md. Summarize the repo's current structure, active workflows, and any constraints that matter for edits.
+Read AGENTS.md, .agents/GOALS.md, .agents/INVENTORY.md, CONTENTS.md, and .agents/SKILLS.md. Summarize the repo's current structure, active workflows, and any constraints that matter for edits.
 """
 
 ## Add or modify a pipeline step
@@ -13,7 +13,7 @@ Read AGENTS.md, GOALS.md, INVENTORY.md, CONTENTS.md, and SKILLS.md. Summarize th
 Update step [STEP_ID] in [analysis-input1|analysis-input2].
 - Keep configuration in config/ and hardcoded data in metadata/.
 - Do not hardcode user-specific absolute paths; rely on PATH/env/config.
-- Update CONTENTS.md and INVENTORY.md if the directory layout changes.
+- Update CONTENTS.md and .agents/INVENTORY.md if the directory layout changes.
 - Provide a commit, do not push.
 """
 
@@ -30,7 +30,7 @@ Investigate the failing Nextflow process [PROCESS_NAME].
 Create or update metadata in metadata/ for [INPUT_NAME].
 - Wire it into the relevant scripts/pipelines.
 - Avoid hardcoding sample IDs in scripts.
-- Update INVENTORY.md if the metadata list is new.
+- Update .agents/INVENTORY.md if the metadata list is new.
 """
 
 ## Compare outputs between analyses
@@ -39,13 +39,13 @@ Compare outputs between [ANALYSIS_A] and [ANALYSIS_B].
 - Focus on reports/ outputs first.
 - Summarize differences with file and row-level highlights.
 - When computing prevalence/proportions, exclude controls / technical artifacts
-  defined in GOALS.md unless explicitly requested.
+  defined in .agents/GOALS.md unless explicitly requested.
 """
 
 ## Move or rename analysis directories
 """
 Rename or move analysis directories to [NEW_LAYOUT].
-- Update CONTENTS.md and INVENTORY.md.
+- Update CONTENTS.md and .agents/INVENTORY.md.
 - Fix references in scripts, configs, and docs.
 - Commit changes without pushing.
 """
@@ -65,7 +65,7 @@ Constraints:
 - Use the same procedural description as the step MultiQC report Methods section, but written in
   scientific prose (avoid listing script names/filenames unless essential for reproducibility).
 - Exclude controls / technical artifacts from prevalence/proportion statements unless explicitly doing QC
-  (see GOALS.md: H2O, HVP-*, and Illumina Undetermined/unassigned reads).
+  (see .agents/GOALS.md: H2O, HVP-*, and Illumina Undetermined/unassigned reads).
 - Summarize results as narrative text with key proportions and ranges; use binning only to support the text.
 - Whenever you mention a small number of samples, list them as `RunID:SampleID`:
   - If count <= 5: always list.

@@ -3,8 +3,8 @@
 Ordered view of steps and dependencies across analyses (happy path).
 
 Rules:
-- Do not add command lines here (put them in `OPERATIONS.md`).
-- Do not describe tools/config locations here beyond what is needed for dependencies (put full catalog info in `SKILLS.md`).
+- Do not add command lines here (put them in `.agents/OPERATIONS.md`).
+- Do not describe tools/config locations here beyond what is needed for dependencies (put full catalog info in `.agents/SKILLS.md`).
 
 ## Workflow: analysis-input1
 

@@ -4,13 +4,13 @@ Runbook with concrete commands and fixes (how to run + troubleshoot).
 
 Rules:
 - Put runnable commands and troubleshooting here.
-- Do not turn this into a catalog (keep that in `SKILLS.md`) or an ordered workflow spec (keep that in `WORKFLOWS.md`).
+- Do not turn this into a catalog (keep that in `.agents/SKILLS.md`) or an ordered workflow spec (keep that in `.agents/WORKFLOWS.md`).
 
 ## Conventions
 
 - Configuration is in `config/` and sample lists in `metadata/`.
 - Outputs are written to each step's `output/` and `reports/`.
-- When changing directory layout, update `CONTENTS.md` and `INVENTORY.md`.
+- When changing directory layout, update `CONTENTS.md` and `.agents/INVENTORY.md`.
 - Avoid user-specific absolute paths in scripts; require tools via PATH or
   configurable env vars (e.g., `CONDA_EXE`).
 - Default parallelism is capped at 24 concurrent tasks via `process.maxForks` and `executor.queueSize` in the step config files under `config/`.

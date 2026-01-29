@@ -3,8 +3,8 @@
 Catalog of what exists (scope + where). This is a map of capabilities and locations, not a how-to.
 
 Rules:
-- Do not add run commands or troubleshooting here (put them in `OPERATIONS.md`).
-- Do not describe step order/dependencies here (put them in `WORKFLOWS.md`).
+- Do not add run commands or troubleshooting here (put them in `.agents/OPERATIONS.md`).
+- Do not describe step order/dependencies here (put them in `.agents/WORKFLOWS.md`).
 
 ## Core conventions (scope only)
 
@@ -16,7 +16,7 @@ Rules:
 - MultiQC reports are published to each step’s `reports/` (tree steps use `output/reports/`), with the process writing `multiqc_report.html` at the workdir root and `publishDir` targeting the final reports directory.
 - MultiQC methods sections include primary literature references for the tools used in each step (see the step-specific `config/*.multiqc.yml`).
 - Custom MultiQC sections and tables are defined in `config/*.multiqc.yml` under `custom_data` with explicit `plot_type`, and TSV tables are wired via `sp:` search patterns.
-- Nextflow execution can be sensitive to the caller environment; when documenting run commands, assume Java 17+ and avoid relying on an activated Conda env unless explicitly required (see OPERATIONS.md for the concrete invocation pattern).
+- Nextflow execution can be sensitive to the caller environment; when documenting run commands, assume Java 17+ and avoid relying on an activated Conda env unless explicitly required (see .agents/OPERATIONS.md for the concrete invocation pattern).
 
 ## Skill: centrifuge bucketing (Nextflow)
 
@@ -65,6 +65,6 @@ Rules:
 - Where:
   - HPV16: `analysis-input2/003.0.hpv16_tree`
   - HPV18: `analysis-input2/004.0.hpv18_tree`
-- Inputs: curated reference sets under each step `input/` plus mapping outputs (see WORKFLOWS.md for dependencies).
+- Inputs: curated reference sets under each step `input/` plus mapping outputs (see .agents/WORKFLOWS.md for dependencies).
 - Inputs: curated tree inputs under `refdata/hpv16_tree` and `refdata/hpv18_tree`.
 - Outputs: alignment and tree artifacts under each step `output/`.
