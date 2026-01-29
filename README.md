@@ -40,7 +40,7 @@ analysis-input1/005.0.bowtie_vs_pave.E7/scripts/run_all.sh
 
 After running step 001, open the interactive report at:
 
-`analysis-input1/001.0.centrifuge/reports/multiqc/multiqc_report.html`
+`analysis-input1/001.0.centrifuge/reports/multiqc_report.html`
 
 ### Run a single sample (optional)
 

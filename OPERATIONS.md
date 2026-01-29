@@ -14,7 +14,7 @@ Rules:
 - Avoid user-specific absolute paths in scripts; require tools via PATH or
   configurable env vars (e.g., `CONDA_EXE`).
 - Default parallelism is capped at 24 concurrent tasks via `process.maxForks` and `executor.queueSize` in the step config files under `config/`.
-- MultiQC reports are written under each step's `reports/multiqc/` (phylo tree steps use `output/reports/multiqc/`). Ensure the MultiQC process outputs files at the process root and publish to `reports/multiqc/` to avoid duplicated `multiqc/multiqc_report.html` paths.
+- MultiQC reports are written under each step's `reports/` (phylo tree steps use `output/reports/`). Ensure the MultiQC process outputs files at the process root and publish to `reports/` to avoid duplicated `multiqc/multiqc_report.html` paths.
 - MultiQC method summaries should cite the primary tool papers; update the relevant `config/*.multiqc.yml` when pipeline steps change.
 - MultiQC custom sections should be configured under `custom_data` with explicit `plot_type` and any table inputs connected via `sp:` search patterns in the same config.
 
@@ -27,9 +27,9 @@ Rules:
 nextflow run pipelines/centrifuge_bucketing_all.nf \
   -c config/centrifuge_bucketing.config \
   -resume
-
-MultiQC report is written to `analysis-input1/001.0.centrifuge/reports/multiqc/`.
 ```
+
+MultiQC report is written to `analysis-input1/001.0.centrifuge/reports/multiqc_report.html`.
 
 ### analysis-input2 bucketing (Nextflow)
 
