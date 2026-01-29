@@ -28,3 +28,5 @@
 - refdata/ curated reference data (PAVE reference, phylogenetic inputs, feature tables)
 
 - docs/ technical documentation for the analysis steps (human-readable)
+
+- .agents/ agent-oriented docs and instructions (GOALS, OPERATIONS, WORKFLOWS, etc.)
