@@ -31,6 +31,9 @@ if (!params.containsKey('aggregate_skip_wo_human') || !params.aggregate_skip_wo_
 if (!params.containsKey('aggregate_skip') || !params.aggregate_skip) {
     params.aggregate_skip = "2886930,2759"
 }
+if (!params.containsKey('skip_align') || params.skip_align == null) {
+    params.skip_align = false
+}
 params.outdir = params.outdir ?: "${projectRoot}/analysis-input1/001.0.centrifuge/output"
 if (!params.containsKey('precomputed_root') || !params.precomputed_root) {
     params.precomputed_root = params.outdir
@@ -60,11 +63,30 @@ def loadSamples(String samplesPath) {
     return rows
 }
 
-def findReadPair(String fastqDir, String samplePrefix) {
+def resolveFastqDir(String fastqDir) {
     def dir = new File(fastqDir)
-    if (!dir.isDirectory()) {
-        error "fastq directory not found: ${fastqDir}"
+    if (dir.isDirectory()) {
+        return dir
     }
+    def lower = fastqDir.toLowerCase()
+    if (lower.endsWith('/fastq')) {
+        def parent = dir.getParentFile()
+        if (parent != null && parent.isDirectory()) {
+            return parent
+        }
+    }
+    def withFastq = new File(fastqDir, 'Fastq')
+    if (withFastq.isDirectory()) {
+        return withFastq
+    }
+    def withfastq = new File(fastqDir, 'fastq')
+    if (withfastq.isDirectory()) {
+        return withfastq
+    }
+    error "fastq directory not found: ${fastqDir}"
+}
+
+def findReadPair(File dir, String samplePrefix) {
     def r1 = dir.listFiles().findAll {
         it.name.startsWith(samplePrefix) &&
         it.name.contains('_R1_') &&
@@ -76,7 +98,7 @@ def findReadPair(String fastqDir, String samplePrefix) {
         it.name.endsWith('.fastq.gz')
     }
     if (r1.size() != 1 || r2.size() != 1) {
-        error "expected 1 R1/R2 for ${samplePrefix} in ${fastqDir}, got ${r1.size()} R1 and ${r2.size()} R2"
+        error "expected 1 R1/R2 for ${samplePrefix} in ${dir}, got ${r1.size()} R1 and ${r2.size()} R2"
     }
     return [r1[0], r2[0]]
 }
@@ -165,9 +187,12 @@ workflow {
             def fastq_dir = cols[1]
             def sample_prefix = cols[2]
             def fastq_path = new File(projectRoot, fastq_dir).getPath()
-            def (r1File, r2File) = findReadPair(fastq_path, sample_prefix)
+            def resolvedDir = resolveFastqDir(fastq_path)
+            def (r1File, r2File) = findReadPair(resolvedDir, sample_prefix)
             def sample_id = sample_prefix
-            def run_id = new File(fastq_path).getParentFile().getName()
+            def run_id = resolvedDir.getName().equalsIgnoreCase('fastq') \
+                ? resolvedDir.getParentFile().getName() \
+                : resolvedDir.getName()
             tuple(run_id, sample_id, file(r1File.absolutePath), file(r2File.absolutePath))
         }
 
