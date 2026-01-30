@@ -52,6 +52,10 @@ def main():
             key = (gene, chrom, pos, ref, alt_allele)
             cambodia_sets[cambodia_id].add(key)
 
+    def format_snps(snps):
+        items = sorted({f"{gene}:{ref}{pos}{alt}" for gene, _chrom, pos, ref, alt in snps})
+        return ",".join(items)
+
     with open(args.output, "w", newline="") as out:
         writer = csv.writer(out, delimiter="\t")
         writer.writerow([
@@ -59,8 +63,11 @@ def main():
             "sample",
             "cambodia_id",
             "shared_snps",
+            "shared_snp_ids",
             "sample_only_snps",
+            "sample_only_snp_ids",
             "cambodia_only_snps",
+            "cambodia_only_snp_ids",
             "sample_total",
             "cambodia_total",
             "jaccard",
@@ -80,8 +87,11 @@ def main():
                     sample,
                     cambodia_id,
                     str(len(shared)),
+                    format_snps(shared),
                     str(len(sample_only)),
+                    format_snps(sample_only),
                     str(len(cambodia_only)),
+                    format_snps(cambodia_only),
                     str(len(sample_set)),
                     str(len(cambodia_set)),
                     f"{jaccard:.3f}",

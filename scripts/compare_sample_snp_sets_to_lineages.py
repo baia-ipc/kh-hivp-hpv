@@ -52,6 +52,10 @@ def main():
             key = (gene, chrom, pos, ref, alt_allele)
             lineage_sets[lineage].add(key)
 
+    def format_snps(snps):
+        items = sorted({f"{gene}:{ref}{pos}{alt}" for gene, _chrom, pos, ref, alt in snps})
+        return ",".join(items)
+
     with open(args.output, "w", newline="") as out:
         writer = csv.writer(out, delimiter="\t")
         writer.writerow([
@@ -59,8 +63,11 @@ def main():
             "sample",
             "lineage",
             "shared_snps",
+            "shared_snp_ids",
             "sample_only_snps",
+            "sample_only_snp_ids",
             "lineage_only_snps",
+            "lineage_only_snp_ids",
             "sample_total",
             "lineage_total",
             "jaccard",
@@ -80,8 +87,11 @@ def main():
                     sample,
                     lineage,
                     str(len(shared)),
+                    format_snps(shared),
                     str(len(sample_only)),
+                    format_snps(sample_only),
                     str(len(lineage_only)),
+                    format_snps(lineage_only),
                     str(len(sample_set)),
                     str(len(lineage_set)),
                     f"{jaccard:.3f}",

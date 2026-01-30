@@ -218,13 +218,14 @@ process COMPARE_SNP_SETS_CAMBODIA {
     input:
     path(cambodia_snps)
     path(sample_variants)
+    path(compare_script)
 
     output:
     path('samples_vs_cambodia_sets.tsv')
 
     script:
     """
-    "${params.scripts_dir}/compare_sample_snp_sets_to_cambodia.py" \\
+    python "${compare_script}" \\
       --variants "${sample_variants}" \\
       --cambodia-snps "${cambodia_snps}" \\
       --allow-strains "HPV16REF,HPV18REF" \\
@@ -240,13 +241,14 @@ process COMPARE_SNP_SETS_LINEAGES {
     input:
     path(lineage_snps)
     path(sample_variants)
+    path(compare_script)
 
     output:
     path('samples_vs_lineage_sets.tsv')
 
     script:
     """
-    "${params.scripts_dir}/compare_sample_snp_sets_to_lineages.py" \\
+    python "${compare_script}" \\
       --variants "${sample_variants}" \\
       --lineage-snps "${lineage_snps}" \\
       --allow-strains "HPV16REF,HPV18REF" \\
@@ -413,8 +415,10 @@ workflow {
     def cambodia_lineages = COMPARE_CAMBODIA_LINEAGES(cambodia_snps, lineage_snps)
     def cambodia_samples = COMPARE_CAMBODIA_SAMPLES(cambodia_snps, sample_variants)
     def samples_vs_cambodia = COMPARE_SAMPLES_CAMBODIA(cambodia_snps, sample_variants)
-    def samples_vs_cambodia_sets = COMPARE_SNP_SETS_CAMBODIA(cambodia_snps, sample_variants)
-    def samples_vs_lineage_sets = COMPARE_SNP_SETS_LINEAGES(lineage_snps, sample_variants)
+    def compare_cambodia_sets = file("${params.scripts_dir}/compare_sample_snp_sets_to_cambodia.py")
+    def compare_lineage_sets = file("${params.scripts_dir}/compare_sample_snp_sets_to_lineages.py")
+    def samples_vs_cambodia_sets = COMPARE_SNP_SETS_CAMBODIA(cambodia_snps, sample_variants, compare_cambodia_sets)
+    def samples_vs_lineage_sets = COMPARE_SNP_SETS_LINEAGES(lineage_snps, sample_variants, compare_lineage_sets)
     def multiqc_tables = PREPARE_MULTIQC(cambodia_snps, cambodia_lineages, cambodia_samples, samples_vs_cambodia, samples_vs_cambodia_sets, samples_vs_lineage_sets)
     MULTIQC(multiqc_tables, multiqc_config)
 }
