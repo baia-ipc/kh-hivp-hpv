@@ -77,13 +77,14 @@ def main():
         run(["samtools", "faidx", ref_fasta])
 
         for lineage_id, seq in read_fasta(args.lineages):
-            seq_path = os.path.join(tmpdir, f"{lineage_id}.fa")
+            safe_id = lineage_id.replace("/", "_")
+            seq_path = os.path.join(tmpdir, f"{safe_id}.fa")
             with open(seq_path, "w") as out:
                 out.write(f">{lineage_id}\n{seq}\n")
 
-            sam_path = os.path.join(tmpdir, f"{lineage_id}.sam")
-            bam_path = os.path.join(tmpdir, f"{lineage_id}.bam")
-            bcf_path = os.path.join(tmpdir, f"{lineage_id}.bcf")
+            sam_path = os.path.join(tmpdir, f"{safe_id}.sam")
+            bam_path = os.path.join(tmpdir, f"{safe_id}.bam")
+            bcf_path = os.path.join(tmpdir, f"{safe_id}.bcf")
 
             with open(sam_path, "w") as sam_out:
                 run(["minimap2", "-a", ref_fasta, seq_path], stdout=sam_out)
