@@ -23,4 +23,4 @@ To run the analyses, use the step wrapper scripts under `analysis-input*/.../scr
 - Step 002 (Bowtie vs PAVE): `docs/steps/analysis-input2-002.0.mapping_vs_pave.md`
 - Step 003 (HPV16 tree): `docs/steps/analysis-input2-003.0.hpv16_tree.md`
 - Step 004 (HPV18 tree): `docs/steps/analysis-input2-004.0.hpv18_tree.md`
-
+- Step 005 (Cambodia SNP comparison): `docs/steps/analysis-input2-005.0.cambodia_snps.md`

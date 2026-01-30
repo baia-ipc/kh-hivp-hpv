@@ -65,6 +65,7 @@ Run these commands from the repository root.
 ```bash
 analysis-input2/001.0.bucketing/scripts/run_all.sh
 analysis-input2/002.0.mapping_vs_pave/scripts/run_all.sh
+analysis-input2/005.0.cambodia_snps/scripts/run_all.sh
 ```
 
 ### Phylogenetic trees (HPV16 and HPV18)
