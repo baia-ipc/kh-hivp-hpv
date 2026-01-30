@@ -100,6 +100,7 @@ def main():
                 stdout=subprocess.PIPE,
             )
             run(["bcftools", "view", "-v", "snps", "-Ob", "-o", bcf_path], stdin=call.stdout)
+            run(["bcftools", "index", bcf_path])
             mpileup.wait()
             call.wait()
 
