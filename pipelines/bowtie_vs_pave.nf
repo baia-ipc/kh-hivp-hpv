@@ -227,27 +227,35 @@ def normalize_header(header, ncols):
         header = header[:ncols]
     return header
 
-def build_combined_id(row, header):
-    def find_col(name):
-        if not header:
-            return None
-        for idx, col in enumerate(header):
-            if col.lower() == name:
-                return idx
+def find_col_idx(header, name):
+    if not header:
         return None
+    for idx, col in enumerate(header):
+        if col.lower() == name:
+            return idx
+    return None
 
+def build_variant_id(row, header):
     run = row[0] if len(row) > 0 else ""
     sample = row[1] if len(row) > 1 else ""
     gene = row[2] if len(row) > 2 else ""
-    chrom_idx = find_col("chrom")
-    pos_idx = find_col("pos")
-    transcript_idx = find_col("transcript")
-    strain = row[chrom_idx] if chrom_idx is not None and len(row) > chrom_idx else ""
-    pos = row[pos_idx] if pos_idx is not None and len(row) > pos_idx else ""
+    transcript_idx = find_col_idx(header, "transcript")
+    strain_idx = find_col_idx(header, "strain")
+    if strain_idx is None:
+        strain_idx = find_col_idx(header, "chrom")
+    pos_idx = find_col_idx(header, "pos")
     transcript = row[transcript_idx] if transcript_idx is not None and len(row) > transcript_idx else "NA"
+    strain = row[strain_idx] if strain_idx is not None and len(row) > strain_idx else ""
+    pos = row[pos_idx] if pos_idx is not None and len(row) > pos_idx else ""
     return f"{run}:{sample}:{gene}:{transcript}:{strain}:{pos}"
 
-def rewrite_with_header(src, dest, use_combined_id=False):
+def build_covstats_id(row, header):
+    run = row[0] if len(row) > 0 else ""
+    sample = row[1] if len(row) > 1 else ""
+    strain = row[2] if len(row) > 2 else ""
+    return f"{run}:{sample}:{strain}"
+
+def rewrite_with_header(src, dest, id_builder=None):
     if not os.path.exists(src):
         return
     with open(src, newline='') as inp, open(dest, 'w', newline='') as out:
@@ -260,10 +268,13 @@ def rewrite_with_header(src, dest, use_combined_id=False):
         for row in reader:
             if not row:
                 continue
-            sample = build_combined_id(row, header) if use_combined_id else (f\"{row[0]}:{row[1]}\" if len(row) > 1 else row[0])
+            if id_builder:
+                sample = id_builder(row, header)
+            else:
+                sample = f\"{row[0]}:{row[1]}\" if len(row) > 1 else row[0]
             writer.writerow([sample] + row)
 
-def rewrite_no_header(src, dest, header, use_combined_id=False):
+def rewrite_no_header(src, dest, header, id_builder=None):
     if not os.path.exists(src):
         return
     with open(src, newline='') as inp, open(dest, 'w', newline='') as out:
@@ -274,24 +285,30 @@ def rewrite_no_header(src, dest, header, use_combined_id=False):
             return
         header = normalize_header(header, len(first))
         writer.writerow(['Sample'] + header)
-        sample = build_combined_id(first, header) if use_combined_id else (f\"{first[0]}:{first[1]}\" if len(first) > 1 else first[0])
+        if id_builder:
+            sample = id_builder(first, header)
+        else:
+            sample = f\"{first[0]}:{first[1]}\" if len(first) > 1 else first[0]
         writer.writerow([sample] + first)
         for row in reader:
             if not row:
                 continue
-            sample = build_combined_id(row, header) if use_combined_id else (f\"{row[0]}:{row[1]}\" if len(row) > 1 else row[0])
+            if id_builder:
+                sample = id_builder(row, header)
+            else:
+                sample = f\"{row[0]}:{row[1]}\" if len(row) > 1 else row[0]
             writer.writerow([sample] + row)
 
 rewrite_with_header('strains.tsv', 'strains.multiqc.tsv')
-rewrite_with_header('cov_stats.tsv', 'cov_stats.multiqc.tsv')
-rewrite_with_header('cov_stats.filtered.tsv', 'cov_stats.filtered.multiqc.tsv')
+rewrite_with_header('cov_stats.tsv', 'cov_stats.multiqc.tsv', id_builder=build_covstats_id)
+rewrite_with_header('cov_stats.filtered.tsv', 'cov_stats.filtered.multiqc.tsv', id_builder=build_covstats_id)
 rewrite_no_header(
     'E6_E7_variants.tsv',
     'E6_E7_variants.multiqc.tsv',
     ['run', 'sample', 'gene', 'chrom', 'pos', 'id', 'ref', 'alt', 'qual', 'filter', 'info', 'format', 'sample_field'],
-    use_combined_id=True,
+    id_builder=build_variant_id,
 )
-rewrite_with_header('E6_E7_variant_effects.tsv', 'E6_E7_variant_effects.multiqc.tsv', use_combined_id=True)
+rewrite_with_header('E6_E7_variant_effects.tsv', 'E6_E7_variant_effects.multiqc.tsv', id_builder=build_variant_id)
 PY
 
     multiqc --force \\
