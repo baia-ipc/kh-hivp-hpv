@@ -22,12 +22,9 @@ Download sequence metadata in TSV format, use custom fields definition
   save as input/HPV18-NCBIVirus.tsv
 
 (3) prepare lineages reference fasta
-  run ../../scripts/hpv18_extract_lineages_fasta.sh
-    ../../scripts/hpv18_extract_lineages_fasta.sh \
-      input/HPV18_lineages.tsv input/HPV18-NCBIVirus.fasta input/lineages_ref.fasta
-  run ../../scripts/rename_lineages.py
-    python3 ../../scripts/rename_lineages.py input/HPV18_lineages.tsv 6 4 \
-      input/lineages_ref.fasta input/lineages_ref_renamed.fasta
+  This is now shared with the SNP‑to‑lineage comparison in step 002.
+  Follow the repository root README instructions and place
+  refdata/hpv18_tree/lineages_ref_renamed.fasta before running this step.
 
 (4) select and prepare NCBI Virus genomes
   # one per country, except SEA and EA where all are included

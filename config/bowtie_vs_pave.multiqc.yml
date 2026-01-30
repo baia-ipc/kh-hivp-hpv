@@ -11,6 +11,7 @@ custom_data:
         <li><strong>Coverage stats:</strong> compute depth and coverage metrics with <code>covstats.py</code>.</li>
         <li><strong>Variant calling:</strong> call variants with bcftools and produce VCF stats plots.</li>
         <li><strong>Variant annotation:</strong> translate variants to amino-acid changes and effects using bcftools csq.</li>
+        <li><strong>Lineage SNP comparison:</strong> call E6/E7 SNPs from HPV16/HPV18 lineage references and annotate sample SNPs.</li>
         <li><strong>Aggregation:</strong> summarize top strains, coverage, and variant tables in the reports directory.</li>
       </ul>
       <p><strong>References:</strong></p>
@@ -40,6 +41,7 @@ custom_data:
         <li><code>cov_stats.filtered.tsv</code></li>
         <li><code>E6_E7_variants.tsv</code></li>
         <li><code>E6_E7_variant_effects.tsv</code></li>
+        <li><code>lineage_snp_comparison.tsv</code></li>
       </ul>
   strains_table:
     file_format: "tsv"
@@ -76,6 +78,13 @@ custom_data:
     plot_type: "table"
     pconfig:
       col1_header: "Sample"
+  lineage_snp_comparison_table:
+    file_format: "tsv"
+    section_name: "Lineage SNP comparison"
+    description: "Sample E6/E7 SNPs annotated with lineage-defining SNPs"
+    plot_type: "table"
+    pconfig:
+      col1_header: "Sample"
 
 sp:
   strains_table:
@@ -88,3 +97,5 @@ sp:
     fn: "E6_E7_variants.multiqc.tsv"
   variant_effects_table:
     fn: "E6_E7_variant_effects.multiqc.tsv"
+  lineage_snp_comparison_table:
+    fn: "lineage_snp_comparison.multiqc.tsv"

@@ -5,7 +5,8 @@
 This step maps bucketed reads (from analysis-input2 step 001) to the PAVE
 reference using Bowtie2, summarizes mapping by strain, computes coverage
 statistics, performs variant calling, and annotates E6/E7 variants with
-amino‑acid consequences.
+amino‑acid consequences. It also compares sample E6/E7 SNPs against
+lineage‑defining SNPs from HPV16/HPV18 lineage references.
 
 ## Implementation
 
@@ -21,6 +22,8 @@ Wrappers:
 ## Inputs
 
 - Reads directory: output of analysis-input2 step 001 (`analysis-input2/001.0.bucketing/output/`)
+- Lineage references: `refdata/hpv16_tree/lineages_ref_renamed.fasta` and
+  `refdata/hpv18_tree/lineages_ref_renamed.fasta`
 
 ## Outputs
 
@@ -28,4 +31,5 @@ Wrappers:
 - Reports under `reports/`, including:
   - mapping/coverage summaries
   - E6/E7 variant effects (amino‑acid consequences)
+  - lineage SNP comparison table
   - `reports/multiqc_report.html`

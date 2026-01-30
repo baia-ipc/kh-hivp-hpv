@@ -21,13 +21,10 @@ Download sequence metadata in TSV format, use custom fields definition
            Collection_Date Release_Date    Molecule_type
   save as input/HPV16-NCBIVirus.tsv
 
-(3) prepare lineages reference fasta
-  run ../../scripts/hpv16_extract_lineages_fasta.sh
-    ../../scripts/hpv16_extract_lineages_fasta.sh \
-      input/HPV16_lineages.tsv input/HPV16-NCBIVirus.fasta input/lineages_ref.fasta
-  run ../../scripts/rename_lineages.py to add lineage prefix from HPV16_lineages.tsv
-    python3 ../../scripts/rename_lineages.py input/HPV16_lineages.tsv 6 4 \
-      input/lineages_ref.fasta input/lineages_ref_renamed.fasta
+(3) prepare lineages reference FASTA
+  This is now shared with the SNP‑to‑lineage comparison in step 002.
+  Follow the repository root README instructions and place
+  refdata/hpv16_tree/lineages_ref_renamed.fasta before running this step.
 
 (4) select and prepare NCBI Virus genomes
   create a selection table with Accession and Country (two columns)
