@@ -244,10 +244,21 @@ def build_variant_id(row, header):
     if strain_idx is None:
         strain_idx = find_col_idx(header, "chrom")
     pos_idx = find_col_idx(header, "pos")
-    transcript = row[transcript_idx] if transcript_idx is not None and len(row) > transcript_idx else "NA"
+    ref_idx = find_col_idx(header, "ref")
+    alt_idx = find_col_idx(header, "alt")
+    transcript = row[transcript_idx] if transcript_idx is not None and len(row) > transcript_idx else ""
     strain = row[strain_idx] if strain_idx is not None and len(row) > strain_idx else ""
+    if "REF" in strain:
+        strain = strain.split("REF", 1)[0]
     pos = row[pos_idx] if pos_idx is not None and len(row) > pos_idx else ""
-    return f"{run}:{sample}:{gene}:{transcript}:{strain}:{pos}"
+    ref = row[ref_idx] if ref_idx is not None and len(row) > ref_idx else ""
+    alt = row[alt_idx] if alt_idx is not None and len(row) > alt_idx else ""
+    mut = f"{ref}{pos}{alt}" if ref and alt else pos
+    parts = [run, sample, gene]
+    if transcript and transcript != "NA":
+        parts.append(transcript)
+    parts += [strain, mut]
+    return ":".join(parts)
 
 def build_covstats_id(row, header):
     run = row[0] if len(row) > 0 else ""
