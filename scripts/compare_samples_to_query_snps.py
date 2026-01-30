@@ -10,6 +10,8 @@ def parse_args():
     parser.add_argument("--variants", required=True, help="Sample E6/E7 variants TSV")
     parser.add_argument("--query-snps", required=True, help="Query SNPs TSV")
     parser.add_argument("--output", required=True, help="Output TSV")
+    parser.add_argument("--allow-strains", default="HPV16REF,HPV18REF",
+                        help="Comma-separated strain prefixes to include [default: HPV16REF,HPV18REF]")
     return parser.parse_args()
 
 
@@ -25,6 +27,7 @@ def read_query_snps(path):
 
 def main():
     args = parse_args()
+    allowed = tuple(s.strip() for s in args.allow_strains.split(",") if s.strip())
 
     query_map = defaultdict(set)
     for row in read_query_snps(args.query_snps):
@@ -54,6 +57,8 @@ def main():
                 if len(row) < 8:
                     continue
                 run, sample, gene, chrom, pos, _id, ref, alt = row[:8]
+                if allowed and not chrom.startswith(allowed):
+                    continue
                 cambodia_ids = set()
                 for alt_allele in alt.split(","):
                     key = (gene, chrom, pos, ref, alt_allele)
