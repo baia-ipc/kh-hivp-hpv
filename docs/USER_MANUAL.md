@@ -44,7 +44,7 @@ All pipeline parameters live in `config/`. Edit these files to point to your
 local reference data paths and to set resource limits:
 
 - `config/centrifuge_bucketing.config`: Centrifuge index + taxonomy paths
-- `config/bowtie_vs_pave.config`: PAVE reference + features
+- `config/bowtie_vs_pave.config`: PAVE reference + features + BED/GFF3 dirs for variant annotation
 - `config/virstrain.config`: VirStrain index paths
 - `config/pave_e6.config`, `config/pave_e7.config`: gene‑level mapping configs
 - `config/hpv16_tree.config`, `config/hpv18_tree.config`: tree pipeline inputs
@@ -58,6 +58,9 @@ Conda environments used by pipelines are also defined here (e.g.
 
 Place the PAVE reference FASTA and feature tables under `refdata/` as required
 by `config/bowtie_vs_pave.config` and the gene‑level configs.
+
+If you use variant effect annotation in step 002, place the PAVE GFF3 files
+under `refdata/gff3` (one GFF3 per reference sequence).
 
 ### 6.2 Phylogenetic tree inputs
 

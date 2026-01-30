@@ -3,7 +3,8 @@
 ## Overview
 
 This step maps bucketed reads to a PAVE reference using Bowtie2, summarizes
-mapping by strain, computes coverage statistics, and performs variant calling.
+mapping by strain, computes coverage statistics, performs variant calling, and
+annotates E6/E7 variants with amino‑acid consequences.
 
 ## Implementation
 
@@ -34,5 +35,5 @@ Aggregated, step-level reports (`reports/`):
 
 - mapping and strain summaries
 - coverage/variant summaries
+- E6/E7 variant effects (amino‑acid consequences)
 - MultiQC report: `reports/multiqc_report.html`
-
