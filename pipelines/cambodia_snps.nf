@@ -61,10 +61,10 @@ process EXTRACT_CAMBODIA {
     conda params.conda_env
 
     input:
-    path(hpv16_fasta)
-    path(hpv16_tsv)
-    path(hpv18_fasta)
-    path(hpv18_tsv)
+    path(hpv16_fasta, stageAs: 'hpv16_selected.fasta')
+    path(hpv16_tsv, stageAs: 'hpv16_selected.tsv')
+    path(hpv18_fasta, stageAs: 'hpv18_selected.fasta')
+    path(hpv18_tsv, stageAs: 'hpv18_selected.tsv')
 
     output:
     tuple path('cambodia_hpv16.fasta'), path('cambodia_hpv18.fasta')
@@ -93,8 +93,8 @@ process LINEAGE_SNPS {
     conda params.conda_env
 
     input:
-    path(lineage_hpv16)
-    path(lineage_hpv18)
+    path(lineage_hpv16, stageAs: 'lineages_hpv16.fasta')
+    path(lineage_hpv18, stageAs: 'lineages_hpv18.fasta')
 
     output:
     path('lineage_snps.tsv')
