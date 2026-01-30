@@ -1,0 +1,66 @@
+title: "Cambodia SNP comparison"
+
+custom_data:
+  methods_summary:
+    plot_type: "html"
+    section_name: "Methods summary"
+    description: "Summary of Cambodian SNP extraction and comparison"
+    data: |
+      <ul>
+        <li><strong>Sequence extraction:</strong> filter selected NCBI HPV16/HPV18 reference genomes by country and extract Cambodian accessions.</li>
+        <li><strong>SNP calling:</strong> align each Cambodian genome to the PAVE reference with minimap2 and call SNPs with bcftools, limited to E6/E7 regions.</li>
+        <li><strong>Comparisons:</strong> annotate Cambodian SNPs with lineage-defining SNPs and with SNPs observed in study samples.</li>
+      </ul>
+      <p><strong>References:</strong></p>
+      <ul>
+        <li>Li, 2018. Minimap2: pairwise alignment for nucleotide sequences. <em>Bioinformatics</em>. DOI: 10.1093/bioinformatics/bty191.</li>
+        <li>Li, 2011. A statistical framework for SNP calling, mutation discovery, association mapping and population genetical parameter estimation from sequencing data. <em>Bioinformatics</em>. DOI: 10.1093/bioinformatics/btr509.</li>
+      </ul>
+  output_locations:
+    plot_type: "html"
+    section_name: "Output locations"
+    description: "Default output paths (can be overridden with Nextflow params)"
+    data: |
+      <ul>
+        <li><code>&lt;outdir&gt;/</code> for extracted Cambodian FASTA sequences</li>
+        <li><code>&lt;reports_dir&gt;/</code> for SNP tables and this MultiQC report</li>
+      </ul>
+  reports_tables:
+    plot_type: "html"
+    section_name: "Reports tables"
+    description: "Tables written to the reports directory"
+    data: |
+      <ul>
+        <li><code>cambodia_snps.tsv</code></li>
+        <li><code>cambodia_lineage_comparison.tsv</code></li>
+        <li><code>cambodia_sample_comparison.tsv</code></li>
+      </ul>
+  cambodia_snps_table:
+    file_format: "tsv"
+    section_name: "Cambodian SNPs"
+    description: "E6/E7 SNPs called from Cambodian reference genomes"
+    plot_type: "table"
+    pconfig:
+      col1_header: "ID"
+  cambodia_lineage_table:
+    file_format: "tsv"
+    section_name: "Cambodia vs lineages"
+    description: "Cambodian SNPs annotated with lineage-defining SNPs"
+    plot_type: "table"
+    pconfig:
+      col1_header: "ID"
+  cambodia_sample_table:
+    file_format: "tsv"
+    section_name: "Cambodia vs samples"
+    description: "Cambodian SNPs annotated with sample SNP matches"
+    plot_type: "table"
+    pconfig:
+      col1_header: "ID"
+
+sp:
+  cambodia_snps_table:
+    fn: "cambodia_snps.multiqc.tsv"
+  cambodia_lineage_table:
+    fn: "cambodia_lineage_comparison.multiqc.tsv"
+  cambodia_sample_table:
+    fn: "cambodia_sample_comparison.multiqc.tsv"

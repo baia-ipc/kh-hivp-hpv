@@ -80,6 +80,17 @@ nextflow run pipelines/bowtie_vs_pave.nf \
   -resume
 ```
 
+### Cambodia SNP comparison (analysis-input2)
+
+```
+nextflow run pipelines/cambodia_snps.nf \
+  -c config/cambodia_snps.config \
+  --sample_variants analysis-input2/002.0.mapping_vs_pave/reports/E6_E7_variants.tsv \
+  --outdir analysis-input2/005.0.cambodia_snps/output \
+  --reports_dir analysis-input2/005.0.cambodia_snps/reports \
+  -resume
+```
+
 ### VirStrain reports (Nextflow)
 
 - Run with Nextflow:
