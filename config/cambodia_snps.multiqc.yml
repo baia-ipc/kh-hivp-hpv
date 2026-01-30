@@ -35,6 +35,8 @@ custom_data:
         <li><code>cambodia_lineage_comparison.tsv</code></li>
         <li><code>cambodia_sample_comparison.tsv</code></li>
         <li><code>samples_vs_cambodia.tsv</code></li>
+        <li><code>samples_vs_cambodia_sets.tsv</code></li>
+        <li><code>samples_vs_lineage_sets.tsv</code></li>
       </ul>
   cambodia_snps_table:
     file_format: "tsv"
@@ -64,6 +66,20 @@ custom_data:
     plot_type: "table"
     pconfig:
       col1_header: "ID"
+  samples_vs_cambodia_sets_table:
+    file_format: "tsv"
+    section_name: "Samples vs Cambodia (set)"
+    description: "Sample SNP sets compared against Cambodian SNP sets"
+    plot_type: "table"
+    pconfig:
+      col1_header: "ID"
+  samples_vs_lineage_sets_table:
+    file_format: "tsv"
+    section_name: "Samples vs lineages (set)"
+    description: "Sample SNP sets compared against lineage SNP sets"
+    plot_type: "table"
+    pconfig:
+      col1_header: "ID"
 
 sp:
   cambodia_snps_table:
@@ -74,3 +90,7 @@ sp:
     fn: "cambodia_sample_comparison.multiqc.tsv"
   samples_vs_cambodia_table:
     fn: "samples_vs_cambodia.multiqc.tsv"
+  samples_vs_cambodia_sets_table:
+    fn: "samples_vs_cambodia_sets.multiqc.tsv"
+  samples_vs_lineage_sets_table:
+    fn: "samples_vs_lineage_sets.multiqc.tsv"
