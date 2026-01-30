@@ -69,8 +69,9 @@ Place curated tree inputs under:
 - `refdata/hpv16_tree`
 - `refdata/hpv18_tree`
 
-The preparation steps for these are described in the repository root
-`README.md`.
+The preparation steps for these (including the shared lineage reference
+FASTA files used by step 002 SNP‑to‑lineage comparison) are described in the
+repository root `README.md`.
 
 ### 6.3 Centrifuge database (taxonomic index)
 

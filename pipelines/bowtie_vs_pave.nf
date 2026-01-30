@@ -20,6 +20,10 @@ def projectRoot = (workflow.projectDir instanceof java.nio.file.Path \
 params.scripts_dir = params.scripts_dir ?: "${projectRoot}/scripts"
 params.bucket_tid_file = params.bucket_tid_file ?: "${projectRoot}/metadata/pave_bucket_tid.txt"
 params.multiqc_config = params.multiqc_config ?: "${projectRoot}/config/bowtie_vs_pave.multiqc.yml"
+params.lineage_hpv16_fasta = params.lineage_hpv16_fasta ?: "${projectRoot}/refdata/hpv16_tree/lineages_ref_renamed.fasta"
+params.lineage_hpv18_fasta = params.lineage_hpv18_fasta ?: "${projectRoot}/refdata/hpv18_tree/lineages_ref_renamed.fasta"
+params.lineage_ref_hpv16_name = params.lineage_ref_hpv16_name ?: "HPV16REF|lcl|Human"
+params.lineage_ref_hpv18_name = params.lineage_ref_hpv18_name ?: "HPV18REF|lcl|Human"
 // Avoid "Access to undefined parameter" warnings; these are optional filters/inputs.
 if (!params.containsKey('reads_dir'))  params.reads_dir = null
 if (!params.containsKey('read1'))      params.read1 = null
@@ -52,7 +56,11 @@ def requiredParams = [
     'pave_gff3_dir',
     'features_tsv_dir',
     'pave_bed_dir',
-    'scripts_dir'
+    'scripts_dir',
+    'lineage_hpv16_fasta',
+    'lineage_hpv18_fasta',
+    'lineage_ref_hpv16_name',
+    'lineage_ref_hpv18_name'
 ]
 
 requiredParams.each { key ->
@@ -77,6 +85,8 @@ checkPath(params.pave_gff3_dir as String, 'PAVE GFF3 directory', true)
 checkPath(params.features_tsv_dir as String, 'Features TSV directory', true)
 checkPath(params.pave_bed_dir as String, 'BED directory', true)
 checkPath(params.scripts_dir as String, 'Scripts directory', true)
+checkPath(params.lineage_hpv16_fasta as String, 'HPV16 lineages reference FASTA')
+checkPath(params.lineage_hpv18_fasta as String, 'HPV18 lineages reference FASTA')
 
 def indexMarker = new File("${params.index_dir}/pave_hsa.1.bt2")
 def indexReady = indexMarker.exists() ? Channel.value(true) : null
@@ -196,6 +206,54 @@ process AGGREGATE_VARIANT_EFFECTS {
     "${params.scripts_dir}/report_E6_E7_variant_effects.sh" "${params.outdir}" "${params.pave_bed_dir}" "${params.pave_gff3_dir}" "${params.index_dir}/pave_hsa.fas" > "E6_E7_variant_effects.tsv"
     """
 }
+
+process LINEAGE_SNPS {
+    tag "lineage_snps"
+    publishDir "${params.reports_dir}", mode: 'copy'
+
+    input:
+    val(done)
+
+    output:
+    path "lineage_snps.tsv"
+
+    script:
+    """
+    "${params.scripts_dir}/lineage_snps_from_fasta.py" \\
+      --lineages "${params.lineage_hpv16_fasta}" \\
+      --ref "${params.pave_ref_fasta}" \\
+      --ref-name "${params.lineage_ref_hpv16_name}" \\
+      --bed-dir "${params.pave_bed_dir}" \\
+      --header > lineage_snps.tsv
+
+    "${params.scripts_dir}/lineage_snps_from_fasta.py" \\
+      --lineages "${params.lineage_hpv18_fasta}" \\
+      --ref "${params.pave_ref_fasta}" \\
+      --ref-name "${params.lineage_ref_hpv18_name}" \\
+      --bed-dir "${params.pave_bed_dir}" \\
+      >> lineage_snps.tsv
+    """
+}
+
+process COMPARE_LINEAGE_SNPS {
+    tag "compare_lineage_snps"
+    publishDir "${params.reports_dir}", mode: 'copy'
+
+    input:
+    path variants
+    path lineage_snps
+
+    output:
+    path "lineage_snp_comparison.tsv"
+
+    script:
+    """
+    "${params.scripts_dir}/compare_lineage_snps.py" \\
+      --variants "${variants}" \\
+      --lineage-snps "${lineage_snps}" \\
+      --output "lineage_snp_comparison.tsv"
+    """
+}
 process MULTIQC {
     tag "multiqc"
     conda params.conda_env
@@ -215,6 +273,7 @@ process MULTIQC {
     cp "${params.reports_dir}/cov_stats.filtered.tsv" .
     cp "${params.reports_dir}/E6_E7_variants.tsv" .
     cp "${params.reports_dir}/E6_E7_variant_effects.tsv" .
+    cp "${params.reports_dir}/lineage_snp_comparison.tsv" .
 
     python - <<'PY'
 import csv
@@ -346,7 +405,7 @@ def rewrite_with_header(src, dest, id_builder=None, decode_cols=None):
         for row in reader:
             if not row:
                 continue
-            if id_builder in (build_covstats_id, build_variant_effect_id) and is_undetermined(row):
+            if id_builder in (build_covstats_id, build_variant_effect_id, build_variant_id) and is_undetermined(row):
                 continue
             row = decode_row(row, header, decode_cols)
             if id_builder:
@@ -402,6 +461,11 @@ rewrite_with_header(
     'E6_E7_variant_effects.multiqc.tsv',
     id_builder=build_variant_effect_id,
     decode_cols=['gene', 'transcript'],
+)
+rewrite_with_header(
+    'lineage_snp_comparison.tsv',
+    'lineage_snp_comparison.multiqc.tsv',
+    id_builder=build_variant_id,
 )
 PY
 
@@ -470,7 +534,9 @@ workflow {
     def covstats = AGGREGATE_COVSTATS(mappedDone)
     def variants = AGGREGATE_VARIANTS(mappedDone)
     def variant_effects = AGGREGATE_VARIANT_EFFECTS(mappedDone)
-    def reports_done = strains.mix(covstats).mix(variants).mix(variant_effects).collect()
+    def lineage_snps = LINEAGE_SNPS(mappedDone)
+    def lineage_compare = COMPARE_LINEAGE_SNPS(variants, lineage_snps)
+    def reports_done = strains.mix(covstats).mix(variants).mix(variant_effects).mix(lineage_snps).mix(lineage_compare).collect()
     def multiqc_config_file = file(params.multiqc_config)
     MULTIQC(multiqc_config_file, reports_done)
 }
