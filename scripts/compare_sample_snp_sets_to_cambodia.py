@@ -36,6 +36,8 @@ def main():
             if len(row) < 8:
                 continue
             run, sample, gene, chrom, pos, _id, ref, alt = row[:8]
+            if sample.lower().startswith("undetermined"):
+                continue
             if allowed and not chrom.startswith(allowed):
                 continue
             sample_id = f"{run}:{sample}"
