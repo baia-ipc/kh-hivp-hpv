@@ -46,6 +46,7 @@ def main():
                 sample_sets[sample_id].add(key)
 
     lineage_sets = defaultdict(set)
+    lineage_chroms = defaultdict(set)
     for row in read_lineage_snps(args.lineage_snps):
         if len(row) < 6:
             continue
@@ -53,6 +54,7 @@ def main():
         for alt_allele in alt.split(","):
             key = (gene, chrom, pos, ref, alt_allele)
             lineage_sets[lineage].add(key)
+            lineage_chroms[lineage].add(chrom)
 
     def format_snps(snps):
         items = sorted({f"{gene}:{ref}{pos}{alt}" for gene, _chrom, pos, ref, alt in snps})
@@ -77,8 +79,11 @@ def main():
         for sample_id in sorted(sample_sets):
             run, sample = sample_id.split(":", 1)
             sample_set = sample_sets[sample_id]
+            sample_chroms = {key[1] for key in sample_set}
             for lineage in sorted(lineage_sets):
                 lineage_set = lineage_sets[lineage]
+                if sample_chroms.isdisjoint(lineage_chroms[lineage]):
+                    continue
                 shared = sample_set & lineage_set
                 sample_only = sample_set - lineage_set
                 lineage_only = lineage_set - sample_set

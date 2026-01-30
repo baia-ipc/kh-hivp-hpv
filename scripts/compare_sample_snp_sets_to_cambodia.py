@@ -46,6 +46,7 @@ def main():
                 sample_sets[sample_id].add(key)
 
     cambodia_sets = defaultdict(set)
+    cambodia_chroms = defaultdict(set)
     for row in read_query_snps(args.cambodia_snps):
         if len(row) < 6:
             continue
@@ -53,6 +54,7 @@ def main():
         for alt_allele in alt.split(","):
             key = (gene, chrom, pos, ref, alt_allele)
             cambodia_sets[cambodia_id].add(key)
+            cambodia_chroms[cambodia_id].add(chrom)
 
     def format_snps(snps):
         items = sorted({f"{gene}:{ref}{pos}{alt}" for gene, _chrom, pos, ref, alt in snps})
@@ -77,8 +79,11 @@ def main():
         for sample_id in sorted(sample_sets):
             run, sample = sample_id.split(":", 1)
             sample_set = sample_sets[sample_id]
+            sample_chroms = {key[1] for key in sample_set}
             for cambodia_id in sorted(cambodia_sets):
                 cambodia_set = cambodia_sets[cambodia_id]
+                if sample_chroms.isdisjoint(cambodia_chroms[cambodia_id]):
+                    continue
                 shared = sample_set & cambodia_set
                 sample_only = sample_set - cambodia_set
                 cambodia_only = cambodia_set - sample_set
