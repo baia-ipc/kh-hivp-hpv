@@ -188,6 +188,27 @@ process COMPARE_CAMBODIA_SAMPLES {
     """
 }
 
+process COMPARE_SAMPLES_CAMBODIA {
+    tag "samples_vs_cambodia"
+    publishDir "${params.reports_dir}", mode: 'copy'
+    conda params.conda_env
+
+    input:
+    path(cambodia_snps)
+    path(sample_variants)
+
+    output:
+    path('samples_vs_cambodia.tsv')
+
+    script:
+    """
+    "${params.scripts_dir}/compare_samples_to_query_snps.py" \\
+      --variants "${sample_variants}" \\
+      --query-snps "${cambodia_snps}" \\
+      --output samples_vs_cambodia.tsv
+    """
+}
+
 process PREPARE_MULTIQC {
     tag "multiqc_tables"
     publishDir "${params.reports_dir}", mode: 'copy'
@@ -197,11 +218,13 @@ process PREPARE_MULTIQC {
     path(cambodia_snps)
     path(cambodia_lineage_comparison)
     path(cambodia_sample_comparison)
+    path(samples_vs_cambodia)
 
     output:
     tuple path('cambodia_snps.multiqc.tsv'),
           path('cambodia_lineage_comparison.multiqc.tsv'),
-          path('cambodia_sample_comparison.multiqc.tsv')
+          path('cambodia_sample_comparison.multiqc.tsv'),
+          path('samples_vs_cambodia.multiqc.tsv')
 
     script:
     """
@@ -237,11 +260,12 @@ process PREPARE_MULTIQC {
                 writer.writerow([row_id, cambodia_id, gene, chrom, pos, ref, alt] + extra)
 
     def build_id(cambodia_id, gene, pos, ref, alt):
-        return f"{cambodia_id}:{gene}:{pos}:{ref}{alt}"
+        return f"{cambodia_id}:{gene}:{ref}{pos}{alt}"
 
     prepare('cambodia_snps.tsv', 'cambodia_snps.multiqc.tsv', build_id)
     prepare('cambodia_lineage_comparison.tsv', 'cambodia_lineage_comparison.multiqc.tsv', build_id)
     prepare('cambodia_sample_comparison.tsv', 'cambodia_sample_comparison.multiqc.tsv', build_id)
+    prepare('samples_vs_cambodia.tsv', 'samples_vs_cambodia.multiqc.tsv', build_id)
     PY
     """
 }
@@ -254,7 +278,8 @@ process MULTIQC {
     input:
     tuple path(cambodia_snps_table),
           path(cambodia_lineage_table),
-          path(cambodia_sample_table)
+          path(cambodia_sample_table),
+          path(samples_vs_cambodia_table)
     path(multiqc_config)
 
     output:
@@ -285,6 +310,7 @@ workflow {
     def cambodia_snps = CAMBODIA_SNPS(cambodia_fastas)
     def cambodia_lineages = COMPARE_CAMBODIA_LINEAGES(cambodia_snps, lineage_snps)
     def cambodia_samples = COMPARE_CAMBODIA_SAMPLES(cambodia_snps, sample_variants)
-    def multiqc_tables = PREPARE_MULTIQC(cambodia_snps, cambodia_lineages, cambodia_samples)
+    def samples_vs_cambodia = COMPARE_SAMPLES_CAMBODIA(cambodia_snps, sample_variants)
+    def multiqc_tables = PREPARE_MULTIQC(cambodia_snps, cambodia_lineages, cambodia_samples, samples_vs_cambodia)
     MULTIQC(multiqc_tables, multiqc_config)
 }

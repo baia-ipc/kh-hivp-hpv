@@ -39,4 +39,5 @@ Wrappers:
   - `lineage_snps.tsv`
   - `cambodia_lineage_comparison.tsv`
   - `cambodia_sample_comparison.tsv`
+  - `samples_vs_cambodia.tsv`
   - `multiqc_report.html`
