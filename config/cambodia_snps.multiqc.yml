@@ -34,6 +34,7 @@ custom_data:
         <li><code>cambodia_snps.tsv</code></li>
         <li><code>cambodia_lineage_comparison.tsv</code></li>
         <li><code>cambodia_sample_comparison.tsv</code></li>
+        <li><code>samples_vs_cambodia.tsv</code></li>
       </ul>
   cambodia_snps_table:
     file_format: "tsv"
@@ -56,6 +57,13 @@ custom_data:
     plot_type: "table"
     pconfig:
       col1_header: "ID"
+  samples_vs_cambodia_table:
+    file_format: "tsv"
+    section_name: "Samples vs Cambodia"
+    description: "Sample SNPs annotated with Cambodian SNP matches"
+    plot_type: "table"
+    pconfig:
+      col1_header: "ID"
 
 sp:
   cambodia_snps_table:
@@ -64,3 +72,5 @@ sp:
     fn: "cambodia_lineage_comparison.multiqc.tsv"
   cambodia_sample_table:
     fn: "cambodia_sample_comparison.multiqc.tsv"
+  samples_vs_cambodia_table:
+    fn: "samples_vs_cambodia.multiqc.tsv"
