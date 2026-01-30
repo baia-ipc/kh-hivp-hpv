@@ -205,6 +205,7 @@ process COMPARE_SAMPLES_CAMBODIA {
     "${params.scripts_dir}/compare_samples_to_query_snps.py" \\
       --variants "${sample_variants}" \\
       --query-snps "${cambodia_snps}" \\
+      --allow-strains "HPV16REF,HPV18REF" \\
       --output samples_vs_cambodia.tsv
     """
 }
@@ -265,7 +266,31 @@ process PREPARE_MULTIQC {
     prepare('cambodia_snps.tsv', 'cambodia_snps.multiqc.tsv', build_id)
     prepare('cambodia_lineage_comparison.tsv', 'cambodia_lineage_comparison.multiqc.tsv', build_id)
     prepare('cambodia_sample_comparison.tsv', 'cambodia_sample_comparison.multiqc.tsv', build_id)
-    prepare('samples_vs_cambodia.tsv', 'samples_vs_cambodia.multiqc.tsv', build_id)
+    def prepare_samples(input_path, output_path):
+        with open(input_path, newline='') as handle:
+            reader = csv.reader(handle, delimiter='\\t')
+            rows = list(reader)
+        if not rows:
+            with open(output_path, 'w', newline='') as out:
+                writer = csv.writer(out, delimiter='\\t')
+                writer.writerow(['ID', 'run', 'sample', 'gene', 'chrom', 'pos', 'ref', 'alt'])
+            return
+        header = rows[0]
+        start_idx = 1 if header and header[0] == 'run' else 0
+        if start_idx == 0:
+            header = ['run', 'sample', 'gene', 'chrom', 'pos', 'ref', 'alt'] + header[7:]
+        with open(output_path, 'w', newline='') as out:
+            writer = csv.writer(out, delimiter='\\t')
+            writer.writerow(['ID'] + header)
+            for row in rows[start_idx:]:
+                if len(row) < 7:
+                    continue
+                run, sample, gene, chrom, pos, ref, alt = row[:7]
+                extra = row[7:]
+                row_id = f\"{run}:{sample}:{gene}:{ref}{pos}{alt}\"
+                writer.writerow([row_id, run, sample, gene, chrom, pos, ref, alt] + extra)
+
+    prepare_samples('samples_vs_cambodia.tsv', 'samples_vs_cambodia.multiqc.tsv')
     PY
     """
 }
