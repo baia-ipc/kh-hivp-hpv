@@ -210,6 +210,50 @@ process COMPARE_SAMPLES_CAMBODIA {
     """
 }
 
+process COMPARE_SNP_SETS_CAMBODIA {
+    tag "samples_vs_cambodia_sets"
+    publishDir "${params.reports_dir}", mode: 'copy'
+    conda params.conda_env
+
+    input:
+    path(cambodia_snps)
+    path(sample_variants)
+
+    output:
+    path('samples_vs_cambodia_sets.tsv')
+
+    script:
+    """
+    "${params.scripts_dir}/compare_sample_snp_sets_to_cambodia.py" \\
+      --variants "${sample_variants}" \\
+      --cambodia-snps "${cambodia_snps}" \\
+      --allow-strains "HPV16REF,HPV18REF" \\
+      --output samples_vs_cambodia_sets.tsv
+    """
+}
+
+process COMPARE_SNP_SETS_LINEAGES {
+    tag "samples_vs_lineage_sets"
+    publishDir "${params.reports_dir}", mode: 'copy'
+    conda params.conda_env
+
+    input:
+    path(lineage_snps)
+    path(sample_variants)
+
+    output:
+    path('samples_vs_lineage_sets.tsv')
+
+    script:
+    """
+    "${params.scripts_dir}/compare_sample_snp_sets_to_lineages.py" \\
+      --variants "${sample_variants}" \\
+      --lineage-snps "${lineage_snps}" \\
+      --allow-strains "HPV16REF,HPV18REF" \\
+      --output samples_vs_lineage_sets.tsv
+    """
+}
+
 process PREPARE_MULTIQC {
     tag "multiqc_tables"
     publishDir "${params.reports_dir}", mode: 'copy'
@@ -220,12 +264,16 @@ process PREPARE_MULTIQC {
     path(cambodia_lineage_comparison)
     path(cambodia_sample_comparison)
     path(samples_vs_cambodia)
+    path(samples_vs_cambodia_sets)
+    path(samples_vs_lineage_sets)
 
     output:
     tuple path('cambodia_snps.multiqc.tsv'),
           path('cambodia_lineage_comparison.multiqc.tsv'),
           path('cambodia_sample_comparison.multiqc.tsv'),
-          path('samples_vs_cambodia.multiqc.tsv')
+          path('samples_vs_cambodia.multiqc.tsv'),
+          path('samples_vs_cambodia_sets.multiqc.tsv'),
+          path('samples_vs_lineage_sets.multiqc.tsv')
 
     script:
     """
@@ -291,6 +339,33 @@ process PREPARE_MULTIQC {
                 writer.writerow([row_id, run, sample, gene, chrom, pos, ref, alt] + extra)
 
     prepare_samples('samples_vs_cambodia.tsv', 'samples_vs_cambodia.multiqc.tsv')
+
+    def prepare_set_comparison(input_path, output_path, label_field):
+        with open(input_path, newline='') as handle:
+            reader = csv.reader(handle, delimiter='\\t')
+            rows = list(reader)
+        if not rows:
+            with open(output_path, 'w', newline='') as out:
+                writer = csv.writer(out, delimiter='\\t')
+                writer.writerow(['ID', 'run', 'sample', label_field])
+            return
+        header = rows[0]
+        start_idx = 1 if header and header[0] == 'run' else 0
+        if start_idx == 0:
+            header = ['run', 'sample', label_field] + header[3:]
+        with open(output_path, 'w', newline='') as out:
+            writer = csv.writer(out, delimiter='\\t')
+            writer.writerow(['ID'] + header)
+            for row in rows[start_idx:]:
+                if len(row) < 3:
+                    continue
+                run, sample, label = row[:3]
+                extra = row[3:]
+                row_id = f\"{run}:{sample}:{label}\"
+                writer.writerow([row_id, run, sample, label] + extra)
+
+    prepare_set_comparison('samples_vs_cambodia_sets.tsv', 'samples_vs_cambodia_sets.multiqc.tsv', 'cambodia_id')
+    prepare_set_comparison('samples_vs_lineage_sets.tsv', 'samples_vs_lineage_sets.multiqc.tsv', 'lineage')
     PY
     """
 }
@@ -304,7 +379,9 @@ process MULTIQC {
     tuple path(cambodia_snps_table),
           path(cambodia_lineage_table),
           path(cambodia_sample_table),
-          path(samples_vs_cambodia_table)
+          path(samples_vs_cambodia_table),
+          path(samples_vs_cambodia_sets_table),
+          path(samples_vs_lineage_sets_table)
     path(multiqc_config)
 
     output:
@@ -336,6 +413,8 @@ workflow {
     def cambodia_lineages = COMPARE_CAMBODIA_LINEAGES(cambodia_snps, lineage_snps)
     def cambodia_samples = COMPARE_CAMBODIA_SAMPLES(cambodia_snps, sample_variants)
     def samples_vs_cambodia = COMPARE_SAMPLES_CAMBODIA(cambodia_snps, sample_variants)
-    def multiqc_tables = PREPARE_MULTIQC(cambodia_snps, cambodia_lineages, cambodia_samples, samples_vs_cambodia)
+    def samples_vs_cambodia_sets = COMPARE_SNP_SETS_CAMBODIA(cambodia_snps, sample_variants)
+    def samples_vs_lineage_sets = COMPARE_SNP_SETS_LINEAGES(lineage_snps, sample_variants)
+    def multiqc_tables = PREPARE_MULTIQC(cambodia_snps, cambodia_lineages, cambodia_samples, samples_vs_cambodia, samples_vs_cambodia_sets, samples_vs_lineage_sets)
     MULTIQC(multiqc_tables, multiqc_config)
 }
