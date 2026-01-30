@@ -219,6 +219,7 @@ process MULTIQC {
     python - <<'PY'
 import csv
 import os
+import urllib.parse
 
 def normalize_header(header, ncols):
     if len(header) < ncols:
@@ -266,7 +267,20 @@ def build_covstats_id(row, header):
     strain = row[2] if len(row) > 2 else ""
     return f"{run}:{sample}:{strain}"
 
-def rewrite_with_header(src, dest, id_builder=None):
+def decode_row(row, header, columns):
+    if not columns or not header:
+        return row
+    header_map = {name.lower(): idx for idx, name in enumerate(header)}
+    for name in columns:
+        idx = header_map.get(name.lower())
+        if idx is None or idx >= len(row):
+            continue
+        value = row[idx]
+        if value:
+            row[idx] = urllib.parse.unquote(value)
+    return row
+
+def rewrite_with_header(src, dest, id_builder=None, decode_cols=None):
     if not os.path.exists(src):
         return
     with open(src, newline='') as inp, open(dest, 'w', newline='') as out:
@@ -279,6 +293,7 @@ def rewrite_with_header(src, dest, id_builder=None):
         for row in reader:
             if not row:
                 continue
+            row = decode_row(row, header, decode_cols)
             if id_builder:
                 sample = id_builder(row, header)
             else:
@@ -319,7 +334,12 @@ rewrite_no_header(
     ['run', 'sample', 'gene', 'chrom', 'pos', 'id', 'ref', 'alt', 'qual', 'filter', 'info', 'format', 'sample_field'],
     id_builder=build_variant_id,
 )
-rewrite_with_header('E6_E7_variant_effects.tsv', 'E6_E7_variant_effects.multiqc.tsv', id_builder=build_variant_id)
+rewrite_with_header(
+    'E6_E7_variant_effects.tsv',
+    'E6_E7_variant_effects.multiqc.tsv',
+    id_builder=build_variant_id,
+    decode_cols=['gene', 'transcript'],
+)
 PY
 
     multiqc --force \\
