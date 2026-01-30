@@ -259,6 +259,12 @@ def format_aa_change(value, consequence):
             return f"{ref}{pos1}{alt}"
     return value
 
+def is_undetermined(row):
+    if not row or len(row) < 2:
+        return False
+    sample = row[1]
+    return sample.startswith("Undetermined")
+
 def build_variant_id(row, header):
     run = row[0] if len(row) > 0 else ""
     sample = row[1] if len(row) > 1 else ""
@@ -340,6 +346,8 @@ def rewrite_with_header(src, dest, id_builder=None, decode_cols=None):
         for row in reader:
             if not row:
                 continue
+            if id_builder in (build_covstats_id, build_variant_effect_id) and is_undetermined(row):
+                continue
             row = decode_row(row, header, decode_cols)
             if id_builder:
                 sample = id_builder(row, header)
@@ -358,13 +366,21 @@ def rewrite_no_header(src, dest, header, id_builder=None):
             return
         header = normalize_header(header, len(first))
         writer.writerow(['Sample'] + header)
+        if id_builder == build_variant_id and is_undetermined(first):
+            first = None
         if id_builder:
-            sample = id_builder(first, header)
+            if first is not None:
+                sample = id_builder(first, header)
+            else:
+                sample = None
         else:
             sample = f\"{first[0]}:{first[1]}\" if len(first) > 1 else first[0]
-        writer.writerow([sample] + first)
+        if first is not None:
+            writer.writerow([sample] + first)
         for row in reader:
             if not row:
+                continue
+            if id_builder == build_variant_id and is_undetermined(row):
                 continue
             if id_builder:
                 sample = id_builder(row, header)
