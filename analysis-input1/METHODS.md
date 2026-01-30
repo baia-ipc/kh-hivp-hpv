@@ -24,9 +24,10 @@ using SAMtools (Li et al., 2009). For each sample, per-base depth profiles were
 computed and summarized into coverage depth and breadth statistics across the
 full reference and, where applicable, for specific genomic regions. Variant
 calling was performed using bcftools mpileup and call, followed by per-sample
-variant statistics reporting (Li, 2011). Aggregate summaries were compiled
-across samples to report dominant (“top”) strain signals, coverage metrics, and
-variant calls.
+variant statistics reporting (Li, 2011). Variants in the E6/E7 regions were
+additionally annotated to amino‑acid consequences using bcftools csq with the
+PAVE GFF3 annotations. Aggregate summaries were compiled across samples to
+report dominant (“top”) strain signals, coverage metrics, and variant calls.
 
 In parallel, strain inference from the same HPV-bucket reads was performed using
 VirStrain with an index built from a multiple sequence alignment of the PAVE HPV

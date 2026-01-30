@@ -49,6 +49,7 @@ def requiredParams = [
     'outdir',
     'reports_dir',
     'pave_ref_fasta',
+    'pave_gff3_dir',
     'features_tsv_dir',
     'pave_bed_dir',
     'scripts_dir'
@@ -72,6 +73,7 @@ def checkPath(String path, String label, boolean mustBeDir = false) {
 }
 
 checkPath(params.pave_ref_fasta as String, 'PAVE reference fasta')
+checkPath(params.pave_gff3_dir as String, 'PAVE GFF3 directory', true)
 checkPath(params.features_tsv_dir as String, 'Features TSV directory', true)
 checkPath(params.pave_bed_dir as String, 'BED directory', true)
 checkPath(params.scripts_dir as String, 'Scripts directory', true)
@@ -179,6 +181,21 @@ process AGGREGATE_VARIANTS {
     """
 }
 
+process AGGREGATE_VARIANT_EFFECTS {
+    tag "aggregate_variant_effects"
+    publishDir "${params.reports_dir}", mode: 'copy'
+
+    input:
+    val(done)
+
+    output:
+    path "E6_E7_variant_effects.tsv"
+
+    script:
+    """
+    "${params.scripts_dir}/report_E6_E7_variant_effects.sh" "${params.outdir}" "${params.pave_bed_dir}" "${params.pave_gff3_dir}" "${params.index_dir}/pave_hsa.fas" > "E6_E7_variant_effects.tsv"
+    """
+}
 process MULTIQC {
     tag "multiqc"
     conda params.conda_env
@@ -197,6 +214,7 @@ process MULTIQC {
     cp "${params.reports_dir}/cov_stats.tsv" .
     cp "${params.reports_dir}/cov_stats.filtered.tsv" .
     cp "${params.reports_dir}/E6_E7_variants.tsv" .
+    cp "${params.reports_dir}/E6_E7_variant_effects.tsv" .
 
     python - <<'PY'
 import csv
@@ -252,6 +270,7 @@ rewrite_no_header(
     'E6_E7_variants.multiqc.tsv',
     ['run', 'sample', 'gene', 'chrom', 'pos', 'id', 'ref', 'alt', 'qual', 'filter', 'info', 'format', 'sample_field'],
 )
+rewrite_with_header('E6_E7_variant_effects.tsv', 'E6_E7_variant_effects.multiqc.tsv')
 PY
 
     multiqc --force \\
@@ -318,7 +337,8 @@ workflow {
     def strains = AGGREGATE_STRAINS(mappedDone)
     def covstats = AGGREGATE_COVSTATS(mappedDone)
     def variants = AGGREGATE_VARIANTS(mappedDone)
-    def reports_done = strains.mix(covstats).mix(variants).collect()
+    def variant_effects = AGGREGATE_VARIANT_EFFECTS(mappedDone)
+    def reports_done = strains.mix(covstats).mix(variants).mix(variant_effects).collect()
     def multiqc_config_file = file(params.multiqc_config)
     MULTIQC(multiqc_config_file, reports_done)
 }

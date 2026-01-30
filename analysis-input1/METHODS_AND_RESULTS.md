@@ -73,8 +73,10 @@ reference with Bowtie2 (Langmead & Salzberg, 2012). Alignments were processed
 with SAMtools to generate sorted/indexed BAMs and idxstats (Li et al., 2009).
 Coverage depth and breadth were computed from per‑base depth files and
 summarized with covstats. Variants were called with bcftools mpileup/call and
-per‑sample VCF statistics were produced (Li, 2011). Aggregation steps compiled
-top‑strain calls, coverage summaries, and E6/E7 variant tables across samples.
+per‑sample VCF statistics were produced (Li, 2011). E6/E7 variants were further
+annotated to amino‑acid consequences using bcftools csq with the PAVE GFF3
+annotations. Aggregation steps compiled top‑strain calls, coverage summaries,
+and E6/E7 variant tables across samples.
 
 **References**
 - Langmead & Salzberg, 2012. Fast gapped-read alignment with Bowtie 2. *Nature Methods*. DOI: 10.1038/nmeth.1923.
@@ -110,6 +112,7 @@ HPV_250523_run02:KHCA223.
 - `analysis-input1/002.0.bowtie_vs_pave/reports/cov_stats.tsv`
 - `analysis-input1/002.0.bowtie_vs_pave/reports/cov_stats.filtered.tsv`
 - `analysis-input1/002.0.bowtie_vs_pave/reports/E6_E7_variants.tsv`
+- `analysis-input1/002.0.bowtie_vs_pave/reports/E6_E7_variant_effects.tsv`
 
 # Methods and Results — analysis-input1 step 003 (VirStrain)
 
