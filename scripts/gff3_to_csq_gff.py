@@ -56,6 +56,10 @@ def main():
                 key = header.split("|")[0]
                 seqid_map[key] = header
 
+    allowed_prefix = "HPV16REF"
+    seen_ids = set()
+    gene_bounds = {}
+
     with open(args.output, "w", encoding="utf-8") as out:
         out.write("##gff-version 3\n")
         for gff in gff_files:
@@ -74,8 +78,13 @@ def main():
                             if len(parts) >= 2:
                                 seqid = parts[1]
                                 mapped = seqid_map.get(seqid, seqid)
+                                if mapped.split("|")[0] != allowed_prefix:
+                                    continue
                                 parts[1] = mapped
                                 line = " ".join(parts)
+                        else:
+                            if parts[1].split("|")[0] != allowed_prefix:
+                                continue
                         out.write(line + "\n")
                     continue
                 parts = line.split("\t")
@@ -84,13 +93,19 @@ def main():
                 seqid, source, ftype, start, end, score, strand, phase, attrs = parts
                 if seqid_map:
                     seqid = seqid_map.get(seqid, seqid)
+                if seqid.split("|")[0] != allowed_prefix:
+                    continue
                 attrs_dict = parse_attrs(attrs)
 
                 parts[0] = seqid
                 if ftype == "gene":
-                    out.write(emit_line(parts) + "\n")
                     gene_id = attrs_dict.get("ID")
                     if gene_id:
+                        if gene_id in seen_ids:
+                            continue
+                        seen_ids.add(gene_id)
+                        gene_bounds[gene_id] = (int(start), int(end))
+                        out.write(emit_line(parts) + "\n")
                         mrna_attrs = {
                             "ID": f"{gene_id}.mRNA",
                             "Parent": gene_id,
@@ -98,6 +113,10 @@ def main():
                         # keep name if present
                         if "Name" in attrs_dict:
                             mrna_attrs["Name"] = attrs_dict["Name"]
+                        mrna_id = mrna_attrs["ID"]
+                        if mrna_id in seen_ids:
+                            continue
+                        seen_ids.add(mrna_id)
                         mrna = [
                             seqid, source, "mRNA", start, end, score, strand, phase,
                             format_attrs(mrna_attrs),
@@ -105,11 +124,19 @@ def main():
                         out.write(emit_line(mrna) + "\n")
                 elif ftype == "CDS":
                     parent = attrs_dict.get("Parent")
-                    if parent:
-                        attrs_dict["Parent"] = f"{parent}.mRNA"
-                    else:
-                        # skip CDS without parent
+                    if not parent:
                         continue
+                    if parent not in gene_bounds:
+                        continue
+                    gene_start, gene_end = gene_bounds[parent]
+                    if int(start) < gene_start or int(end) > gene_end:
+                        continue
+                    attrs_dict["Parent"] = f"{parent}.mRNA"
+                    cds_id = attrs_dict.get("ID")
+                    if cds_id:
+                        if cds_id in seen_ids:
+                            continue
+                        seen_ids.add(cds_id)
                     parts[8] = format_attrs(attrs_dict)
                     out.write(emit_line(parts) + "\n")
 
