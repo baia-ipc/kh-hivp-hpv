@@ -21,8 +21,6 @@ params.lineage_hpv18_fasta = params.lineage_hpv18_fasta ?: "${projectRoot}/refda
 params.ref_fasta = params.ref_fasta ?: "${projectRoot}/refdata/pave/pave_hsa.fas"
 params.ref_hpv16_name = params.ref_hpv16_name ?: "HPV16REF|lcl|Human"
 params.ref_hpv18_name = params.ref_hpv18_name ?: "HPV18REF|lcl|Human"
-params.pave_gff3_dir = params.pave_gff3_dir ?: "${projectRoot}/refdata/gff3"
-
 // Avoid warnings for optional params
 if (!params.containsKey('outdir')) params.outdir = null
 if (!params.containsKey('reports_dir')) params.reports_dir = null
@@ -31,7 +29,7 @@ if (!params.containsKey('sample_variant_effects')) params.sample_variant_effects
 if (!params.containsKey('pave_bed_dir')) params.pave_bed_dir = null
 
 [ 'outdir', 'reports_dir', 'sample_variants', 'pave_bed_dir', 'scripts_dir',
-  'sample_variant_effects', 'pave_gff3_dir', 'selected_hpv16_fasta', 'selected_hpv16_tsv',
+  'sample_variant_effects', 'selected_hpv16_fasta', 'selected_hpv16_tsv',
   'selected_hpv18_fasta', 'selected_hpv18_tsv', 'lineage_hpv16_fasta', 'lineage_hpv18_fasta',
   'ref_fasta', 'ref_hpv16_name', 'ref_hpv18_name'
 ].each { key ->
@@ -58,7 +56,6 @@ checkPath(params.sample_variants, 'Sample E6/E7 variants')
 checkPath(params.sample_variant_effects, 'Sample E6/E7 variant effects')
 checkPath(params.multiqc_config, 'MultiQC config')
 checkPath(params.pave_bed_dir, 'PAVE BED directory')
-checkPath(params.pave_gff3_dir, 'PAVE GFF3 directory')
 
 process EXTRACT_CAMBODIA {
     tag "extract"
@@ -281,7 +278,7 @@ process HPV16_E6E7_SUMMARY {
       --cambodia-snps "${cambodia_snps}" \\
       --lineage-snps "${lineage_snps}" \\
       --ref-fasta "${params.ref_fasta}" \\
-      --gff3-dir "${params.pave_gff3_dir}" \\
+      --bed-dir "${params.pave_bed_dir}" \\
       --output hpv16_e6e7_variants_summary.tsv
     """
 }

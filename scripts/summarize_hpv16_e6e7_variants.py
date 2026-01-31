@@ -10,8 +10,6 @@ import argparse
 import csv
 import os
 import re
-import subprocess
-import tempfile
 import urllib.parse
 from collections import defaultdict
 
@@ -22,7 +20,7 @@ def parse_args():
     parser.add_argument("--cambodia-snps", required=True, help="Cambodia SNPs TSV")
     parser.add_argument("--lineage-snps", required=True, help="Lineage SNPs TSV")
     parser.add_argument("--ref-fasta", required=True, help="Reference FASTA")
-    parser.add_argument("--gff3-dir", required=True, help="Directory with PaVE GFF/GFF3 files")
+    parser.add_argument("--bed-dir", required=True, help="Directory with pave_hsa.E6/E7.bed")
     parser.add_argument("--output", required=True, help="Output TSV path")
     return parser.parse_args()
 
@@ -120,130 +118,121 @@ def parse_snp_table(path):
     return rows
 
 
-def ensure_fai(ref_fasta):
-    if not os.path.exists(ref_fasta + ".fai"):
-        subprocess.run(["samtools", "faidx", ref_fasta], check=True)
+CODON_TABLE = {
+    "TTT": "F", "TTC": "F", "TTA": "L", "TTG": "L",
+    "CTT": "L", "CTC": "L", "CTA": "L", "CTG": "L",
+    "ATT": "I", "ATC": "I", "ATA": "I", "ATG": "M",
+    "GTT": "V", "GTC": "V", "GTA": "V", "GTG": "V",
+    "TCT": "S", "TCC": "S", "TCA": "S", "TCG": "S",
+    "CCT": "P", "CCC": "P", "CCA": "P", "CCG": "P",
+    "ACT": "T", "ACC": "T", "ACA": "T", "ACG": "T",
+    "GCT": "A", "GCC": "A", "GCA": "A", "GCG": "A",
+    "TAT": "Y", "TAC": "Y", "TAA": "*", "TAG": "*",
+    "CAT": "H", "CAC": "H", "CAA": "Q", "CAG": "Q",
+    "AAT": "N", "AAC": "N", "AAA": "K", "AAG": "K",
+    "GAT": "D", "GAC": "D", "GAA": "E", "GAG": "E",
+    "TGT": "C", "TGC": "C", "TGA": "*", "TGG": "W",
+    "CGT": "R", "CGC": "R", "CGA": "R", "CGG": "R",
+    "AGT": "S", "AGC": "S", "AGA": "R", "AGG": "R",
+    "GGT": "G", "GGC": "G", "GGA": "G", "GGG": "G",
+}
 
 
-def build_csq_gff(gff3_dir, ref_fasta, output_path, script_dir):
-    subprocess.run(
-        [
-            os.path.join(script_dir, "gff3_to_csq_gff.py"),
-            gff3_dir,
-            "-o",
-            output_path,
-            "--fasta",
-            ref_fasta,
-        ],
-        check=True,
-    )
-
-
-def parse_bcsq_format(line):
-    match = re.search(r"Format: ([^\">]+)", line)
-    if not match:
-        return []
-    return [field.strip() for field in match.group(1).split("|") if field.strip()]
-
-
-def parse_info(info_str):
-    info = {}
-    for part in info_str.split(";"):
-        if "=" in part:
-            key, value = part.split("=", 1)
-            info[key] = value
-        else:
-            info[part] = True
-    return info
-
-
-def annotate_snps(snps, ref_fasta, gff_path):
-    if not snps:
-        return []
-    vcf_lines = ["##fileformat=VCFv4.2", "#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO"]
-    for row in snps:
-        vcf_lines.append(
-            f"{row['chrom']}\t{row['pos']}\t.\t{row['ref']}\t{row['alt']}\t.\tPASS\t."
-        )
-    with tempfile.NamedTemporaryFile(mode="w", suffix=".vcf", delete=False) as tmp_vcf:
-        tmp_vcf.write("\n".join(vcf_lines) + "\n")
-        vcf_path = tmp_vcf.name
-    try:
-        cmd = ["bcftools", "csq", "-f", ref_fasta, "-g", gff_path, "-Ov", vcf_path]
-        output = subprocess.check_output(cmd, text=True)
-    finally:
-        os.unlink(vcf_path)
-
-    bcsq_fields = []
-    annotated = {}
-    for line in output.splitlines():
-        if line.startswith("##INFO=<ID=BCSQ"):
-            bcsq_fields = parse_bcsq_format(line)
-            continue
-        if line.startswith("#"):
-            continue
-        fields = line.split("\t")
-        if len(fields) < 8:
-            continue
-        chrom, pos, _vid, ref, alt, _qual, _filt, info_str = fields[:8]
-        info = parse_info(info_str)
-        if "BCSQ" not in info:
-            continue
-        pos_int = int(pos)
-        key = (chrom, pos_int, ref, alt)
-        bcsq_entries = info["BCSQ"].split(",")
-        entries = []
-        for entry in bcsq_entries:
-            parts = entry.split("|")
-            if bcsq_fields:
-                if len(parts) < len(bcsq_fields):
-                    parts += [""] * (len(bcsq_fields) - len(parts))
-                data = dict(zip(bcsq_fields, parts))
+def read_fasta(path, prefix=None):
+    name = None
+    seq = []
+    with open(path) as handle:
+        for line in handle:
+            line = line.strip()
+            if not line:
+                continue
+            if line.startswith(">"):
+                if name is not None:
+                    yield name, "".join(seq)
+                name = line[1:].split()[0]
+                seq = []
             else:
-                data = {"Consequence": entry}
-            entries.append(data)
-        annotated[key] = entries
-    return annotated
+                seq.append(line)
+        if name is not None:
+            yield name, "".join(seq)
 
 
-def select_bcsq_entry(annotated, variant):
-    key = (variant["chrom"], variant["pos"], variant["ref"], variant["alt"])
-    entries = annotated.get(key)
-    if not entries:
-        return None
-    for data in entries:
-        if "gene" in data:
-            gene_val = decode_field(data.get("gene", ""))
-            if gene_val == variant["gene"]:
-                return data
-    for data in entries:
-        if "gene" in data:
-            gene_val = decode_field(data.get("gene", ""))
-            gene_val_norm = gene_val.replace("*", "")
-            if gene_val_norm == variant["gene"]:
-                return data
-    return entries[0]
+def load_ref_sequence(ref_fasta, prefix="HPV16REF"):
+    for name, seq in read_fasta(ref_fasta):
+        if name.startswith(prefix):
+            return name, seq
+    raise SystemExit(f"Reference sequence not found for prefix {prefix} in {ref_fasta}")
 
 
-def annotate_snps_by_id(snps_by_id, ref_fasta, gff_path):
+def load_gene_bounds(bed_dir, ref_name):
+    bounds = {}
+    for gene in ("E6", "E7"):
+        bed_path = os.path.join(bed_dir, f"pave_hsa.{gene}.bed")
+        if not os.path.exists(bed_path):
+            continue
+        with open(bed_path) as handle:
+            for line in handle:
+                line = line.strip()
+                if not line or line.startswith("#"):
+                    continue
+                chrom, start, end, name = line.split("\t")[:4]
+                if chrom != ref_name:
+                    continue
+                bounds[gene] = (int(start), int(end))
+                break
+    return bounds
+
+
+def translate_codon(codon):
+    return CODON_TABLE.get(codon.upper(), "X")
+
+
+def annotate_variant(variant, ref_seq, gene_bounds):
+    gene = variant["gene"]
+    if gene not in gene_bounds:
+        return {"consequence": "", "aa_change": ""}
+    start, end = gene_bounds[gene]
+    pos0 = variant["pos"] - 1
+    if pos0 < start or pos0 >= end:
+        return {"consequence": "", "aa_change": ""}
+    offset = pos0 - start
+    codon_index = offset // 3
+    codon_pos = offset % 3
+    codon_start = start + codon_index * 3
+    codon = ref_seq[codon_start:codon_start + 3].upper()
+    if len(codon) != 3 or any(base not in "ACGT" for base in codon):
+        return {"consequence": "", "aa_change": ""}
+    alt = variant["alt"].upper()
+    if alt not in "ACGT":
+        return {"consequence": "", "aa_change": ""}
+    alt_codon = list(codon)
+    alt_codon[codon_pos] = alt
+    alt_codon = "".join(alt_codon)
+    aa_ref = translate_codon(codon)
+    aa_alt = translate_codon(alt_codon)
+    aa_pos = codon_index + 1
+    if aa_ref == aa_alt:
+        consequence = "synonymous"
+        aa_change = ""
+    else:
+        consequence = "missense"
+        aa_change = f"{aa_ref}{aa_pos}{aa_alt}"
+    return {"consequence": consequence, "aa_change": aa_change}
+
+
+def annotate_snps_by_id(snps_by_id, ref_seq, gene_bounds):
     annotated_by_id = {}
     for entity_id, snps in snps_by_id.items():
-        annotated = annotate_snps(snps, ref_fasta, gff_path)
         enriched = []
         for variant in snps:
-            data = select_bcsq_entry(annotated, variant)
-            consequence = ""
-            aa_change = ""
-            if data:
-                consequence = data.get("Consequence", "") or data.get("consequence", "")
-                aa_change = normalize_aa_change(data.get("amino_acid_change", ""))
+            info = annotate_variant(variant, ref_seq, gene_bounds)
             enriched.append(
                 {
                     "pos": variant["pos"],
                     "ref": variant["ref"],
                     "alt": variant["alt"],
-                    "consequence": consequence,
-                    "aa_change": aa_change,
+                    "consequence": info.get("consequence", ""),
+                    "aa_change": info.get("aa_change", ""),
                 }
             )
         annotated_by_id[entity_id] = enriched
@@ -297,46 +286,41 @@ def labels_for_entity(variants):
 
 def main():
     args = parse_args()
-    script_dir = os.path.dirname(os.path.abspath(__file__))
+    ref_name, ref_seq = load_ref_sequence(args.ref_fasta)
+    gene_bounds = load_gene_bounds(args.bed_dir, ref_name)
 
-    ensure_fai(args.ref_fasta)
+    sample_variants = load_sample_effects(args.sample_effects)
 
-    with tempfile.TemporaryDirectory(prefix="hpv16_summary_") as tmpdir:
-        gff_path = os.path.join(tmpdir, "csq.gff3")
-        build_csq_gff(args.gff3_dir, args.ref_fasta, gff_path, script_dir)
+    cambodia_rows = parse_snp_table(args.cambodia_snps)
+    lineage_rows = parse_snp_table(args.lineage_snps)
 
-        sample_variants = load_sample_effects(args.sample_effects)
+    cambodia_by_id = defaultdict(list)
+    for row in cambodia_rows:
+        if row["id"]:
+            cambodia_by_id[row["id"]].append(row)
+    lineage_by_id = defaultdict(list)
+    for row in lineage_rows:
+        if row["id"]:
+            lineage_by_id[row["id"]].append(row)
 
-        cambodia_rows = parse_snp_table(args.cambodia_snps)
-        lineage_rows = parse_snp_table(args.lineage_snps)
+    cambodia_effects = annotate_snps_by_id(cambodia_by_id, ref_seq, gene_bounds)
+    lineage_effects = annotate_snps_by_id(lineage_by_id, ref_seq, gene_bounds)
 
-        cambodia_by_id = defaultdict(list)
-        for row in cambodia_rows:
-            if row["id"]:
-                cambodia_by_id[row["id"]].append(row)
-        lineage_by_id = defaultdict(list)
-        for row in lineage_rows:
-            if row["id"]:
-                lineage_by_id[row["id"]].append(row)
+    with open(args.output, "w", newline="") as out:
+        writer = csv.writer(out, delimiter="\t")
+        writer.writerow(["ID", "variants"])
 
-        cambodia_effects = annotate_snps_by_id(cambodia_by_id, args.ref_fasta, gff_path)
-        lineage_effects = annotate_snps_by_id(lineage_by_id, args.ref_fasta, gff_path)
+        for sample_id in sorted(sample_variants):
+            labels = labels_for_entity(sample_variants[sample_id])
+            writer.writerow([sample_id, ", ".join(labels) if labels else "none"])
 
-        with open(args.output, "w", newline="") as out:
-            writer = csv.writer(out, delimiter="\t")
-            writer.writerow(["ID", "variants"])
+        for accession in sorted(cambodia_effects):
+            labels = labels_for_entity(cambodia_effects[accession])
+            writer.writerow([accession, ", ".join(labels) if labels else "none"])
 
-            for sample_id in sorted(sample_variants):
-                labels = labels_for_entity(sample_variants[sample_id])
-                writer.writerow([sample_id, ", ".join(labels) if labels else "none"])
-
-            for accession in sorted(cambodia_effects):
-                labels = labels_for_entity(cambodia_effects[accession])
-                writer.writerow([accession, ", ".join(labels) if labels else "none"])
-
-            for lineage in sorted(lineage_effects):
-                labels = labels_for_entity(lineage_effects[lineage])
-                writer.writerow([lineage, ", ".join(labels) if labels else "none"])
+        for lineage in sorted(lineage_effects):
+            labels = labels_for_entity(lineage_effects[lineage])
+            writer.writerow([lineage, ", ".join(labels) if labels else "none"])
 
 
 if __name__ == "__main__":
