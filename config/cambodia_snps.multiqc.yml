@@ -37,6 +37,7 @@ custom_data:
         <li><code>samples_vs_cambodia.tsv</code></li>
         <li><code>samples_vs_cambodia_sets.tsv</code></li>
         <li><code>samples_vs_lineage_sets.tsv</code></li>
+        <li><code>hpv16_e6e7_variants_summary.tsv</code></li>
       </ul>
   cambodia_snps_table:
     file_format: "tsv"
@@ -80,6 +81,13 @@ custom_data:
     plot_type: "table"
     pconfig:
       col1_header: "ID"
+  hpv16_e6e7_summary_table:
+    file_format: "tsv"
+    section_name: "HPV16 E6/E7 variant summary"
+    description: "Variant summaries for samples, Cambodian accessions, and lineages"
+    plot_type: "table"
+    pconfig:
+      col1_header: "ID"
 
 sp:
   cambodia_snps_table:
@@ -94,3 +102,5 @@ sp:
     fn: "samples_vs_cambodia_sets.multiqc.tsv"
   samples_vs_lineage_sets_table:
     fn: "samples_vs_lineage_sets.multiqc.tsv"
+  hpv16_e6e7_summary_table:
+    fn: "hpv16_e6e7_variants_summary.multiqc.tsv"

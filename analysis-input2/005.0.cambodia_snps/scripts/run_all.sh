@@ -7,6 +7,7 @@ PRJROOT=$SCRIPTSDIR/../../..
 PIPELINE_NF=$PRJROOT/pipelines/cambodia_snps.nf
 PIPELINE_CONFIG=$PRJROOT/config/cambodia_snps.config
 SAMPLE_VARIANTS=$PRJROOT/analysis-input2/002.0.mapping_vs_pave/reports/E6_E7_variants.tsv
+SAMPLE_EFFECTS=$PRJROOT/analysis-input2/002.0.mapping_vs_pave/reports/E6_E7_variant_effects.tsv
 
 if ! command -v nextflow >/dev/null 2>&1; then
   echo "Error: nextflow was not found in PATH" > /dev/stderr
@@ -28,6 +29,7 @@ fi
 nextflow run "$PIPELINE_NF" \
   -c "$PIPELINE_CONFIG" \
   --sample_variants "$SAMPLE_VARIANTS" \
+  --sample_variant_effects "$SAMPLE_EFFECTS" \
   --outdir "$STEPDIR/output" \
   --reports_dir "$STEPDIR/reports" \
   "${args[@]}"
