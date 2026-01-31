@@ -21,16 +21,19 @@ params.lineage_hpv18_fasta = params.lineage_hpv18_fasta ?: "${projectRoot}/refda
 params.ref_fasta = params.ref_fasta ?: "${projectRoot}/refdata/pave/pave_hsa.fas"
 params.ref_hpv16_name = params.ref_hpv16_name ?: "HPV16REF|lcl|Human"
 params.ref_hpv18_name = params.ref_hpv18_name ?: "HPV18REF|lcl|Human"
+params.pave_gff3_dir = params.pave_gff3_dir ?: "${projectRoot}/refdata/gff3"
 
 // Avoid warnings for optional params
 if (!params.containsKey('outdir')) params.outdir = null
 if (!params.containsKey('reports_dir')) params.reports_dir = null
 if (!params.containsKey('sample_variants')) params.sample_variants = null
+if (!params.containsKey('sample_variant_effects')) params.sample_variant_effects = null
 if (!params.containsKey('pave_bed_dir')) params.pave_bed_dir = null
 
 [ 'outdir', 'reports_dir', 'sample_variants', 'pave_bed_dir', 'scripts_dir',
-  'selected_hpv16_fasta', 'selected_hpv16_tsv', 'selected_hpv18_fasta', 'selected_hpv18_tsv',
-  'lineage_hpv16_fasta', 'lineage_hpv18_fasta', 'ref_fasta', 'ref_hpv16_name', 'ref_hpv18_name'
+  'sample_variant_effects', 'pave_gff3_dir', 'selected_hpv16_fasta', 'selected_hpv16_tsv',
+  'selected_hpv18_fasta', 'selected_hpv18_tsv', 'lineage_hpv16_fasta', 'lineage_hpv18_fasta',
+  'ref_fasta', 'ref_hpv16_name', 'ref_hpv18_name'
 ].each { key ->
     if (!params[key]) {
         error "params.${key} is required"
@@ -52,8 +55,10 @@ checkPath(params.lineage_hpv16_fasta, 'HPV16 lineage fasta')
 checkPath(params.lineage_hpv18_fasta, 'HPV18 lineage fasta')
 checkPath(params.ref_fasta, 'PAVE reference fasta')
 checkPath(params.sample_variants, 'Sample E6/E7 variants')
+checkPath(params.sample_variant_effects, 'Sample E6/E7 variant effects')
 checkPath(params.multiqc_config, 'MultiQC config')
 checkPath(params.pave_bed_dir, 'PAVE BED directory')
+checkPath(params.pave_gff3_dir, 'PAVE GFF3 directory')
 
 process EXTRACT_CAMBODIA {
     tag "extract"
@@ -256,6 +261,31 @@ process COMPARE_SNP_SETS_LINEAGES {
     """
 }
 
+process HPV16_E6E7_SUMMARY {
+    tag "hpv16_e6e7_summary"
+    publishDir "${params.reports_dir}", mode: 'copy'
+    conda params.conda_env
+
+    input:
+    path(sample_variant_effects)
+    path(cambodia_snps)
+    path(lineage_snps)
+
+    output:
+    path('hpv16_e6e7_variants_summary.tsv')
+
+    script:
+    """
+    "${params.scripts_dir}/summarize_hpv16_e6e7_variants.py" \\
+      --sample-effects "${sample_variant_effects}" \\
+      --cambodia-snps "${cambodia_snps}" \\
+      --lineage-snps "${lineage_snps}" \\
+      --ref-fasta "${params.ref_fasta}" \\
+      --gff3-dir "${params.pave_gff3_dir}" \\
+      --output hpv16_e6e7_variants_summary.tsv
+    """
+}
+
 process PREPARE_MULTIQC {
     tag "multiqc_tables"
     publishDir "${params.reports_dir}", mode: 'copy'
@@ -268,6 +298,7 @@ process PREPARE_MULTIQC {
     path(samples_vs_cambodia)
     path(samples_vs_cambodia_sets)
     path(samples_vs_lineage_sets)
+    path(hpv16_e6e7_summary)
 
     output:
     tuple path('cambodia_snps.multiqc.tsv'),
@@ -275,7 +306,8 @@ process PREPARE_MULTIQC {
           path('cambodia_sample_comparison.multiqc.tsv'),
           path('samples_vs_cambodia.multiqc.tsv'),
           path('samples_vs_cambodia_sets.multiqc.tsv'),
-          path('samples_vs_lineage_sets.multiqc.tsv')
+          path('samples_vs_lineage_sets.multiqc.tsv'),
+          path('hpv16_e6e7_variants_summary.multiqc.tsv')
 
     script:
     """
@@ -368,6 +400,9 @@ process PREPARE_MULTIQC {
 
     prepare_set_comparison('samples_vs_cambodia_sets.tsv', 'samples_vs_cambodia_sets.multiqc.tsv', 'cambodia_id')
     prepare_set_comparison('samples_vs_lineage_sets.tsv', 'samples_vs_lineage_sets.multiqc.tsv', 'lineage')
+
+    import shutil
+    shutil.copyfile('hpv16_e6e7_variants_summary.tsv', 'hpv16_e6e7_variants_summary.multiqc.tsv')
     PY
     """
 }
@@ -383,7 +418,8 @@ process MULTIQC {
           path(cambodia_sample_table),
           path(samples_vs_cambodia_table),
           path(samples_vs_cambodia_sets_table),
-          path(samples_vs_lineage_sets_table)
+          path(samples_vs_lineage_sets_table),
+          path(hpv16_e6e7_summary_table)
     path(multiqc_config)
 
     output:
@@ -407,6 +443,7 @@ workflow {
     def lineage_hpv16 = file(params.lineage_hpv16_fasta)
     def lineage_hpv18 = file(params.lineage_hpv18_fasta)
     def sample_variants = file(params.sample_variants)
+    def sample_variant_effects = file(params.sample_variant_effects)
     def multiqc_config = file(params.multiqc_config)
 
     def cambodia_fastas = EXTRACT_CAMBODIA(hpv16_fasta, hpv16_tsv, hpv18_fasta, hpv18_tsv)
@@ -419,6 +456,7 @@ workflow {
     def compare_lineage_sets = file("${params.scripts_dir}/compare_sample_snp_sets_to_lineages.py")
     def samples_vs_cambodia_sets = COMPARE_SNP_SETS_CAMBODIA(cambodia_snps, sample_variants, compare_cambodia_sets)
     def samples_vs_lineage_sets = COMPARE_SNP_SETS_LINEAGES(lineage_snps, sample_variants, compare_lineage_sets)
-    def multiqc_tables = PREPARE_MULTIQC(cambodia_snps, cambodia_lineages, cambodia_samples, samples_vs_cambodia, samples_vs_cambodia_sets, samples_vs_lineage_sets)
+    def hpv16_summary = HPV16_E6E7_SUMMARY(sample_variant_effects, cambodia_snps, lineage_snps)
+    def multiqc_tables = PREPARE_MULTIQC(cambodia_snps, cambodia_lineages, cambodia_samples, samples_vs_cambodia, samples_vs_cambodia_sets, samples_vs_lineage_sets, hpv16_summary)
     MULTIQC(multiqc_tables, multiqc_config)
 }
