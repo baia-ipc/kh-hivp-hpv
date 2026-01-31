@@ -21,15 +21,17 @@ params.lineage_hpv18_fasta = params.lineage_hpv18_fasta ?: "${projectRoot}/refda
 params.ref_fasta = params.ref_fasta ?: "${projectRoot}/refdata/pave/pave_hsa.fas"
 params.ref_hpv16_name = params.ref_hpv16_name ?: "HPV16REF|lcl|Human"
 params.ref_hpv18_name = params.ref_hpv18_name ?: "HPV18REF|lcl|Human"
+params.samples_tsv = params.samples_tsv ?: "${projectRoot}/metadata/samples-input2.tsv"
 // Avoid warnings for optional params
 if (!params.containsKey('outdir')) params.outdir = null
 if (!params.containsKey('reports_dir')) params.reports_dir = null
 if (!params.containsKey('sample_variants')) params.sample_variants = null
 if (!params.containsKey('sample_variant_effects')) params.sample_variant_effects = null
 if (!params.containsKey('pave_bed_dir')) params.pave_bed_dir = null
+if (!params.containsKey('samples_tsv')) params.samples_tsv = null
 
 [ 'outdir', 'reports_dir', 'sample_variants', 'pave_bed_dir', 'scripts_dir',
-  'sample_variant_effects', 'selected_hpv16_fasta', 'selected_hpv16_tsv',
+  'sample_variant_effects', 'samples_tsv', 'selected_hpv16_fasta', 'selected_hpv16_tsv',
   'selected_hpv18_fasta', 'selected_hpv18_tsv', 'lineage_hpv16_fasta', 'lineage_hpv18_fasta',
   'ref_fasta', 'ref_hpv16_name', 'ref_hpv18_name'
 ].each { key ->
@@ -54,6 +56,7 @@ checkPath(params.lineage_hpv18_fasta, 'HPV18 lineage fasta')
 checkPath(params.ref_fasta, 'PAVE reference fasta')
 checkPath(params.sample_variants, 'Sample E6/E7 variants')
 checkPath(params.sample_variant_effects, 'Sample E6/E7 variant effects')
+checkPath(params.samples_tsv, 'Samples metadata TSV')
 checkPath(params.multiqc_config, 'MultiQC config')
 checkPath(params.pave_bed_dir, 'PAVE BED directory')
 
@@ -265,8 +268,11 @@ process HPV16_E6E7_SUMMARY {
 
     input:
     path(sample_variant_effects)
+    path(sample_list)
     path(cambodia_snps)
     path(lineage_snps)
+    path(cambodia_fasta)
+    path(lineage_fasta)
 
     output:
     path('hpv16_e6e7_variants_summary.tsv')
@@ -275,8 +281,11 @@ process HPV16_E6E7_SUMMARY {
     """
     "${params.scripts_dir}/summarize_hpv16_e6e7_variants.py" \\
       --sample-effects "${sample_variant_effects}" \\
+      --sample-list "${sample_list}" \\
       --cambodia-snps "${cambodia_snps}" \\
       --lineage-snps "${lineage_snps}" \\
+      --cambodia-fasta "${cambodia_fasta}" \\
+      --lineage-fasta "${lineage_fasta}" \\
       --ref-fasta "${params.ref_fasta}" \\
       --bed-dir "${params.pave_bed_dir}" \\
       --output hpv16_e6e7_variants_summary.tsv
@@ -441,6 +450,7 @@ workflow {
     def lineage_hpv18 = file(params.lineage_hpv18_fasta)
     def sample_variants = file(params.sample_variants)
     def sample_variant_effects = file(params.sample_variant_effects)
+    def sample_list = file(params.samples_tsv)
     def multiqc_config = file(params.multiqc_config)
 
     def cambodia_fastas = EXTRACT_CAMBODIA(hpv16_fasta, hpv16_tsv, hpv18_fasta, hpv18_tsv)
@@ -453,7 +463,8 @@ workflow {
     def compare_lineage_sets = file("${params.scripts_dir}/compare_sample_snp_sets_to_lineages.py")
     def samples_vs_cambodia_sets = COMPARE_SNP_SETS_CAMBODIA(cambodia_snps, sample_variants, compare_cambodia_sets)
     def samples_vs_lineage_sets = COMPARE_SNP_SETS_LINEAGES(lineage_snps, sample_variants, compare_lineage_sets)
-    def hpv16_summary = HPV16_E6E7_SUMMARY(sample_variant_effects, cambodia_snps, lineage_snps)
+    def cambodia_hpv16 = cambodia_fastas.map { it[0] }
+    def hpv16_summary = HPV16_E6E7_SUMMARY(sample_variant_effects, sample_list, cambodia_snps, lineage_snps, cambodia_hpv16, lineage_hpv16)
     def multiqc_tables = PREPARE_MULTIQC(cambodia_snps, cambodia_lineages, cambodia_samples, samples_vs_cambodia, samples_vs_cambodia_sets, samples_vs_lineage_sets, hpv16_summary)
     MULTIQC(multiqc_tables, multiqc_config)
 }

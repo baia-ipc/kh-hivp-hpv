@@ -19,6 +19,9 @@ def parse_args():
     parser.add_argument("--sample-effects", required=True, help="E6/E7 variant effects TSV")
     parser.add_argument("--cambodia-snps", required=True, help="Cambodia SNPs TSV")
     parser.add_argument("--lineage-snps", required=True, help="Lineage SNPs TSV")
+    parser.add_argument("--sample-list", required=True, help="Samples metadata TSV")
+    parser.add_argument("--cambodia-fasta", required=True, help="Cambodian HPV16 FASTA")
+    parser.add_argument("--lineage-fasta", required=True, help="HPV16 lineage FASTA")
     parser.add_argument("--ref-fasta", required=True, help="Reference FASTA")
     parser.add_argument("--bed-dir", required=True, help="Directory with pave_hsa.E6/E7.bed")
     parser.add_argument("--output", required=True, help="Output TSV path")
@@ -88,6 +91,36 @@ def load_sample_effects(path):
             existing = variants[sample].get(key)
             variants[sample][key] = choose_variant(existing, candidate)
     return {sample: list(vals.values()) for sample, vals in variants.items()}
+
+def load_sample_list(path):
+    samples = []
+    seen = set()
+    with open(path) as handle:
+        for line in handle:
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
+            parts = line.split("\t")
+            if len(parts) < 3:
+                continue
+            sample_id = parts[2].strip()
+            if not sample_id:
+                continue
+            if sample_id in seen:
+                continue
+            seen.add(sample_id)
+            samples.append(sample_id)
+    return samples
+
+def load_fasta_ids(path):
+    ids = []
+    seen = set()
+    for name, _seq in read_fasta(path):
+        if name in seen:
+            continue
+        seen.add(name)
+        ids.append(name)
+    return ids
 
 
 def parse_snp_table(path):
@@ -228,6 +261,7 @@ def annotate_snps_by_id(snps_by_id, ref_seq, gene_bounds):
             info = annotate_variant(variant, ref_seq, gene_bounds)
             enriched.append(
                 {
+                    "gene": variant["gene"],
                     "pos": variant["pos"],
                     "ref": variant["ref"],
                     "alt": variant["alt"],
@@ -283,6 +317,22 @@ def labels_for_entity(variants):
         labels.append(label)
     return labels
 
+def labels_by_gene(variants):
+    by_gene = {"E6": [], "E7": []}
+    for variant in variants:
+        gene = variant.get("gene")
+        if gene not in by_gene:
+            continue
+        by_gene[gene].append(variant)
+    labels = {}
+    for gene, items in by_gene.items():
+        if not items:
+            labels[gene] = "-"
+            continue
+        gene_labels = labels_for_entity(items)
+        labels[gene] = ", ".join(gene_labels) if gene_labels else "-"
+    return labels
+
 
 def main():
     args = parse_args()
@@ -290,6 +340,9 @@ def main():
     gene_bounds = load_gene_bounds(args.bed_dir, ref_name)
 
     sample_variants = load_sample_effects(args.sample_effects)
+    sample_ids = load_sample_list(args.sample_list)
+    cambodia_ids = load_fasta_ids(args.cambodia_fasta)
+    lineage_ids = load_fasta_ids(args.lineage_fasta)
 
     cambodia_rows = parse_snp_table(args.cambodia_snps)
     lineage_rows = parse_snp_table(args.lineage_snps)
@@ -308,19 +361,22 @@ def main():
 
     with open(args.output, "w", newline="") as out:
         writer = csv.writer(out, delimiter="\t")
-        writer.writerow(["ID", "variants"])
+        writer.writerow(["ID", "E6_variants", "E7_variants"])
 
-        for sample_id in sorted(sample_variants):
-            labels = labels_for_entity(sample_variants[sample_id])
-            writer.writerow([sample_id, ", ".join(labels) if labels else "none"])
+        for sample_id in sample_ids:
+            variants = sample_variants.get(sample_id, [])
+            labels = labels_by_gene(variants)
+            writer.writerow([sample_id, labels["E6"], labels["E7"]])
 
-        for accession in sorted(cambodia_effects):
-            labels = labels_for_entity(cambodia_effects[accession])
-            writer.writerow([accession, ", ".join(labels) if labels else "none"])
+        for accession in cambodia_ids:
+            variants = cambodia_effects.get(accession, [])
+            labels = labels_by_gene(variants)
+            writer.writerow([accession, labels["E6"], labels["E7"]])
 
-        for lineage in sorted(lineage_effects):
-            labels = labels_for_entity(lineage_effects[lineage])
-            writer.writerow([lineage, ", ".join(labels) if labels else "none"])
+        for lineage in lineage_ids:
+            variants = lineage_effects.get(lineage, [])
+            labels = labels_by_gene(variants)
+            writer.writerow([lineage, labels["E6"], labels["E7"]])
 
 
 if __name__ == "__main__":
