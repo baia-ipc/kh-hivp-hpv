@@ -70,7 +70,7 @@ to your local reference data paths and to set resource limits:
 - Gene‑mapping step configs remain under `config/` (`config/pave_e6.config`, `config/pave_e7.config`).
 - Tree configs remain under `config/` (`config/hpv16_tree.config`, `config/hpv18_tree.config`).
 
-Technical Nextflow settings (executor/conda wiring) live under `pipelines/config/`.
+Technical Nextflow settings (executor/conda wiring and derived refdata paths) live under `pipelines/config/`.
 Conda environments are defined under `pipelines/conda_env/`.
 MultiQC configs are under `pipelines/multiqc/`.
 
