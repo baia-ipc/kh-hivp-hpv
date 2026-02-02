@@ -32,13 +32,13 @@ Format:
   - Context: step 002 relied on per-step scripts with hardcoded paths.
   - Decision: centralize scripts under `scripts/` and run step 002 via `pipelines/bowtie_vs_pave.nf`.
   - Rationale: reduce duplication and make configuration consistent across analyses.
-  - Consequences: use `config/bowtie_vs_pave.config` and `metadata/pave_bucket_tid.txt` for inputs.
+  - Consequences: use `config/bowtie_vs_pave.config` and `config/pave_bucket_tid.txt` for inputs.
 
 - 2026-01-24: Migrate VirStrain reports to Nextflow
   - Context: step 003 used step-local scripts and hardcoded reference paths.
   - Decision: centralize scripts under `scripts/` and run step 003 via `pipelines/virstrain.nf`.
   - Rationale: align with the shared pipeline layout and remove hardcoded paths.
-  - Consequences: use `config/virstrain.config` and `metadata/pave_bucket_tid.txt` for inputs.
+  - Consequences: use `config/virstrain.config` and `config/pave_bucket_tid.txt` for inputs.
 
 - 2026-01-24: Migrate E6 mapping to Nextflow
   - Context: step 004 relied on step-local scripts and per-step index creation.

@@ -37,7 +37,7 @@ Rules:
 - Where:
   - analysis-input1: `analysis-input1/002.0.bowtie_vs_pave`
   - analysis-input2: `analysis-input2/002.0.mapping_vs_pave`
-- Inputs: bucketed FASTQs from the corresponding step 001 output; bucket selection in `metadata/pave_bucket_tid.txt`.
+- Inputs: bucketed FASTQs from the corresponding step 001 output; bucket selection in `config/pave_bucket_tid.txt`.
 - Reference assets: PAVE FASTA/GFF3/BED under `refdata/raw/pave/`, plus derived feature tables under `refdata/derived/pave/features_tsv`.
 - Outputs: per-step `output/` and `reports/` under the locations above.
 
@@ -46,7 +46,7 @@ Rules:
 - Scope: VirStrain-based strain reports (analysis-input1 only).
 - Entry points: `pipelines/virstrain.nf` (config: `config/virstrain.config`).
 - Where: `analysis-input1/003.0.virstrain`.
-- Inputs: bucketed FASTQs from `analysis-input1/001.0.centrifuge/output`; bucket selection in `metadata/pave_bucket_tid.txt`.
+- Inputs: bucketed FASTQs from `analysis-input1/001.0.centrifuge/output`; bucket selection in `config/pave_bucket_tid.txt`.
 - Outputs: `analysis-input1/003.0.virstrain/output`, `analysis-input1/003.0.virstrain/reports`.
 
 ## Skill: E6/E7 sub-analyses
@@ -56,7 +56,7 @@ Rules:
 - Where:
   - E6: `analysis-input1/004.0.bowtie_vs_pave.E6`
   - E7: `analysis-input1/005.0.bowtie_vs_pave.E7`
-- Inputs: bucketed FASTQs from `analysis-input1/001.0.centrifuge/output`; bucket selection in `metadata/pave_bucket_tid.txt`.
+- Inputs: bucketed FASTQs from `analysis-input1/001.0.centrifuge/output`; bucket selection in `config/pave_bucket_tid.txt`.
 - Outputs: per-step `output/` and `reports/` under the locations above.
 
 ## Skill: phylogenetic trees (HPV16/HPV18)

@@ -12,7 +12,7 @@ lineage‑defining SNPs from HPV16/HPV18 lineage references.
 
 - Pipeline: `pipelines/bowtie_vs_pave.nf`
 - Config: `config/bowtie_vs_pave.config`
-- Bucket selection: `metadata/pave_bucket_tid.txt`
+- Bucket selection: `config/pave_bucket_tid.txt`
 
 Wrappers:
 
