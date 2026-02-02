@@ -13,7 +13,7 @@ This step is implemented as a Nextflow pipeline:
 - User config: `config/virstrain.config`
 - Step path config: `bin/config/analysis-input1_003.virstrain.config` (internal defaults)
 - Technical config: `pipelines/config/common.technical.config` + `pipelines/config/virstrain.technical.config`
-- Bucket selection: `config/pave_bucket_tid.txt`
+- Bucket selection: `params.bucket_tid` in `pipelines/config/virstrain.technical.config`
 
 Wrappers:
 

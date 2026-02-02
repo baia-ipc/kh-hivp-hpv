@@ -18,7 +18,6 @@ def projectRoot = (workflow.projectDir instanceof java.nio.file.Path \
     .resolve('..').normalize().toString()
 
 params.scripts_dir = params.scripts_dir ?: "${projectRoot}/scripts"
-params.bucket_tid_file = params.bucket_tid_file ?: "${projectRoot}/config/pave_bucket_tid.txt"
 params.multiqc_config = params.multiqc_config ?: "${projectRoot}/pipelines/multiqc/bowtie_vs_pave.multiqc.yml"
 params.lineage_hpv16_fasta = params.lineage_hpv16_fasta ?: "${projectRoot}/refdata/derived/hpv16_tree/lineages_ref_renamed.fasta"
 params.lineage_hpv18_fasta = params.lineage_hpv18_fasta ?: "${projectRoot}/refdata/derived/hpv18_tree/lineages_ref_renamed.fasta"
@@ -33,18 +32,7 @@ if (!params.containsKey('sample_id'))  params.sample_id = null
 
 def bucketTid = params.bucket_tid
 if (!bucketTid) {
-    def bucketFile = new File(params.bucket_tid_file as String)
-    if (!bucketFile.exists()) {
-        error "bucket tid file not found: ${params.bucket_tid_file}"
-    }
-    def tidLine = bucketFile.readLines().find { it && !it.startsWith('#') }
-    if (!tidLine) {
-        error "bucket tid file is empty: ${params.bucket_tid_file}"
-    }
-    bucketTid = tidLine.split(/\s+/)[0].trim()
-    if (!bucketTid) {
-        error "bucket tid file contains no value: ${params.bucket_tid_file}"
-    }
+    error "params.bucket_tid is required"
 }
 params.bucket_tid = bucketTid
 
@@ -52,6 +40,7 @@ def requiredParams = [
     'index_dir',
     'outdir',
     'reports_dir',
+    'bucket_tid',
     'pave_ref_fasta',
     'pave_gff3_dir',
     'features_tsv_dir',
