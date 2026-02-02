@@ -5,8 +5,8 @@ the analysis of HPV sequencing data in our study.
 
 ## Repository layout (high level)
 
-- `analysis-input1/`: analysis for the first input dataset (all patients)
-- `analysis-input2/`: analysis for the second input dataset (HPV16/18-focused)
+- `preliminary-analysis-all-patients/`: analysis for the first input dataset (all patients)
+- `targeted-analysis-hpv16-hpv18/`: analysis for the second input dataset (HPV16/18-focused)
 - `pipelines/`: Nextflow pipelines
   - `pipelines/config/`: technical Nextflow config
   - `pipelines/conda_env/`: Conda environment definitions used by pipelines
@@ -31,14 +31,14 @@ the analysis of HPV sequencing data in our study.
 - Step path configs under `bin/config/` are internal defaults and generally not edited by users.
 - Derived reference paths are wired in pipeline technical configs under `pipelines/config/` (not user-edited).
 
-## How to run analysis-input1
+## How to run preliminary-analysis-all-patients
 
 Run these commands from the repository root.
 
 All steps in one go:
 
 ```bash
-bin/analysis-input1.run.sh
+bin/preliminary-analysis-all-patients.run.sh
 ```
 
 Or run each step individually:
@@ -60,7 +60,7 @@ and database creation).
 
 After running step 001, open the interactive report at:
 
-`analysis-input1/001.0.centrifuge/reports/multiqc_report.html`
+`preliminary-analysis-all-patients/001.0.centrifuge/reports/multiqc_report.html`
 
 ### Run a single sample (optional)
 
@@ -70,17 +70,17 @@ The third argument is an output prefix used to infer `run_id` and `sample_id`; o
 ```bash
 bin/sample/002.0.bowtie_vs_pave.run_sample.sh \
   /path/to/SAMPLE_R1.fastq.gz /path/to/SAMPLE_R2.fastq.gz \
-  analysis-input1/002.0.bowtie_vs_pave/output/RUN_ID/SAMPLE
+  preliminary-analysis-all-patients/002.0.bowtie_vs_pave/output/RUN_ID/SAMPLE
 ```
 
-## How to run analysis-input2
+## How to run targeted-analysis-hpv16-hpv18
 
 Run these commands from the repository root.
 
 All steps in one go:
 
 ```bash
-bin/analysis-input2.run.sh
+bin/targeted-analysis-hpv16-hpv18.run.sh
 ```
 
 Or run each step individually:
@@ -217,7 +217,7 @@ scripts/hpv18_select_ncbi_genomes.sh \
 ```
 
 4) Build `samples.fasta` from mapping results (step 002). By default the script
-derives samples from `analysis-input2/002.0.mapping_vs_pave/reports/strains.tsv`
+derives samples from `targeted-analysis-hpv16-hpv18/002.0.mapping_vs_pave/reports/strains.tsv`
 by selecting rows with top strain `HPV18` for the run ID:
 
 ```bash
