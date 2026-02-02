@@ -1,4 +1,9 @@
 title: "Cambodia SNP comparison"
+rename_regex: true
+sample_names_rename:
+  - ["^3__",""]
+  - ["^2__",""]
+  - ["^1__",""]
 
 custom_data:
   methods_summary:
