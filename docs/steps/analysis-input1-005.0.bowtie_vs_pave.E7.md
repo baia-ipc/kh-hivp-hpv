@@ -14,7 +14,7 @@ This step is implemented as a Nextflow pipeline:
 - User config: `config/pave_gene_mapping.config`
 - Step path config: `bin/config/pave_e7.config` (internal defaults)
 - Technical config: `pipelines/config/common.technical.config` + `pipelines/config/pave_gene_mapping.technical.config`
-- Bucket selection: `config/pave_bucket_tid.txt`
+- Bucket selection: `params.bucket_tid` in `pipelines/config/pave_gene_mapping.technical.config`
 
 Wrappers:
 

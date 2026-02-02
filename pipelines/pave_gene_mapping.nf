@@ -18,27 +18,10 @@ def projectRoot = (workflow.projectDir instanceof java.nio.file.Path \
     .resolve('..').normalize().toString()
 
 params.scripts_dir = params.scripts_dir ?: "${projectRoot}/scripts"
-params.bucket_tid_file = params.bucket_tid_file ?: "${projectRoot}/config/pave_bucket_tid.txt"
 params.multiqc_config = params.multiqc_config ?: "${projectRoot}/pipelines/multiqc/pave_gene_mapping.multiqc.yml"
 
-def bucketTid = params.bucket_tid
-if (!bucketTid) {
-    def bucketFile = new File(params.bucket_tid_file as String)
-    if (!bucketFile.exists()) {
-        error "bucket tid file not found: ${params.bucket_tid_file}"
-    }
-    def tidLine = bucketFile.readLines().find { it && !it.startsWith('#') }
-    if (!tidLine) {
-        error "bucket tid file is empty: ${params.bucket_tid_file}"
-    }
-    bucketTid = tidLine.split(/\s+/)[0].trim()
-    if (!bucketTid) {
-        error "bucket tid file contains no value: ${params.bucket_tid_file}"
-    }
-    params.bucket_tid = bucketTid
-}
-
 def requiredParams = [
+    'bucket_tid',
     'index_dir',
     'outdir',
     'reports_dir',

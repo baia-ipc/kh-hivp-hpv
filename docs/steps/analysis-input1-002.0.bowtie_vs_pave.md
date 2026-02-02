@@ -16,7 +16,7 @@ This step is implemented as a Nextflow pipeline:
 - User config: `config/bowtie_vs_pave.config`
 - Step path config: `bin/config/analysis-input1_002.bowtie_vs_pave.config` (internal defaults)
 - Technical config: `pipelines/config/common.technical.config` + `pipelines/config/bowtie_vs_pave.technical.config`
-- Bucket selection: `config/pave_bucket_tid.txt`
+- Bucket selection: `params.bucket_tid` in `pipelines/config/bowtie_vs_pave.technical.config`
 
 Wrappers:
 
