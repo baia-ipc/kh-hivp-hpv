@@ -16,10 +16,10 @@ This step is implemented as Nextflow pipelines:
 - User configs: `config/centrifuge_bucketing.config` + `config/analysis-input1_001.centrifuge.config`
 - Technical config: `pipelines/config/common.technical.config` + `pipelines/config/centrifuge_bucketing.technical.config`
 
-Wrappers in the analysis directory call the Nextflow pipelines:
+Wrappers under `bin/` call the Nextflow pipelines:
 
-- `analysis-input1/001.0.centrifuge/scripts/run.sh` (one sample / one pair)
-- `analysis-input1/001.0.centrifuge/scripts/run_all.sh` (all samples)
+- `bin/001.0.centrifuge.run.sh` (one sample / one pair)
+- `bin/001.0.centrifuge.run_all.sh` (all samples)
 
 ## Inputs
 

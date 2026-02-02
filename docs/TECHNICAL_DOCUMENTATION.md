@@ -6,7 +6,7 @@ and where to find its inputs and outputs.
 
 This documentation is intended for humans (e.g. lab / bioinformatics users).
 
-To run the analyses, use the step wrapper scripts under `analysis-input*/.../scripts/`
+To run the analyses, use the step wrapper scripts under `bin/`
 (see the repository root `README.md`).
 
 ## analysis-input1

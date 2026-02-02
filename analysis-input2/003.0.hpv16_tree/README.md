@@ -45,5 +45,5 @@ Download sequence metadata in TSV format, use custom fields definition
   # defaults: bcf_run_id in config/hpv16_tree.config for the run ID
 
 (7) build the tree
-  run scripts/run.sh (Nextflow pipeline)
+  run bin/003.0.hpv16_tree.run.sh (Nextflow pipeline)
   outputs go to output/

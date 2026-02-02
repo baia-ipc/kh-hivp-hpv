@@ -15,7 +15,7 @@ analysis-input2 sample list and input FASTQ layout.
 
 Wrapper:
 
-- `analysis-input2/001.0.bucketing/scripts/run_all.sh`
+- `bin/001.0.bucketing.run_all.sh`
 
 ## Inputs
 

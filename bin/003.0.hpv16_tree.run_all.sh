@@ -2,4 +2,4 @@
 set -euo pipefail
 
 SCRIPTSDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-"$SCRIPTSDIR/run.sh" "$@"
+"$SCRIPTSDIR/003.0.hpv16_tree.run.sh" "$@"

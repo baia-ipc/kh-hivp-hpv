@@ -15,6 +15,7 @@ the analysis of HPV sequencing data in our study.
 - `metadata/`: sample lists and other fixed inputs (e.g. bucket taxonomy IDs)
 - `refdata/raw/`: external reference inputs (PAVE FASTA/GFF3, NCBI downloads)
 - `refdata/derived/`: derived reference data (feature tables, renamed/filtered FASTA sets)
+- `bin/`: step and analysis runner scripts (wrappers around Nextflow)
 
 ## Requirements
 
@@ -34,12 +35,20 @@ the analysis of HPV sequencing data in our study.
 
 Run these commands from the repository root.
 
+All steps in one go:
+
 ```bash
-analysis-input1/001.0.centrifuge/scripts/run_all.sh
-analysis-input1/002.0.bowtie_vs_pave/scripts/run_all.sh
-analysis-input1/003.0.virstrain/scripts/run_all.sh
-analysis-input1/004.0.bowtie_vs_pave.E6/scripts/run_all.sh
-analysis-input1/005.0.bowtie_vs_pave.E7/scripts/run_all.sh
+bin/analysis-input1.run_all.sh
+```
+
+Or run each step individually:
+
+```bash
+bin/001.0.centrifuge.run_all.sh
+bin/002.0.bowtie_vs_pave.run_all.sh
+bin/003.0.virstrain.run_all.sh
+bin/004.0.bowtie_vs_pave.E6.run_all.sh
+bin/005.0.bowtie_vs_pave.E7.run_all.sh
 ```
 
 ## User manual
@@ -59,7 +68,7 @@ Some steps also provide a `run.sh` wrapper for running one sample pair.
 The third argument is an output prefix used to infer `run_id` and `sample_id`; outputs still go to the step output directory configured in `config/`.
 
 ```bash
-analysis-input1/002.0.bowtie_vs_pave/scripts/run.sh \
+bin/002.0.bowtie_vs_pave.run.sh \
   /path/to/SAMPLE_R1.fastq.gz /path/to/SAMPLE_R2.fastq.gz \
   analysis-input1/002.0.bowtie_vs_pave/output/RUN_ID/SAMPLE
 ```
@@ -68,10 +77,20 @@ analysis-input1/002.0.bowtie_vs_pave/scripts/run.sh \
 
 Run these commands from the repository root.
 
+All steps in one go:
+
 ```bash
-analysis-input2/001.0.bucketing/scripts/run_all.sh
-analysis-input2/002.0.mapping_vs_pave/scripts/run_all.sh
-analysis-input2/005.0.cambodia_snps/scripts/run_all.sh
+bin/analysis-input2.run_all.sh
+```
+
+Or run each step individually:
+
+```bash
+bin/001.0.bucketing.run_all.sh
+bin/002.0.mapping_vs_pave.run_all.sh
+bin/003.0.hpv16_tree.run_all.sh
+bin/004.0.hpv18_tree.run_all.sh
+bin/005.0.cambodia_snps.run_all.sh
 ```
 
 ### Phylogenetic trees (HPV16 and HPV18)
@@ -162,7 +181,7 @@ Override with `BCF_RUN_ID=...` if needed.
 5) Run the tree pipeline:
 
 ```bash
-analysis-input2/003.0.hpv16_tree/scripts/run.sh
+bin/003.0.hpv16_tree.run.sh
 ```
 
 #### HPV18 tree
@@ -212,7 +231,7 @@ Override with `BCF_RUN_ID=...` if needed.
 5) Run the tree pipeline:
 
 ```bash
-analysis-input2/004.0.hpv18_tree/scripts/run.sh
+bin/004.0.hpv18_tree.run.sh
 ```
 
 ## Troubleshooting
@@ -233,5 +252,5 @@ If Nextflow behaves differently when Conda is activated in your shell, try
 Re-run the same command with `-resume`:
 
 ```bash
-analysis-input1/002.0.bowtie_vs_pave/scripts/run_all.sh -resume
+bin/002.0.bowtie_vs_pave.run_all.sh -resume
 ```

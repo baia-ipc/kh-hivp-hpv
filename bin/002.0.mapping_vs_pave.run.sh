@@ -2,13 +2,12 @@
 set -euo pipefail
 
 SCRIPTSDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-STEPDIR=$SCRIPTSDIR/..
-PRJROOT=$SCRIPTSDIR/../../..
-PIPELINE_NF=$PRJROOT/pipelines/virstrain.nf
+PRJROOT="$( cd "$SCRIPTSDIR/.." && pwd )"
+PIPELINE_NF=$PRJROOT/pipelines/bowtie_vs_pave.nf
 TECH_CONFIG_COMMON=$PRJROOT/pipelines/config/common.technical.config
-TECH_CONFIG_PIPE=$PRJROOT/pipelines/config/virstrain.technical.config
-USER_CONFIG=$PRJROOT/config/virstrain.config
-STEP_CONFIG=$PRJROOT/config/analysis-input1_003.virstrain.config
+TECH_CONFIG_PIPE=$PRJROOT/pipelines/config/bowtie_vs_pave.technical.config
+USER_CONFIG=$PRJROOT/config/bowtie_vs_pave.config
+STEP_CONFIG=$PRJROOT/config/analysis-input2_002.mapping_vs_pave.config
 
 if [ $# -lt 3 ]; then
   echo "Usage: $0 <fwd> <rev> <out_prefix> [nextflow args...]"

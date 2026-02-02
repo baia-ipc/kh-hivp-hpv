@@ -2,13 +2,12 @@
 set -euo pipefail
 
 SCRIPTSDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-STEPDIR=$SCRIPTSDIR/..
-PRJROOT=$SCRIPTSDIR/../../..
-PIPELINE_NF=$PRJROOT/pipelines/bowtie_vs_pave.nf
+PRJROOT="$( cd "$SCRIPTSDIR/.." && pwd )"
+PIPELINE_NF=$PRJROOT/pipelines/cambodia_snps.nf
 TECH_CONFIG_COMMON=$PRJROOT/pipelines/config/common.technical.config
-TECH_CONFIG_PIPE=$PRJROOT/pipelines/config/bowtie_vs_pave.technical.config
-USER_CONFIG=$PRJROOT/config/bowtie_vs_pave.config
-STEP_CONFIG=$PRJROOT/config/analysis-input1_002.bowtie_vs_pave.config
+TECH_CONFIG_PIPE=$PRJROOT/pipelines/config/cambodia_snps.technical.config
+USER_CONFIG=$PRJROOT/config/cambodia_snps.config
+STEP_CONFIG=$PRJROOT/config/analysis-input2_005.cambodia_snps.config
 
 if ! command -v nextflow >/dev/null 2>&1; then
   echo "Error: nextflow was not found in PATH" > /dev/stderr

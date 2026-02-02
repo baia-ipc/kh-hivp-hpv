@@ -19,8 +19,8 @@ This step is implemented as a Nextflow pipeline:
 
 Wrappers:
 
-- `analysis-input1/002.0.bowtie_vs_pave/scripts/run_all.sh` (all samples)
-- `analysis-input1/002.0.bowtie_vs_pave/scripts/run.sh` (single sample pair)
+- `bin/002.0.bowtie_vs_pave.run_all.sh` (all samples)
+- `bin/002.0.bowtie_vs_pave.run.sh` (single sample pair)
 
 ## Inputs
 
