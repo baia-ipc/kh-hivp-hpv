@@ -7,7 +7,7 @@ PIPELINE_NF=$PRJROOT/pipelines/pave_gene_mapping.nf
 TECH_CONFIG_COMMON=$PRJROOT/pipelines/config/common.technical.config
 TECH_CONFIG_PIPE=$PRJROOT/pipelines/config/pave_gene_mapping.technical.config
 USER_CONFIG=$PRJROOT/config/pave_gene_mapping.config
-STEP_CONFIG=$PRJROOT/config/pave_e7.config
+STEP_CONFIG=$PRJROOT/bin/config/pave_e7.config
 
 if ! command -v nextflow >/dev/null 2>&1; then
   echo "Error: nextflow was not found in PATH" > /dev/stderr

@@ -7,7 +7,7 @@ PIPELINE_NF=$PRJROOT/pipelines/pave_gene_mapping.nf
 TECH_CONFIG_COMMON=$PRJROOT/pipelines/config/common.technical.config
 TECH_CONFIG_PIPE=$PRJROOT/pipelines/config/pave_gene_mapping.technical.config
 USER_CONFIG=$PRJROOT/config/pave_gene_mapping.config
-STEP_CONFIG=$PRJROOT/config/pave_e7.config
+STEP_CONFIG=$PRJROOT/bin/config/pave_e7.config
 
 if [ $# -lt 3 ]; then
   echo "Usage: $0 <fwd> <rev> <out_prefix> [nextflow args...]"
