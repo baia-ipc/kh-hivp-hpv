@@ -14,8 +14,8 @@ Rules:
 - Centrifuge database build script lives at `scripts/build_centrifuge_db.sh` (outputs under `refdata/centrifuge/`).
 - Outputs live under each step's `output/` and `reports/` directories.
 - MultiQC reports are published to each step’s `reports/` (tree steps use `output/reports/`), with the process writing `multiqc_report.html` at the workdir root and `publishDir` targeting the final reports directory.
-- MultiQC methods sections include primary literature references for the tools used in each step (see the step-specific `config/*.multiqc.yml`).
-- Custom MultiQC sections and tables are defined in `config/*.multiqc.yml` under `custom_data` with explicit `plot_type`, and TSV tables are wired via `sp:` search patterns.
+- MultiQC methods sections include primary literature references for the tools used in each step (see the step-specific `pipelines/multiqc/*.multiqc.yml`).
+- Custom MultiQC sections and tables are defined in `pipelines/multiqc/*.multiqc.yml` under `custom_data` with explicit `plot_type`, and TSV tables are wired via `sp:` search patterns.
 - Nextflow execution can be sensitive to the caller environment; when documenting run commands, assume Java 17+ and avoid relying on an activated Conda env unless explicitly required (see .agents/OPERATIONS.md for the concrete invocation pattern).
 
 ## Skill: centrifuge bucketing (Nextflow)

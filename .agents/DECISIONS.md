@@ -93,3 +93,9 @@ Format:
   - Decision: keep user-editable configs in `config/`, move technical Nextflow settings to `pipelines/config/`, and add step-specific config files for inputs/outputs.
   - Rationale: ensure users only edit `config/` while keeping technical defaults centralized.
   - Consequences: wrappers pass multiple `-c` files; new step configs define `outdir`, `reports_dir`, and inputs.
+
+- 2026-02-02: Relocate MultiQC configs alongside pipelines
+  - Context: MultiQC configs were mixed into `config/` with user-editable settings.
+  - Decision: move `*.multiqc.yml` into `pipelines/multiqc/` and update references.
+  - Rationale: keep pipeline-owned config with pipeline assets while leaving `config/` for user edits.
+  - Consequences: technical configs and pipelines reference `pipelines/multiqc/*`.

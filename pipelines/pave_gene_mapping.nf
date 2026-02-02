@@ -19,7 +19,7 @@ def projectRoot = (workflow.projectDir instanceof java.nio.file.Path \
 
 params.scripts_dir = params.scripts_dir ?: "${projectRoot}/scripts"
 params.bucket_tid_file = params.bucket_tid_file ?: "${projectRoot}/config/pave_bucket_tid.txt"
-params.multiqc_config = params.multiqc_config ?: "${projectRoot}/config/pave_gene_mapping.multiqc.yml"
+params.multiqc_config = params.multiqc_config ?: "${projectRoot}/pipelines/multiqc/pave_gene_mapping.multiqc.yml"
 
 def bucketTid = params.bucket_tid
 if (!bucketTid) {

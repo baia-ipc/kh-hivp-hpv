@@ -16,7 +16,7 @@ Rules:
   configurable env vars (e.g., `CONDA_EXE`).
 - Default parallelism is capped at 24 concurrent tasks via `process.maxForks` and `executor.queueSize` in `pipelines/config/common.technical.config`.
 - MultiQC reports are written under each step's `reports/` (phylo tree steps use `output/reports/`). Ensure the MultiQC process outputs files at the process root and publish to `reports/` to avoid duplicated `multiqc/multiqc_report.html` paths.
-- MultiQC method summaries should cite the primary tool papers; update the relevant `config/*.multiqc.yml` when pipeline steps change.
+- MultiQC method summaries should cite the primary tool papers; update the relevant `pipelines/multiqc/*.multiqc.yml` when pipeline steps change.
 - MultiQC custom sections should be configured under `custom_data` with explicit `plot_type` and any table inputs connected via `sp:` search patterns in the same config.
 
 ## Running pipelines
