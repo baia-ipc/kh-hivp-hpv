@@ -53,5 +53,5 @@ Download sequence metadata in TSV format, use custom fields definition
   # defaults: bcf_run_id in config/hpv18_tree.config and derived samples from reports/strains.tsv
 
 (7) build the tree
-  run bin/004.0.hpv18_tree.run.sh (Nextflow pipeline)
+  run bin/004.0.hpv18_tree.run_all.sh (Nextflow pipeline)
   outputs go to output/

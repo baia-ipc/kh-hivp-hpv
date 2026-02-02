@@ -181,7 +181,7 @@ Override with `BCF_RUN_ID=...` if needed.
 5) Run the tree pipeline:
 
 ```bash
-bin/003.0.hpv16_tree.run.sh
+bin/003.0.hpv16_tree.run_all.sh
 ```
 
 #### HPV18 tree
@@ -231,7 +231,7 @@ Override with `BCF_RUN_ID=...` if needed.
 5) Run the tree pipeline:
 
 ```bash
-bin/004.0.hpv18_tree.run.sh
+bin/004.0.hpv18_tree.run_all.sh
 ```
 
 ## Troubleshooting
