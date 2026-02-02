@@ -90,7 +90,7 @@ bin/001.0.bucketing.run.sh
 bin/002.0.mapping_vs_pave.run.sh
 bin/003.0.hpv16_tree.run.sh
 bin/004.0.hpv18_tree.run.sh
-bin/005.0.cambodia_snps.run.sh
+bin/005.0.snps_samples_vs_db.run.sh
 ```
 
 ### Phylogenetic trees (HPV16 and HPV18)

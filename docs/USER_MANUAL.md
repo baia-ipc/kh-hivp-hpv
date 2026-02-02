@@ -63,7 +63,7 @@ to your local reference data paths and to set resource limits:
   - `bin/config/analysis-input2_002.mapping_vs_pave.config`
   - `bin/config/analysis-input2_003.hpv16_tree.config`
   - `bin/config/analysis-input2_004.hpv18_tree.config`
-  - `bin/config/analysis-input2_005.cambodia_snps.config`
+  - `bin/config/analysis-input2_005.snps_samples_vs_db.config`
 - Gene‑mapping step configs are under `bin/config/` (`bin/config/pave_e6.config`, `bin/config/pave_e7.config`).
 - Tree defaults are configured via `config/general.config`.
 
@@ -109,7 +109,7 @@ scripts/gff3_to_bed.run_all.sh \
   refdata/derived/pave/bed
 ```
 
-These BED files are required by the Bowtie vs PAVE and Cambodia SNP steps.
+These BED files are required by the Bowtie vs PAVE and SNPs samples vs database steps.
 
 ### 6.3 Phylogenetic tree inputs (raw + derived)
 

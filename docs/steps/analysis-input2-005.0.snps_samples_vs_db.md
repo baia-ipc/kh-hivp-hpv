@@ -1,4 +1,4 @@
-# analysis-input2 step 005: Cambodia SNP comparison
+# analysis-input2 step 005: SNPs (samples vs database)
 
 ## Overview
 
@@ -11,12 +11,12 @@ observed in analysis-input2 step 002.
 
 - Pipeline: `pipelines/cambodia_snps.nf`
 - User config: `config/general.config`
-- Step path config: `bin/config/analysis-input2_005.cambodia_snps.config` (internal defaults)
+- Step path config: `bin/config/analysis-input2_005.snps_samples_vs_db.config` (internal defaults)
 - Technical config: `pipelines/config/common.config` + `pipelines/config/cambodia_snps.config`
 
 Wrappers:
 
-- `bin/005.0.cambodia_snps.run.sh`
+- `bin/005.0.snps_samples_vs_db.run.sh`
 
 ## Inputs
 
