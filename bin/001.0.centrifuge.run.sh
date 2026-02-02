@@ -3,38 +3,60 @@ set -euo pipefail
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PRJROOT="$( cd "$DIR/.." && pwd )"
-PIPELINESDIR=$PRJROOT/pipelines
-PIPELINE_NF=$PIPELINESDIR/centrifuge_bucketing.nf
+PIPELINE_NF=$PRJROOT/pipelines/centrifuge_bucketing_all.nf
 TECH_CONFIG_COMMON=$PRJROOT/pipelines/config/common.technical.config
 TECH_CONFIG_PIPE=$PRJROOT/pipelines/config/centrifuge_bucketing.technical.config
 USER_CONFIG=$PRJROOT/config/centrifuge_bucketing.config
 STEP_CONFIG=$PRJROOT/config/analysis-input1_001.centrifuge.config
-
-if [ $# -lt 1 ]; then
-  echo "Usage: $0 <READSETPFX> [nextflow args...]"
-  exit 1
-fi
-
-READSETPFX=$1
-shift
-READSETPFX=$(cd "$(dirname "$READSETPFX")" && pwd)/$(basename "$READSETPFX")
-READS_GLOB="${READSETPFX}"*_R{1,2}_*.fastq.gz
-R1_GLOB="${READSETPFX}"*_R1_*.fastq.gz
-R2_GLOB="${READSETPFX}"*_R2_*.fastq.gz
 
 if ! command -v nextflow >/dev/null 2>&1; then
   echo "Error: nextflow was not found in PATH" > /dev/stderr
   exit 1
 fi
 
-if ! compgen -G "$R1_GLOB" >/dev/null; then
-  echo "Error: no R1 reads found for pattern: $R1_GLOB" > /dev/stderr
+if [ -n "${CONDA_EXE:-}" ] && [ -x "$CONDA_EXE" ]; then
+  export PATH="$(dirname "$CONDA_EXE"):$PATH"
+elif ! command -v conda >/dev/null 2>&1; then
+  echo "Error: conda was not found in PATH. Set PATH or CONDA_EXE to your conda binary." > /dev/stderr
   exit 1
 fi
 
-if ! compgen -G "$R2_GLOB" >/dev/null; then
-  echo "Error: no R2 reads found for pattern: $R2_GLOB" > /dev/stderr
-  exit 1
+args=()
+resume_set=false
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --skip-align)
+      args+=(--skip_align)
+      shift
+      ;;
+    --skip-align=*)
+      args+=("${1/--skip-align=/--skip_align=}")
+      shift
+      ;;
+    --skip_align)
+      args+=(--skip_align)
+      shift
+      ;;
+    --skip_align=*)
+      args+=("$1")
+      shift
+      ;;
+    *)
+      args+=("$1")
+      shift
+      ;;
+  esac
+done
+for arg in "${args[@]}"; do
+  if [ "$arg" = "-resume" ] || [ "$arg" = "--resume" ]; then
+    resume_set=true
+    break
+  fi
+done
+
+if ! $resume_set; then
+  args+=(-resume)
 fi
 
 nextflow run "$PIPELINE_NF" \
@@ -42,5 +64,4 @@ nextflow run "$PIPELINE_NF" \
   -c "$TECH_CONFIG_PIPE" \
   -c "$USER_CONFIG" \
   -c "$STEP_CONFIG" \
-  --reads "$READS_GLOB" \
-  "$@" -resume
+  "${args[@]}"

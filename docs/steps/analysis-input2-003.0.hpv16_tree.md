@@ -15,7 +15,7 @@ This step builds an HPV16 phylogenetic tree from prepared sequence inputs
 
 Wrappers:
 
-- `bin/003.0.hpv16_tree.run_all.sh`
+- `bin/003.0.hpv16_tree.run.sh`
 
 ## Inputs
 

@@ -38,17 +38,17 @@ Run these commands from the repository root.
 All steps in one go:
 
 ```bash
-bin/analysis-input1.run_all.sh
+bin/analysis-input1.run.sh
 ```
 
 Or run each step individually:
 
 ```bash
-bin/001.0.centrifuge.run_all.sh
-bin/002.0.bowtie_vs_pave.run_all.sh
-bin/003.0.virstrain.run_all.sh
-bin/004.0.bowtie_vs_pave.E6.run_all.sh
-bin/005.0.bowtie_vs_pave.E7.run_all.sh
+bin/001.0.centrifuge.run.sh
+bin/002.0.bowtie_vs_pave.run.sh
+bin/003.0.virstrain.run.sh
+bin/004.0.bowtie_vs_pave.E6.run.sh
+bin/005.0.bowtie_vs_pave.E7.run.sh
 ```
 
 ## User manual
@@ -64,11 +64,11 @@ After running step 001, open the interactive report at:
 
 ### Run a single sample (optional)
 
-Some steps also provide a `run.sh` wrapper for running one sample pair.
+Some steps also provide a `run_sample.sh` wrapper under `bin/sample/` for running one sample pair.
 The third argument is an output prefix used to infer `run_id` and `sample_id`; outputs still go to the step output directory configured in `config/`.
 
 ```bash
-bin/002.0.bowtie_vs_pave.run.sh \
+bin/sample/002.0.bowtie_vs_pave.run_sample.sh \
   /path/to/SAMPLE_R1.fastq.gz /path/to/SAMPLE_R2.fastq.gz \
   analysis-input1/002.0.bowtie_vs_pave/output/RUN_ID/SAMPLE
 ```
@@ -80,17 +80,17 @@ Run these commands from the repository root.
 All steps in one go:
 
 ```bash
-bin/analysis-input2.run_all.sh
+bin/analysis-input2.run.sh
 ```
 
 Or run each step individually:
 
 ```bash
-bin/001.0.bucketing.run_all.sh
-bin/002.0.mapping_vs_pave.run_all.sh
-bin/003.0.hpv16_tree.run_all.sh
-bin/004.0.hpv18_tree.run_all.sh
-bin/005.0.cambodia_snps.run_all.sh
+bin/001.0.bucketing.run.sh
+bin/002.0.mapping_vs_pave.run.sh
+bin/003.0.hpv16_tree.run.sh
+bin/004.0.hpv18_tree.run.sh
+bin/005.0.cambodia_snps.run.sh
 ```
 
 ### Phylogenetic trees (HPV16 and HPV18)
@@ -181,7 +181,7 @@ Override with `BCF_RUN_ID=...` if needed.
 5) Run the tree pipeline:
 
 ```bash
-bin/003.0.hpv16_tree.run_all.sh
+bin/003.0.hpv16_tree.run.sh
 ```
 
 #### HPV18 tree
@@ -231,7 +231,7 @@ Override with `BCF_RUN_ID=...` if needed.
 5) Run the tree pipeline:
 
 ```bash
-bin/004.0.hpv18_tree.run_all.sh
+bin/004.0.hpv18_tree.run.sh
 ```
 
 ## Troubleshooting
@@ -252,5 +252,5 @@ If Nextflow behaves differently when Conda is activated in your shell, try
 Re-run the same command with `-resume`:
 
 ```bash
-bin/002.0.bowtie_vs_pave.run_all.sh -resume
+bin/002.0.bowtie_vs_pave.run.sh -resume
 ```
