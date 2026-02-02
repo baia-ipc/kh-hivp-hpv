@@ -42,7 +42,7 @@ Download sequence metadata in TSV format, use custom fields definition
 (6) prepare samples.fasta
   run ../../scripts/hpv16_prepare_samples.sh
   # this writes input/HPV16REF.fas, the consensus FASTAs (with KHCA-<sample>-HPV16 IDs), and input/samples.fasta
-  # defaults: bcf_run_id in config/hpv16_tree.config for the run ID
+  # defaults: run ID inferred from metadata/samples-input2.tsv (fastq_dir); override with BCF_RUN_ID/BCF_DIR
 
 (7) build the tree
   run bin/003.0.hpv16_tree.run.sh (Nextflow pipeline)
