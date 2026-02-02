@@ -152,10 +152,12 @@ scripts/hpv16_select_ncbi_genomes.sh \
 
 ```bash
 OUT_DIR=refdata/derived/hpv16_tree \
-BCF_RUN_ID=$(cat config/hpv16_tree_bcf_run.txt) \
 SAMPLES="<space-separated sample IDs>" \
 scripts/hpv16_prepare_samples.sh
 ```
+
+The mapping run ID defaults to `bcf_run_id` in `config/hpv16_tree.config`.
+Override with `BCF_RUN_ID=...` if needed.
 
 5) Run the tree pipeline:
 
@@ -201,9 +203,11 @@ by selecting rows with top strain `HPV18` for the run ID:
 
 ```bash
 OUT_DIR=refdata/derived/hpv18_tree \
-BCF_RUN_ID=$(cat config/hpv18_tree_bcf_run.txt) \
 scripts/hpv18_prepare_samples.sh
 ```
+
+The mapping run ID defaults to `bcf_run_id` in `config/hpv18_tree.config`.
+Override with `BCF_RUN_ID=...` if needed.
 
 5) Run the tree pipeline:
 
