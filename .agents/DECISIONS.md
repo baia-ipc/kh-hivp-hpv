@@ -56,13 +56,13 @@ Format:
   - Context: step 003 relied on multiple per-step scripts for alignment and tree building.
   - Decision: centralize the tree build as `pipelines/phylo_tree.nf` with step config.
   - Rationale: standardize tree workflows and reduce step-local scripts.
-  - Consequences: use `config/hpv16_tree.config` and `metadata/hpv16_tree_outgroups.txt`.
+  - Consequences: use `config/phylo_tree.config` and `metadata/hpv16_tree_outgroups.txt`.
 
 - 2026-01-24: Migrate HPV18 tree build to Nextflow
   - Context: step 004 mirrored the HPV16 tree workflow with separate scripts.
   - Decision: use the shared `pipelines/phylo_tree.nf` pipeline with an HPV18 config.
   - Rationale: keep HPV16/HPV18 tree generation consistent and centralized.
-  - Consequences: use `config/hpv18_tree.config` and `metadata/hpv18_tree_outgroups.txt`.
+  - Consequences: use `config/phylo_tree.config` and `metadata/hpv18_tree_outgroups.txt`.
 
 - 2026-01-24: Add reference snapshot directory
   - Context: need to compare old results vs updated pipelines.

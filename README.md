@@ -176,8 +176,8 @@ SAMPLES="<space-separated sample IDs>" \
 scripts/hpv16_prepare_samples.sh
 ```
 
-The mapping run ID defaults to `bcf_run_id` in `config/hpv16_tree.config`.
-Override with `BCF_RUN_ID=...` if needed.
+The mapping run ID is inferred from `metadata/samples-input2.tsv` (using the
+`fastq_dir` column). Override with `BCF_RUN_ID=...` or `BCF_DIR=...` if needed.
 
 5) Run the tree pipeline:
 
@@ -226,8 +226,8 @@ OUT_DIR=refdata/derived/hpv18_tree \
 scripts/hpv18_prepare_samples.sh
 ```
 
-The mapping run ID defaults to `bcf_run_id` in `config/hpv18_tree.config`.
-Override with `BCF_RUN_ID=...` if needed.
+The mapping run ID is inferred from `metadata/samples-input2.tsv` (using the
+`fastq_dir` column). Override with `BCF_RUN_ID=...` or `BCF_DIR=...` if needed.
 
 5) Run the tree pipeline:
 

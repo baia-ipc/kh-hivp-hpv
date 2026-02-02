@@ -70,7 +70,7 @@ to your local reference data paths and to set resource limits:
   - `bin/config/analysis-input2_004.hpv18_tree.config`
   - `bin/config/analysis-input2_005.cambodia_snps.config`
 - Gene‑mapping step configs are under `bin/config/` (`bin/config/pave_e6.config`, `bin/config/pave_e7.config`).
-- Tree user configs remain under `config/` (`config/hpv16_tree.config`, `config/hpv18_tree.config`).
+- Tree defaults are configured via `config/phylo_tree.config`.
 
 Technical Nextflow settings (executor/conda wiring and derived refdata paths) live under `pipelines/config/`.
 Conda environments are defined under `pipelines/conda_env/`.

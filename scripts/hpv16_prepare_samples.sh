@@ -9,18 +9,18 @@ PAVE_FASTA=${PAVE_FASTA:-}
 HPV16REF_FASTA=${HPV16REF_FASTA:-}
 BCF_DIR=${BCF_DIR:-}
 BCF_RUN_ID=${BCF_RUN_ID:-}
-TREE_CONFIG=${TREE_CONFIG:-$REPO_ROOT/config/hpv16_tree.config}
 OUT_DIR=${OUT_DIR:-}
 SAMPLES=${SAMPLES:-}
 SAMPLES_FILE=${SAMPLES_FILE:-}
+SAMPLES_TSV=${SAMPLES_TSV:-$REPO_ROOT/metadata/samples-input2.tsv}
 
 if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
   cat <<'EOFHELP'
 Usage: hpv16_prepare_samples.sh
 
 Environment overrides:
-  PAVE_FASTA, HPV16REF_FASTA, BCF_DIR, BCF_RUN_ID, TREE_CONFIG
-  OUT_DIR, SAMPLES, SAMPLES_FILE
+  PAVE_FASTA, HPV16REF_FASTA, BCF_DIR, BCF_RUN_ID
+  OUT_DIR, SAMPLES, SAMPLES_FILE, SAMPLES_TSV
 EOFHELP
   exit 0
 fi
@@ -38,18 +38,29 @@ if [[ -z "$HPV16REF_FASTA" ]]; then
   HPV16REF_FASTA="$OUT_DIR/HPV16REF.fas"
 fi
 
-if [[ -z "$BCF_DIR" ]]; then
-  if [[ -z "$BCF_RUN_ID" && -f "$TREE_CONFIG" ]]; then
-    BCF_RUN_ID=$(awk -F'=' '/bcf_run_id/ {gsub(/#.*/, "", $2); gsub(/[[:space:]]*/, "", $2); gsub(/"/, "", $2); print $2; exit}' \
-      "$TREE_CONFIG")
-  fi
-  if [[ -n "$BCF_RUN_ID" ]]; then
-    BCF_DIR="$REPO_ROOT/analysis-input2/002.0.mapping_vs_pave/output/$BCF_RUN_ID"
+if [[ -z "$BCF_RUN_ID" && -z "$BCF_DIR" && -f "$SAMPLES_TSV" ]]; then
+  mapfile -t run_ids < <(
+    awk -F'\t' 'NR==1 && $1 ~ /^#/ {next} {
+      n=split($2, parts, "/");
+      last=parts[n];
+      run=(tolower(last)=="fastq" && n>1) ? parts[n-1] : last;
+      if (run != "") print run;
+    }' "$SAMPLES_TSV" | sort -u
+  )
+  if [[ ${#run_ids[@]} -eq 1 ]]; then
+    BCF_RUN_ID="${run_ids[0]}"
+  elif [[ ${#run_ids[@]} -gt 1 ]]; then
+    echo "Error: multiple run IDs in $SAMPLES_TSV; set BCF_RUN_ID or BCF_DIR explicitly." >&2
+    exit 1
   fi
 fi
 
+if [[ -z "$BCF_DIR" && -n "$BCF_RUN_ID" ]]; then
+  BCF_DIR="$REPO_ROOT/analysis-input2/002.0.mapping_vs_pave/output/$BCF_RUN_ID"
+fi
+
 if [[ -z "$BCF_DIR" ]]; then
-  echo "Error: BCF_DIR is required (set BCF_DIR or BCF_RUN_ID, or set bcf_run_id in $TREE_CONFIG)." >&2
+  echo "Error: BCF_DIR is required (set BCF_DIR or BCF_RUN_ID, or ensure $SAMPLES_TSV exists with a single run ID)." >&2
   exit 1
 fi
 

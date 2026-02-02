@@ -63,7 +63,7 @@ Rules:
 ## Skill: phylogenetic trees (HPV16/HPV18)
 
 - Scope: tree generation for HPV16 and HPV18.
-- Entry points: `pipelines/phylo_tree.nf` (user configs: `config/hpv16_tree.config`, `config/hpv18_tree.config`; step path configs: `bin/config/analysis-input2_003.hpv16_tree.config`, `bin/config/analysis-input2_004.hpv18_tree.config`).
+- Entry points: `pipelines/phylo_tree.nf` (user config: `config/phylo_tree.config`; step path configs: `bin/config/analysis-input2_003.hpv16_tree.config`, `bin/config/analysis-input2_004.hpv18_tree.config`).
 - Where:
   - HPV16: `analysis-input2/003.0.hpv16_tree`
   - HPV18: `analysis-input2/004.0.hpv18_tree`

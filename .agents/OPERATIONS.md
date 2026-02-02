@@ -161,7 +161,6 @@ nextflow run pipelines/phylo_tree.nf \
   -c pipelines/config/phylo_tree.hpv16.technical.config \
   -c config/phylo_tree.config \
   -c bin/config/analysis-input2_003.hpv16_tree.config \
-  -c config/hpv16_tree.config \
   -resume
 ```
 
@@ -175,7 +174,6 @@ nextflow run pipelines/phylo_tree.nf \
   -c pipelines/config/phylo_tree.hpv18.technical.config \
   -c config/phylo_tree.config \
   -c bin/config/analysis-input2_004.hpv18_tree.config \
-  -c config/hpv18_tree.config \
   -resume
 ```
 
