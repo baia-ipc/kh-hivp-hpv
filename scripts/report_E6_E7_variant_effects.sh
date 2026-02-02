@@ -28,17 +28,8 @@ fi
 tmp_gff=$(mktemp)
 trap 'rm -f "$tmp_gff"' EXIT
 
-first=true
-for gff in "$GFFDIR"/*.gff "$GFFDIR"/*.gff3; do
-  [ -f "$gff" ] || continue
-  if $first; then
-    cat "$gff" >> "$tmp_gff"
-    first=false
-  else
-    # Avoid repeating the gff-version line
-    grep -v '^##gff-version' "$gff" >> "$tmp_gff"
-  fi
-done
+# Build a csq-friendly GFF with gene/mRNA/CDS structure
+"$SCRIPT_DIR/gff3_to_csq_gff.py" "$GFFDIR" -o "$tmp_gff" --fasta "$REFFA"
 
 header_written=false
 for subdir in "$OUTDIR"/*; do

@@ -80,8 +80,9 @@ def load_sample_effects(path):
             alt = row.get("alt", "")
             consequence = row.get("Consequence", "")
             aa_change = normalize_aa_change(row.get("amino_acid_change", ""))
-            key = (pos, ref, alt)
+            key = (gene, pos, ref, alt)
             candidate = {
+                "gene": gene,
                 "pos": pos,
                 "ref": ref,
                 "alt": alt,
@@ -366,17 +367,20 @@ def main():
         for sample_id in sample_ids:
             variants = sample_variants.get(sample_id, [])
             labels = labels_by_gene(variants)
-            writer.writerow([sample_id, labels["E6"], labels["E7"]])
+            writer.writerow([f"3__{sample_id}", labels["E6"], labels["E7"]])
 
         for accession in cambodia_ids:
             variants = cambodia_effects.get(accession, [])
             labels = labels_by_gene(variants)
-            writer.writerow([accession, labels["E6"], labels["E7"]])
+            # remove HPV16_ prefix from accession
+            if accession.startswith("HPV16_"):
+                accession = accession[len("HPV16_") :]
+            writer.writerow([f"2__{accession}", labels["E6"], labels["E7"]])
 
         for lineage in lineage_ids:
             variants = lineage_effects.get(lineage, [])
             labels = labels_by_gene(variants)
-            writer.writerow([lineage, labels["E6"], labels["E7"]])
+            writer.writerow([f"1__{lineage}", labels["E6"], labels["E7"]])
 
 
 if __name__ == "__main__":
