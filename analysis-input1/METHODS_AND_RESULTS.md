@@ -43,7 +43,7 @@ In the non-human normalized table, the majority clustered in a narrow band where
 “Other viruses” represented 1–10% of non-human assignments (45/67). Only one
 sample showed “Other viruses” dominating the non-human fraction (>0.5),
 consistent with a library dominated by non-HPV viral signal
-(HPV_250523_run02:KHCA191).
+(HPV_250523_run02:KHCA-191).
 
 Phi X-174 spike-in reads were present in 35/67 non-control samples in absolute
 counts, but for most samples the relative contribution was small when human
@@ -103,9 +103,9 @@ substantial subset of samples.
 Variant calls were reported in E6 for 12 samples and in E7 for 8 samples. The
 E7‑variant samples were: HPV_150123_run01:KHCA-064,
 HPV_160823_run03:KHCA-289, HPV_160823_run03:KHCA-298,
-HPV_160823_run03:KHCA-306, HPV_250523_run02:KHCA151,
-HPV_250523_run02:KHCA152, HPV_250523_run02:KHCA169,
-HPV_250523_run02:KHCA223.
+HPV_160823_run03:KHCA-306, HPV_250523_run02:KHCA-151,
+HPV_250523_run02:KHCA-152, HPV_250523_run02:KHCA-169,
+HPV_250523_run02:KHCA-223.
 
 **Notes on sources**
 - `analysis-input1/002.0.bowtie_vs_pave/reports/strains.tsv`
@@ -135,7 +135,7 @@ strain assignment.
 
 Among the assigned samples, 21 had a single strain call and three had multiple
 strain calls. The multi‑strain samples were: HPV_150123_run01:KHCA-037,
-HPV_160823_run03:KHCA-256, HPV_250523_run02:KHCA223. The most frequently
+HPV_160823_run03:KHCA-256, HPV_250523_run02:KHCA-223. The most frequently
 assigned strains included HPV16, HPV58, HPV18, HPV71, and HPV52.
 
 **Notes on sources**
