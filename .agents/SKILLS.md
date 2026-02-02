@@ -25,7 +25,7 @@ Rules:
 - Where:
   - analysis-input1: `analysis-input1/001.0.centrifuge`
   - analysis-input2: `analysis-input2/001.0.bucketing`
-- Inputs: `metadata/samples-input1.tsv` or `metadata/samples-input2.tsv` plus Centrifuge index/taxdump.
+- Inputs: `metadata/samples-input1.tsv` or `metadata/samples-input2.tsv` (normalized `sample_id` + raw `fastq_sample_id`) plus Centrifuge index/taxdump.
 - Outputs:
   - analysis-input1: `analysis-input1/001.0.centrifuge/output`, `analysis-input1/001.0.centrifuge/reports`
   - analysis-input2: `analysis-input2/001.0.bucketing/output`, `analysis-input2/001.0.bucketing/reports`

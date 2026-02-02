@@ -20,7 +20,7 @@ the analysis of HPV sequencing data in our study.
 
 ## Configuration you may need to edit
 
-- `metadata/samples-input1.tsv` and `metadata/samples-input2.tsv`: which samples to process and where the FASTQs are
+- `metadata/samples-input1.tsv` and `metadata/samples-input2.tsv`: which samples to process and where the FASTQs are. These include a normalized `sample_id` plus `fastq_sample_id` (the exact prefix found in FASTQ filenames) used for read discovery.
 - `config/centrifuge_bucketing.config`: Centrifuge index/taxdump paths and resource settings
 - `config/bowtie_vs_pave.config`: PAVE reference paths and resource settings
 
