@@ -13,7 +13,8 @@ This step is implemented as Nextflow pipelines:
 
 - Per-sample pipeline: `pipelines/centrifuge_bucketing.nf`
 - Multi-sample pipeline: `pipelines/centrifuge_bucketing_all.nf`
-- User configs: `config/centrifuge_bucketing.config` + `config/analysis-input1_001.centrifuge.config`
+- User config: `config/centrifuge_bucketing.config`
+- Step path config: `bin/config/analysis-input1_001.centrifuge.config` (internal defaults)
 - Technical config: `pipelines/config/common.technical.config` + `pipelines/config/centrifuge_bucketing.technical.config`
 
 Wrappers under `bin/` call the Nextflow pipelines:

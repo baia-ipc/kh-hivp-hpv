@@ -10,7 +10,8 @@ produces per-sample VirStrain reports plus an aggregated summary table.
 This step is implemented as a Nextflow pipeline:
 
 - Pipeline: `pipelines/virstrain.nf`
-- User configs: `config/virstrain.config` + `config/analysis-input1_003.virstrain.config`
+- User config: `config/virstrain.config`
+- Step path config: `bin/config/analysis-input1_003.virstrain.config` (internal defaults)
 - Technical config: `pipelines/config/common.technical.config` + `pipelines/config/virstrain.technical.config`
 - Bucket selection: `config/pave_bucket_tid.txt`
 

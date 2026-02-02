@@ -7,7 +7,7 @@ PIPELINE_NF=$PRJROOT/pipelines/cambodia_snps.nf
 TECH_CONFIG_COMMON=$PRJROOT/pipelines/config/common.technical.config
 TECH_CONFIG_PIPE=$PRJROOT/pipelines/config/cambodia_snps.technical.config
 USER_CONFIG=$PRJROOT/config/cambodia_snps.config
-STEP_CONFIG=$PRJROOT/config/analysis-input2_005.cambodia_snps.config
+STEP_CONFIG=$PRJROOT/bin/config/analysis-input2_005.cambodia_snps.config
 
 if ! command -v nextflow >/dev/null 2>&1; then
   echo "Error: nextflow was not found in PATH" > /dev/stderr
