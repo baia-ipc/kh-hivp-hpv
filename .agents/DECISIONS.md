@@ -99,3 +99,9 @@ Format:
   - Decision: move `*.multiqc.yml` into `pipelines/multiqc/` and update references.
   - Rationale: keep pipeline-owned config with pipeline assets while leaving `config/` for user edits.
   - Consequences: technical configs and pipelines reference `pipelines/multiqc/*`.
+
+- 2026-02-02: Move step wrapper scripts into `bin/`
+  - Context: step runner scripts lived under each analysis step directory.
+  - Decision: relocate wrappers into a top-level `bin/` directory and add analysis-level runners.
+  - Rationale: keep execution entry points centralized and remove step-local `scripts/`.
+  - Consequences: update docs and references to use `bin/*.run*.sh`.

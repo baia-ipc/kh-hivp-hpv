@@ -16,8 +16,8 @@ This step is implemented as a Nextflow pipeline:
 
 Wrappers:
 
-- `analysis-input1/003.0.virstrain/scripts/run_all.sh` (all samples)
-- `analysis-input1/003.0.virstrain/scripts/run.sh` (single sample pair)
+- `bin/003.0.virstrain.run_all.sh` (all samples)
+- `bin/003.0.virstrain.run.sh` (single sample pair)
 
 ## Inputs
 

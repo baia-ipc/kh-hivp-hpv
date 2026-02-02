@@ -8,11 +8,10 @@
 - analysis-input\*/\*:
   - each analysis directory contain subdirectories for each step, numbered
     according to the order in which they were run (01, 02, etc)
-  - each step subdirectory contains separate subdirectories for scripts, output
-    files and reports and in some cases for config files, metadata files, input
-    and reference data
+  - each step subdirectory contains outputs and reports and in some cases
+    step-specific inputs or reference material
   - most of the code is contained in the scripts and pipelines in the root-level
-    directories described below, the step-level scripts are mostly wrappers to call
+    directories described below; step runners live in `bin/`
 
 - pipelines/ wrapper scripts and Nextflow workflows
   - conda_env/ per-pipeline Conda environment definitions
@@ -21,6 +20,8 @@
 
 - scripts/ reusable Python scripts for single operations such as
            LCA computing, bucketing, FASTQ splitting, and strain summaries
+
+- bin/ step and analysis runner scripts (wrappers around Nextflow pipelines)
 
 - input/ symlinks to external raw data locations (not stored in-repo)
 

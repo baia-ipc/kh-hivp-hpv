@@ -2,16 +2,7 @@
 
 ## Analysis steps and scripts
 
-- `analysis-input1/001.0.centrifuge/scripts`: run.sh, run_all.sh
-- `analysis-input1/002.0.bowtie_vs_pave/scripts`: run.sh, run_all.sh
-- `analysis-input1/003.0.virstrain/scripts`: run.sh, run_all.sh
-- `analysis-input1/004.0.bowtie_vs_pave.E6/scripts`: run.sh, run_all.sh
-- `analysis-input1/005.0.bowtie_vs_pave.E7/scripts`: run.sh, run_all.sh
-- `analysis-input2/001.0.bucketing/scripts`: run_all.sh
-- `analysis-input2/002.0.mapping_vs_pave/scripts`: run.sh, run_all.sh
-- `analysis-input2/003.0.hpv16_tree/scripts`: run.sh, run_all.sh
-- `analysis-input2/004.0.hpv18_tree/scripts`: run.sh, run_all.sh
-- `analysis-input2/005.0.cambodia_snps/scripts`: run_all.sh
+- `bin/`: step wrapper scripts (001.0.centrifuge.run.sh/.run_all.sh, 002.0.bowtie_vs_pave.run.sh/.run_all.sh, 003.0.virstrain.run.sh/.run_all.sh, 004.0.bowtie_vs_pave.E6.run.sh/.run_all.sh, 005.0.bowtie_vs_pave.E7.run.sh/.run_all.sh, 001.0.bucketing.run_all.sh, 002.0.mapping_vs_pave.run.sh/.run_all.sh, 003.0.hpv16_tree.run.sh/.run_all.sh, 004.0.hpv18_tree.run.sh/.run_all.sh, 005.0.cambodia_snps.run_all.sh) + analysis-level runners (analysis-input1.run_all.sh, analysis-input2.run_all.sh)
 - `metadata/`: bucket_taxonomy_ids.tsv, hpv16_tree_outgroups.txt, hpv18_lineage_refs.tsv, hpv18_tree_outgroups.txt, samples-input1.tsv, samples-input2.tsv
 - `config/`: analysis-input1_001.centrifuge.config, analysis-input1_002.bowtie_vs_pave.config, analysis-input1_003.virstrain.config, analysis-input2_001.bucketing.config, analysis-input2_002.mapping_vs_pave.config, analysis-input2_005.cambodia_snps.config, bowtie_vs_pave.config, cambodia_snps.config, centrifuge_bucketing.config, hpv16_tree.config, hpv18_tree.config, pave_bucket_tid.txt, pave_e6.config, pave_e7.config, pave_gene_mapping.config, phylo_tree.config, virstrain.config
 - `pipelines/config/`: bowtie_vs_pave.technical.config, cambodia_snps.technical.config, centrifuge_bucketing.technical.config, common.technical.config, pave_gene_mapping.technical.config, phylo_tree.technical.config, virstrain.technical.config
@@ -25,7 +16,6 @@
 
 ## Manual commands documented only in README.md
 
-The step-level `analysis-input*/.../scripts/README.md` files are pointers only.
 Technical documentation is maintained under `docs/`.
 
 Step documentation index: `docs/TECHNICAL_DOCUMENTATION.md`

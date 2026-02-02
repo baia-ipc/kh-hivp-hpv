@@ -9,6 +9,7 @@ Rules:
 ## Core conventions (scope only)
 
 - User-editable configuration lives in `config/` (no hardcoded paths in scripts); technical Nextflow config lives under `pipelines/config/`, and Conda env definitions live under `pipelines/conda_env/`.
+- Step/analysis wrapper scripts live under `bin/` (wrappers around Nextflow pipelines).
 - Sample lists and other hardcoded data live in `metadata/`.
 - Reference inputs live in `refdata/raw/`; derived reference assets live in `refdata/derived/` (do not place reference inputs under analysis step directories).
 - Centrifuge database build script lives at `scripts/build_centrifuge_db.sh` (outputs under `refdata/centrifuge/`).
