@@ -33,7 +33,7 @@
 
 - refdata/ reference data split into:
   - raw/ external inputs (PAVE FASTA/GFF3, NCBI downloads)
-  - derived/ processed reference assets (feature tables, curated tree inputs)
+  - derived/ processed reference assets (feature tables, BED intervals, curated tree inputs)
 
 - docs/ technical documentation for the analysis steps (human-readable)
 
