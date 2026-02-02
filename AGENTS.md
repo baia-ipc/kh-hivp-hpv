@@ -7,7 +7,7 @@
 - Never hardcode user-specific absolute paths (e.g., `/home/<user>`). Use PATH,
   env vars, or config options instead.
 - When summarizing results, exclude controls / technical artifacts as defined in
-  .agents/GOALS.md (e.g. `H2O`, `HVP-*`, and Illumina `Undetermined` reads) unless doing QC.
+  .agents/GOALS.md (e.g. `H2O`, `HPV-110`, and Illumina `Undetermined` reads) unless doing QC.
 - When writing a `METHODS_AND_RESULTS.md`, list affected `RunID:SampleID` when only a few samples are involved (<=5, or <=10 if central), and keep results prose-first.
 - Strict doc roles:
   - `.agents/SKILLS.md`: catalog of what exists (scope + where); no how-to.

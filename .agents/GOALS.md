@@ -35,7 +35,7 @@ when summarizing results (e.g. exclude them from prevalence/proportion statement
 goal is explicitly QC):
 
 - `H2O`: water / negative control sample.
-- `HVP-*`: control material (treated as a control sample for summaries).
+- `HPV-110`: control material (treated as a control sample for summaries; FASTQ prefix may be `HVP-110`).
 - `Undetermined`: FASTQ sets produced by Illumina demultiplexing for reads that were not
   assigned to any sample (unassigned index combinations), i.e. not a biological sample.
 
