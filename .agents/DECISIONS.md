@@ -32,13 +32,13 @@ Format:
   - Context: step 002 relied on per-step scripts with hardcoded paths.
   - Decision: centralize scripts under `scripts/` and run step 002 via `pipelines/bowtie_vs_pave.nf`.
   - Rationale: reduce duplication and make configuration consistent across analyses.
-  - Consequences: use `config/bowtie_vs_pave.config` for user inputs and `pipelines/config/bowtie_vs_pave.technical.config` for fixed bucket selection.
+  - Consequences: use `config/general.config` for user inputs and `pipelines/config/bowtie_vs_pave.technical.config` for fixed bucket selection.
 
 - 2026-01-24: Migrate VirStrain reports to Nextflow
   - Context: step 003 used step-local scripts and hardcoded reference paths.
   - Decision: centralize scripts under `scripts/` and run step 003 via `pipelines/virstrain.nf`.
   - Rationale: align with the shared pipeline layout and remove hardcoded paths.
-  - Consequences: use `config/virstrain.config` for user inputs and `pipelines/config/virstrain.technical.config` for fixed bucket selection.
+  - Consequences: use `config/general.config` for user inputs and `pipelines/config/virstrain.technical.config` for fixed bucket selection.
 
 - 2026-01-24: Migrate E6 mapping to Nextflow
   - Context: step 004 relied on step-local scripts and per-step index creation.
@@ -56,13 +56,13 @@ Format:
   - Context: step 003 relied on multiple per-step scripts for alignment and tree building.
   - Decision: centralize the tree build as `pipelines/phylo_tree.nf` with step config.
   - Rationale: standardize tree workflows and reduce step-local scripts.
-  - Consequences: use `config/phylo_tree.config` and `metadata/hpv16_tree_outgroups.txt`.
+  - Consequences: use `config/general.config` and `metadata/hpv16_tree_outgroups.txt`.
 
 - 2026-01-24: Migrate HPV18 tree build to Nextflow
   - Context: step 004 mirrored the HPV16 tree workflow with separate scripts.
   - Decision: use the shared `pipelines/phylo_tree.nf` pipeline with an HPV18 config.
   - Rationale: keep HPV16/HPV18 tree generation consistent and centralized.
-  - Consequences: use `config/phylo_tree.config` and `metadata/hpv18_tree_outgroups.txt`.
+  - Consequences: use `config/general.config` and `metadata/hpv18_tree_outgroups.txt`.
 
 - 2026-01-24: Add reference snapshot directory
   - Context: need to compare old results vs updated pipelines.
@@ -105,6 +105,12 @@ Format:
   - Decision: treat BED files as derived data under `refdata/derived/pave/bed`, generated via `scripts/gff3_to_bed.run_all.sh`.
   - Rationale: BEDs are derived from GFF3s and should not live under raw reference inputs.
   - Consequences: technical configs reference the derived BED directory.
+
+- 2026-02-02: Consolidate user config into `config/general.config`
+  - Context: user parameters were split across multiple `config/*.config` files.
+  - Decision: move all user-editable parameters into a single `config/general.config`.
+  - Rationale: keep user configuration in one place and set shared defaults (e.g., `threads`) only once.
+  - Consequences: wrappers and docs reference `config/general.config`; per-pipeline user configs are removed.
 
 - 2026-02-02: Move step wrapper scripts into `bin/`
   - Context: step runner scripts lived under each analysis step directory.

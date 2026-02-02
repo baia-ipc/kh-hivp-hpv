@@ -27,8 +27,7 @@ the analysis of HPV sequencing data in our study.
 ## Configuration you may need to edit
 
 - `metadata/samples-input1.tsv` and `metadata/samples-input2.tsv`: which samples to process and where the FASTQs are. These include a normalized `sample_id` plus `fastq_sample_id` (the exact prefix found in FASTQ filenames) used for read discovery.
-- `config/centrifuge_bucketing.config`: Centrifuge index/taxdump paths and resource settings
-- `config/bowtie_vs_pave.config`: PAVE reference paths and resource settings
+- `config/general.config`: all user-editable pipeline parameters (Centrifuge index/taxdump, PAVE reference names, Cambodia settings, tree defaults, and shared threads)
 - Step path configs under `bin/config/` are internal defaults and generally not edited by users.
 - Derived reference paths are wired in pipeline technical configs under `pipelines/config/` (not user-edited).
 

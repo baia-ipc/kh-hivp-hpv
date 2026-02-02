@@ -34,18 +34,18 @@ Rules:
 ## Skill: bowtie vs PAVE mapping and reports
 
 - Scope: mapping and rough strain assignment.
-- Entry points: `pipelines/bowtie_vs_pave.nf` (config: `config/bowtie_vs_pave.config`).
+- Entry points: `pipelines/bowtie_vs_pave.nf` (config: `config/general.config`).
 - Where:
   - analysis-input1: `analysis-input1/002.0.bowtie_vs_pave`
   - analysis-input2: `analysis-input2/002.0.mapping_vs_pave`
 - Inputs: bucketed FASTQs from the corresponding step 001 output; bucket selection via `params.bucket_tid` in `pipelines/config/bowtie_vs_pave.technical.config`.
-- Reference assets: PAVE FASTA/GFF3/BED under `refdata/raw/pave/`, plus derived feature tables under `refdata/derived/pave/features_tsv`.
+- Reference assets: PAVE FASTA/GFF3 under `refdata/raw/pave/`, plus derived BEDs and feature tables under `refdata/derived/pave/`.
 - Outputs: per-step `output/` and `reports/` under the locations above.
 
 ## Skill: VirStrain reports
 
 - Scope: VirStrain-based strain reports (analysis-input1 only).
-- Entry points: `pipelines/virstrain.nf` (config: `config/virstrain.config`).
+- Entry points: `pipelines/virstrain.nf` (config: `config/general.config`).
 - Where: `analysis-input1/003.0.virstrain`.
 - Inputs: bucketed FASTQs from `analysis-input1/001.0.centrifuge/output`; bucket selection via `params.bucket_tid` in `pipelines/config/virstrain.technical.config`.
 - Outputs: `analysis-input1/003.0.virstrain/output`, `analysis-input1/003.0.virstrain/reports`.
@@ -63,7 +63,7 @@ Rules:
 ## Skill: phylogenetic trees (HPV16/HPV18)
 
 - Scope: tree generation for HPV16 and HPV18.
-- Entry points: `pipelines/phylo_tree.nf` (user config: `config/phylo_tree.config`; step path configs: `bin/config/analysis-input2_003.hpv16_tree.config`, `bin/config/analysis-input2_004.hpv18_tree.config`).
+- Entry points: `pipelines/phylo_tree.nf` (user config: `config/general.config`; step path configs: `bin/config/analysis-input2_003.hpv16_tree.config`, `bin/config/analysis-input2_004.hpv18_tree.config`).
 - Where:
   - HPV16: `analysis-input2/003.0.hpv16_tree`
   - HPV18: `analysis-input2/004.0.hpv18_tree`
@@ -73,7 +73,7 @@ Rules:
 ## Skill: Cambodia SNP comparison
 
 - Scope: extract Cambodian HPV16/HPV18 references, call E6/E7 SNPs, and compare against lineage and sample SNPs.
-- Entry points: `pipelines/cambodia_snps.nf` (config: `config/cambodia_snps.config`).
+- Entry points: `pipelines/cambodia_snps.nf` (config: `config/general.config`).
 - Where: `analysis-input2/005.0.cambodia_snps`.
 - Inputs:
   - Selected reference sets under `refdata/derived/hpv16_tree` and `refdata/derived/hpv18_tree`

@@ -7,7 +7,7 @@ PIPELINESDIR=$PRJROOT/pipelines
 PIPELINE_NF=$PIPELINESDIR/centrifuge_bucketing.nf
 TECH_CONFIG_COMMON=$PRJROOT/pipelines/config/common.technical.config
 TECH_CONFIG_PIPE=$PRJROOT/pipelines/config/centrifuge_bucketing.technical.config
-USER_CONFIG=$PRJROOT/config/centrifuge_bucketing.config
+USER_CONFIG=$PRJROOT/config/general.config
 STEP_CONFIG=$PRJROOT/bin/config/analysis-input1_001.centrifuge.config
 
 if [ $# -lt 1 ]; then

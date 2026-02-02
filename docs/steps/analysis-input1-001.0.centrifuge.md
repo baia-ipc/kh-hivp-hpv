@@ -13,7 +13,7 @@ This step is implemented as Nextflow pipelines:
 
 - Per-sample pipeline: `pipelines/centrifuge_bucketing.nf`
 - Multi-sample pipeline: `pipelines/centrifuge_bucketing_all.nf`
-- User config: `config/centrifuge_bucketing.config`
+- User config: `config/general.config`
 - Step path config: `bin/config/analysis-input1_001.centrifuge.config` (internal defaults)
 - Technical config: `pipelines/config/common.technical.config` + `pipelines/config/centrifuge_bucketing.technical.config`
 
@@ -26,7 +26,7 @@ Wrappers under `bin/` call the Nextflow pipelines:
 
 - Sample list: `metadata/samples-input1.tsv` (normalized `sample_id` plus `fastq_sample_id` for raw filename prefixes)
 - Bucket definitions: `metadata/bucket_taxonomy_ids.tsv`
-- Centrifuge index + taxonomy: configured in `config/centrifuge_bucketing.config`
+- Centrifuge index + taxonomy: configured in `config/general.config`
 - Optional: build a local index with `scripts/build_centrifuge_db.sh`
 
 ## Outputs
