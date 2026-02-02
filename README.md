@@ -148,7 +148,7 @@ scripts/hpv16_select_ncbi_genomes.sh \
 
 ```bash
 OUT_DIR=refdata/derived/hpv16_tree \
-BCF_RUN_ID=$(cat metadata/hpv16_tree_bcf_run.txt) \
+BCF_RUN_ID=$(cat config/hpv16_tree_bcf_run.txt) \
 SAMPLES="<space-separated sample IDs>" \
 scripts/hpv16_prepare_samples.sh
 ```
@@ -195,7 +195,7 @@ scripts/hpv18_select_ncbi_genomes.sh \
 
 ```bash
 OUT_DIR=refdata/derived/hpv18_tree \
-BCF_RUN_ID=$(cat metadata/hpv18_tree_bcf_run.txt) \
+BCF_RUN_ID=$(cat config/hpv18_tree_bcf_run.txt) \
 scripts/hpv18_prepare_samples.sh
 ```
 
