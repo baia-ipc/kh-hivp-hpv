@@ -60,15 +60,15 @@ to your local reference data paths and to set resource limits:
   - `config/pave_gene_mapping.config`: gene‑level mapping defaults (E6/E7)
   - `config/phylo_tree.config`: tree pipeline defaults
   - `config/cambodia_snps.config`: Cambodia SNP comparison defaults
-- Step‑specific configs (inputs/outputs):
-  - `config/analysis-input1_001.centrifuge.config`
-  - `config/analysis-input1_002.bowtie_vs_pave.config`
-  - `config/analysis-input1_003.virstrain.config`
-  - `config/pave_e6.config`, `config/pave_e7.config`
-  - `config/analysis-input2_001.bucketing.config`
-  - `config/analysis-input2_002.mapping_vs_pave.config`
-  - `config/hpv16_tree.config`, `config/hpv18_tree.config`
-  - `config/analysis-input2_005.cambodia_snps.config`
+- Step‑specific path configs (inputs/outputs) are stored under `bin/config/` and are not typically edited by users:
+  - `bin/config/analysis-input1_001.centrifuge.config`
+  - `bin/config/analysis-input1_002.bowtie_vs_pave.config`
+  - `bin/config/analysis-input1_003.virstrain.config`
+  - `bin/config/analysis-input2_001.bucketing.config`
+  - `bin/config/analysis-input2_002.mapping_vs_pave.config`
+  - `bin/config/analysis-input2_005.cambodia_snps.config`
+- Gene‑mapping step configs remain under `config/` (`config/pave_e6.config`, `config/pave_e7.config`).
+- Tree configs remain under `config/` (`config/hpv16_tree.config`, `config/hpv18_tree.config`).
 
 Technical Nextflow settings (executor/conda wiring) live under `pipelines/config/`.
 Conda environments are defined under `pipelines/conda_env/`.

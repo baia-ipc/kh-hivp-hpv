@@ -8,7 +8,7 @@ Rules:
 
 ## Conventions
 
-- User-editable configuration is in `config/`; technical Nextflow config is in `pipelines/config/`. Sample lists live in `metadata/`.
+- User-editable configuration is in `config/`; step path configs are under `bin/config/`; technical Nextflow config is in `pipelines/config/`. Sample lists live in `metadata/`.
 - Raw reference inputs live in `refdata/raw/`; derived reference assets live in `refdata/derived/`.
 - Outputs are written to each step's `output/` and `reports/`.
 - When changing directory layout, update `CONTENTS.md` and `.agents/INVENTORY.md`.
@@ -30,10 +30,16 @@ bin/analysis-input1.run.sh
 bin/analysis-input2.run.sh
 ```
 
-Run individual steps (examples):
+Run individual steps (all samples):
 
 ```
-bin/sample/001.0.centrifuge.run_sample.sh
+bin/001.0.centrifuge.run.sh
+bin/002.0.mapping_vs_pave.run.sh
+```
+
+Run a single sample (for steps that support it):
+
+```
 bin/sample/002.0.mapping_vs_pave.run_sample.sh
 ```
 
@@ -45,7 +51,7 @@ nextflow run pipelines/centrifuge_bucketing_all.nf \
   -c pipelines/config/common.technical.config \
   -c pipelines/config/centrifuge_bucketing.technical.config \
   -c config/centrifuge_bucketing.config \
-  -c config/analysis-input1_001.centrifuge.config \
+  -c bin/config/analysis-input1_001.centrifuge.config \
   -resume
 ```
 
@@ -70,7 +76,7 @@ nextflow run pipelines/centrifuge_bucketing_all.nf \
   -c pipelines/config/common.technical.config \
   -c pipelines/config/centrifuge_bucketing.technical.config \
   -c config/centrifuge_bucketing.config \
-  -c config/analysis-input2_001.bucketing.config \
+  -c bin/config/analysis-input2_001.bucketing.config \
   -resume
 ```
 
@@ -83,7 +89,7 @@ nextflow run pipelines/bowtie_vs_pave.nf \
   -c pipelines/config/common.technical.config \
   -c pipelines/config/bowtie_vs_pave.technical.config \
   -c config/bowtie_vs_pave.config \
-  -c config/analysis-input1_002.bowtie_vs_pave.config \
+  -c bin/config/analysis-input1_002.bowtie_vs_pave.config \
   -resume
 ```
 
@@ -94,7 +100,7 @@ nextflow run pipelines/bowtie_vs_pave.nf \
   -c pipelines/config/common.technical.config \
   -c pipelines/config/bowtie_vs_pave.technical.config \
   -c config/bowtie_vs_pave.config \
-  -c config/analysis-input2_002.mapping_vs_pave.config \
+  -c bin/config/analysis-input2_002.mapping_vs_pave.config \
   -resume
 ```
 
@@ -105,7 +111,7 @@ nextflow run pipelines/cambodia_snps.nf \
   -c pipelines/config/common.technical.config \
   -c pipelines/config/cambodia_snps.technical.config \
   -c config/cambodia_snps.config \
-  -c config/analysis-input2_005.cambodia_snps.config \
+  -c bin/config/analysis-input2_005.cambodia_snps.config \
   -resume
 ```
 
@@ -117,7 +123,7 @@ nextflow run pipelines/virstrain.nf \
   -c pipelines/config/common.technical.config \
   -c pipelines/config/virstrain.technical.config \
   -c config/virstrain.config \
-  -c config/analysis-input1_003.virstrain.config \
+  -c bin/config/analysis-input1_003.virstrain.config \
   -resume
 ```
 

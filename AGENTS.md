@@ -1,7 +1,7 @@
 - Read first: .agents/GOALS.md (assumptions) and .agents/INVENTORY.md (current steps/commands).
 - CONTENTS.md lists directories only; do not list files; update it after any
   directory reordering.
-- Keep configuration in `config/` under the repo root.
+- Keep user-editable configuration in `config/` under the repo root; step path configs live under `bin/config/`.
 - Move hardcoded values (e.g., sample IDs) into `metadata/` and remove them from
   scripts.
 - Never hardcode user-specific absolute paths (e.g., `/home/<user>`). Use PATH,

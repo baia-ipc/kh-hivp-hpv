@@ -22,6 +22,7 @@
            LCA computing, bucketing, FASTQ splitting, and strain summaries
 
 - bin/ step and analysis runner scripts (wrappers around Nextflow pipelines)
+  - config/ step path configs (internal defaults; not typically edited by users)
   - sample/ single-sample wrappers for steps that support per-sample runs
 
 - input/ symlinks to external raw data locations (not stored in-repo)

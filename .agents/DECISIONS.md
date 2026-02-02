@@ -105,3 +105,15 @@ Format:
   - Decision: relocate wrappers into a top-level `bin/` directory and add analysis-level runners.
   - Rationale: keep execution entry points centralized and remove step-local `scripts/`.
   - Consequences: update docs and references to use `bin/*.run*.sh`.
+
+- 2026-02-02: Move step path configs into `bin/config`
+  - Context: step-specific configs only contained fixed input/output paths and were not user-editable.
+  - Decision: relocate path-only configs under `bin/config` and keep user-editable configs in `config/`.
+  - Rationale: separate internal path wiring from user-facing configuration.
+  - Consequences: update wrapper scripts and docs to point at `bin/config/*`.
+
+- 2026-02-02: Rename runners and isolate single-sample wrappers
+  - Context: step wrappers used `run_all.sh` vs `run.sh` naming and lived in a single directory.
+  - Decision: rename all-step wrappers to `run.sh`, rename single-sample wrappers to `run_sample.sh`, and move them under `bin/sample/`.
+  - Rationale: make the default entry point consistent and keep per-sample utilities separate.
+  - Consequences: update documentation and runner references to new paths.
