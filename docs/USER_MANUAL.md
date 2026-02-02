@@ -101,7 +101,7 @@ The preparation steps for these (including the shared lineage reference
 FASTA files used by step 002 SNP‑to‑lineage comparison) are described in the
 repository root `README.md`.
 
-### 6.3 Centrifuge database (taxonomic index)
+### 6.4 Centrifuge database (taxonomic index)
 
 Build or provide a Centrifuge database and taxonomy dump. A helper script is
 included:
