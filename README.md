@@ -10,7 +10,8 @@ the analysis of HPV sequencing data in our study.
 - `pipelines/`: Nextflow pipelines
   - `pipelines/config/`: technical Nextflow config
   - `pipelines/conda_env/`: Conda environment definitions used by pipelines
-- `config/`: user-editable configuration files (pipeline + step configs, MultiQC)
+- `pipelines/multiqc/`: MultiQC config files used by pipelines
+- `config/`: user-editable configuration files (pipeline + step configs)
 - `metadata/`: sample lists and other fixed inputs (e.g. bucket taxonomy IDs)
 - `refdata/raw/`: external reference inputs (PAVE FASTA/GFF3, NCBI downloads)
 - `refdata/derived/`: derived reference data (feature tables, renamed/filtered FASTA sets)

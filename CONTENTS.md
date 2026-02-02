@@ -17,6 +17,7 @@
 - pipelines/ wrapper scripts and Nextflow workflows
   - conda_env/ per-pipeline Conda environment definitions
   - config/ technical Nextflow config shared by pipelines
+  - multiqc/ MultiQC configuration files used by pipelines
 
 - scripts/ reusable Python scripts for single operations such as
            LCA computing, bucketing, FASTQ splitting, and strain summaries
@@ -25,7 +26,7 @@
 
 - metadata/ taxonomy bucket definitions and sample lists
 
-- config/ user-editable configuration files and MultiQC configs
+- config/ user-editable configuration files
 
 - refdata/ reference data split into:
   - raw/ external inputs (PAVE FASTA/GFF3, NCBI downloads)

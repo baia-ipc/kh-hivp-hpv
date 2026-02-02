@@ -16,6 +16,7 @@ before running the analyses in this repository.
 - `config/`: user-editable pipeline configs (base + step-specific) and MultiQC configs.
 - `pipelines/config/`: technical Nextflow config (executor/conda wiring).
 - `pipelines/conda_env/`: Conda environment definitions used by pipelines.
+- `pipelines/multiqc/`: MultiQC configuration files used by pipelines.
 - `refdata/raw/`: reference inputs from external sources (PAVE FASTA/GFF3, NCBI downloads).
 - `refdata/derived/`: derived reference data (feature tables, renamed/filtered FASTA sets).
 - `analysis-input1/` and `analysis-input2/`: outputs and reports for each analysis.
@@ -71,6 +72,7 @@ to your local reference data paths and to set resource limits:
 
 Technical Nextflow settings (executor/conda wiring) live under `pipelines/config/`.
 Conda environments are defined under `pipelines/conda_env/`.
+MultiQC configs are under `pipelines/multiqc/`.
 
 ## 6) Prepare reference data (`refdata/`)
 

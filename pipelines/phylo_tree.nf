@@ -14,7 +14,7 @@ def reportsDirParam = params.containsKey('reports_dir') ? params.reports_dir : n
 def outgroupsFileParam = params.containsKey('outgroups_file') ? params.outgroups_file : null
 def iqtreeOutgroupsParam = params.containsKey('iqtree_outgroups') ? params.iqtree_outgroups : null
 
-params.multiqc_config = params.multiqc_config ?: "${projectRoot}/config/phylo_tree.multiqc.yml"
+params.multiqc_config = params.multiqc_config ?: "${projectRoot}/pipelines/multiqc/phylo_tree.multiqc.yml"
 
 if (!inputDirParam) {
     error "params.input_dir is required"

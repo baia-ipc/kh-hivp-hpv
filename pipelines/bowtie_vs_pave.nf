@@ -19,7 +19,7 @@ def projectRoot = (workflow.projectDir instanceof java.nio.file.Path \
 
 params.scripts_dir = params.scripts_dir ?: "${projectRoot}/scripts"
 params.bucket_tid_file = params.bucket_tid_file ?: "${projectRoot}/config/pave_bucket_tid.txt"
-params.multiqc_config = params.multiqc_config ?: "${projectRoot}/config/bowtie_vs_pave.multiqc.yml"
+params.multiqc_config = params.multiqc_config ?: "${projectRoot}/pipelines/multiqc/bowtie_vs_pave.multiqc.yml"
 params.lineage_hpv16_fasta = params.lineage_hpv16_fasta ?: "${projectRoot}/refdata/derived/hpv16_tree/lineages_ref_renamed.fasta"
 params.lineage_hpv18_fasta = params.lineage_hpv18_fasta ?: "${projectRoot}/refdata/derived/hpv18_tree/lineages_ref_renamed.fasta"
 params.lineage_ref_hpv16_name = params.lineage_ref_hpv16_name ?: "HPV16REF|lcl|Human"
