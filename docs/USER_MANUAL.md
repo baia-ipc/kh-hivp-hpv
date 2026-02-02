@@ -82,11 +82,12 @@ MultiQC configs are under `pipelines/multiqc/`.
 
 Place the PAVE reference FASTA (and gene FASTAs if used) under `refdata/raw/pave/`.
 If you use variant effect annotation, place the PAVE GFF3 files under
-`refdata/raw/pave/gff3/` (one GFF3 per reference sequence), and the BED files
-under `refdata/raw/pave/bed/`.
+`refdata/raw/pave/gff3/` (one GFF3 per reference sequence).
 
-These paths are referenced by `config/bowtie_vs_pave.config` and the step configs
-for E6/E7 (`bin/config/pave_e6.config`, `bin/config/pave_e7.config`).
+BED files used for E6/E7 SNP extraction are derived from the GFF3 inputs and
+stored under `refdata/derived/pave/bed/` (see below).
+
+These paths are wired via the technical pipeline configs (under `pipelines/config/`).
 
 ### 6.2 PAVE feature tables (derived)
 
@@ -101,6 +102,19 @@ scripts/gff3_to_features_tsv.run_all.sh \
 
 These TSVs are consumed by the Bowtie vs PAVE steps (coverage summaries).
 If the directory is missing or empty, the pipeline will generate it automatically.
+
+### 6.2b PAVE BED files (derived)
+
+E6/E7 SNP extraction uses BED intervals derived from the same GFF3 inputs.
+Generate them with:
+
+```
+scripts/gff3_to_bed.run_all.sh \
+  refdata/raw/pave/gff3 \
+  refdata/derived/pave/bed
+```
+
+These BED files are required by the Bowtie vs PAVE and Cambodia SNP steps.
 
 ### 6.3 Phylogenetic tree inputs (raw + derived)
 

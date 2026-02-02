@@ -188,6 +188,17 @@ scripts/gff3_to_features_tsv.run_all.sh \
   refdata/derived/pave/features_tsv
 ```
 
+### Generate PAVE BED files (derived)
+
+E6/E7 SNP extraction relies on BED intervals derived from the same PAVE GFF3s.
+Generate them under `refdata/derived/pave/bed` with:
+
+```
+scripts/gff3_to_bed.run_all.sh \
+  refdata/raw/pave/gff3 \
+  refdata/derived/pave/bed
+```
+
 ## Reruns and resume
 
 - Nextflow: use `-resume` to reuse successful tasks.

@@ -100,6 +100,12 @@ Format:
   - Rationale: keep pipeline-owned config with pipeline assets while leaving `config/` for user edits.
   - Consequences: technical configs and pipelines reference `pipelines/multiqc/*`.
 
+- 2026-02-02: Derive PAVE BED intervals from GFF3
+  - Context: multiple pipelines require BED intervals for E6/E7 SNP extraction.
+  - Decision: treat BED files as derived data under `refdata/derived/pave/bed`, generated via `scripts/gff3_to_bed.run_all.sh`.
+  - Rationale: BEDs are derived from GFF3s and should not live under raw reference inputs.
+  - Consequences: technical configs reference the derived BED directory.
+
 - 2026-02-02: Move step wrapper scripts into `bin/`
   - Context: step runner scripts lived under each analysis step directory.
   - Decision: relocate wrappers into a top-level `bin/` directory and add analysis-level runners.

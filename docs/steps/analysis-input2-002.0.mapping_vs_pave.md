@@ -27,7 +27,7 @@ Wrappers:
 - PAVE reference inputs (see `config/bowtie_vs_pave.config`):
   - Reference FASTA: `refdata/raw/pave/pave_hsa.fas`
   - GFF3 directory: `refdata/raw/pave/gff3`
-  - BED directory: `refdata/raw/pave/bed`
+  - BED directory: `refdata/derived/pave/bed` (generated from GFF3 with `scripts/gff3_to_bed.run_all.sh`)
   - Feature tables (derived): `refdata/derived/pave/features_tsv` (generated from GFF3 with `scripts/gff3_to_features_tsv.run_all.sh`)
 - Lineage references: `refdata/derived/hpv16_tree/lineages_ref_renamed.fasta` and
   `refdata/derived/hpv18_tree/lineages_ref_renamed.fasta`
