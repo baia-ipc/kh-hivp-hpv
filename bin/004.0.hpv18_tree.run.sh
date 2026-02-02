@@ -6,6 +6,7 @@ PRJROOT="$( cd "$SCRIPTSDIR/.." && pwd )"
 PIPELINE_NF=$PRJROOT/pipelines/phylo_tree.nf
 TECH_CONFIG_COMMON=$PRJROOT/pipelines/config/common.technical.config
 TECH_CONFIG_PIPE=$PRJROOT/pipelines/config/phylo_tree.technical.config
+TECH_CONFIG_STEP=$PRJROOT/pipelines/config/phylo_tree.hpv18.technical.config
 USER_CONFIG=$PRJROOT/config/phylo_tree.config
 STEP_CONFIG=$PRJROOT/config/hpv18_tree.config
 
@@ -17,6 +18,7 @@ fi
 nextflow run "$PIPELINE_NF" \
   -c "$TECH_CONFIG_COMMON" \
   -c "$TECH_CONFIG_PIPE" \
+  -c "$TECH_CONFIG_STEP" \
   -c "$USER_CONFIG" \
   -c "$STEP_CONFIG" \
   "$@" -resume

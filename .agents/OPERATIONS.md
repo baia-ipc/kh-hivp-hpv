@@ -158,6 +158,7 @@ nextflow run pipelines/pave_gene_mapping.nf \
 nextflow run pipelines/phylo_tree.nf \
   -c pipelines/config/common.technical.config \
   -c pipelines/config/phylo_tree.technical.config \
+  -c pipelines/config/phylo_tree.hpv16.technical.config \
   -c config/phylo_tree.config \
   -c config/hpv16_tree.config \
   -resume
@@ -170,6 +171,7 @@ nextflow run pipelines/phylo_tree.nf \
 nextflow run pipelines/phylo_tree.nf \
   -c pipelines/config/common.technical.config \
   -c pipelines/config/phylo_tree.technical.config \
+  -c pipelines/config/phylo_tree.hpv18.technical.config \
   -c config/phylo_tree.config \
   -c config/hpv18_tree.config \
   -resume

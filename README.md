@@ -30,6 +30,7 @@ the analysis of HPV sequencing data in our study.
 - `config/centrifuge_bucketing.config`: Centrifuge index/taxdump paths and resource settings
 - `config/bowtie_vs_pave.config`: PAVE reference paths and resource settings
 - Step path configs under `bin/config/` are internal defaults and generally not edited by users.
+- Derived reference paths are wired in pipeline technical configs under `pipelines/config/` (not user-edited).
 
 ## How to run analysis-input1
 

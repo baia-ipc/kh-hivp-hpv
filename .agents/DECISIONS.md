@@ -117,3 +117,9 @@ Format:
   - Decision: rename all-step wrappers to `run.sh`, rename single-sample wrappers to `run_sample.sh`, and move them under `bin/sample/`.
   - Rationale: make the default entry point consistent and keep per-sample utilities separate.
   - Consequences: update documentation and runner references to new paths.
+
+- 2026-02-02: Move derived refdata paths into technical configs
+  - Context: derived reference paths were defined in user-editable configs.
+  - Decision: relocate derived refdata path parameters into `pipelines/config/*.technical.config`.
+  - Rationale: keep user configs focused on tunable inputs and avoid editing fixed internal paths.
+  - Consequences: update pipelines and wrappers to read derived paths from technical configs.
