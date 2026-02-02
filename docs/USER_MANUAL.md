@@ -57,7 +57,7 @@ local reference data paths and to set resource limits:
 - `config/hpv16_tree.config`, `config/hpv18_tree.config`: tree pipeline inputs
 
 Conda environments used by pipelines are also defined here (e.g.
-`config/centrifuge_bucketing.env.yml`).
+`pipelines/conda_env/centrifuge_bucketing.env.yml`).
 
 ## 6) Prepare reference data (`refdata/`)
 

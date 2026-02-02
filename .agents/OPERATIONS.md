@@ -174,11 +174,11 @@ scripts/gff3_to_features_tsv.run_all.sh \
 - Check `.nextflow.log` for pipeline errors.
 - Inspect process work directories under `work/` and read `.command.sh`, `.command.err`, `.command.out`.
 - If tools are missing, confirm the Conda env file in `config/` is referenced by the pipeline.
-- Nextflow requires Java 17+; if Conda provides an older Java, use the env in `config/nextflow_java.env.yml`:
+- Nextflow requires Java 17+; if Conda provides an older Java, use the env in `pipelines/conda_env/nextflow_java.env.yml`:
 - When adding a new Nextflow parameter in a pipeline (e.g. `params.multiqc_config`), also add it to the matching `config/*.config` file to avoid “undefined parameter” warnings.
 
 ```
-conda env create -f config/nextflow_java.env.yml
+conda env create -f pipelines/conda_env/nextflow_java.env.yml
 conda activate nextflow-java
 ```
 

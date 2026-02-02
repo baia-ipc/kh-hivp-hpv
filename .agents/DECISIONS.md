@@ -81,3 +81,9 @@ Format:
   - Decision: set the sample ID in `pipelines/centrifuge_bucketing_all.nf` from the metadata sample column.
   - Rationale: keep `--skip-align` compatible with precomputed alignment/report files and historical naming.
   - Consequences: alignment/report filenames follow metadata sample IDs for multi-sample runs.
+
+- 2026-02-02: Centralize Conda environment definitions under pipelines
+  - Context: pipeline env files were mixed with other config in `config/`.
+  - Decision: move all `*.env.yml` to `pipelines/conda_env/` and update references.
+  - Rationale: keep pipeline runtime environments alongside the workflows that consume them.
+  - Consequences: configs and docs must reference `pipelines/conda_env/*` for Conda envs.

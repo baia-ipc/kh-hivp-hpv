@@ -8,7 +8,7 @@ Rules:
 
 ## Core conventions (scope only)
 
-- Configuration lives in `config/` (no hardcoded paths in scripts).
+- Configuration lives in `config/` (no hardcoded paths in scripts); Conda env definitions live under `pipelines/conda_env/`.
 - Sample lists and other hardcoded data live in `metadata/`.
 - Reference inputs live in `refdata/raw/`; derived reference assets live in `refdata/derived/` (do not place reference inputs under analysis step directories).
 - Centrifuge database build script lives at `scripts/build_centrifuge_db.sh` (outputs under `refdata/centrifuge/`).
