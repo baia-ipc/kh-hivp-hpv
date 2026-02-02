@@ -15,11 +15,11 @@ HPV_250523_run02	Ex	No reads or too few reads
 HPV_250523_run02	KHCA-168	Too many possible strains (204)
 HPV_250523_run02	KHCA-186	HPV70
 HPV_250523_run02	KHCA-116	Too many possible strains (207)
-HPV_250523_run02	HPV019	HPV90
+HPV_250523_run02	HPV-019	HPV90
 HPV_250523_run02	KHCA-164	Too many possible strains (143)
 HPV_250523_run02	KHCA-169	HPV56
 HPV_250523_run02	Undetermined	Too many possible strains (80)
-HPV_150123_run01	HVP-110	Too many possible strains (210)
+HPV_150123_run01	HPV-110	Too many possible strains (210)
 HPV_150123_run01	Undetermined	HPV18,HPV56
 HPV_150123_run01	KHCA-123	HPV33
 HPV_150123_run01	KHCA-037	HPV68,HPV39,HPV221
@@ -48,7 +48,7 @@ HPV_160823_run03	H2O	No reads or too few reads
 HPV_160823_run03	KHCA-256	HPV58,HPV33
 HPV_160823_run03	KHCA-332	No reads or too few reads
 HPV_160823_run03	KHCA-263	HPV52
-HPV_160823_run03	HPV019	HPV90
+HPV_160823_run03	HPV-019	HPV90
 HPV_160823_run03	KHCA-330	HPV39
 HPV_160823_run03	KHCA-306	HPV16
 HPV_160823_run03	KHCA-323	No reads or too few reads
