@@ -9,7 +9,7 @@ This step builds an HPV18 phylogenetic tree from prepared sequence inputs
 
 - Pipeline: `pipelines/phylo_tree.nf`
 - Config: `config/hpv18_tree.config`
-- Inputs directory: `refdata/hpv18_tree`
+- Inputs directory: `refdata/derived/hpv18_tree`
 - Outgroup list: `metadata/hpv18_tree_outgroups.txt`
 
 Wrappers:
@@ -19,11 +19,11 @@ Wrappers:
 
 ## Inputs
 
-Inputs are expected under `refdata/hpv18_tree/` and are prepared using scripts
-documented in the repository root `README.md`.
+Inputs are expected under `refdata/derived/hpv18_tree/` and are prepared from
+raw inputs under `refdata/raw/hpv18_tree/` using scripts documented in the
+repository root `README.md`.
 
 ## Outputs
 
 - Tree outputs and intermediate artifacts under `output/`
 - MultiQC report: `output/reports/multiqc_report.html`
-

@@ -24,7 +24,7 @@ Download sequence metadata in TSV format, use custom fields definition
 (3) prepare lineages reference fasta
   This is now shared with the SNP‑to‑lineage comparison in step 002.
   Follow the repository root README instructions and place
-  refdata/hpv18_tree/lineages_ref_renamed.fasta before running this step.
+  refdata/derived/hpv18_tree/lineages_ref_renamed.fasta before running this step.
 
 (4) select and prepare NCBI Virus genomes
   # one per country, except SEA and EA where all are included

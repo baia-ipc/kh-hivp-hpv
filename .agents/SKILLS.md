@@ -10,7 +10,7 @@ Rules:
 
 - Configuration lives in `config/` (no hardcoded paths in scripts).
 - Sample lists and other hardcoded data live in `metadata/`.
-- Reference datasets live in `refdata/` (do not place reference inputs under analysis step directories).
+- Reference inputs live in `refdata/raw/`; derived reference assets live in `refdata/derived/` (do not place reference inputs under analysis step directories).
 - Centrifuge database build script lives at `scripts/build_centrifuge_db.sh` (outputs under `refdata/centrifuge/`).
 - Outputs live under each step's `output/` and `reports/` directories.
 - MultiQC reports are published to each step’s `reports/` (tree steps use `output/reports/`), with the process writing `multiqc_report.html` at the workdir root and `publishDir` targeting the final reports directory.
@@ -38,6 +38,7 @@ Rules:
   - analysis-input1: `analysis-input1/002.0.bowtie_vs_pave`
   - analysis-input2: `analysis-input2/002.0.mapping_vs_pave`
 - Inputs: bucketed FASTQs from the corresponding step 001 output; bucket selection in `metadata/pave_bucket_tid.txt`.
+- Reference assets: PAVE FASTA/GFF3/BED under `refdata/raw/pave/`, plus derived feature tables under `refdata/derived/pave/features_tsv`.
 - Outputs: per-step `output/` and `reports/` under the locations above.
 
 ## Skill: VirStrain reports
@@ -65,8 +66,7 @@ Rules:
 - Where:
   - HPV16: `analysis-input2/003.0.hpv16_tree`
   - HPV18: `analysis-input2/004.0.hpv18_tree`
-- Inputs: curated reference sets under each step `input/` plus mapping outputs (see .agents/WORKFLOWS.md for dependencies).
-- Inputs: curated tree inputs under `refdata/hpv16_tree` and `refdata/hpv18_tree`.
+- Inputs: curated tree inputs under `refdata/derived/hpv16_tree` and `refdata/derived/hpv18_tree` (prepared from `refdata/raw/hpv16_tree` and `refdata/raw/hpv18_tree`).
 - Outputs: alignment and tree artifacts under each step `output/`.
 
 ## Skill: Cambodia SNP comparison
@@ -75,6 +75,6 @@ Rules:
 - Entry points: `pipelines/cambodia_snps.nf` (config: `config/cambodia_snps.config`).
 - Where: `analysis-input2/005.0.cambodia_snps`.
 - Inputs:
-  - Selected reference sets under `refdata/hpv16_tree` and `refdata/hpv18_tree`
+  - Selected reference sets under `refdata/derived/hpv16_tree` and `refdata/derived/hpv18_tree`
   - Sample variants from `analysis-input2/002.0.mapping_vs_pave/reports/E6_E7_variants.tsv`
 - Outputs: `analysis-input2/005.0.cambodia_snps/output`, `analysis-input2/005.0.cambodia_snps/reports`.

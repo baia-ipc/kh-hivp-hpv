@@ -14,6 +14,6 @@ fi
 
 nextflow run "$PIPELINE_NF" \
   -c "$PIPELINE_CONFIG" \
-  --input_dir "$PRJROOT/refdata/hpv16_tree" \
+  --input_dir "$PRJROOT/refdata/derived/hpv16_tree" \
   --outdir "$STEPDIR/output" \
   "$@" -resume

@@ -22,8 +22,13 @@ Wrappers:
 ## Inputs
 
 - Reads directory: output of analysis-input2 step 001 (`analysis-input2/001.0.bucketing/output/`)
-- Lineage references: `refdata/hpv16_tree/lineages_ref_renamed.fasta` and
-  `refdata/hpv18_tree/lineages_ref_renamed.fasta`
+- PAVE reference inputs (see `config/bowtie_vs_pave.config`):
+  - Reference FASTA: `refdata/raw/pave/pave_hsa.fas`
+  - GFF3 directory: `refdata/raw/pave/gff3`
+  - BED directory: `refdata/raw/pave/bed`
+  - Feature tables (derived): `refdata/derived/pave/features_tsv` (generated from GFF3 with `scripts/gff3_to_features_tsv.run_all.sh`)
+- Lineage references: `refdata/derived/hpv16_tree/lineages_ref_renamed.fasta` and
+  `refdata/derived/hpv18_tree/lineages_ref_renamed.fasta`
 
 ## Outputs
 

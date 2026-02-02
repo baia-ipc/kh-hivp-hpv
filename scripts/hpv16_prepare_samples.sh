@@ -26,7 +26,7 @@ EOFHELP
 fi
 
 if [[ -z "$PAVE_FASTA" ]]; then
-  PAVE_FASTA="$REPO_ROOT/refdata/pave/pave_hsa.fas"
+PAVE_FASTA="$REPO_ROOT/refdata/raw/pave/pave_hsa.fas"
 fi
 
 if [[ -z "$OUT_DIR" ]]; then

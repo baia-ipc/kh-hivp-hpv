@@ -20,8 +20,8 @@ def projectRoot = (workflow.projectDir instanceof java.nio.file.Path \
 params.scripts_dir = params.scripts_dir ?: "${projectRoot}/scripts"
 params.bucket_tid_file = params.bucket_tid_file ?: "${projectRoot}/metadata/pave_bucket_tid.txt"
 params.multiqc_config = params.multiqc_config ?: "${projectRoot}/config/bowtie_vs_pave.multiqc.yml"
-params.lineage_hpv16_fasta = params.lineage_hpv16_fasta ?: "${projectRoot}/refdata/hpv16_tree/lineages_ref_renamed.fasta"
-params.lineage_hpv18_fasta = params.lineage_hpv18_fasta ?: "${projectRoot}/refdata/hpv18_tree/lineages_ref_renamed.fasta"
+params.lineage_hpv16_fasta = params.lineage_hpv16_fasta ?: "${projectRoot}/refdata/derived/hpv16_tree/lineages_ref_renamed.fasta"
+params.lineage_hpv18_fasta = params.lineage_hpv18_fasta ?: "${projectRoot}/refdata/derived/hpv18_tree/lineages_ref_renamed.fasta"
 params.lineage_ref_hpv16_name = params.lineage_ref_hpv16_name ?: "HPV16REF|lcl|Human"
 params.lineage_ref_hpv18_name = params.lineage_ref_hpv18_name ?: "HPV18REF|lcl|Human"
 // Avoid "Access to undefined parameter" warnings; these are optional filters/inputs.
@@ -82,7 +82,6 @@ def checkPath(String path, String label, boolean mustBeDir = false) {
 
 checkPath(params.pave_ref_fasta as String, 'PAVE reference fasta')
 checkPath(params.pave_gff3_dir as String, 'PAVE GFF3 directory', true)
-checkPath(params.features_tsv_dir as String, 'Features TSV directory', true)
 checkPath(params.pave_bed_dir as String, 'BED directory', true)
 checkPath(params.scripts_dir as String, 'Scripts directory', true)
 checkPath(params.lineage_hpv16_fasta as String, 'HPV16 lineages reference FASTA')
@@ -90,6 +89,31 @@ checkPath(params.lineage_hpv18_fasta as String, 'HPV18 lineages reference FASTA'
 
 def indexMarker = new File("${params.index_dir}/pave_hsa.1.bt2")
 def indexReady = indexMarker.exists() ? Channel.value(true) : null
+
+def featuresDir = new File(params.features_tsv_dir as String)
+if (featuresDir.exists() && !featuresDir.isDirectory()) {
+    error "Features TSV path is not a directory: ${params.features_tsv_dir}"
+}
+def featuresReady = (featuresDir.isDirectory() && featuresDir.listFiles()?.any { it.name.endsWith('.tsv') }) \
+    ? Channel.value(true) \
+    : null
+
+process GENERATE_FEATURES_TSV {
+    tag "features_tsv"
+    publishDir "${params.features_tsv_dir}", mode: 'copy'
+
+    input:
+    val(dummy)
+
+    output:
+    path "features_tsv", emit: features
+
+    script:
+    """
+    mkdir -p features_tsv
+    "${params.scripts_dir}/gff3_to_features_tsv.run_all.sh" "${params.pave_gff3_dir}" features_tsv
+    """
+}
 
 process CREATE_INDEX {
     tag "pave_hsa"
@@ -111,7 +135,7 @@ process MAP_SAMPLE {
     publishDir { "${params.outdir}/${run_id}" }, mode: 'copy'
 
     input:
-    tuple val(run_id), val(sample_id), path(read1), path(read2), val(index_ready)
+    tuple val(run_id), val(sample_id), path(read1), path(read2), val(index_ready), val(features_ready)
 
     output:
     tuple val(run_id), val(sample_id), path("${sample_id}.*"), emit: mapped
@@ -486,6 +510,9 @@ workflow {
     if (!indexReady) {
         indexReady = CREATE_INDEX().marker.map { true }
     }
+    if (!featuresReady) {
+        featuresReady = GENERATE_FEATURES_TSV(Channel.value(true)).features.map { true }
+    }
 
     def samples
     if (params.read1 && params.read2) {
@@ -526,8 +553,8 @@ workflow {
         error "set either params.read1/read2 or params.reads_dir"
     }
 
-    def samplesWithIndex = samples.combine(indexReady)
-    def mapped = MAP_SAMPLE(samplesWithIndex)
+    def samplesWithDeps = samples.combine(indexReady).combine(featuresReady)
+    def mapped = MAP_SAMPLE(samplesWithDeps)
     def mappedDone = mapped.collect()
 
     def strains = AGGREGATE_STRAINS(mappedDone)

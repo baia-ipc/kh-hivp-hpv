@@ -14,7 +14,8 @@ before running the analyses in this repository.
 - `input/`: symlinks or folders pointing to raw FASTQ data (not tracked in git).
 - `metadata/`: sample sheets and other fixed inputs (TSV files).
 - `config/`: pipeline configuration files and Conda env definitions.
-- `refdata/`: curated reference data (PAVE reference, phylogenetic inputs, feature tables).
+- `refdata/raw/`: reference inputs from external sources (PAVE FASTA/GFF3, NCBI downloads).
+- `refdata/derived/`: derived reference data (feature tables, renamed/filtered FASTA sets).
 - `analysis-input1/` and `analysis-input2/`: outputs and reports for each analysis.
 - `docs/`: technical documentation and this user manual.
 
@@ -60,20 +61,41 @@ Conda environments used by pipelines are also defined here (e.g.
 
 ## 6) Prepare reference data (`refdata/`)
 
-### 6.1 PAVE reference
+### 6.1 PAVE reference (raw)
 
-Place the PAVE reference FASTA and feature tables under `refdata/` as required
-by `config/bowtie_vs_pave.config` and the gene‑level configs.
+Place the PAVE reference FASTA (and gene FASTAs if used) under `refdata/raw/pave/`.
+If you use variant effect annotation, place the PAVE GFF3 files under
+`refdata/raw/pave/gff3/` (one GFF3 per reference sequence), and the BED files
+under `refdata/raw/pave/bed/`.
 
-If you use variant effect annotation in step 002, place the PAVE GFF3 files
-under `refdata/gff3` (one GFF3 per reference sequence).
+These paths are referenced by `config/bowtie_vs_pave.config`, `config/pave_e6.config`,
+and `config/pave_e7.config`.
 
-### 6.2 Phylogenetic tree inputs
+### 6.2 PAVE feature tables (derived)
 
-Place curated tree inputs under:
+Coverage statistics use tabular feature files (TSV) derived from the PAVE GFF3s.
+Generate them with:
 
-- `refdata/hpv16_tree`
-- `refdata/hpv18_tree`
+```
+scripts/gff3_to_features_tsv.run_all.sh \
+  refdata/raw/pave/gff3 \
+  refdata/derived/pave/features_tsv
+```
+
+These TSVs are consumed by the Bowtie vs PAVE steps (coverage summaries).
+If the directory is missing or empty, the pipeline will generate it automatically.
+
+### 6.3 Phylogenetic tree inputs (raw + derived)
+
+Place raw inputs under:
+
+- `refdata/raw/hpv16_tree`
+- `refdata/raw/hpv18_tree`
+
+Derived tree inputs live under:
+
+- `refdata/derived/hpv16_tree`
+- `refdata/derived/hpv18_tree`
 
 The preparation steps for these (including the shared lineage reference
 FASTA files used by step 002 SNP‑to‑lineage comparison) are described in the

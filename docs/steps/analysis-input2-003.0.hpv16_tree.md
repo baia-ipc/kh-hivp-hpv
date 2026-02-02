@@ -9,7 +9,7 @@ This step builds an HPV16 phylogenetic tree from prepared sequence inputs
 
 - Pipeline: `pipelines/phylo_tree.nf`
 - Config: `config/hpv16_tree.config`
-- Inputs directory: `refdata/hpv16_tree`
+- Inputs directory: `refdata/derived/hpv16_tree`
 - Outgroup list: `metadata/hpv16_tree_outgroups.txt`
 
 Wrappers:
@@ -19,11 +19,11 @@ Wrappers:
 
 ## Inputs
 
-Inputs are expected under `refdata/hpv16_tree/` and are prepared using scripts
-documented in the repository root `README.md`.
+Inputs are expected under `refdata/derived/hpv16_tree/` and are prepared from
+raw inputs under `refdata/raw/hpv16_tree/` using scripts documented in the
+repository root `README.md`.
 
 ## Outputs
 
 - Tree outputs and intermediate artifacts under `output/`
 - MultiQC report: `output/reports/multiqc_report.html`
-

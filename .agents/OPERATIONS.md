@@ -9,6 +9,7 @@ Rules:
 ## Conventions
 
 - Configuration is in `config/` and sample lists in `metadata/`.
+- Raw reference inputs live in `refdata/raw/`; derived reference assets live in `refdata/derived/`.
 - Outputs are written to each step's `output/` and `reports/`.
 - When changing directory layout, update `CONTENTS.md` and `.agents/INVENTORY.md`.
 - Avoid user-specific absolute paths in scripts; require tools via PATH or
@@ -136,7 +137,7 @@ nextflow run pipelines/pave_gene_mapping.nf \
 ```
 nextflow run pipelines/phylo_tree.nf \
   -c config/hpv16_tree.config \
-  --input_dir refdata/hpv16_tree \
+  --input_dir refdata/derived/hpv16_tree \
   --outdir analysis-input2/003.0.hpv16_tree/output \
   -resume
 ```
@@ -147,9 +148,20 @@ nextflow run pipelines/phylo_tree.nf \
 ```
 nextflow run pipelines/phylo_tree.nf \
   -c config/hpv18_tree.config \
-  --input_dir refdata/hpv18_tree \
+  --input_dir refdata/derived/hpv18_tree \
   --outdir analysis-input2/004.0.hpv18_tree/output \
   -resume
+```
+
+### Generate PAVE feature tables (derived)
+
+Coverage statistics use feature tables derived from the PAVE GFF3 files.
+Generate them under `refdata/derived/pave/features_tsv` with:
+
+```
+scripts/gff3_to_features_tsv.run_all.sh \
+  refdata/raw/pave/gff3 \
+  refdata/derived/pave/features_tsv
 ```
 
 ## Reruns and resume

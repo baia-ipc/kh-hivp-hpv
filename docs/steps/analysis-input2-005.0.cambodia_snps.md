@@ -19,13 +19,13 @@ Wrappers:
 ## Inputs
 
 - Selected genomes and country metadata:
-  - `refdata/hpv16_tree/selected.fasta`
-  - `refdata/hpv16_tree/selected`
-  - `refdata/hpv18_tree/selected.fasta`
-  - `refdata/hpv18_tree/HPV18-NCBIVirus.acc_country.selected.tsv`
+  - `refdata/derived/hpv16_tree/selected.fasta`
+  - `refdata/derived/hpv16_tree/selected`
+  - `refdata/derived/hpv18_tree/selected.fasta`
+  - `refdata/derived/hpv18_tree/HPV18-NCBIVirus.acc_country.selected.tsv`
 - Lineage references:
-  - `refdata/hpv16_tree/lineages_ref_renamed.fasta`
-  - `refdata/hpv18_tree/lineages_ref_renamed.fasta`
+  - `refdata/derived/hpv16_tree/lineages_ref_renamed.fasta`
+  - `refdata/derived/hpv18_tree/lineages_ref_renamed.fasta`
 - Sample variants from step 002:
   - `analysis-input2/002.0.mapping_vs_pave/reports/E6_E7_variants.tsv`
 

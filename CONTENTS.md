@@ -25,7 +25,9 @@
 
 - config/ pipeline and other configuration files
 
-- refdata/ curated reference data (PAVE reference, phylogenetic inputs, feature tables)
+- refdata/ reference data split into:
+  - raw/ external inputs (PAVE FASTA/GFF3, NCBI downloads)
+  - derived/ processed reference assets (feature tables, curated tree inputs)
 
 - docs/ technical documentation for the analysis steps (human-readable)
 
