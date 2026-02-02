@@ -11,7 +11,7 @@ analysis-input2 sample list and input FASTQ layout.
 - Pipeline: `pipelines/centrifuge_bucketing_all.nf`
 - User config: `config/general.config`
 - Step path config: `bin/config/analysis-input2_001.bucketing.config` (internal defaults)
-- Technical config: `pipelines/config/common.technical.config` + `pipelines/config/centrifuge_bucketing.technical.config`
+- Technical config: `pipelines/config/common.config` + `pipelines/config/centrifuge_bucketing.config`
 - Sample list: `metadata/samples-input2.tsv` (normalized `sample_id` plus `fastq_sample_id` for raw filename prefixes)
 
 Wrapper:

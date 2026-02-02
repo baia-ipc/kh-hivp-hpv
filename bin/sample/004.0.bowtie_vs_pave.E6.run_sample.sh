@@ -4,8 +4,8 @@ set -euo pipefail
 SCRIPTSDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PRJROOT="$( cd "$SCRIPTSDIR/../.." && pwd )"
 PIPELINE_NF=$PRJROOT/pipelines/pave_gene_mapping.nf
-TECH_CONFIG_COMMON=$PRJROOT/pipelines/config/common.technical.config
-TECH_CONFIG_PIPE=$PRJROOT/pipelines/config/pave_gene_mapping.technical.config
+TECH_CONFIG_COMMON=$PRJROOT/pipelines/config/common.config
+TECH_CONFIG_PIPE=$PRJROOT/pipelines/config/pave_gene_mapping.config
 USER_CONFIG=$PRJROOT/config/general.config
 STEP_CONFIG=$PRJROOT/bin/config/pave_e6.config
 

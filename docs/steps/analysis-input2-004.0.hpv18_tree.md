@@ -10,7 +10,7 @@ This step builds an HPV18 phylogenetic tree from prepared sequence inputs
 - Pipeline: `pipelines/phylo_tree.nf`
 - User config: `config/general.config`
 - Step path config: `bin/config/analysis-input2_004.hpv18_tree.config` (internal defaults)
-- Technical config: `pipelines/config/common.technical.config` + `pipelines/config/phylo_tree.technical.config` + `pipelines/config/phylo_tree.hpv18.technical.config`
+- Technical config: `pipelines/config/common.config` + `pipelines/config/phylo_tree.config` + `pipelines/config/phylo_tree.hpv18.config`
 - Inputs directory: `refdata/derived/hpv18_tree` (wired via technical config)
 - Outgroup list: `metadata/hpv18_tree_outgroups.txt`
 

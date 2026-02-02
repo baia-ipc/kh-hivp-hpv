@@ -4,8 +4,8 @@ set -euo pipefail
 SCRIPTSDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PRJROOT="$( cd "$SCRIPTSDIR/.." && pwd )"
 PIPELINE_NF=$PRJROOT/pipelines/bowtie_vs_pave.nf
-TECH_CONFIG_COMMON=$PRJROOT/pipelines/config/common.technical.config
-TECH_CONFIG_PIPE=$PRJROOT/pipelines/config/bowtie_vs_pave.technical.config
+TECH_CONFIG_COMMON=$PRJROOT/pipelines/config/common.config
+TECH_CONFIG_PIPE=$PRJROOT/pipelines/config/bowtie_vs_pave.config
 USER_CONFIG=$PRJROOT/config/general.config
 STEP_CONFIG=$PRJROOT/bin/config/analysis-input1_002.bowtie_vs_pave.config
 

@@ -15,8 +15,8 @@ This step is implemented as a Nextflow pipeline:
 - Pipeline: `pipelines/bowtie_vs_pave.nf`
 - User config: `config/general.config`
 - Step path config: `bin/config/analysis-input1_002.bowtie_vs_pave.config` (internal defaults)
-- Technical config: `pipelines/config/common.technical.config` + `pipelines/config/bowtie_vs_pave.technical.config`
-- Bucket selection: `params.bucket_tid` in `pipelines/config/bowtie_vs_pave.technical.config`
+- Technical config: `pipelines/config/common.config` + `pipelines/config/bowtie_vs_pave.config`
+- Bucket selection: `params.bucket_tid` in `pipelines/config/bowtie_vs_pave.config`
 
 Wrappers:
 
@@ -26,7 +26,7 @@ Wrappers:
 ## Inputs
 
 - Reads directory: output of step 001 (`analysis-input1/001.0.centrifuge/output/`)
-- PAVE reference inputs (wired via `pipelines/config/bowtie_vs_pave.technical.config`):
+- PAVE reference inputs (wired via `pipelines/config/bowtie_vs_pave.config`):
   - Reference FASTA: `refdata/raw/pave/pave_hsa.fas`
   - GFF3 directory: `refdata/raw/pave/gff3`
   - BED directory: `refdata/derived/pave/bed` (generated from GFF3 with `scripts/gff3_to_bed.run_all.sh`)
