@@ -182,6 +182,5 @@ workflow {
     def aligned = MAFFT_ALIGN(cat_all)
     def trimmed = TRIMAL(aligned)
     def tree = IQTREE(trimmed.trimal)
-    def multiqc_config_file = file(params.multiqc_config)
     MULTIQC(multiqc_config_file, tree.collect())
 }
