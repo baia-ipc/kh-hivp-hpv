@@ -19,7 +19,7 @@ operations used the NCBI taxonomy dump specified for the analysis.
 
 Seventy-two samples were processed across three MiSeq runs (HPV_150123_run01,
 n=22; HPV_160823_run03, n=25; HPV_250523_run02, n=25). Five samples were
-controls/technical placeholders (one water control H2O, one HVP control, and
+controls/technical placeholders (one water control H2O, one HPV control, and
 three “Undetermined” FASTQ sets produced by Illumina demultiplexing for reads
 that were not assigned to any sample); proportions below are reported for the
 remaining 67 non-control samples unless stated otherwise.
@@ -86,7 +86,7 @@ and E6/E7 variant tables across samples.
 ## Results (aggregated from step 002 reports)
 
 This step operated on the HPV bucket only; 51 non‑control samples had bucketed
-reads available. Control/technical samples (H2O, HVP‑*, Undetermined) are
+reads available. Control/technical samples (H2O, HPV‑110, Undetermined) are
 excluded from the summaries below.
 
 Top‑strain calls were present in 34/51 samples, while 17/51 samples had no top
