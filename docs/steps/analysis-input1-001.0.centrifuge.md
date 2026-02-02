@@ -18,8 +18,8 @@ This step is implemented as Nextflow pipelines:
 
 Wrappers under `bin/` call the Nextflow pipelines:
 
-- `bin/001.0.centrifuge.run.sh` (one sample / one pair)
-- `bin/001.0.centrifuge.run_all.sh` (all samples)
+- `bin/001.0.centrifuge.run.sh` (all samples)
+- `bin/sample/001.0.centrifuge.run_sample.sh` (one sample / one pair)
 
 ## Inputs
 

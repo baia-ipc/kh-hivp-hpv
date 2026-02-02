@@ -26,15 +26,15 @@ Rules:
 Run whole analyses:
 
 ```
-bin/analysis-input1.run_all.sh
-bin/analysis-input2.run_all.sh
+bin/analysis-input1.run.sh
+bin/analysis-input2.run.sh
 ```
 
 Run individual steps (examples):
 
 ```
-bin/001.0.centrifuge.run_all.sh
-bin/002.0.mapping_vs_pave.run_all.sh
+bin/sample/001.0.centrifuge.run_sample.sh
+bin/sample/002.0.mapping_vs_pave.run_sample.sh
 ```
 
 ### analysis-input1 bucketing (Nextflow)

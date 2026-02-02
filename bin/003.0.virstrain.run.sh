@@ -9,21 +9,21 @@ TECH_CONFIG_PIPE=$PRJROOT/pipelines/config/virstrain.technical.config
 USER_CONFIG=$PRJROOT/config/virstrain.config
 STEP_CONFIG=$PRJROOT/config/analysis-input1_003.virstrain.config
 
-if [ $# -lt 3 ]; then
-  echo "Usage: $0 <fwd> <rev> <out_prefix> [nextflow args...]"
-  exit 1
-fi
-
-fwd=$1
-rev=$2
-out=$3
-shift 3
-
-run_id=$(basename "$(dirname "$out")")
-sample_id=$(basename "$out")
 if ! command -v nextflow >/dev/null 2>&1; then
   echo "Error: nextflow was not found in PATH" > /dev/stderr
   exit 1
+fi
+
+args=()
+resume_set=false
+for arg in "$@"; do
+  if [ "$arg" = "-resume" ] || [ "$arg" = "--resume" ]; then
+    resume_set=true
+  fi
+  args+=("$arg")
+done
+if ! $resume_set; then
+  args+=(-resume)
 fi
 
 nextflow run "$PIPELINE_NF" \
@@ -31,8 +31,4 @@ nextflow run "$PIPELINE_NF" \
   -c "$TECH_CONFIG_PIPE" \
   -c "$USER_CONFIG" \
   -c "$STEP_CONFIG" \
-  --read1 "$fwd" \
-  --read2 "$rev" \
-  --run_id "$run_id" \
-  --sample_id "$sample_id" \
-  "$@" -resume
+  "${args[@]}"

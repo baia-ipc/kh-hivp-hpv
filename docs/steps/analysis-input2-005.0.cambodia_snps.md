@@ -15,7 +15,7 @@ observed in analysis-input2 step 002.
 
 Wrappers:
 
-- `bin/005.0.cambodia_snps.run_all.sh`
+- `bin/005.0.cambodia_snps.run.sh`
 
 ## Inputs
 

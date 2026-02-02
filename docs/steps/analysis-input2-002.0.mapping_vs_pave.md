@@ -17,8 +17,8 @@ lineage‑defining SNPs from HPV16/HPV18 lineage references.
 
 Wrappers:
 
-- `bin/002.0.mapping_vs_pave.run_all.sh` (all samples)
-- `bin/002.0.mapping_vs_pave.run.sh` (single sample pair)
+- `bin/002.0.mapping_vs_pave.run.sh` (all samples)
+- `bin/sample/002.0.mapping_vs_pave.run_sample.sh` (single sample pair)
 
 ## Inputs
 
