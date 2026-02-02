@@ -32,13 +32,13 @@ Format:
   - Context: step 002 relied on per-step scripts with hardcoded paths.
   - Decision: centralize scripts under `scripts/` and run step 002 via `pipelines/bowtie_vs_pave.nf`.
   - Rationale: reduce duplication and make configuration consistent across analyses.
-  - Consequences: use `config/general.config` for user inputs and `pipelines/config/bowtie_vs_pave.technical.config` for fixed bucket selection.
+  - Consequences: use `config/general.config` for user inputs and `pipelines/config/bowtie_vs_pave.config` for fixed bucket selection.
 
 - 2026-01-24: Migrate VirStrain reports to Nextflow
   - Context: step 003 used step-local scripts and hardcoded reference paths.
   - Decision: centralize scripts under `scripts/` and run step 003 via `pipelines/virstrain.nf`.
   - Rationale: align with the shared pipeline layout and remove hardcoded paths.
-  - Consequences: use `config/general.config` for user inputs and `pipelines/config/virstrain.technical.config` for fixed bucket selection.
+  - Consequences: use `config/general.config` for user inputs and `pipelines/config/virstrain.config` for fixed bucket selection.
 
 - 2026-01-24: Migrate E6 mapping to Nextflow
   - Context: step 004 relied on step-local scripts and per-step index creation.
@@ -132,6 +132,6 @@ Format:
 
 - 2026-02-02: Move derived refdata paths into technical configs
   - Context: derived reference paths were defined in user-editable configs.
-  - Decision: relocate derived refdata path parameters into `pipelines/config/*.technical.config`.
+  - Decision: relocate derived refdata path parameters into `pipelines/config/*.config`.
   - Rationale: keep user configs focused on tunable inputs and avoid editing fixed internal paths.
   - Consequences: update pipelines and wrappers to read derived paths from technical configs.

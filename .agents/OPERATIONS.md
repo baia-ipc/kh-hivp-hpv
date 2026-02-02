@@ -14,7 +14,7 @@ Rules:
 - When changing directory layout, update `CONTENTS.md` and `.agents/INVENTORY.md`.
 - Avoid user-specific absolute paths in scripts; require tools via PATH or
   configurable env vars (e.g., `CONDA_EXE`).
-- Default parallelism is capped at 24 concurrent tasks via `process.maxForks` and `executor.queueSize` in `pipelines/config/common.technical.config`.
+- Default parallelism is tied to `params.threads` (from `config/general.config`) via `process.maxForks` and `executor.queueSize` in `pipelines/config/common.config`.
 - MultiQC reports are written under each step's `reports/` (phylo tree steps use `output/reports/`). Ensure the MultiQC process outputs files at the process root and publish to `reports/` to avoid duplicated `multiqc/multiqc_report.html` paths.
 - MultiQC method summaries should cite the primary tool papers; update the relevant `pipelines/multiqc/*.multiqc.yml` when pipeline steps change.
 - MultiQC custom sections should be configured under `custom_data` with explicit `plot_type` and any table inputs connected via `sp:` search patterns in the same config.
@@ -48,8 +48,8 @@ bin/sample/002.0.mapping_vs_pave.run_sample.sh
 - Run with Nextflow:
 ```
 nextflow run pipelines/centrifuge_bucketing_all.nf \
-  -c pipelines/config/common.technical.config \
-  -c pipelines/config/centrifuge_bucketing.technical.config \
+  -c pipelines/config/common.config \
+  -c pipelines/config/centrifuge_bucketing.config \
   -c config/general.config \
   -c bin/config/analysis-input1_001.centrifuge.config \
   -resume
@@ -73,8 +73,8 @@ scripts/build_centrifuge_db.sh --outdir refdata/centrifuge --index-name human_ab
 - Run with Nextflow:
 ```
 nextflow run pipelines/centrifuge_bucketing_all.nf \
-  -c pipelines/config/common.technical.config \
-  -c pipelines/config/centrifuge_bucketing.technical.config \
+  -c pipelines/config/common.config \
+  -c pipelines/config/centrifuge_bucketing.config \
   -c config/general.config \
   -c bin/config/analysis-input2_001.bucketing.config \
   -resume
@@ -86,8 +86,8 @@ nextflow run pipelines/centrifuge_bucketing_all.nf \
 
 ```
 nextflow run pipelines/bowtie_vs_pave.nf \
-  -c pipelines/config/common.technical.config \
-  -c pipelines/config/bowtie_vs_pave.technical.config \
+  -c pipelines/config/common.config \
+  -c pipelines/config/bowtie_vs_pave.config \
   -c config/general.config \
   -c bin/config/analysis-input1_002.bowtie_vs_pave.config \
   -resume
@@ -97,8 +97,8 @@ nextflow run pipelines/bowtie_vs_pave.nf \
 
 ```
 nextflow run pipelines/bowtie_vs_pave.nf \
-  -c pipelines/config/common.technical.config \
-  -c pipelines/config/bowtie_vs_pave.technical.config \
+  -c pipelines/config/common.config \
+  -c pipelines/config/bowtie_vs_pave.config \
   -c config/general.config \
   -c bin/config/analysis-input2_002.mapping_vs_pave.config \
   -resume
@@ -108,8 +108,8 @@ nextflow run pipelines/bowtie_vs_pave.nf \
 
 ```
 nextflow run pipelines/cambodia_snps.nf \
-  -c pipelines/config/common.technical.config \
-  -c pipelines/config/cambodia_snps.technical.config \
+  -c pipelines/config/common.config \
+  -c pipelines/config/cambodia_snps.config \
   -c config/general.config \
   -c bin/config/analysis-input2_005.cambodia_snps.config \
   -resume
@@ -120,8 +120,8 @@ nextflow run pipelines/cambodia_snps.nf \
 - Run with Nextflow:
 ```
 nextflow run pipelines/virstrain.nf \
-  -c pipelines/config/common.technical.config \
-  -c pipelines/config/virstrain.technical.config \
+  -c pipelines/config/common.config \
+  -c pipelines/config/virstrain.config \
   -c config/general.config \
   -c bin/config/analysis-input1_003.virstrain.config \
   -resume
@@ -132,8 +132,8 @@ nextflow run pipelines/virstrain.nf \
 - Run with Nextflow:
 ```
 nextflow run pipelines/pave_gene_mapping.nf \
-  -c pipelines/config/common.technical.config \
-  -c pipelines/config/pave_gene_mapping.technical.config \
+  -c pipelines/config/common.config \
+  -c pipelines/config/pave_gene_mapping.config \
   -c config/general.config \
   -c bin/config/pave_e6.config \
   -resume
@@ -144,8 +144,8 @@ nextflow run pipelines/pave_gene_mapping.nf \
 - Run with Nextflow:
 ```
 nextflow run pipelines/pave_gene_mapping.nf \
-  -c pipelines/config/common.technical.config \
-  -c pipelines/config/pave_gene_mapping.technical.config \
+  -c pipelines/config/common.config \
+  -c pipelines/config/pave_gene_mapping.config \
   -c config/general.config \
   -c bin/config/pave_e7.config \
   -resume
@@ -156,9 +156,9 @@ nextflow run pipelines/pave_gene_mapping.nf \
 - Run with Nextflow:
 ```
 nextflow run pipelines/phylo_tree.nf \
-  -c pipelines/config/common.technical.config \
-  -c pipelines/config/phylo_tree.technical.config \
-  -c pipelines/config/phylo_tree.hpv16.technical.config \
+  -c pipelines/config/common.config \
+  -c pipelines/config/phylo_tree.config \
+  -c pipelines/config/phylo_tree.hpv16.config \
   -c config/general.config \
   -c bin/config/analysis-input2_003.hpv16_tree.config \
   -resume
@@ -169,9 +169,9 @@ nextflow run pipelines/phylo_tree.nf \
 - Run with Nextflow:
 ```
 nextflow run pipelines/phylo_tree.nf \
-  -c pipelines/config/common.technical.config \
-  -c pipelines/config/phylo_tree.technical.config \
-  -c pipelines/config/phylo_tree.hpv18.technical.config \
+  -c pipelines/config/common.config \
+  -c pipelines/config/phylo_tree.config \
+  -c pipelines/config/phylo_tree.hpv18.config \
   -c config/general.config \
   -c bin/config/analysis-input2_004.hpv18_tree.config \
   -resume
@@ -208,9 +208,9 @@ scripts/gff3_to_bed.run_all.sh \
 
 - Check `.nextflow.log` for pipeline errors.
 - Inspect process work directories under `work/` and read `.command.sh`, `.command.err`, `.command.out`.
-- If tools are missing, confirm the Conda env file under `pipelines/conda_env/` is referenced by the matching `pipelines/config/*.technical.config`.
+- If tools are missing, confirm the Conda env file under `pipelines/conda_env/` is referenced by the matching `pipelines/config/*.config`.
 - Nextflow requires Java 17+; if Conda provides an older Java, use the env in `pipelines/conda_env/nextflow_java.env.yml`:
-- When adding a new Nextflow parameter in a pipeline (e.g. `params.multiqc_config`), also add it to `config/general.config` (user) or the matching `pipelines/config/*.technical.config` (technical) file to avoid “undefined parameter” warnings.
+- When adding a new Nextflow parameter in a pipeline (e.g. `params.multiqc_config`), also add it to `config/general.config` (user) or the matching `pipelines/config/*.config` (technical) file to avoid “undefined parameter” warnings.
 
 ```
 conda env create -f pipelines/conda_env/nextflow_java.env.yml

@@ -15,7 +15,7 @@ This step is implemented as Nextflow pipelines:
 - Multi-sample pipeline: `pipelines/centrifuge_bucketing_all.nf`
 - User config: `config/general.config`
 - Step path config: `bin/config/analysis-input1_001.centrifuge.config` (internal defaults)
-- Technical config: `pipelines/config/common.technical.config` + `pipelines/config/centrifuge_bucketing.technical.config`
+- Technical config: `pipelines/config/common.config` + `pipelines/config/centrifuge_bucketing.config`
 
 Wrappers under `bin/` call the Nextflow pipelines:
 

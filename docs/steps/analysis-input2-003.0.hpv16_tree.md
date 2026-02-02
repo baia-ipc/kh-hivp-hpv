@@ -10,7 +10,7 @@ This step builds an HPV16 phylogenetic tree from prepared sequence inputs
 - Pipeline: `pipelines/phylo_tree.nf`
 - User config: `config/general.config`
 - Step path config: `bin/config/analysis-input2_003.hpv16_tree.config` (internal defaults)
-- Technical config: `pipelines/config/common.technical.config` + `pipelines/config/phylo_tree.technical.config` + `pipelines/config/phylo_tree.hpv16.technical.config`
+- Technical config: `pipelines/config/common.config` + `pipelines/config/phylo_tree.config` + `pipelines/config/phylo_tree.hpv16.config`
 - Inputs directory: `refdata/derived/hpv16_tree` (wired via technical config)
 - Outgroup list: `metadata/hpv16_tree_outgroups.txt`
 

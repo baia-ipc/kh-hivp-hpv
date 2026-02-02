@@ -4,8 +4,8 @@ set -euo pipefail
 SCRIPTSDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PRJROOT="$( cd "$SCRIPTSDIR/.." && pwd )"
 PIPELINE_NF=$PRJROOT/pipelines/cambodia_snps.nf
-TECH_CONFIG_COMMON=$PRJROOT/pipelines/config/common.technical.config
-TECH_CONFIG_PIPE=$PRJROOT/pipelines/config/cambodia_snps.technical.config
+TECH_CONFIG_COMMON=$PRJROOT/pipelines/config/common.config
+TECH_CONFIG_PIPE=$PRJROOT/pipelines/config/cambodia_snps.config
 USER_CONFIG=$PRJROOT/config/general.config
 STEP_CONFIG=$PRJROOT/bin/config/analysis-input2_005.cambodia_snps.config
 

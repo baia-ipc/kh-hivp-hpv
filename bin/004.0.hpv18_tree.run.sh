@@ -4,9 +4,9 @@ set -euo pipefail
 SCRIPTSDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PRJROOT="$( cd "$SCRIPTSDIR/.." && pwd )"
 PIPELINE_NF=$PRJROOT/pipelines/phylo_tree.nf
-TECH_CONFIG_COMMON=$PRJROOT/pipelines/config/common.technical.config
-TECH_CONFIG_PIPE=$PRJROOT/pipelines/config/phylo_tree.technical.config
-TECH_CONFIG_STEP=$PRJROOT/pipelines/config/phylo_tree.hpv18.technical.config
+TECH_CONFIG_COMMON=$PRJROOT/pipelines/config/common.config
+TECH_CONFIG_PIPE=$PRJROOT/pipelines/config/phylo_tree.config
+TECH_CONFIG_STEP=$PRJROOT/pipelines/config/phylo_tree.hpv18.config
 USER_CONFIG=$PRJROOT/config/general.config
 STEP_CONFIG=$PRJROOT/bin/config/analysis-input2_004.hpv18_tree.config
 
