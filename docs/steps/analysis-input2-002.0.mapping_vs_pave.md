@@ -11,7 +11,7 @@ lineage‑defining SNPs from HPV16/HPV18 lineage references.
 ## Implementation
 
 - Pipeline: `pipelines/bowtie_vs_pave.nf`
-- User config: `config/bowtie_vs_pave.config`
+- User config: `config/general.config`
 - Step path config: `bin/config/analysis-input2_002.mapping_vs_pave.config` (internal defaults)
 - Technical config: `pipelines/config/common.technical.config` + `pipelines/config/bowtie_vs_pave.technical.config`
 - Bucket selection: `params.bucket_tid` in `pipelines/config/bowtie_vs_pave.technical.config`
@@ -24,7 +24,7 @@ Wrappers:
 ## Inputs
 
 - Reads directory: output of analysis-input2 step 001 (`analysis-input2/001.0.bucketing/output/`)
-- PAVE reference inputs (see `config/bowtie_vs_pave.config`):
+- PAVE reference inputs (wired via `pipelines/config/bowtie_vs_pave.technical.config`):
   - Reference FASTA: `refdata/raw/pave/pave_hsa.fas`
   - GFF3 directory: `refdata/raw/pave/gff3`
   - BED directory: `refdata/derived/pave/bed` (generated from GFF3 with `scripts/gff3_to_bed.run_all.sh`)

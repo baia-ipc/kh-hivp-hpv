@@ -53,13 +53,8 @@ even when the raw file prefix differs from the normalized ID.
 User-editable pipeline parameters live in `config/`. Edit these files to point
 to your local reference data paths and to set resource limits:
 
-- Base pipeline configs:
-  - `config/centrifuge_bucketing.config`: Centrifuge index + taxonomy paths
-  - `config/bowtie_vs_pave.config`: PAVE reference + features + BED/GFF3 dirs for variant annotation
-  - `config/virstrain.config`: VirStrain reference paths
-  - `config/pave_gene_mapping.config`: gene‑level mapping defaults (E6/E7)
-  - `config/phylo_tree.config`: tree pipeline defaults
-  - `config/cambodia_snps.config`: Cambodia SNP comparison defaults
+- Base pipeline config:
+  - `config/general.config`: all user-editable pipeline parameters (Centrifuge index/taxdump, PAVE reference names, Cambodia defaults, tree defaults, and shared threads)
 - Step‑specific path configs (inputs/outputs) are stored under `bin/config/` and are not typically edited by users:
   - `bin/config/analysis-input1_001.centrifuge.config`
   - `bin/config/analysis-input1_002.bowtie_vs_pave.config`
@@ -70,7 +65,7 @@ to your local reference data paths and to set resource limits:
   - `bin/config/analysis-input2_004.hpv18_tree.config`
   - `bin/config/analysis-input2_005.cambodia_snps.config`
 - Gene‑mapping step configs are under `bin/config/` (`bin/config/pave_e6.config`, `bin/config/pave_e7.config`).
-- Tree defaults are configured via `config/phylo_tree.config`.
+- Tree defaults are configured via `config/general.config`.
 
 Technical Nextflow settings (executor/conda wiring and derived refdata paths) live under `pipelines/config/`.
 Conda environments are defined under `pipelines/conda_env/`.
@@ -144,7 +139,7 @@ scripts/build_centrifuge_db.sh \
   --threads 24
 ```
 
-Then update `config/centrifuge_bucketing.config`, for example:
+Then update `config/general.config`, for example:
 
 - `index = "refdata/centrifuge/human_abv"`
 - `taxdump = "refdata/centrifuge/taxonomy-YYYY-MM-DD"`

@@ -10,7 +10,7 @@ observed in analysis-input2 step 002.
 ## Implementation
 
 - Pipeline: `pipelines/cambodia_snps.nf`
-- User config: `config/cambodia_snps.config`
+- User config: `config/general.config`
 - Step path config: `bin/config/analysis-input2_005.cambodia_snps.config` (internal defaults)
 - Technical config: `pipelines/config/common.technical.config` + `pipelines/config/cambodia_snps.technical.config`
 

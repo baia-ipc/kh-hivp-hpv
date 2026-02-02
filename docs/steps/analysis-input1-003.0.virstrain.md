@@ -10,7 +10,7 @@ produces per-sample VirStrain reports plus an aggregated summary table.
 This step is implemented as a Nextflow pipeline:
 
 - Pipeline: `pipelines/virstrain.nf`
-- User config: `config/virstrain.config`
+- User config: `config/general.config`
 - Step path config: `bin/config/analysis-input1_003.virstrain.config` (internal defaults)
 - Technical config: `pipelines/config/common.technical.config` + `pipelines/config/virstrain.technical.config`
 - Bucket selection: `params.bucket_tid` in `pipelines/config/virstrain.technical.config`
@@ -23,7 +23,7 @@ Wrappers:
 ## Inputs
 
 - Reads directory: output of step 001 (`analysis-input1/001.0.centrifuge/output/`)
-- VirStrain reference/index: configured in `config/virstrain.config`
+- VirStrain reference/index: wired via `pipelines/config/virstrain.technical.config`
 
 ## Outputs
 
