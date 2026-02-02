@@ -30,7 +30,6 @@ def requiredParams = [
     'homo_sapiens_tid',
     'threads',
     'aggregate_skip',
-    'aggregate_skip_wo_human',
     'conda_env'
 ]
 
@@ -46,6 +45,14 @@ if (!params.containsKey('skip_align') || params.skip_align == null) {
 if (!params.containsKey('precomputed_root') || !params.precomputed_root) {
     params.precomputed_root = params.outdir
 }
+
+def aggregateSkipList = params.aggregate_skip.toString()
+    .split(',')
+    .collect { it.trim() }
+    .findAll { it }
+def homoTid = params.homo_sapiens_tid.toString().trim()
+def skipNoHuman = ([homoTid] + aggregateSkipList.findAll { it != homoTid }).unique()
+params.aggregate_skip_wo_human = skipNoHuman.join(',')
 
 def loadSamples(String samplesPath) {
     def samplesFile = new File(samplesPath)
