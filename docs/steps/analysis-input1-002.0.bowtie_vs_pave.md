@@ -14,7 +14,7 @@ This step is implemented as a Nextflow pipeline:
 
 - Pipeline: `pipelines/bowtie_vs_pave.nf`
 - Config: `config/bowtie_vs_pave.config`
-- Bucket selection: `metadata/pave_bucket_tid.txt`
+- Bucket selection: `config/pave_bucket_tid.txt`
 
 Wrappers:
 

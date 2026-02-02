@@ -12,7 +12,7 @@ This step is implemented as a Nextflow pipeline:
 
 - Pipeline: `pipelines/pave_gene_mapping.nf`
 - Config: `config/pave_e6.config`
-- Bucket selection: `metadata/pave_bucket_tid.txt`
+- Bucket selection: `config/pave_bucket_tid.txt`
 
 Wrappers:
 
@@ -36,4 +36,3 @@ Aggregated, step-level reports (`reports/`):
 - `depth_stats.unfiltered.tsv`
 - `depth_stats.filtered.tsv`
 - MultiQC report: `reports/multiqc_report.html`
-

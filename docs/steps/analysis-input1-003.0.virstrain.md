@@ -11,7 +11,7 @@ This step is implemented as a Nextflow pipeline:
 
 - Pipeline: `pipelines/virstrain.nf`
 - Config: `config/virstrain.config`
-- Bucket selection: `metadata/pave_bucket_tid.txt`
+- Bucket selection: `config/pave_bucket_tid.txt`
 
 Wrappers:
 
@@ -34,4 +34,3 @@ Per sample (`output/<RUN_ID>/<SAMPLE_ID>/`):
 
 - `VirStrain_report.txt`
 - `VirStrain_report.html`
-
