@@ -37,9 +37,9 @@ Rules:
    - Depends on: step 001 `analysis-input2/001.0.bucketing/output`
    - Outputs: `analysis-input2/002.0.mapping_vs_pave/output`, `analysis-input2/002.0.mapping_vs_pave/reports`
 
-3) Cambodia SNP comparison
+3) SNPs samples vs database
    - Depends on: step 002 reports (`analysis-input2/002.0.mapping_vs_pave/reports/E6_E7_variants.tsv`)
-   - Outputs: `analysis-input2/005.0.cambodia_snps/output`, `analysis-input2/005.0.cambodia_snps/reports`
+   - Outputs: `analysis-input2/005.0.snps_samples_vs_db/output`, `analysis-input2/005.0.snps_samples_vs_db/reports`
 
 ## Workflow: phylogenetic trees
 

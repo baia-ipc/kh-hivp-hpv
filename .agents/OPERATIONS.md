@@ -104,14 +104,14 @@ nextflow run pipelines/bowtie_vs_pave.nf \
   -resume
 ```
 
-### Cambodia SNP comparison (analysis-input2)
+### SNPs samples vs database (analysis-input2)
 
 ```
 nextflow run pipelines/cambodia_snps.nf \
   -c pipelines/config/common.config \
   -c pipelines/config/cambodia_snps.config \
   -c config/general.config \
-  -c bin/config/analysis-input2_005.cambodia_snps.config \
+  -c bin/config/analysis-input2_005.snps_samples_vs_db.config \
   -resume
 ```
 

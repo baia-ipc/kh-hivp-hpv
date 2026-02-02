@@ -70,12 +70,12 @@ Rules:
 - Inputs: curated tree inputs under `refdata/derived/hpv16_tree` and `refdata/derived/hpv18_tree` (prepared from `refdata/raw/hpv16_tree` and `refdata/raw/hpv18_tree`).
 - Outputs: alignment and tree artifacts under each step `output/`.
 
-## Skill: Cambodia SNP comparison
+## Skill: SNPs samples vs database
 
 - Scope: extract Cambodian HPV16/HPV18 references, call E6/E7 SNPs, and compare against lineage and sample SNPs.
 - Entry points: `pipelines/cambodia_snps.nf` (config: `config/general.config`).
-- Where: `analysis-input2/005.0.cambodia_snps`.
+- Where: `analysis-input2/005.0.snps_samples_vs_db`.
 - Inputs:
   - Selected reference sets under `refdata/derived/hpv16_tree` and `refdata/derived/hpv18_tree`
   - Sample variants from `analysis-input2/002.0.mapping_vs_pave/reports/E6_E7_variants.tsv`
-- Outputs: `analysis-input2/005.0.cambodia_snps/output`, `analysis-input2/005.0.cambodia_snps/reports`.
+- Outputs: `analysis-input2/005.0.snps_samples_vs_db/output`, `analysis-input2/005.0.snps_samples_vs_db/reports`.
