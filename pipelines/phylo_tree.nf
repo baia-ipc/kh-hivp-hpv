@@ -8,21 +8,29 @@ def projectRoot = (workflow.projectDir instanceof java.nio.file.Path \
     : Paths.get(workflow.projectDir.toString())) \
     .resolve('..').normalize().toString()
 
-params.input_dir = params.input_dir ?: null
-params.outdir = params.outdir ?: null
-params.reports_dir = params.reports_dir ?: null
-params.outgroups_file = params.outgroups_file ?: null
+def inputDirParam = params.containsKey('input_dir') ? params.input_dir : null
+def outdirParam = params.containsKey('outdir') ? params.outdir : null
+def reportsDirParam = params.containsKey('reports_dir') ? params.reports_dir : null
+def outgroupsFileParam = params.containsKey('outgroups_file') ? params.outgroups_file : null
+def iqtreeOutgroupsParam = params.containsKey('iqtree_outgroups') ? params.iqtree_outgroups : null
+
 params.multiqc_config = params.multiqc_config ?: "${projectRoot}/config/phylo_tree.multiqc.yml"
 
-if (!params.input_dir) {
+if (!inputDirParam) {
     error "params.input_dir is required"
 }
-if (!params.outdir) {
+if (!outdirParam) {
     error "params.outdir is required"
 }
-if (!params.reports_dir) {
-    params.reports_dir = "${params.outdir}/reports"
+if (!reportsDirParam) {
+    reportsDirParam = "${outdirParam}/reports"
 }
+
+params.input_dir = inputDirParam
+params.outdir = outdirParam
+params.reports_dir = reportsDirParam
+params.outgroups_file = outgroupsFileParam
+params.iqtree_outgroups = iqtreeOutgroupsParam
 
 def requiredInputs = [
     'selected_renamed.fasta',
