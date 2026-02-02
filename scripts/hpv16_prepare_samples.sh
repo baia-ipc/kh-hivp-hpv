@@ -9,7 +9,7 @@ PAVE_FASTA=${PAVE_FASTA:-}
 HPV16REF_FASTA=${HPV16REF_FASTA:-}
 BCF_DIR=${BCF_DIR:-}
 BCF_RUN_ID=${BCF_RUN_ID:-}
-BCF_RUN_ID_FILE=${BCF_RUN_ID_FILE:-$REPO_ROOT/config/hpv16_tree_bcf_run.txt}
+TREE_CONFIG=${TREE_CONFIG:-$REPO_ROOT/config/hpv16_tree.config}
 OUT_DIR=${OUT_DIR:-}
 SAMPLES=${SAMPLES:-}
 SAMPLES_FILE=${SAMPLES_FILE:-}
@@ -19,7 +19,7 @@ if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
 Usage: hpv16_prepare_samples.sh
 
 Environment overrides:
-  PAVE_FASTA, HPV16REF_FASTA, BCF_DIR, BCF_RUN_ID, BCF_RUN_ID_FILE
+  PAVE_FASTA, HPV16REF_FASTA, BCF_DIR, BCF_RUN_ID, TREE_CONFIG
   OUT_DIR, SAMPLES, SAMPLES_FILE
 EOFHELP
   exit 0
@@ -39,8 +39,9 @@ if [[ -z "$HPV16REF_FASTA" ]]; then
 fi
 
 if [[ -z "$BCF_DIR" ]]; then
-  if [[ -z "$BCF_RUN_ID" && -f "$BCF_RUN_ID_FILE" ]]; then
-    BCF_RUN_ID=$(head -n 1 "$BCF_RUN_ID_FILE" | tr -d '\r')
+  if [[ -z "$BCF_RUN_ID" && -f "$TREE_CONFIG" ]]; then
+    BCF_RUN_ID=$(awk -F'=' '/bcf_run_id/ {gsub(/#.*/, "", $2); gsub(/[[:space:]]*/, "", $2); gsub(/"/, "", $2); print $2; exit}' \
+      "$TREE_CONFIG")
   fi
   if [[ -n "$BCF_RUN_ID" ]]; then
     BCF_DIR="$REPO_ROOT/analysis-input2/002.0.mapping_vs_pave/output/$BCF_RUN_ID"
@@ -48,7 +49,7 @@ if [[ -z "$BCF_DIR" ]]; then
 fi
 
 if [[ -z "$BCF_DIR" ]]; then
-  echo "Error: BCF_DIR is required (set BCF_DIR or BCF_RUN_ID/BCF_RUN_ID_FILE)." >&2
+  echo "Error: BCF_DIR is required (set BCF_DIR or BCF_RUN_ID, or set bcf_run_id in $TREE_CONFIG)." >&2
   exit 1
 fi
 
