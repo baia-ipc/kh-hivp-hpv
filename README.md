@@ -8,7 +8,9 @@ the analysis of HPV sequencing data in our study.
 - `analysis-input1/`: analysis for the first input dataset (all patients)
 - `analysis-input2/`: analysis for the second input dataset (HPV16/18-focused)
 - `pipelines/`: Nextflow pipelines
-- `config/`: pipeline configuration files and Conda env definitions
+  - `pipelines/config/`: technical Nextflow config
+  - `pipelines/conda_env/`: Conda environment definitions used by pipelines
+- `config/`: user-editable configuration files (pipeline + step configs, MultiQC)
 - `metadata/`: sample lists and other fixed inputs (e.g. bucket taxonomy IDs)
 - `refdata/raw/`: external reference inputs (PAVE FASTA/GFF3, NCBI downloads)
 - `refdata/derived/`: derived reference data (feature tables, renamed/filtered FASTA sets)
@@ -25,6 +27,7 @@ the analysis of HPV sequencing data in our study.
 - `metadata/samples-input1.tsv` and `metadata/samples-input2.tsv`: which samples to process and where the FASTQs are. These include a normalized `sample_id` plus `fastq_sample_id` (the exact prefix found in FASTQ filenames) used for read discovery.
 - `config/centrifuge_bucketing.config`: Centrifuge index/taxdump paths and resource settings
 - `config/bowtie_vs_pave.config`: PAVE reference paths and resource settings
+- Step-specific configs (e.g. `config/analysis-input1_001.centrifuge.config`) set per-step inputs/outputs.
 
 ## How to run analysis-input1
 
@@ -52,7 +55,7 @@ After running step 001, open the interactive report at:
 ### Run a single sample (optional)
 
 Some steps also provide a `run.sh` wrapper for running one sample pair.
-The third argument is an output prefix; use a path that includes a run folder and a sample name, for example:
+The third argument is an output prefix used to infer `run_id` and `sample_id`; outputs still go to the step output directory configured in `config/`.
 
 ```bash
 analysis-input1/002.0.bowtie_vs_pave/scripts/run.sh \

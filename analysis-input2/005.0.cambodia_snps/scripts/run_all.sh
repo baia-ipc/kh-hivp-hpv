@@ -5,9 +5,10 @@ SCRIPTSDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 STEPDIR=$SCRIPTSDIR/..
 PRJROOT=$SCRIPTSDIR/../../..
 PIPELINE_NF=$PRJROOT/pipelines/cambodia_snps.nf
-PIPELINE_CONFIG=$PRJROOT/config/cambodia_snps.config
-SAMPLE_VARIANTS=$PRJROOT/analysis-input2/002.0.mapping_vs_pave/reports/E6_E7_variants.tsv
-SAMPLE_EFFECTS=$PRJROOT/analysis-input2/002.0.mapping_vs_pave/reports/E6_E7_variant_effects.tsv
+TECH_CONFIG_COMMON=$PRJROOT/pipelines/config/common.technical.config
+TECH_CONFIG_PIPE=$PRJROOT/pipelines/config/cambodia_snps.technical.config
+USER_CONFIG=$PRJROOT/config/cambodia_snps.config
+STEP_CONFIG=$PRJROOT/config/analysis-input2_005.cambodia_snps.config
 
 if ! command -v nextflow >/dev/null 2>&1; then
   echo "Error: nextflow was not found in PATH" > /dev/stderr
@@ -27,9 +28,8 @@ if ! $resume_set; then
 fi
 
 nextflow run "$PIPELINE_NF" \
-  -c "$PIPELINE_CONFIG" \
-  --sample_variants "$SAMPLE_VARIANTS" \
-  --sample_variant_effects "$SAMPLE_EFFECTS" \
-  --outdir "$STEPDIR/output" \
-  --reports_dir "$STEPDIR/reports" \
+  -c "$TECH_CONFIG_COMMON" \
+  -c "$TECH_CONFIG_PIPE" \
+  -c "$USER_CONFIG" \
+  -c "$STEP_CONFIG" \
   "${args[@]}"

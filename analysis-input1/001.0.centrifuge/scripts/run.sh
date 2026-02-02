@@ -5,9 +5,11 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 STEPDIR=$DIR/..
 PRJROOT=$DIR/../../..
 PIPELINESDIR=$PRJROOT/pipelines
-OUTDIR=$STEPDIR/output
 PIPELINE_NF=$PIPELINESDIR/centrifuge_bucketing.nf
-PIPELINE_CONFIG=$PRJROOT/config/centrifuge_bucketing.config
+TECH_CONFIG_COMMON=$PRJROOT/pipelines/config/common.technical.config
+TECH_CONFIG_PIPE=$PRJROOT/pipelines/config/centrifuge_bucketing.technical.config
+USER_CONFIG=$PRJROOT/config/centrifuge_bucketing.config
+STEP_CONFIG=$PRJROOT/config/analysis-input1_001.centrifuge.config
 
 if [ $# -lt 1 ]; then
   echo "Usage: $0 <READSETPFX> [nextflow args...]"
@@ -37,7 +39,9 @@ if ! compgen -G "$R2_GLOB" >/dev/null; then
 fi
 
 nextflow run "$PIPELINE_NF" \
-  -c "$PIPELINE_CONFIG" \
+  -c "$TECH_CONFIG_COMMON" \
+  -c "$TECH_CONFIG_PIPE" \
+  -c "$USER_CONFIG" \
+  -c "$STEP_CONFIG" \
   --reads "$READS_GLOB" \
-  --outdir "$OUTDIR" \
   "$@" -resume

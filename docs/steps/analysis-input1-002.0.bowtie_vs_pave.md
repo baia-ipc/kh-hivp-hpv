@@ -13,7 +13,8 @@ reference genomes.
 This step is implemented as a Nextflow pipeline:
 
 - Pipeline: `pipelines/bowtie_vs_pave.nf`
-- Config: `config/bowtie_vs_pave.config`
+- User configs: `config/bowtie_vs_pave.config` + `config/analysis-input1_002.bowtie_vs_pave.config`
+- Technical config: `pipelines/config/common.technical.config` + `pipelines/config/bowtie_vs_pave.technical.config`
 - Bucket selection: `config/pave_bucket_tid.txt`
 
 Wrappers:

@@ -87,3 +87,9 @@ Format:
   - Decision: move all `*.env.yml` to `pipelines/conda_env/` and update references.
   - Rationale: keep pipeline runtime environments alongside the workflows that consume them.
   - Consequences: configs and docs must reference `pipelines/conda_env/*` for Conda envs.
+
+- 2026-02-02: Split user vs technical Nextflow configuration
+  - Context: pipeline configs mixed user-editable parameters with executor/conda wiring, and step paths lived in wrappers.
+  - Decision: keep user-editable configs in `config/`, move technical Nextflow settings to `pipelines/config/`, and add step-specific config files for inputs/outputs.
+  - Rationale: ensure users only edit `config/` while keeping technical defaults centralized.
+  - Consequences: wrappers pass multiple `-c` files; new step configs define `outdir`, `reports_dir`, and inputs.
