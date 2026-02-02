@@ -191,7 +191,9 @@ scripts/hpv18_select_ncbi_genomes.sh \
   refdata/derived/hpv18_tree/selected_renamed.fasta
 ```
 
-4) Build `samples.fasta` from mapping results (step 002). The default sample list is in `metadata/hpv18_tree_samples.txt`:
+4) Build `samples.fasta` from mapping results (step 002). By default the script
+derives samples from `analysis-input2/002.0.mapping_vs_pave/reports/strains.tsv`
+by selecting rows with top strain `HPV18` for the run ID:
 
 ```bash
 OUT_DIR=refdata/derived/hpv18_tree \

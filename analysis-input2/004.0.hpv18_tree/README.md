@@ -50,7 +50,7 @@ Download sequence metadata in TSV format, use custom fields definition
   extracted the reference sequence from the downloaded PAVE:
   ../../scripts/hpv18_prepare_samples.sh
   # this writes input/HPV18REF.fas, the consensus FASTAs (with KHCA-<sample>-HPV18 IDs), and input/samples.fasta
-  # defaults: config/hpv18_tree_bcf_run.txt and metadata/hpv18_tree_samples.txt
+  # defaults: config/hpv18_tree_bcf_run.txt and derived samples from reports/strains.tsv
 
 (7) build the tree
   run scripts/run.sh (Nextflow pipeline)

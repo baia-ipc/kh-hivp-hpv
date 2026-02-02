@@ -23,6 +23,10 @@ Inputs are expected under `refdata/derived/hpv18_tree/` and are prepared from
 raw inputs under `refdata/raw/hpv18_tree/` using scripts documented in the
 repository root `README.md`.
 
+Sample IDs are derived automatically by `scripts/hpv18_prepare_samples.sh` from
+`analysis-input2/002.0.mapping_vs_pave/reports/strains.tsv`, selecting samples
+whose top strain is HPV18 for the configured run ID.
+
 ## Outputs
 
 - Tree outputs and intermediate artifacts under `output/`
