@@ -1,11 +1,11 @@
 # High level summary of the contents of the repository
 
-- analysis-input\*/ workflows used for the analyses; in total 2 analyses were done
-  - analysis of the first three batches of sequences (Miseq): analysis-input1/
+- preliminary-analysis-all-patients/ and targeted-analysis-hpv16-hpv18/ workflows used for the analyses; in total 2 analyses were done
+  - analysis of the first three batches of sequences (Miseq): preliminary-analysis-all-patients/
   - analysis of the subsequent sequencing, focused on HPV16/HPV18 samples:
-    analysis-input2/
+    targeted-analysis-hpv16-hpv18/
 
-- analysis-input\*/\*:
+- analysis directories:
   - each analysis directory contain subdirectories for each step, numbered
     according to the order in which they were run (01, 02, etc)
   - each step subdirectory contains outputs and reports and in some cases

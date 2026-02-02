@@ -19,7 +19,7 @@ before running the analyses in this repository.
 - `pipelines/multiqc/`: MultiQC configuration files used by pipelines.
 - `refdata/raw/`: reference inputs from external sources (PAVE FASTA/GFF3, NCBI downloads).
 - `refdata/derived/`: derived reference data (feature tables, renamed/filtered FASTA sets).
-- `analysis-input1/` and `analysis-input2/`: outputs and reports for each analysis.
+- `preliminary-analysis-all-patients/` and `targeted-analysis-hpv16-hpv18/`: outputs and reports for each analysis.
 - `docs/`: technical documentation and this user manual.
 
 ## 3) Prepare raw input data (`input/`)
@@ -56,14 +56,14 @@ to your local reference data paths and to set resource limits:
 - Base pipeline config:
   - `config/general.config`: all user-editable pipeline parameters (Centrifuge index/taxdump, PAVE reference names, Cambodia defaults, tree defaults, and shared threads)
 - Step‑specific path configs (inputs/outputs) are stored under `bin/config/` and are not typically edited by users:
-  - `bin/config/analysis-input1_001.centrifuge.config`
-  - `bin/config/analysis-input1_002.bowtie_vs_pave.config`
-  - `bin/config/analysis-input1_003.virstrain.config`
-  - `bin/config/analysis-input2_001.bucketing.config`
-  - `bin/config/analysis-input2_002.mapping_vs_pave.config`
-  - `bin/config/analysis-input2_003.hpv16_tree.config`
-  - `bin/config/analysis-input2_004.hpv18_tree.config`
-  - `bin/config/analysis-input2_005.snps_samples_vs_db.config`
+  - `bin/config/preliminary-analysis-all-patients_001.centrifuge.config`
+  - `bin/config/preliminary-analysis-all-patients_002.bowtie_vs_pave.config`
+  - `bin/config/preliminary-analysis-all-patients_003.virstrain.config`
+  - `bin/config/targeted-analysis-hpv16-hpv18_001.bucketing.config`
+  - `bin/config/targeted-analysis-hpv16-hpv18_002.mapping_vs_pave.config`
+  - `bin/config/targeted-analysis-hpv16-hpv18_003.hpv16_tree.config`
+  - `bin/config/targeted-analysis-hpv16-hpv18_004.hpv18_tree.config`
+  - `bin/config/targeted-analysis-hpv16-hpv18_005.snps_samples_vs_db.config`
 - Gene‑mapping step configs are under `bin/config/` (`bin/config/pave_e6.config`, `bin/config/pave_e7.config`).
 - Tree defaults are configured via `config/general.config`.
 

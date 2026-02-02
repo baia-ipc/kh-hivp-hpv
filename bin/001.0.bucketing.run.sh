@@ -8,7 +8,7 @@ PIPELINE_NF=$PRJROOT/pipelines/centrifuge_bucketing_all.nf
 TECH_CONFIG_COMMON=$PRJROOT/pipelines/config/common.config
 TECH_CONFIG_PIPE=$PRJROOT/pipelines/config/centrifuge_bucketing.config
 USER_CONFIG=$PRJROOT/config/general.config
-STEP_CONFIG=$PRJROOT/bin/config/analysis-input2_001.bucketing.config
+STEP_CONFIG=$PRJROOT/bin/config/targeted-analysis-hpv16-hpv18_001.bucketing.config
 
 if ! command -v nextflow >/dev/null 2>&1; then
   echo "Error: nextflow was not found in PATH" > /dev/stderr

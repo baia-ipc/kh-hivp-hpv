@@ -7,7 +7,7 @@ PIPELINE_NF=$PRJROOT/pipelines/virstrain.nf
 TECH_CONFIG_COMMON=$PRJROOT/pipelines/config/common.config
 TECH_CONFIG_PIPE=$PRJROOT/pipelines/config/virstrain.config
 USER_CONFIG=$PRJROOT/config/general.config
-STEP_CONFIG=$PRJROOT/bin/config/analysis-input1_003.virstrain.config
+STEP_CONFIG=$PRJROOT/bin/config/preliminary-analysis-all-patients_003.virstrain.config
 
 if [ $# -lt 3 ]; then
   echo "Usage: $0 <fwd> <rev> <out_prefix> [nextflow args...]"

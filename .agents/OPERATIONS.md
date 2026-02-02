@@ -26,8 +26,8 @@ Rules:
 Run whole analyses:
 
 ```
-bin/analysis-input1.run.sh
-bin/analysis-input2.run.sh
+bin/preliminary-analysis-all-patients.run.sh
+bin/targeted-analysis-hpv16-hpv18.run.sh
 ```
 
 Run individual steps (all samples):
@@ -43,7 +43,7 @@ Run a single sample (for steps that support it):
 bin/sample/002.0.mapping_vs_pave.run_sample.sh
 ```
 
-### analysis-input1 bucketing (Nextflow)
+### preliminary-analysis-all-patients bucketing (Nextflow)
 
 - Run with Nextflow:
 ```
@@ -51,11 +51,11 @@ nextflow run pipelines/centrifuge_bucketing_all.nf \
   -c pipelines/config/common.config \
   -c pipelines/config/centrifuge_bucketing.config \
   -c config/general.config \
-  -c bin/config/analysis-input1_001.centrifuge.config \
+  -c bin/config/preliminary-analysis-all-patients_001.centrifuge.config \
   -resume
 ```
 
-MultiQC report is written to `analysis-input1/001.0.centrifuge/reports/multiqc_report.html`.
+MultiQC report is written to `preliminary-analysis-all-patients/001.0.centrifuge/reports/multiqc_report.html`.
 
 ### Build the Centrifuge database (human + RefSeq archaea/bacteria/viral)
 
@@ -68,7 +68,7 @@ scripts/build_centrifuge_db.sh --outdir refdata/centrifuge --index-name human_ab
 - `index = "refdata/centrifuge/human_abv"`
   - `taxdump = "refdata/centrifuge/taxonomy-YYYY-MM-DD"`
 
-### analysis-input2 bucketing (Nextflow)
+### targeted-analysis-hpv16-hpv18 bucketing (Nextflow)
 
 - Run with Nextflow:
 ```
@@ -76,42 +76,42 @@ nextflow run pipelines/centrifuge_bucketing_all.nf \
   -c pipelines/config/common.config \
   -c pipelines/config/centrifuge_bucketing.config \
   -c config/general.config \
-  -c bin/config/analysis-input2_001.bucketing.config \
+  -c bin/config/targeted-analysis-hpv16-hpv18_001.bucketing.config \
   -resume
 ```
 
 ### Bowtie vs PAVE mapping (Nextflow)
 
-- analysis-input1:
+- preliminary-analysis-all-patients:
 
 ```
 nextflow run pipelines/bowtie_vs_pave.nf \
   -c pipelines/config/common.config \
   -c pipelines/config/bowtie_vs_pave.config \
   -c config/general.config \
-  -c bin/config/analysis-input1_002.bowtie_vs_pave.config \
+  -c bin/config/preliminary-analysis-all-patients_002.bowtie_vs_pave.config \
   -resume
 ```
 
-- analysis-input2:
+- targeted-analysis-hpv16-hpv18:
 
 ```
 nextflow run pipelines/bowtie_vs_pave.nf \
   -c pipelines/config/common.config \
   -c pipelines/config/bowtie_vs_pave.config \
   -c config/general.config \
-  -c bin/config/analysis-input2_002.mapping_vs_pave.config \
+  -c bin/config/targeted-analysis-hpv16-hpv18_002.mapping_vs_pave.config \
   -resume
 ```
 
-### SNPs samples vs database (analysis-input2)
+### SNPs samples vs database (targeted-analysis-hpv16-hpv18)
 
 ```
 nextflow run pipelines/cambodia_snps.nf \
   -c pipelines/config/common.config \
   -c pipelines/config/cambodia_snps.config \
   -c config/general.config \
-  -c bin/config/analysis-input2_005.snps_samples_vs_db.config \
+  -c bin/config/targeted-analysis-hpv16-hpv18_005.snps_samples_vs_db.config \
   -resume
 ```
 
@@ -123,7 +123,7 @@ nextflow run pipelines/virstrain.nf \
   -c pipelines/config/common.config \
   -c pipelines/config/virstrain.config \
   -c config/general.config \
-  -c bin/config/analysis-input1_003.virstrain.config \
+  -c bin/config/preliminary-analysis-all-patients_003.virstrain.config \
   -resume
 ```
 
@@ -160,7 +160,7 @@ nextflow run pipelines/phylo_tree.nf \
   -c pipelines/config/phylo_tree.config \
   -c pipelines/config/phylo_tree.hpv16.config \
   -c config/general.config \
-  -c bin/config/analysis-input2_003.hpv16_tree.config \
+  -c bin/config/targeted-analysis-hpv16-hpv18_003.hpv16_tree.config \
   -resume
 ```
 
@@ -173,7 +173,7 @@ nextflow run pipelines/phylo_tree.nf \
   -c pipelines/config/phylo_tree.config \
   -c pipelines/config/phylo_tree.hpv18.config \
   -c config/general.config \
-  -c bin/config/analysis-input2_004.hpv18_tree.config \
+  -c bin/config/targeted-analysis-hpv16-hpv18_004.hpv18_tree.config \
   -resume
 ```
 
@@ -232,7 +232,7 @@ To refresh the reference snapshot used for regression checks:
 
 ```
 mkdir -p reference-results
-for step in analysis-input1/* analysis-input2/*; do
+for step in preliminary-analysis-all-patients/* targeted-analysis-hpv16-hpv18/*; do
   [ -d "$step" ] || continue
   for sub in output reports index; do
     src="$step/$sub"

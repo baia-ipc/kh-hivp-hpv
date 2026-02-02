@@ -13,7 +13,7 @@ OUT_DIR=${OUT_DIR:-}
 SAMPLES=${SAMPLES:-}
 SAMPLES_FILE=${SAMPLES_FILE:-}
 SAMPLES_TSV=${SAMPLES_TSV:-$REPO_ROOT/metadata/samples-input2.tsv}
-STRAINS_TSV=${STRAINS_TSV:-$REPO_ROOT/analysis-input2/002.0.mapping_vs_pave/reports/strains.tsv}
+STRAINS_TSV=${STRAINS_TSV:-$REPO_ROOT/targeted-analysis-hpv16-hpv18/002.0.mapping_vs_pave/reports/strains.tsv}
 
 if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
   cat <<'EOFHELP'
@@ -57,7 +57,7 @@ if [[ -z "$BCF_RUN_ID" && -z "$BCF_DIR" && -f "$SAMPLES_TSV" ]]; then
 fi
 
 if [[ -z "$BCF_DIR" && -n "$BCF_RUN_ID" ]]; then
-  BCF_DIR="$REPO_ROOT/analysis-input2/002.0.mapping_vs_pave/output/$BCF_RUN_ID"
+  BCF_DIR="$REPO_ROOT/targeted-analysis-hpv16-hpv18/002.0.mapping_vs_pave/output/$BCF_RUN_ID"
 fi
 if [[ -z "$BCF_RUN_ID" && -n "$BCF_DIR" ]]; then
   BCF_RUN_ID=$(basename "$BCF_DIR")

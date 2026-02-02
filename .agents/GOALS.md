@@ -24,7 +24,7 @@ user and put into a conventional location (e.g. "refdata").
 Indices which can be re-used (e.g. pave) must be located into a general directory
 under the repository root.
 
-In the final product, there shall be only analysis-input1 and analysis-input2.
+In the final product, there shall be only preliminary-analysis-all-patients and targeted-analysis-hpv16-hpv18.
 
 ----
 
@@ -42,6 +42,6 @@ goal is explicitly QC):
 ----
 
 The final repository will contain Nextflow pipelines:
-- a pipeline for the entire analysis-input1
-- a pipeline for the entire analysis-input2, except the phylogenetic trees
+- a pipeline for the entire preliminary-analysis-all-patients
+- a pipeline for the entire targeted-analysis-hpv16-hpv18, except the phylogenetic trees
 - a pipeline for the phylogenetic trees
