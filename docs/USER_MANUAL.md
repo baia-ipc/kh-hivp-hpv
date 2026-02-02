@@ -66,9 +66,11 @@ to your local reference data paths and to set resource limits:
   - `bin/config/analysis-input1_003.virstrain.config`
   - `bin/config/analysis-input2_001.bucketing.config`
   - `bin/config/analysis-input2_002.mapping_vs_pave.config`
+  - `bin/config/analysis-input2_003.hpv16_tree.config`
+  - `bin/config/analysis-input2_004.hpv18_tree.config`
   - `bin/config/analysis-input2_005.cambodia_snps.config`
-- Gene‑mapping step configs remain under `config/` (`config/pave_e6.config`, `config/pave_e7.config`).
-- Tree configs remain under `config/` (`config/hpv16_tree.config`, `config/hpv18_tree.config`).
+- Gene‑mapping step configs are under `bin/config/` (`bin/config/pave_e6.config`, `bin/config/pave_e7.config`).
+- Tree user configs remain under `config/` (`config/hpv16_tree.config`, `config/hpv18_tree.config`).
 
 Technical Nextflow settings (executor/conda wiring and derived refdata paths) live under `pipelines/config/`.
 Conda environments are defined under `pipelines/conda_env/`.
@@ -84,7 +86,7 @@ If you use variant effect annotation, place the PAVE GFF3 files under
 under `refdata/raw/pave/bed/`.
 
 These paths are referenced by `config/bowtie_vs_pave.config` and the step configs
-for E6/E7 (`config/pave_e6.config`, `config/pave_e7.config`).
+for E6/E7 (`bin/config/pave_e6.config`, `bin/config/pave_e7.config`).
 
 ### 6.2 PAVE feature tables (derived)
 

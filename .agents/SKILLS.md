@@ -53,7 +53,7 @@ Rules:
 ## Skill: E6/E7 sub-analyses
 
 - Scope: separate E6 and E7 gene-only mapping analyses (analysis-input1 only).
-- Entry points: `pipelines/pave_gene_mapping.nf` (configs: `config/pave_e6.config`, `config/pave_e7.config`).
+- Entry points: `pipelines/pave_gene_mapping.nf` (configs: `bin/config/pave_e6.config`, `bin/config/pave_e7.config`).
 - Where:
   - E6: `analysis-input1/004.0.bowtie_vs_pave.E6`
   - E7: `analysis-input1/005.0.bowtie_vs_pave.E7`
@@ -63,7 +63,7 @@ Rules:
 ## Skill: phylogenetic trees (HPV16/HPV18)
 
 - Scope: tree generation for HPV16 and HPV18.
-- Entry points: `pipelines/phylo_tree.nf` (configs: `config/hpv16_tree.config`, `config/hpv18_tree.config`).
+- Entry points: `pipelines/phylo_tree.nf` (user configs: `config/hpv16_tree.config`, `config/hpv18_tree.config`; step path configs: `bin/config/analysis-input2_003.hpv16_tree.config`, `bin/config/analysis-input2_004.hpv18_tree.config`).
 - Where:
   - HPV16: `analysis-input2/003.0.hpv16_tree`
   - HPV18: `analysis-input2/004.0.hpv18_tree`
