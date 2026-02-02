@@ -1,73 +1,73 @@
-# run_id	fastq_dir	sample_id
-01	input/hpv_miseq/HPV_150123_run01/Fastq	KHCA-025
-01	input/hpv_miseq/HPV_150123_run01/Fastq	KHCA-029
-01	input/hpv_miseq/HPV_150123_run01/Fastq	KHCA-030
-01	input/hpv_miseq/HPV_150123_run01/Fastq	KHCA-037
-01	input/hpv_miseq/HPV_150123_run01/Fastq	KHCA-056
-01	input/hpv_miseq/HPV_150123_run01/Fastq	KHCA-064
-01	input/hpv_miseq/HPV_150123_run01/Fastq	KHCA-073
-01	input/hpv_miseq/HPV_150123_run01/Fastq	KHCA-075
-01	input/hpv_miseq/HPV_150123_run01/Fastq	KHCA-078
-01	input/hpv_miseq/HPV_150123_run01/Fastq	KHCA-082
-01	input/hpv_miseq/HPV_150123_run01/Fastq	KHCA-092
-01	input/hpv_miseq/HPV_150123_run01/Fastq	KHCA-098
-01	input/hpv_miseq/HPV_150123_run01/Fastq	KHCA-100
-01	input/hpv_miseq/HPV_150123_run01/Fastq	KHCA-103
-01	input/hpv_miseq/HPV_150123_run01/Fastq	KHCA-105
-01	input/hpv_miseq/HPV_150123_run01/Fastq	KHCA-117
-01	input/hpv_miseq/HPV_150123_run01/Fastq	KHCA-123
-01	input/hpv_miseq/HPV_150123_run01/Fastq	KHCA-133
-01	input/hpv_miseq/HPV_150123_run01/Fastq	KHCA-135
-01	input/hpv_miseq/HPV_150123_run01/Fastq	KHCA-136
-01	input/hpv_miseq/HPV_150123_run01/Fastq	HVP-110
-01	input/hpv_miseq/HPV_150123_run01/Fastq	Undetermined
-02	input/hpv_miseq/HPV_250523_run02/Fastq	KHCA-116
-02	input/hpv_miseq/HPV_250523_run02/Fastq	KHCA-146
-02	input/hpv_miseq/HPV_250523_run02/Fastq	KHCA-147
-02	input/hpv_miseq/HPV_250523_run02/Fastq	KHCA-148
-02	input/hpv_miseq/HPV_250523_run02/Fastq	KHCA-149
-02	input/hpv_miseq/HPV_250523_run02/Fastq	KHCA-151
-02	input/hpv_miseq/HPV_250523_run02/Fastq	KHCA-152
-02	input/hpv_miseq/HPV_250523_run02/Fastq	KHCA-162
-02	input/hpv_miseq/HPV_250523_run02/Fastq	KHCA-164
-02	input/hpv_miseq/HPV_250523_run02/Fastq	KHCA-166
-02	input/hpv_miseq/HPV_250523_run02/Fastq	KHCA-168
-02	input/hpv_miseq/HPV_250523_run02/Fastq	KHCA-169
-02	input/hpv_miseq/HPV_250523_run02/Fastq	KHCA-172
-02	input/hpv_miseq/HPV_250523_run02/Fastq	KHCA-179
-02	input/hpv_miseq/HPV_250523_run02/Fastq	KHCA-181
-02	input/hpv_miseq/HPV_250523_run02/Fastq	KHCA-182
-02	input/hpv_miseq/HPV_250523_run02/Fastq	KHCA-186
-02	input/hpv_miseq/HPV_250523_run02/Fastq	KHCA-187
-02	input/hpv_miseq/HPV_250523_run02/Fastq	KHCA-191
-02	input/hpv_miseq/HPV_250523_run02/Fastq	KHCA-204
-02	input/hpv_miseq/HPV_250523_run02/Fastq	KHCA-213
-02	input/hpv_miseq/HPV_250523_run02/Fastq	KHCA-223
-02	input/hpv_miseq/HPV_250523_run02/Fastq	Ex
-02	input/hpv_miseq/HPV_250523_run02/Fastq	HPV019
-02	input/hpv_miseq/HPV_250523_run02/Fastq	Undetermined
-03	input/hpv_miseq/HPV_160823_run03/Fastq	KHCA-229
-03	input/hpv_miseq/HPV_160823_run03/Fastq	KHCA-230
-03	input/hpv_miseq/HPV_160823_run03/Fastq	KHCA-232
-03	input/hpv_miseq/HPV_160823_run03/Fastq	KHCA-233
-03	input/hpv_miseq/HPV_160823_run03/Fastq	KHCA-235
-03	input/hpv_miseq/HPV_160823_run03/Fastq	KHCA-236
-03	input/hpv_miseq/HPV_160823_run03/Fastq	KHCA-237
-03	input/hpv_miseq/HPV_160823_run03/Fastq	KHCA-255
-03	input/hpv_miseq/HPV_160823_run03/Fastq	KHCA-256
-03	input/hpv_miseq/HPV_160823_run03/Fastq	KHCA-263
-03	input/hpv_miseq/HPV_160823_run03/Fastq	KHCA-268
-03	input/hpv_miseq/HPV_160823_run03/Fastq	KHCA-285
-03	input/hpv_miseq/HPV_160823_run03/Fastq	KHCA-289
-03	input/hpv_miseq/HPV_160823_run03/Fastq	KHCA-298
-03	input/hpv_miseq/HPV_160823_run03/Fastq	KHCA-305
-03	input/hpv_miseq/HPV_160823_run03/Fastq	KHCA-306
-03	input/hpv_miseq/HPV_160823_run03/Fastq	KHCA-307
-03	input/hpv_miseq/HPV_160823_run03/Fastq	KHCA-322
-03	input/hpv_miseq/HPV_160823_run03/Fastq	KHCA-323
-03	input/hpv_miseq/HPV_160823_run03/Fastq	KHCA-328
-03	input/hpv_miseq/HPV_160823_run03/Fastq	KHCA-330
-03	input/hpv_miseq/HPV_160823_run03/Fastq	KHCA-332
-03	input/hpv_miseq/HPV_160823_run03/Fastq	H2O
-03	input/hpv_miseq/HPV_160823_run03/Fastq	HPV019
-03	input/hpv_miseq/HPV_160823_run03/Fastq	Undetermined
+# run_id	fastq_dir	sample_id	fastq_sample_id
+01	input/hpv_miseq/HPV_150123_run01/Fastq	KHCA-025	KHCA-025
+01	input/hpv_miseq/HPV_150123_run01/Fastq	KHCA-029	KHCA-029
+01	input/hpv_miseq/HPV_150123_run01/Fastq	KHCA-030	KHCA-030
+01	input/hpv_miseq/HPV_150123_run01/Fastq	KHCA-037	KHCA-037
+01	input/hpv_miseq/HPV_150123_run01/Fastq	KHCA-056	KHCA-056
+01	input/hpv_miseq/HPV_150123_run01/Fastq	KHCA-064	KHCA-064
+01	input/hpv_miseq/HPV_150123_run01/Fastq	KHCA-073	KHCA-073
+01	input/hpv_miseq/HPV_150123_run01/Fastq	KHCA-075	KHCA-075
+01	input/hpv_miseq/HPV_150123_run01/Fastq	KHCA-078	KHCA-078
+01	input/hpv_miseq/HPV_150123_run01/Fastq	KHCA-082	KHCA-082
+01	input/hpv_miseq/HPV_150123_run01/Fastq	KHCA-092	KHCA-092
+01	input/hpv_miseq/HPV_150123_run01/Fastq	KHCA-098	KHCA-098
+01	input/hpv_miseq/HPV_150123_run01/Fastq	KHCA-100	KHCA-100
+01	input/hpv_miseq/HPV_150123_run01/Fastq	KHCA-103	KHCA-103
+01	input/hpv_miseq/HPV_150123_run01/Fastq	KHCA-105	KHCA-105
+01	input/hpv_miseq/HPV_150123_run01/Fastq	KHCA-117	KHCA-117
+01	input/hpv_miseq/HPV_150123_run01/Fastq	KHCA-123	KHCA-123
+01	input/hpv_miseq/HPV_150123_run01/Fastq	KHCA-133	KHCA-133
+01	input/hpv_miseq/HPV_150123_run01/Fastq	KHCA-135	KHCA-135
+01	input/hpv_miseq/HPV_150123_run01/Fastq	KHCA-136	KHCA-136
+01	input/hpv_miseq/HPV_150123_run01/Fastq	HPV-110	HPV-110
+01	input/hpv_miseq/HPV_150123_run01/Fastq	Undetermined	Undetermined
+02	input/hpv_miseq/HPV_250523_run02/Fastq	KHCA-116	KHCA116
+02	input/hpv_miseq/HPV_250523_run02/Fastq	KHCA-146	KHCA146
+02	input/hpv_miseq/HPV_250523_run02/Fastq	KHCA-147	KHCA147
+02	input/hpv_miseq/HPV_250523_run02/Fastq	KHCA-148	KHCA148
+02	input/hpv_miseq/HPV_250523_run02/Fastq	KHCA-149	KHCA149
+02	input/hpv_miseq/HPV_250523_run02/Fastq	KHCA-151	KHCA151
+02	input/hpv_miseq/HPV_250523_run02/Fastq	KHCA-152	KHCA152
+02	input/hpv_miseq/HPV_250523_run02/Fastq	KHCA-162	KHCA162
+02	input/hpv_miseq/HPV_250523_run02/Fastq	KHCA-164	KHCA164
+02	input/hpv_miseq/HPV_250523_run02/Fastq	KHCA-166	KHCA166
+02	input/hpv_miseq/HPV_250523_run02/Fastq	KHCA-168	KHCA168
+02	input/hpv_miseq/HPV_250523_run02/Fastq	KHCA-169	KHCA169
+02	input/hpv_miseq/HPV_250523_run02/Fastq	KHCA-172	KHCA172
+02	input/hpv_miseq/HPV_250523_run02/Fastq	KHCA-179	KHCA179
+02	input/hpv_miseq/HPV_250523_run02/Fastq	KHCA-181	KHCA181
+02	input/hpv_miseq/HPV_250523_run02/Fastq	KHCA-182	KHCA182
+02	input/hpv_miseq/HPV_250523_run02/Fastq	KHCA-186	KHCA186
+02	input/hpv_miseq/HPV_250523_run02/Fastq	KHCA-187	KHCA187
+02	input/hpv_miseq/HPV_250523_run02/Fastq	KHCA-191	KHCA191
+02	input/hpv_miseq/HPV_250523_run02/Fastq	KHCA-204	KHCA204
+02	input/hpv_miseq/HPV_250523_run02/Fastq	KHCA-213	KHCA213
+02	input/hpv_miseq/HPV_250523_run02/Fastq	KHCA-223	KHCA223
+02	input/hpv_miseq/HPV_250523_run02/Fastq	Ex	Ex
+02	input/hpv_miseq/HPV_250523_run02/Fastq	HPV-019	HPV-019
+02	input/hpv_miseq/HPV_250523_run02/Fastq	Undetermined	Undetermined
+03	input/hpv_miseq/HPV_160823_run03/Fastq	KHCA-229	KHCA-229
+03	input/hpv_miseq/HPV_160823_run03/Fastq	KHCA-230	KHCA-230
+03	input/hpv_miseq/HPV_160823_run03/Fastq	KHCA-232	KHCA-232
+03	input/hpv_miseq/HPV_160823_run03/Fastq	KHCA-233	KHCA-233
+03	input/hpv_miseq/HPV_160823_run03/Fastq	KHCA-235	KHCA-235
+03	input/hpv_miseq/HPV_160823_run03/Fastq	KHCA-236	KHCA-236
+03	input/hpv_miseq/HPV_160823_run03/Fastq	KHCA-237	KHCA-237
+03	input/hpv_miseq/HPV_160823_run03/Fastq	KHCA-255	KHCA-255
+03	input/hpv_miseq/HPV_160823_run03/Fastq	KHCA-256	KHCA-256
+03	input/hpv_miseq/HPV_160823_run03/Fastq	KHCA-263	KHCA-263
+03	input/hpv_miseq/HPV_160823_run03/Fastq	KHCA-268	KHCA-268
+03	input/hpv_miseq/HPV_160823_run03/Fastq	KHCA-285	KHCA-285
+03	input/hpv_miseq/HPV_160823_run03/Fastq	KHCA-289	KHCA-289
+03	input/hpv_miseq/HPV_160823_run03/Fastq	KHCA-298	KHCA-298
+03	input/hpv_miseq/HPV_160823_run03/Fastq	KHCA-305	KHCA-305
+03	input/hpv_miseq/HPV_160823_run03/Fastq	KHCA-306	KHCA-306
+03	input/hpv_miseq/HPV_160823_run03/Fastq	KHCA-307	KHCA-307
+03	input/hpv_miseq/HPV_160823_run03/Fastq	KHCA-322	KHCA-322
+03	input/hpv_miseq/HPV_160823_run03/Fastq	KHCA-323	KHCA-323
+03	input/hpv_miseq/HPV_160823_run03/Fastq	KHCA-328	KHCA-328
+03	input/hpv_miseq/HPV_160823_run03/Fastq	KHCA-330	KHCA-330
+03	input/hpv_miseq/HPV_160823_run03/Fastq	KHCA-332	KHCA-332
+03	input/hpv_miseq/HPV_160823_run03/Fastq	H2O	H2O
+03	input/hpv_miseq/HPV_160823_run03/Fastq	HPV-019	HPV-019
+03	input/hpv_miseq/HPV_160823_run03/Fastq	Undetermined	Undetermined

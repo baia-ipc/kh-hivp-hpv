@@ -22,7 +22,7 @@ Wrappers in the analysis directory call the Nextflow pipelines:
 
 ## Inputs
 
-- Sample list: `metadata/samples-input1.tsv`
+- Sample list: `metadata/samples-input1.tsv` (normalized `sample_id` plus `fastq_sample_id` for raw filename prefixes)
 - Bucket definitions: `metadata/bucket_taxonomy_ids.tsv`
 - Centrifuge index + taxonomy: configured in `config/centrifuge_bucketing.config`
 - Optional: build a local index with `scripts/build_centrifuge_db.sh`

@@ -10,7 +10,7 @@ analysis-input2 sample list and input FASTQ layout.
 
 - Pipeline: `pipelines/centrifuge_bucketing_all.nf`
 - Config: `config/centrifuge_bucketing.config`
-- Sample list: `metadata/samples-input2.tsv`
+- Sample list: `metadata/samples-input2.tsv` (normalized `sample_id` plus `fastq_sample_id` for raw filename prefixes)
 
 Wrapper:
 
@@ -23,7 +23,9 @@ The input data for analysis-input2 can be stored either:
 - under a per-run `Fastq/` subdirectory, or
 - directly in the run directory (flat layout).
 
-This is controlled by the sample sheet entries (see `metadata/samples-input2.tsv`).
+This is controlled by the sample sheet entries (see `metadata/samples-input2.tsv`),
+which include `fastq_sample_id` to match the original FASTQ filename prefix when
+it differs from the normalized `sample_id`.
 
 ## Outputs
 

@@ -186,9 +186,10 @@ workflow {
         .map { cols ->
             def fastq_dir = cols[1]
             def sample_prefix = cols[2]
+            def fastq_prefix = (cols.size() > 3 && cols[3]) ? cols[3] : sample_prefix
             def fastq_path = new File(projectRoot, fastq_dir).getPath()
             def resolvedDir = resolveFastqDir(fastq_path)
-            def (r1File, r2File) = findReadPair(resolvedDir, sample_prefix)
+            def (r1File, r2File) = findReadPair(resolvedDir, fastq_prefix)
             def sample_id = sample_prefix
             def run_id = resolvedDir.getName().equalsIgnoreCase('fastq') \
                 ? resolvedDir.getParentFile().getName() \

@@ -34,9 +34,15 @@ Sample sheets define which runs and samples to process:
 - `metadata/samples-input1.tsv`
 - `metadata/samples-input2.tsv`
 
-Each row should include the run ID, sample ID, and the FASTQ directory (relative
-to the repo root). If a run uses a flat FASTQ layout, point to the run folder
-directly. If it has a `Fastq/` subdirectory, point to that.
+Each row should include the run ID, sample ID, FASTQ directory (relative to the
+repo root), and the `fastq_sample_id` (the exact prefix used in FASTQ filenames).
+If a run uses a flat FASTQ layout, point to the run folder directly. If it has a
+`Fastq/` subdirectory, point to that.
+
+`sample_id` is the normalized identifier used in outputs (e.g., `KHCA-064`,
+`HPV-019`). `fastq_sample_id` preserves the original naming found in the FASTQ
+files (e.g., `KHCA064`, `HPV019`, `HVP-110`) so the pipelines can locate reads
+even when the raw file prefix differs from the normalized ID.
 
 ## 5) Configure pipelines (`config/`)
 
