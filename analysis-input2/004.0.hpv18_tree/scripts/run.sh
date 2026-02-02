@@ -5,7 +5,10 @@ SCRIPTSDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 STEPDIR=$SCRIPTSDIR/..
 PRJROOT=$SCRIPTSDIR/../../..
 PIPELINE_NF=$PRJROOT/pipelines/phylo_tree.nf
-PIPELINE_CONFIG=$PRJROOT/config/hpv18_tree.config
+TECH_CONFIG_COMMON=$PRJROOT/pipelines/config/common.technical.config
+TECH_CONFIG_PIPE=$PRJROOT/pipelines/config/phylo_tree.technical.config
+USER_CONFIG=$PRJROOT/config/phylo_tree.config
+STEP_CONFIG=$PRJROOT/config/hpv18_tree.config
 
 if ! command -v nextflow >/dev/null 2>&1; then
   echo "Error: nextflow was not found in PATH" > /dev/stderr
@@ -13,7 +16,8 @@ if ! command -v nextflow >/dev/null 2>&1; then
 fi
 
 nextflow run "$PIPELINE_NF" \
-  -c "$PIPELINE_CONFIG" \
-  --input_dir "$PRJROOT/refdata/derived/hpv18_tree" \
-  --outdir "$STEPDIR/output" \
+  -c "$TECH_CONFIG_COMMON" \
+  -c "$TECH_CONFIG_PIPE" \
+  -c "$USER_CONFIG" \
+  -c "$STEP_CONFIG" \
   "$@" -resume

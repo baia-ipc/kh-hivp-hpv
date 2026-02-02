@@ -18,34 +18,34 @@ def projectRoot = (workflow.projectDir instanceof java.nio.file.Path \
     : Paths.get(workflow.projectDir.toString())) \
     .resolve('..').normalize().toString()
 
-// Define optional params exactly once to avoid Nextflow "undefined parameter" and "defined multiple times" warnings.
-if (!params.containsKey('samples_tsv') || !params.samples_tsv) {
-    params.samples_tsv = "${projectRoot}/metadata/samples-input1.tsv"
+def requiredParams = [
+    'samples_tsv',
+    'reports_dir',
+    'outdir',
+    'buckets',
+    'scripts_dir',
+    'multiqc_config',
+    'index',
+    'taxdump',
+    'homo_sapiens_tid',
+    'threads',
+    'aggregate_skip',
+    'aggregate_skip_wo_human',
+    'conda_env'
+]
+
+requiredParams.each { key ->
+    if (!params.containsKey(key) || params[key] == null || params[key].toString().trim().isEmpty()) {
+        error "params.${key} is required"
+    }
 }
-if (!params.containsKey('reports_dir') || !params.reports_dir) {
-    params.reports_dir = "${projectRoot}/analysis-input1/001.0.centrifuge/reports"
-}
-if (!params.containsKey('aggregate_skip_wo_human') || !params.aggregate_skip_wo_human) {
-    params.aggregate_skip_wo_human = "9606,2886930,2759"
-}
-if (!params.containsKey('aggregate_skip') || !params.aggregate_skip) {
-    params.aggregate_skip = "2886930,2759"
-}
+
 if (!params.containsKey('skip_align') || params.skip_align == null) {
     params.skip_align = false
 }
-params.outdir = params.outdir ?: "${projectRoot}/analysis-input1/001.0.centrifuge/output"
 if (!params.containsKey('precomputed_root') || !params.precomputed_root) {
     params.precomputed_root = params.outdir
 }
-params.buckets = params.buckets ?: "${projectRoot}/metadata/bucket_taxonomy_ids.tsv"
-params.scripts_dir = params.scripts_dir ?: "${projectRoot}/scripts"
-params.conda_env = params.conda_env ?: "${projectRoot}/pipelines/conda_env/centrifuge_bucketing.env.yml"
-params.multiqc_config = params.multiqc_config ?: "${projectRoot}/config/centrifuge_bucketing.multiqc.yml"
-params.index = params.index ?: "/srv/databases/centrifuge/hpvc/latest/hpvc"
-params.taxdump = params.taxdump ?: "/srv/databases/centrifuge/hpvc/latest/factory/taxonomy-2023-10-30"
-params.homo_sapiens_tid = params.homo_sapiens_tid ?: 9606
-params.threads = params.threads ?: 64
 
 def loadSamples(String samplesPath) {
     def samplesFile = new File(samplesPath)

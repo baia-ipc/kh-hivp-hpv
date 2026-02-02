@@ -11,7 +11,8 @@ lineage‑defining SNPs from HPV16/HPV18 lineage references.
 ## Implementation
 
 - Pipeline: `pipelines/bowtie_vs_pave.nf`
-- Config: `config/bowtie_vs_pave.config`
+- User configs: `config/bowtie_vs_pave.config` + `config/analysis-input2_002.mapping_vs_pave.config`
+- Technical config: `pipelines/config/common.technical.config` + `pipelines/config/bowtie_vs_pave.technical.config`
 - Bucket selection: `config/pave_bucket_tid.txt`
 
 Wrappers:

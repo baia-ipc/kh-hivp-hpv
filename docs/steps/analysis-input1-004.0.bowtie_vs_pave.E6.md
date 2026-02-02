@@ -11,7 +11,8 @@ aggregated depth tables.
 This step is implemented as a Nextflow pipeline:
 
 - Pipeline: `pipelines/pave_gene_mapping.nf`
-- Config: `config/pave_e6.config`
+- User configs: `config/pave_gene_mapping.config` + `config/pave_e6.config`
+- Technical config: `pipelines/config/common.technical.config` + `pipelines/config/pave_gene_mapping.technical.config`
 - Bucket selection: `config/pave_bucket_tid.txt`
 
 Wrappers:

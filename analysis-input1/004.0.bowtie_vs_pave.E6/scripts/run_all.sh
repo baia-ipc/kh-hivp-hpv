@@ -5,8 +5,10 @@ SCRIPTSDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 STEPDIR=$SCRIPTSDIR/..
 PRJROOT=$SCRIPTSDIR/../../..
 PIPELINE_NF=$PRJROOT/pipelines/pave_gene_mapping.nf
-PIPELINE_CONFIG=$PRJROOT/config/pave_e6.config
-READSDIR="$PRJROOT/analysis-input1/001.0.centrifuge/output"
+TECH_CONFIG_COMMON=$PRJROOT/pipelines/config/common.technical.config
+TECH_CONFIG_PIPE=$PRJROOT/pipelines/config/pave_gene_mapping.technical.config
+USER_CONFIG=$PRJROOT/config/pave_gene_mapping.config
+STEP_CONFIG=$PRJROOT/config/pave_e6.config
 
 if ! command -v nextflow >/dev/null 2>&1; then
   echo "Error: nextflow was not found in PATH" > /dev/stderr
@@ -26,9 +28,8 @@ if ! $resume_set; then
 fi
 
 nextflow run "$PIPELINE_NF" \
-  -c "$PIPELINE_CONFIG" \
-  --reads_dir "$READSDIR" \
-  --outdir "$STEPDIR/output" \
-  --reports_dir "$STEPDIR/reports" \
-  --index_dir "$STEPDIR/index" \
+  -c "$TECH_CONFIG_COMMON" \
+  -c "$TECH_CONFIG_PIPE" \
+  -c "$USER_CONFIG" \
+  -c "$STEP_CONFIG" \
   "${args[@]}"

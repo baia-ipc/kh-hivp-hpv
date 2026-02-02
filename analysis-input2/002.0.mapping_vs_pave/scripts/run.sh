@@ -5,10 +5,13 @@ SCRIPTSDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 STEPDIR=$SCRIPTSDIR/..
 PRJROOT=$SCRIPTSDIR/../../..
 PIPELINE_NF=$PRJROOT/pipelines/bowtie_vs_pave.nf
-PIPELINE_CONFIG=$PRJROOT/config/bowtie_vs_pave.config
+TECH_CONFIG_COMMON=$PRJROOT/pipelines/config/common.technical.config
+TECH_CONFIG_PIPE=$PRJROOT/pipelines/config/bowtie_vs_pave.technical.config
+USER_CONFIG=$PRJROOT/config/bowtie_vs_pave.config
+STEP_CONFIG=$PRJROOT/config/analysis-input2_002.mapping_vs_pave.config
 
 if [ $# -lt 3 ]; then
-  echo "Usage: $0 <fwd> <rev> <out> [nextflow args...]"
+  echo "Usage: $0 <fwd> <rev> <out_prefix> [nextflow args...]"
   exit 1
 fi
 
@@ -19,20 +22,18 @@ shift 3
 
 run_id=$(basename "$(dirname "$out")")
 sample_id=$(basename "$out")
-outdir=$(dirname "$(dirname "$out")")
-
 if ! command -v nextflow >/dev/null 2>&1; then
   echo "Error: nextflow was not found in PATH" > /dev/stderr
   exit 1
 fi
 
 nextflow run "$PIPELINE_NF" \
-  -c "$PIPELINE_CONFIG" \
+  -c "$TECH_CONFIG_COMMON" \
+  -c "$TECH_CONFIG_PIPE" \
+  -c "$USER_CONFIG" \
+  -c "$STEP_CONFIG" \
   --read1 "$fwd" \
   --read2 "$rev" \
   --run_id "$run_id" \
   --sample_id "$sample_id" \
-  --outdir "$outdir" \
-  --reports_dir "$STEPDIR/reports" \
-  --index_dir "$STEPDIR/index" \
   "$@" -resume

@@ -13,7 +13,9 @@ before running the analyses in this repository.
 
 - `input/`: symlinks or folders pointing to raw FASTQ data (not tracked in git).
 - `metadata/`: sample sheets and other fixed inputs (TSV files).
-- `config/`: pipeline configuration files and Conda env definitions.
+- `config/`: user-editable pipeline configs (base + step-specific) and MultiQC configs.
+- `pipelines/config/`: technical Nextflow config (executor/conda wiring).
+- `pipelines/conda_env/`: Conda environment definitions used by pipelines.
 - `refdata/raw/`: reference inputs from external sources (PAVE FASTA/GFF3, NCBI downloads).
 - `refdata/derived/`: derived reference data (feature tables, renamed/filtered FASTA sets).
 - `analysis-input1/` and `analysis-input2/`: outputs and reports for each analysis.
@@ -47,17 +49,28 @@ even when the raw file prefix differs from the normalized ID.
 
 ## 5) Configure pipelines (`config/`)
 
-All pipeline parameters live in `config/`. Edit these files to point to your
-local reference data paths and to set resource limits:
+User-editable pipeline parameters live in `config/`. Edit these files to point
+to your local reference data paths and to set resource limits:
 
-- `config/centrifuge_bucketing.config`: Centrifuge index + taxonomy paths
-- `config/bowtie_vs_pave.config`: PAVE reference + features + BED/GFF3 dirs for variant annotation
-- `config/virstrain.config`: VirStrain index paths
-- `config/pave_e6.config`, `config/pave_e7.config`: gene‑level mapping configs
-- `config/hpv16_tree.config`, `config/hpv18_tree.config`: tree pipeline inputs
+- Base pipeline configs:
+  - `config/centrifuge_bucketing.config`: Centrifuge index + taxonomy paths
+  - `config/bowtie_vs_pave.config`: PAVE reference + features + BED/GFF3 dirs for variant annotation
+  - `config/virstrain.config`: VirStrain reference paths
+  - `config/pave_gene_mapping.config`: gene‑level mapping defaults (E6/E7)
+  - `config/phylo_tree.config`: tree pipeline defaults
+  - `config/cambodia_snps.config`: Cambodia SNP comparison defaults
+- Step‑specific configs (inputs/outputs):
+  - `config/analysis-input1_001.centrifuge.config`
+  - `config/analysis-input1_002.bowtie_vs_pave.config`
+  - `config/analysis-input1_003.virstrain.config`
+  - `config/pave_e6.config`, `config/pave_e7.config`
+  - `config/analysis-input2_001.bucketing.config`
+  - `config/analysis-input2_002.mapping_vs_pave.config`
+  - `config/hpv16_tree.config`, `config/hpv18_tree.config`
+  - `config/analysis-input2_005.cambodia_snps.config`
 
-Conda environments used by pipelines are also defined here (e.g.
-`pipelines/conda_env/centrifuge_bucketing.env.yml`).
+Technical Nextflow settings (executor/conda wiring) live under `pipelines/config/`.
+Conda environments are defined under `pipelines/conda_env/`.
 
 ## 6) Prepare reference data (`refdata/`)
 
@@ -68,8 +81,8 @@ If you use variant effect annotation, place the PAVE GFF3 files under
 `refdata/raw/pave/gff3/` (one GFF3 per reference sequence), and the BED files
 under `refdata/raw/pave/bed/`.
 
-These paths are referenced by `config/bowtie_vs_pave.config`, `config/pave_e6.config`,
-and `config/pave_e7.config`.
+These paths are referenced by `config/bowtie_vs_pave.config` and the step configs
+for E6/E7 (`config/pave_e6.config`, `config/pave_e7.config`).
 
 ### 6.2 PAVE feature tables (derived)
 
