@@ -213,7 +213,7 @@ If Nextflow fails to start because of Java, create and activate the provided
 Java environment:
 
 ```bash
-conda env create -f config/nextflow_java.env.yml
+conda env create -f pipelines/conda_env/nextflow_java.env.yml
 conda activate nextflow-java
 ```
 

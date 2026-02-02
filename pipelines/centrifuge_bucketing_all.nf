@@ -40,7 +40,7 @@ if (!params.containsKey('precomputed_root') || !params.precomputed_root) {
 }
 params.buckets = params.buckets ?: "${projectRoot}/metadata/bucket_taxonomy_ids.tsv"
 params.scripts_dir = params.scripts_dir ?: "${projectRoot}/scripts"
-params.conda_env = params.conda_env ?: "${projectRoot}/config/centrifuge_bucketing.env.yml"
+params.conda_env = params.conda_env ?: "${projectRoot}/pipelines/conda_env/centrifuge_bucketing.env.yml"
 params.multiqc_config = params.multiqc_config ?: "${projectRoot}/config/centrifuge_bucketing.multiqc.yml"
 params.index = params.index ?: "/srv/databases/centrifuge/hpvc/latest/hpvc"
 params.taxdump = params.taxdump ?: "/srv/databases/centrifuge/hpvc/latest/factory/taxonomy-2023-10-30"

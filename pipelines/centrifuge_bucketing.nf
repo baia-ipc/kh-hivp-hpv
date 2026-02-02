@@ -76,7 +76,7 @@ workflow {
         error "params.buckets is required. Set it in the config file or on the command line."
     }
     if (!params.conda_env) {
-        params.conda_env = "${workflow.projectDir}/../config/centrifuge_bucketing.env.yml"
+        params.conda_env = "${workflow.projectDir}/../pipelines/conda_env/centrifuge_bucketing.env.yml"
     }
     def index_file = new File("${params.index}.1.cf")
     if (!index_file.exists()) {

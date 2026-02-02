@@ -15,6 +15,7 @@
     directories described below, the step-level scripts are mostly wrappers to call
 
 - pipelines/ wrapper scripts and Nextflow workflows
+  - conda_env/ per-pipeline Conda environment definitions
 
 - scripts/ reusable Python scripts for single operations such as
            LCA computing, bucketing, FASTQ splitting, and strain summaries
@@ -23,7 +24,7 @@
 
 - metadata/ taxonomy bucket definitions and sample lists
 
-- config/ pipeline and other configuration files
+- config/ pipeline and other configuration files (non-Conda)
 
 - refdata/ reference data split into:
   - raw/ external inputs (PAVE FASTA/GFF3, NCBI downloads)

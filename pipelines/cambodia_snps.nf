@@ -9,7 +9,7 @@ def projectRoot = (workflow.projectDir instanceof java.nio.file.Path \
     .resolve('..').normalize().toString()
 
 params.scripts_dir = params.scripts_dir ?: "${projectRoot}/scripts"
-params.conda_env = params.conda_env ?: "${projectRoot}/config/bowtie_vs_pave.env.yml"
+params.conda_env = params.conda_env ?: "${projectRoot}/pipelines/conda_env/bowtie_vs_pave.env.yml"
 params.multiqc_config = params.multiqc_config ?: "${projectRoot}/config/cambodia_snps.multiqc.yml"
 params.target_country = params.target_country ?: "Cambodia"
 params.selected_hpv16_fasta = params.selected_hpv16_fasta ?: "${projectRoot}/refdata/derived/hpv16_tree/selected.fasta"
