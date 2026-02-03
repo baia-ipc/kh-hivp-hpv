@@ -7,6 +7,9 @@ PIPELINE_NF=$PRJROOT/pipelines/centrifuge_bucketing_all.nf
 ALL_PIPELINES_CONFIG=$PRJROOT/config/pipelines/common.config
 PIPELINE_CONFIG=$PRJROOT/config/pipelines/centrifuge_bucketing.config
 USER_CONFIG=$PRJROOT/config/user.config
+
+THREADS=$(awk -F '=' '/^[[:space:]]*threads[[:space:]]*=/{gsub(/[^0-9]/,"",$2); print $2; exit}' "$USER_CONFIG")
+THREADS=${THREADS:-24}
 STEP_CONFIG=$PRJROOT/bin/config/prelim_analysis.config
 PROFILE=preliminary_centrifuge
 
@@ -65,5 +68,8 @@ nextflow run "$PIPELINE_NF" \
   -c "$PIPELINE_CONFIG" \
   -c "$USER_CONFIG" \
   -c "$STEP_CONFIG" \
+  -process.maxForks "$THREADS" \
+  -executor.queueSize "$THREADS" \
+  -process.cpus "$THREADS" \
   -profile "$PROFILE" \
   "${args[@]}"
