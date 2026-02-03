@@ -2,6 +2,11 @@
 set -euo pipefail
 
 SCRIPTSDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+PRJROOT="$( cd "$SCRIPTSDIR/.." && pwd )"
+
+if [ -z "${NXF_HOME:-}" ]; then
+  export NXF_HOME="${PRJROOT}/.nextflow"
+fi
 
 step1_args=()
 common_args=()

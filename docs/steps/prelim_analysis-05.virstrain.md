@@ -12,7 +12,7 @@ This step is implemented as a Nextflow pipeline:
 
 - Pipeline: `pipelines/virstrain.nf`
 - User config: `config/user.config`
-- Step path config: `bin/config/prelim_analysis.config` (profile `preliminary_virstrain`)
+- Step path config: `config/analyses/prelim_analysis.config` (profile `preliminary_virstrain`)
 - Technical config: `config/pipelines/common.config` + `config/pipelines/virstrain.config`
 - Bucket selection: `params.bucket_tid` in `config/pipelines/virstrain.config`
 

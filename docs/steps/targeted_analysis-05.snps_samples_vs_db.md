@@ -11,7 +11,7 @@ observed in targeted_analysis step 02.
 
 - Pipeline: `pipelines/database_snps.nf`
 - User config: `config/user.config`
-- Step path config: `bin/config/targeted_analysis.config` (profile `targeted_snps_samples_vs_db`)
+- Step path config: `config/analyses/targeted_analysis.config` (profile `targeted_snps_samples_vs_db`)
 - Technical config: `config/pipelines/common.config` + `config/pipelines/database_snps.config`
 
 Wrappers:

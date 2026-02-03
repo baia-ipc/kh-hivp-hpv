@@ -10,7 +10,7 @@ USER_CONFIG=$PRJROOT/config/user.config
 
 THREADS=$(awk -F '=' '/^[[:space:]]*threads[[:space:]]*=/{gsub(/[^0-9]/,"",$2); print $2; exit}' "$USER_CONFIG")
 THREADS=${THREADS:-24}
-STEP_CONFIG=$PRJROOT/bin/config/prelim_analysis.config
+STEP_CONFIG=$PRJROOT/config/analyses/prelim_analysis.config
 PROFILE=preliminary_bowtie_vs_pave
 
 if ! command -v nextflow >/dev/null 2>&1; then

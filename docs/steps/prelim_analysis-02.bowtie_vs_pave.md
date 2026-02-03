@@ -14,7 +14,7 @@ This step is implemented as a Nextflow pipeline:
 
 - Pipeline: `pipelines/bowtie_vs_pave.nf`
 - User config: `config/user.config`
-- Step path config: `bin/config/prelim_analysis.config` (profile `preliminary_bowtie_vs_pave`)
+- Step path config: `config/analyses/prelim_analysis.config` (profile `preliminary_bowtie_vs_pave`)
 - Technical config: `config/pipelines/common.config` + `config/pipelines/bowtie_vs_pave.config`
 - Bucket selection: `params.bucket_tid` in `config/pipelines/bowtie_vs_pave.config`
 

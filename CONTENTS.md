@@ -19,14 +19,13 @@
 - `bin/`: step and analysis runner scripts (wrappers around Nextflow pipelines)
   - `prelim_analysis.steps/`: per-step wrappers (plus `single_sample/`)
   - `targeted_analysis.steps/`: per-step wrappers (plus `single_sample/`)
-  - `config/`: step path config profiles (internal defaults; not typically edited by users)
 
 - `input_reads/`: symlinks to external raw data locations (not stored in-repo)
 
 - `metadata/`: taxonomy bucket definitions and sample lists
 
 - `config/`: user-editable configuration files
-  - `bin/`: step path config profiles used by wrappers
+  - `analyses/`: step path config profiles used by wrappers
   - `pipelines/`: technical Nextflow config shared by pipelines
 
 - `refdata/`: external reference inputs (PAVE FASTA/GFF3, NCBI downloads)
