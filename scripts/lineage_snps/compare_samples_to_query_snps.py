@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Compare sample E6/E7 SNPs against query SNPs (e.g., Cambodia)."""
+"""Compare sample E6/E7 SNPs against query SNPs."""
 import argparse
 import csv
 from collections import defaultdict
@@ -21,7 +21,7 @@ def read_query_snps(path):
         rows = list(reader)
     if not rows:
         return []
-    start = 1 if rows[0] and rows[0][0] in ("lineage", "cambodia_id", "query_id") else 0
+    start = 1 if rows[0] and rows[0][0] in ("lineage", "database_id", "cambodia_id", "query_id") else 0
     return rows[start:]
 
 
@@ -33,10 +33,10 @@ def main():
     for row in read_query_snps(args.query_snps):
         if len(row) < 6:
             continue
-        cambodia_id, gene, chrom, pos, ref, alt = row[:6]
+        database_id, gene, chrom, pos, ref, alt = row[:6]
         for alt_allele in alt.split(","):
             key = (gene, chrom, pos, ref, alt_allele)
-            query_map[key].add(cambodia_id)
+            query_map[key].add(database_id)
 
     with open(args.output, "w", newline="") as out:
         writer = csv.writer(out, delimiter="\t")
@@ -48,8 +48,8 @@ def main():
             "pos",
             "ref",
             "alt",
-            "cambodia_count",
-            "cambodia_ids",
+            "database_count",
+            "database_ids",
         ])
         with open(args.variants, newline="") as handle:
             reader = csv.reader(handle, delimiter="\t")
@@ -59,11 +59,11 @@ def main():
                 run, sample, gene, chrom, pos, _id, ref, alt = row[:8]
                 if allowed and not chrom.startswith(allowed):
                     continue
-                cambodia_ids = set()
+                database_ids = set()
                 for alt_allele in alt.split(","):
                     key = (gene, chrom, pos, ref, alt_allele)
-                    cambodia_ids.update(query_map.get(key, set()))
-                cambodia_sorted = sorted(cambodia_ids)
+                    database_ids.update(query_map.get(key, set()))
+                database_sorted = sorted(database_ids)
                 writer.writerow([
                     run,
                     sample,
@@ -72,8 +72,8 @@ def main():
                     pos,
                     ref,
                     alt,
-                    str(len(cambodia_sorted)),
-                    ",".join(cambodia_sorted),
+                    str(len(database_sorted)),
+                    ",".join(database_sorted),
                 ])
 
 

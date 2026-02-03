@@ -304,7 +304,7 @@ Key parameters (environment overrides):
 
 ### `scripts/phylo_tree/extract_country_sequences.py`
 Purpose: Extract sequences from a selected FASTA for a specific country, used
-for Cambodia-focused SNP comparisons.
+for target-country SNP comparisons.
 Key parameters:
 - `--selected-fasta`: FASTA with selected accessions.
 - `--selected-metadata`: TSV with accession + country columns.
@@ -334,7 +334,7 @@ Key parameters:
 - `--output`: output comparison TSV.
 
 ### `scripts/lineage_snps/compare_query_snps_to_lineages.py`
-Purpose: Compare query SNPs (e.g., Cambodia subset) against lineage SNPs.
+Purpose: Compare query SNPs (e.g., target-country subset) against lineage SNPs.
 Key parameters:
 - `--query-snps`: query SNPs TSV.
 - `--lineage-snps`: lineage SNPs TSV.

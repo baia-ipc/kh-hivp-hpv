@@ -56,7 +56,7 @@ User-editable pipeline parameters live in `config/`. Edit these files to point
 to your local reference data paths and to set resource limits:
 
 - Base pipeline config:
-  - `config/user.config`: all user-editable pipeline parameters (Centrifuge index/taxdump, PAVE reference names, Cambodia defaults, tree defaults, and shared threads)
+  - `config/user.config`: all user-editable pipeline parameters (Centrifuge index/taxdump, PAVE reference names, target-country defaults, tree defaults, and shared threads)
 - Step‑specific path configs (inputs/outputs) are stored under `bin/config/` as profile bundles and are not typically edited by users:
   - `bin/config/preliminary-analysis-all-patients.config` (profiles for steps 001‑005)
   - `bin/config/targeted-analysis-hpv16-hpv18.config` (profiles for steps 001‑005)

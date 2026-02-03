@@ -19,7 +19,7 @@ def read_snps(path, has_header=True):
         rows = list(reader)
     if not rows:
         return []
-    start = 1 if has_header and rows[0] and rows[0][0] in ("lineage", "cambodia_id", "query_id") else 0
+    start = 1 if has_header and rows[0] and rows[0][0] in ("lineage", "database_id", "cambodia_id", "query_id") else 0
     return rows[start:]
 
 
@@ -37,7 +37,7 @@ def main():
     with open(args.output, "w", newline="") as out:
         writer = csv.writer(out, delimiter="\t")
         writer.writerow([
-            "cambodia_id",
+            "database_id",
             "gene",
             "chrom",
             "pos",
@@ -49,14 +49,14 @@ def main():
         for row in read_snps(args.query_snps):
             if len(row) < 6:
                 continue
-            cambodia_id, gene, chrom, pos, ref, alt = row[:6]
+            database_id, gene, chrom, pos, ref, alt = row[:6]
             lineages = set()
             for alt_allele in alt.split(","):
                 key = (gene, chrom, pos, ref, alt_allele)
                 lineages.update(lineage_map.get(key, set()))
             lineages_sorted = sorted(lineages)
             writer.writerow([
-                cambodia_id,
+                database_id,
                 gene,
                 chrom,
                 pos,

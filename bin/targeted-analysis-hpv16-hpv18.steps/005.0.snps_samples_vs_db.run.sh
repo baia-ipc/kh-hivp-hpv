@@ -3,9 +3,9 @@ set -euo pipefail
 
 SCRIPTSDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PRJROOT="$( cd "$SCRIPTSDIR/../.." && pwd )"
-PIPELINE_NF=$PRJROOT/pipelines/cambodia_snps.nf
+PIPELINE_NF=$PRJROOT/pipelines/database_snps.nf
 ALL_PIPELINES_CONFIG=$PRJROOT/config/pipelines/common.config
-PIPELINE_CONFIG=$PRJROOT/config/pipelines/cambodia_snps.config
+PIPELINE_CONFIG=$PRJROOT/config/pipelines/database_snps.config
 USER_CONFIG=$PRJROOT/config/user.config
 STEP_CONFIG=$PRJROOT/bin/config/targeted-analysis-hpv16-hpv18.config
 PROFILE=targeted_snps_samples_vs_db

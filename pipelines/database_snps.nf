@@ -10,7 +10,7 @@ def projectRoot = (workflow.projectDir instanceof java.nio.file.Path \
 
 params.scripts_dir = params.scripts_dir ?: "${projectRoot}/scripts"
 params.conda_env = params.conda_env ?: "${projectRoot}/pipelines/conda_env/pipeline.env.yml"
-params.multiqc_config = params.multiqc_config ?: "${projectRoot}/pipelines/multiqc/cambodia_snps.multiqc.yml"
+params.multiqc_config = params.multiqc_config ?: "${projectRoot}/pipelines/multiqc/database_snps.multiqc.yml"
 params.target_country = params.target_country ?: "Cambodia"
 params.selected_hpv16_fasta = params.selected_hpv16_fasta ?: "${projectRoot}/intermediate_files/refdata/hpv16_tree/selected.fasta"
 params.selected_hpv16_tsv = params.selected_hpv16_tsv ?: "${projectRoot}/intermediate_files/refdata/hpv16_tree/selected"
@@ -71,7 +71,7 @@ def bedReady = (bedDir.isDirectory() && bedDir.listFiles()?.any { it.name.endsWi
     ? Channel.value(true) \
     : null
 
-process EXTRACT_CAMBODIA {
+process EXTRACT_DATABASE {
     tag "extract"
     publishDir "${params.outdir}", mode: 'copy'
     conda params.conda_env
@@ -83,7 +83,7 @@ process EXTRACT_CAMBODIA {
     path(hpv18_tsv, stageAs: 'hpv18_selected.tsv')
 
     output:
-    tuple path('cambodia_hpv16.fasta'), path('cambodia_hpv18.fasta')
+    tuple path('database_hpv16.fasta'), path('database_hpv18.fasta')
 
     script:
     """
@@ -92,14 +92,14 @@ process EXTRACT_CAMBODIA {
       --selected-metadata "${hpv16_tsv}" \\
       --country "${params.target_country}" \\
       --label-prefix "HPV16" \\
-      --output cambodia_hpv16.fasta
+      --output database_hpv16.fasta
 
     "${params.scripts_dir}/phylo_tree/extract_country_sequences.py" \\
       --selected-fasta "${hpv18_fasta}" \\
       --selected-metadata "${hpv18_tsv}" \\
       --country "${params.target_country}" \\
       --label-prefix "HPV18" \\
-      --output cambodia_hpv18.fasta
+      --output database_hpv18.fasta
     """
 }
 
@@ -151,120 +151,120 @@ process LINEAGE_SNPS {
     """
 }
 
-process CAMBODIA_SNPS {
-    tag "cambodia_snps"
+process DATABASE_SNPS {
+    tag "database_snps"
     publishDir "${params.reports_dir}", mode: 'copy'
     conda params.conda_env
 
     input:
-    tuple path(cambodia_hpv16), path(cambodia_hpv18)
+    tuple path(database_hpv16), path(database_hpv18)
     val(bed_ready)
 
     output:
-    path('cambodia_snps.tsv')
+    path('database_snps.tsv')
 
     script:
     """
     "${params.scripts_dir}/lineage_snps/lineage_snps_from_fasta.py" \\
-      --lineages "${cambodia_hpv16}" \\
+      --lineages "${database_hpv16}" \\
       --ref "${params.ref_fasta}" \\
       --ref-name "${params.ref_hpv16_name}" \\
       --bed-dir "${params.pave_bed_dir}" \\
-      --header > cambodia_snps.tsv
+      --header > database_snps.tsv
 
     "${params.scripts_dir}/lineage_snps/lineage_snps_from_fasta.py" \\
-      --lineages "${cambodia_hpv18}" \\
+      --lineages "${database_hpv18}" \\
       --ref "${params.ref_fasta}" \\
       --ref-name "${params.ref_hpv18_name}" \\
       --bed-dir "${params.pave_bed_dir}" \\
-      >> cambodia_snps.tsv
+      >> database_snps.tsv
     """
 }
 
-process COMPARE_CAMBODIA_LINEAGES {
-    tag "cambodia_vs_lineages"
+process COMPARE_DATABASE_LINEAGES {
+    tag "database_vs_lineages"
     publishDir "${params.reports_dir}", mode: 'copy'
     conda params.conda_env
 
     input:
-    path(cambodia_snps)
+    path(database_snps)
     path(lineage_snps)
 
     output:
-    path('cambodia_lineage_comparison.tsv')
+    path('database_lineage_comparison.tsv')
 
     script:
     """
     "${params.scripts_dir}/lineage_snps/compare_query_snps_to_lineages.py" \\
-      --query-snps "${cambodia_snps}" \\
+      --query-snps "${database_snps}" \\
       --lineage-snps "${lineage_snps}" \\
-      --output cambodia_lineage_comparison.tsv
+      --output database_lineage_comparison.tsv
     """
 }
 
-process COMPARE_CAMBODIA_SAMPLES {
-    tag "cambodia_vs_samples"
+process COMPARE_DATABASE_SAMPLES {
+    tag "database_vs_samples"
     publishDir "${params.reports_dir}", mode: 'copy'
     conda params.conda_env
 
     input:
-    path(cambodia_snps)
+    path(database_snps)
     path(sample_variants)
 
     output:
-    path('cambodia_sample_comparison.tsv')
+    path('database_sample_comparison.tsv')
 
     script:
     """
     "${params.scripts_dir}/lineage_snps/compare_query_snps_to_samples.py" \\
-      --query-snps "${cambodia_snps}" \\
+      --query-snps "${database_snps}" \\
       --variants "${sample_variants}" \\
-      --output cambodia_sample_comparison.tsv
+      --output database_sample_comparison.tsv
     """
 }
 
-process COMPARE_SAMPLES_CAMBODIA {
-    tag "samples_vs_cambodia"
+process COMPARE_SAMPLES_DATABASE {
+    tag "samples_vs_database"
     publishDir "${params.reports_dir}", mode: 'copy'
     conda params.conda_env
 
     input:
-    path(cambodia_snps)
+    path(database_snps)
     path(sample_variants)
 
     output:
-    path('samples_vs_cambodia.tsv')
+    path('samples_vs_database.tsv')
 
     script:
     """
     "${params.scripts_dir}/lineage_snps/compare_samples_to_query_snps.py" \\
       --variants "${sample_variants}" \\
-      --query-snps "${cambodia_snps}" \\
+      --query-snps "${database_snps}" \\
       --allow-strains "HPV16REF,HPV18REF" \\
-      --output samples_vs_cambodia.tsv
+      --output samples_vs_database.tsv
     """
 }
 
-process COMPARE_SNP_SETS_CAMBODIA {
-    tag "samples_vs_cambodia_sets"
+process COMPARE_SNP_SETS_DATABASE {
+    tag "samples_vs_database_sets"
     publishDir "${params.reports_dir}", mode: 'copy'
     conda params.conda_env
 
     input:
-    path(cambodia_snps)
+    path(database_snps)
     path(sample_variants)
     path(compare_script)
 
     output:
-    path('samples_vs_cambodia_sets.tsv')
+    path('samples_vs_database_sets.tsv')
 
     script:
     """
     python "${compare_script}" \\
       --variants "${sample_variants}" \\
-      --database-snps "${cambodia_snps}" \\
+      --database-snps "${database_snps}" \\
       --allow-strains "HPV16REF,HPV18REF" \\
-      --output samples_vs_cambodia_sets.tsv
+      --output samples_vs_database_sets.tsv
     """
 }
 
@@ -299,9 +299,9 @@ process HPV16_E6E7_SUMMARY {
     input:
     path(sample_variant_effects)
     path(sample_list)
-    path(cambodia_snps)
+    path(database_snps)
     path(lineage_snps)
-    path(cambodia_fasta)
+    path(database_fasta)
     path(lineage_fasta)
 
     output:
@@ -312,9 +312,9 @@ process HPV16_E6E7_SUMMARY {
     "${params.scripts_dir}/lineage_snps/summarize_hpv16_e6e7_variants_database.py" \\
       --sample-effects "${sample_variant_effects}" \\
       --sample-list "${sample_list}" \\
-      --database-snps "${cambodia_snps}" \\
+      --database-snps "${database_snps}" \\
       --lineage-snps "${lineage_snps}" \\
-      --database-fasta "${cambodia_fasta}" \\
+      --database-fasta "${database_fasta}" \\
       --lineage-fasta "${lineage_fasta}" \\
       --ref-fasta "${params.ref_fasta}" \\
       --bed-dir "${params.pave_bed_dir}" \\
@@ -328,20 +328,20 @@ process PREPARE_MULTIQC {
     conda params.conda_env
 
     input:
-    path(cambodia_snps)
-    path(cambodia_lineage_comparison)
-    path(cambodia_sample_comparison)
-    path(samples_vs_cambodia)
-    path(samples_vs_cambodia_sets)
+    path(database_snps)
+    path(database_lineage_comparison)
+    path(database_sample_comparison)
+    path(samples_vs_database)
+    path(samples_vs_database_sets)
     path(samples_vs_lineage_sets)
     path(hpv16_e6e7_summary)
 
     output:
-    tuple path('cambodia_snps.multiqc.tsv'),
-          path('cambodia_lineage_comparison.multiqc.tsv'),
-          path('cambodia_sample_comparison.multiqc.tsv'),
-          path('samples_vs_cambodia.multiqc.tsv'),
-          path('samples_vs_cambodia_sets.multiqc.tsv'),
+    tuple path('database_snps.multiqc.tsv'),
+          path('database_lineage_comparison.multiqc.tsv'),
+          path('database_sample_comparison.multiqc.tsv'),
+          path('samples_vs_database.multiqc.tsv'),
+          path('samples_vs_database_sets.multiqc.tsv'),
           path('samples_vs_lineage_sets.multiqc.tsv'),
           path('hpv16_e6e7_variants_summary.multiqc.tsv')
 
@@ -357,33 +357,33 @@ process PREPARE_MULTIQC {
         if not rows:
             with open(output_path, 'w', newline='') as out:
                 writer = csv.writer(out, delimiter='\\t')
-                writer.writerow(['ID', 'cambodia_id', 'gene', 'chrom', 'pos', 'ref', 'alt'])
+                writer.writerow(['ID', 'database_id', 'gene', 'chrom', 'pos', 'ref', 'alt'])
             return
         header = rows[0]
-        start_idx = 1 if header and header[0] in ('lineage', 'database_id', 'cambodia_id', 'query_id', 'sample') else 0
+        start_idx = 1 if header and header[0] in ('lineage', 'database_id', 'query_id', 'sample') else 0
         if start_idx == 0:
-            header = ['cambodia_id', 'gene', 'chrom', 'pos', 'ref', 'alt'] + header[6:]
+            header = ['database_id', 'gene', 'chrom', 'pos', 'ref', 'alt'] + header[6:]
         else:
             header = header[:]
             if header[0] in ('lineage', 'query_id', 'sample'):
-                header[0] = 'cambodia_id'
+                header[0] = 'database_id'
         with open(output_path, 'w', newline='') as out:
             writer = csv.writer(out, delimiter='\t')
             writer.writerow(['ID'] + header)
             for row in rows[start_idx:]:
                 if len(row) < 6:
                     continue
-                cambodia_id, gene, chrom, pos, ref, alt = row[:6]
+                database_id, gene, chrom, pos, ref, alt = row[:6]
                 extra = row[6:]
-                row_id = id_builder(cambodia_id, gene, pos, ref, alt)
-                writer.writerow([row_id, cambodia_id, gene, chrom, pos, ref, alt] + extra)
+                row_id = id_builder(database_id, gene, pos, ref, alt)
+                writer.writerow([row_id, database_id, gene, chrom, pos, ref, alt] + extra)
 
-    def build_id(cambodia_id, gene, pos, ref, alt):
-        return f"{cambodia_id}:{gene}:{ref}{pos}{alt}"
+    def build_id(database_id, gene, pos, ref, alt):
+        return f"{database_id}:{gene}:{ref}{pos}{alt}"
 
-    prepare('cambodia_snps.tsv', 'cambodia_snps.multiqc.tsv', build_id)
-    prepare('cambodia_lineage_comparison.tsv', 'cambodia_lineage_comparison.multiqc.tsv', build_id)
-    prepare('cambodia_sample_comparison.tsv', 'cambodia_sample_comparison.multiqc.tsv', build_id)
+    prepare('database_snps.tsv', 'database_snps.multiqc.tsv', build_id)
+    prepare('database_lineage_comparison.tsv', 'database_lineage_comparison.multiqc.tsv', build_id)
+    prepare('database_sample_comparison.tsv', 'database_sample_comparison.multiqc.tsv', build_id)
     def prepare_samples(input_path, output_path):
         with open(input_path, newline='') as handle:
             reader = csv.reader(handle, delimiter='\\t')
@@ -408,7 +408,7 @@ process PREPARE_MULTIQC {
                 row_id = f\"{run}:{sample}:{gene}:{ref}{pos}{alt}\"
                 writer.writerow([row_id, run, sample, gene, chrom, pos, ref, alt] + extra)
 
-    prepare_samples('samples_vs_cambodia.tsv', 'samples_vs_cambodia.multiqc.tsv')
+    prepare_samples('samples_vs_database.tsv', 'samples_vs_database.multiqc.tsv')
 
     def prepare_set_comparison(input_path, output_path, label_field):
         with open(input_path, newline='') as handle:
@@ -434,7 +434,7 @@ process PREPARE_MULTIQC {
                 row_id = f\"{run}:{sample}:{label}\"
                 writer.writerow([row_id, run, sample, label] + extra)
 
-    prepare_set_comparison('samples_vs_cambodia_sets.tsv', 'samples_vs_cambodia_sets.multiqc.tsv', 'database_id')
+    prepare_set_comparison('samples_vs_database_sets.tsv', 'samples_vs_database_sets.multiqc.tsv', 'database_id')
     prepare_set_comparison('samples_vs_lineage_sets.tsv', 'samples_vs_lineage_sets.multiqc.tsv', 'lineage')
 
     import shutil
@@ -449,11 +449,11 @@ process MULTIQC {
     conda params.conda_env
 
     input:
-    tuple path(cambodia_snps_table),
-          path(cambodia_lineage_table),
-          path(cambodia_sample_table),
-          path(samples_vs_cambodia_table),
-          path(samples_vs_cambodia_sets_table),
+    tuple path(database_snps_table),
+          path(database_lineage_table),
+          path(database_sample_table),
+          path(samples_vs_database_table),
+          path(samples_vs_database_sets_table),
           path(samples_vs_lineage_sets_table),
           path(hpv16_e6e7_summary_table)
     path(multiqc_config)
@@ -487,18 +487,18 @@ workflow {
         bedReady = GENERATE_BED(Channel.value(true)).beds.map { true }
     }
 
-    def cambodia_fastas = EXTRACT_CAMBODIA(hpv16_fasta, hpv16_tsv, hpv18_fasta, hpv18_tsv)
+    def database_fastas = EXTRACT_DATABASE(hpv16_fasta, hpv16_tsv, hpv18_fasta, hpv18_tsv)
     def lineage_snps = LINEAGE_SNPS(lineage_hpv16, lineage_hpv18, bedReady)
-    def cambodia_snps = CAMBODIA_SNPS(cambodia_fastas, bedReady)
-    def cambodia_lineages = COMPARE_CAMBODIA_LINEAGES(cambodia_snps, lineage_snps)
-    def cambodia_samples = COMPARE_CAMBODIA_SAMPLES(cambodia_snps, sample_variants)
-    def samples_vs_cambodia = COMPARE_SAMPLES_CAMBODIA(cambodia_snps, sample_variants)
-    def compare_cambodia_sets = file("${params.scripts_dir}/lineage_snps/compare_sample_snp_sets_to_database.py")
+    def database_snps = DATABASE_SNPS(database_fastas, bedReady)
+    def database_lineages = COMPARE_DATABASE_LINEAGES(database_snps, lineage_snps)
+    def database_samples = COMPARE_DATABASE_SAMPLES(database_snps, sample_variants)
+    def samples_vs_database = COMPARE_SAMPLES_DATABASE(database_snps, sample_variants)
+    def compare_database_sets = file("${params.scripts_dir}/lineage_snps/compare_sample_snp_sets_to_database.py")
     def compare_lineage_sets = file("${params.scripts_dir}/lineage_snps/compare_sample_snp_sets_to_lineages.py")
-    def samples_vs_cambodia_sets = COMPARE_SNP_SETS_CAMBODIA(cambodia_snps, sample_variants, compare_cambodia_sets)
+    def samples_vs_database_sets = COMPARE_SNP_SETS_DATABASE(database_snps, sample_variants, compare_database_sets)
     def samples_vs_lineage_sets = COMPARE_SNP_SETS_LINEAGES(lineage_snps, sample_variants, compare_lineage_sets)
-    def cambodia_hpv16 = cambodia_fastas.map { it[0] }
-    def hpv16_summary = HPV16_E6E7_SUMMARY(sample_variant_effects, sample_list, cambodia_snps, lineage_snps, cambodia_hpv16, lineage_hpv16)
-    def multiqc_tables = PREPARE_MULTIQC(cambodia_snps, cambodia_lineages, cambodia_samples, samples_vs_cambodia, samples_vs_cambodia_sets, samples_vs_lineage_sets, hpv16_summary)
+    def database_hpv16 = database_fastas.map { it[0] }
+    def hpv16_summary = HPV16_E6E7_SUMMARY(sample_variant_effects, sample_list, database_snps, lineage_snps, database_hpv16, lineage_hpv16)
+    def multiqc_tables = PREPARE_MULTIQC(database_snps, database_lineages, database_samples, samples_vs_database, samples_vs_database_sets, samples_vs_lineage_sets, hpv16_summary)
     MULTIQC(multiqc_tables, multiqc_config)
 }
