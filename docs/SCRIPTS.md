@@ -363,24 +363,24 @@ Key parameters:
 - `--output`: output TSV with shared/unique counts.
 - `--allow-strains`: strain prefixes to include.
 
-### `scripts/compare_sample_snp_sets_to_cambodia.py`
-Purpose: Compare each sample's SNP set to each Cambodia SNP set, computing
+### `scripts/compare_sample_snp_sets_to_database.py`
+Purpose: Compare each sample's SNP set to each database SNP set, computing
 shared/unique counts and Jaccard similarity.
 Key parameters:
 - `--variants`: sample variants TSV.
-- `--cambodia-snps`: Cambodia SNPs TSV.
+- `--database-snps`: database SNPs TSV.
 - `--output`: output TSV.
 - `--allow-strains`: strain prefixes to include.
 
-### `scripts/summarize_hpv16_e6e7_variants.py`
-Purpose: Summarize HPV16 E6/E7 variants across samples, Cambodia accessions,
+### `scripts/summarize_hpv16_e6e7_variants_database.py`
+Purpose: Summarize HPV16 E6/E7 variants across samples, database accessions,
 lineages, and a reference, emitting compact per-ID variant lists.
 Key parameters:
 - `--sample-effects`: sample E6/E7 variant effects TSV.
-- `--cambodia-snps`: Cambodia SNPs TSV.
+- `--database-snps`: database SNPs TSV.
 - `--lineage-snps`: lineage SNPs TSV.
 - `--sample-list`: metadata TSV with sample IDs.
-- `--cambodia-fasta`: Cambodian HPV16 FASTA.
+- `--database-fasta`: database HPV16 FASTA.
 - `--lineage-fasta`: HPV16 lineage FASTA.
 - `--ref-fasta`: reference FASTA.
 - `--bed-dir`: directory with E6/E7 BED files.

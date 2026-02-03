@@ -262,7 +262,7 @@ process COMPARE_SNP_SETS_CAMBODIA {
     """
     python "${compare_script}" \\
       --variants "${sample_variants}" \\
-      --cambodia-snps "${cambodia_snps}" \\
+      --database-snps "${cambodia_snps}" \\
       --allow-strains "HPV16REF,HPV18REF" \\
       --output samples_vs_cambodia_sets.tsv
     """
@@ -309,12 +309,12 @@ process HPV16_E6E7_SUMMARY {
 
     script:
     """
-    "${params.scripts_dir}/summarize_hpv16_e6e7_variants.py" \\
+    "${params.scripts_dir}/summarize_hpv16_e6e7_variants_database.py" \\
       --sample-effects "${sample_variant_effects}" \\
       --sample-list "${sample_list}" \\
-      --cambodia-snps "${cambodia_snps}" \\
+      --database-snps "${cambodia_snps}" \\
       --lineage-snps "${lineage_snps}" \\
-      --cambodia-fasta "${cambodia_fasta}" \\
+      --database-fasta "${cambodia_fasta}" \\
       --lineage-fasta "${lineage_fasta}" \\
       --ref-fasta "${params.ref_fasta}" \\
       --bed-dir "${params.pave_bed_dir}" \\
@@ -360,7 +360,7 @@ process PREPARE_MULTIQC {
                 writer.writerow(['ID', 'cambodia_id', 'gene', 'chrom', 'pos', 'ref', 'alt'])
             return
         header = rows[0]
-        start_idx = 1 if header and header[0] in ('lineage', 'cambodia_id', 'query_id', 'sample') else 0
+        start_idx = 1 if header and header[0] in ('lineage', 'database_id', 'cambodia_id', 'query_id', 'sample') else 0
         if start_idx == 0:
             header = ['cambodia_id', 'gene', 'chrom', 'pos', 'ref', 'alt'] + header[6:]
         else:
@@ -434,7 +434,7 @@ process PREPARE_MULTIQC {
                 row_id = f\"{run}:{sample}:{label}\"
                 writer.writerow([row_id, run, sample, label] + extra)
 
-    prepare_set_comparison('samples_vs_cambodia_sets.tsv', 'samples_vs_cambodia_sets.multiqc.tsv', 'cambodia_id')
+    prepare_set_comparison('samples_vs_cambodia_sets.tsv', 'samples_vs_cambodia_sets.multiqc.tsv', 'database_id')
     prepare_set_comparison('samples_vs_lineage_sets.tsv', 'samples_vs_lineage_sets.multiqc.tsv', 'lineage')
 
     import shutil
@@ -493,7 +493,7 @@ workflow {
     def cambodia_lineages = COMPARE_CAMBODIA_LINEAGES(cambodia_snps, lineage_snps)
     def cambodia_samples = COMPARE_CAMBODIA_SAMPLES(cambodia_snps, sample_variants)
     def samples_vs_cambodia = COMPARE_SAMPLES_CAMBODIA(cambodia_snps, sample_variants)
-    def compare_cambodia_sets = file("${params.scripts_dir}/compare_sample_snp_sets_to_cambodia.py")
+    def compare_cambodia_sets = file("${params.scripts_dir}/compare_sample_snp_sets_to_database.py")
     def compare_lineage_sets = file("${params.scripts_dir}/compare_sample_snp_sets_to_lineages.py")
     def samples_vs_cambodia_sets = COMPARE_SNP_SETS_CAMBODIA(cambodia_snps, sample_variants, compare_cambodia_sets)
     def samples_vs_lineage_sets = COMPARE_SNP_SETS_LINEAGES(lineage_snps, sample_variants, compare_lineage_sets)
