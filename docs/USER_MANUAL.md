@@ -11,7 +11,7 @@ before running the analyses in this repository.
 
 ## 2) Repository layout (what goes where)
 
-- `input/`: symlinks or folders pointing to raw FASTQ data (not tracked in git).
+- `input_reads/`: symlinks or folders pointing to raw FASTQ data (not tracked in git).
 - `metadata/`: sample sheets and other fixed inputs (TSV files).
 - `config/`: user-editable pipeline configs (base + step-specific).
 - `config/pipelines/`: technical Nextflow config (executor/conda wiring, derived paths).
@@ -24,12 +24,12 @@ before running the analyses in this repository.
 - `preliminary-analysis-all-patients/` and `targeted-analysis-hpv16-hpv18/`: outputs and reports for each analysis.
 - `docs/`: technical documentation and this user manual.
 
-## 3) Prepare raw input data (`input/`)
+## 3) Prepare raw input data (`input_reads/`)
 
-Put or link each sequencing run folder under `input/`. Examples:
+Put or link each sequencing run folder under `input_reads/`. Examples:
 
-- If your runs are organized as `.../RUN_ID/Fastq/`, put the run under `input/RUN_ID/`.
-- If FASTQs are directly under the run directory, put them under `input/RUN_ID/`.
+- If your runs are organized as `.../RUN_ID/Fastq/`, put the run under `input_reads/RUN_ID/`.
+- If FASTQs are directly under the run directory, put them under `input_reads/RUN_ID/`.
 
 These paths are referenced in the sample sheets (next section).
 

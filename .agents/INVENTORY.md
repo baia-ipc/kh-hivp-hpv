@@ -9,6 +9,7 @@
 - `config/pipelines/`: bowtie_vs_pave.config, database_snps.config, centrifuge_bucketing.config, common.config, pave_gene_mapping.config, phylo_tree.config, phylo_tree.hpv16.config, phylo_tree.hpv18.config, virstrain.config
 - `pipelines/multiqc/`: bowtie_vs_pave.multiqc.yml, database_snps.multiqc.yml, centrifuge_bucketing.multiqc.yml, pave_gene_mapping.multiqc.yml, phylo_tree.multiqc.yml, virstrain.multiqc.yml
 - `pipelines/conda_env/`: nextflow_java.env.yml, pipeline.env.yml, virstrain.env.yml
+- `input_reads/`: symlinks or folders pointing to raw FASTQ data (not tracked in git)
 - `scripts/`: grouped by concern in subdirectories
   - `scripts/centrifuge_bucketing/`: build_centrifuge_db.sh, compute_lca.py, assign_to_buckets.py, bucketize_fastq.py, aggregate_bucket_counts.py
   - `scripts/bowtie_vs_pave/`: identify_top_strains.py, aggregate_top_strains.sh, covstats.py, depth_stats.py, aggregate_covstats.py, aggregate_depth_stats.py, covplot.py, make_all_covplots.sh, report_E6_E7_variants.sh, report_E6_E7_variant_effects.sh, csq_to_tsv.py

@@ -10,6 +10,7 @@ Rules:
 
 - User-editable configuration lives in `config/` (no hardcoded paths in scripts); step path configs live under `bin/config/`; technical Nextflow config (including derived refdata paths) lives under `config/pipelines/`, and Conda env definitions live under `pipelines/conda_env/`.
 - Step/analysis wrapper scripts live under `bin/` (wrappers around Nextflow pipelines).
+- Raw FASTQ inputs live under `input_reads/` (symlinks or folders to external data).
 - Script utilities live under `scripts/` and are grouped by concern in subdirectories (centrifuge_bucketing, bowtie_vs_pave, pave_reference, virstrain, phylo_tree, lineage_snps).
 - Sample lists and other hardcoded data live in `metadata/`.
 - Reference inputs live in `refdata/`; derived reference assets live in `intermediate_files/refdata/` (do not place reference inputs under analysis step directories).

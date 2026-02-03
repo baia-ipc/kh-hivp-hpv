@@ -147,3 +147,9 @@ Format:
   - Decision: rename `pipelines/cambodia_snps.nf` to `pipelines/database_snps.nf`, along with its configs and outputs, and update variable names to use database/target-country terminology.
   - Rationale: keep the workflow reusable for other target countries without changing names.
   - Consequences: update pipeline, configs, MultiQC config, and docs to reflect the new naming.
+
+- 2026-02-03: Rename input directory to input_reads
+  - Context: raw FASTQ inputs were stored under a generic `input/` directory.
+  - Decision: rename the top-level directory to `input_reads/` and update references in metadata and documentation.
+  - Rationale: clarify that the directory contains raw reads.
+  - Consequences: update sample sheets and docs to use `input_reads/`.
