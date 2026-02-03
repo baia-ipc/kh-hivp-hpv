@@ -17,8 +17,8 @@
   - conda_env/ Conda environment definitions
   - multiqc/ MultiQC configuration files used by pipelines
 
-- scripts/ reusable Python scripts for single operations such as
-           LCA computing, bucketing, FASTQ splitting, and strain summaries
+- scripts/ reusable utilities grouped by concern
+           (centrifuge_bucketing, bowtie_vs_pave, pave_reference, virstrain, phylo_tree, lineage_snps)
 
 - bin/ step and analysis runner scripts (wrappers around Nextflow pipelines)
   - preliminary-analysis-all-patients.steps/ per-step wrappers (plus single_sample/)

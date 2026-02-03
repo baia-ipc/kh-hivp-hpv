@@ -107,7 +107,7 @@ process GENERATE_FEATURES_TSV {
     script:
     """
     mkdir -p features_tsv
-    "${params.scripts_dir}/gff3_to_features_tsv.run_all.sh" "${params.pave_gff3_dir}" features_tsv
+    "${params.scripts_dir}/pave_reference/gff3_to_features_tsv.run_all.sh" "${params.pave_gff3_dir}" features_tsv
     """
 }
 
@@ -124,7 +124,7 @@ process GENERATE_BED {
     script:
     """
     mkdir -p bed_files
-    "${params.scripts_dir}/gff3_to_bed.run_all.sh" "${params.pave_gff3_dir}" bed_files
+    "${params.scripts_dir}/pave_reference/gff3_to_bed.run_all.sh" "${params.pave_gff3_dir}" bed_files
     """
 }
 
@@ -164,10 +164,10 @@ process MAP_SAMPLE {
     samtools index "\${prefix}.bam"
     samtools idxstats "\${prefix}.bam" > "\${prefix}.idxstats"
 
-    "${params.scripts_dir}/identify_top_strains.py" "\${prefix}.idxstats" > "\${prefix}.top_strains"
+    "${params.scripts_dir}/bowtie_vs_pave/identify_top_strains.py" "\${prefix}.idxstats" > "\${prefix}.top_strains"
 
     samtools depth -aa "\${prefix}.bam" > "\${prefix}.depth"
-    "${params.scripts_dir}/covstats.py" "\${prefix}.depth" "\${prefix}.depth.stats" "${params.features_tsv_dir}"
+    "${params.scripts_dir}/bowtie_vs_pave/covstats.py" "\${prefix}.depth" "\${prefix}.depth.stats" "${params.features_tsv_dir}"
 
     samtools faidx "${params.index_dir}/pave_hsa.fas"
     bcftools mpileup -Ou -f "${params.index_dir}/pave_hsa.fas" "\${prefix}.bam" -d 500 | \\
@@ -190,7 +190,7 @@ process AGGREGATE_STRAINS {
 
     script:
     """
-    "${params.scripts_dir}/aggregate_top_strains.sh" "${params.outdir}" "strains.tsv"
+    "${params.scripts_dir}/bowtie_vs_pave/aggregate_top_strains.sh" "${params.outdir}" "strains.tsv"
     """
 }
 
@@ -207,8 +207,8 @@ process AGGREGATE_COVSTATS {
 
     script:
     """
-    "${params.scripts_dir}/aggregate_covstats.py" "${params.outdir}" "cov_stats.tsv" -b 0 -d 0
-    "${params.scripts_dir}/aggregate_covstats.py" "${params.outdir}" "cov_stats.filtered.tsv"
+    "${params.scripts_dir}/bowtie_vs_pave/aggregate_covstats.py" "${params.outdir}" "cov_stats.tsv" -b 0 -d 0
+    "${params.scripts_dir}/bowtie_vs_pave/aggregate_covstats.py" "${params.outdir}" "cov_stats.filtered.tsv"
     """
 }
 
@@ -224,7 +224,7 @@ process AGGREGATE_VARIANTS {
 
     script:
     """
-    "${params.scripts_dir}/report_E6_E7_variants.sh" "${params.outdir}" "${params.pave_bed_dir}" > "E6_E7_variants.tsv"
+    "${params.scripts_dir}/bowtie_vs_pave/report_E6_E7_variants.sh" "${params.outdir}" "${params.pave_bed_dir}" > "E6_E7_variants.tsv"
     """
 }
 
@@ -240,7 +240,7 @@ process AGGREGATE_VARIANT_EFFECTS {
 
     script:
     """
-    "${params.scripts_dir}/report_E6_E7_variant_effects.sh" "${params.outdir}" "${params.pave_bed_dir}" "${params.pave_gff3_dir}" "${params.index_dir}/pave_hsa.fas" > "E6_E7_variant_effects.tsv"
+    "${params.scripts_dir}/bowtie_vs_pave/report_E6_E7_variant_effects.sh" "${params.outdir}" "${params.pave_bed_dir}" "${params.pave_gff3_dir}" "${params.index_dir}/pave_hsa.fas" > "E6_E7_variant_effects.tsv"
     """
 }
 
@@ -256,14 +256,14 @@ process LINEAGE_SNPS {
 
     script:
     """
-    "${params.scripts_dir}/lineage_snps_from_fasta.py" \\
+    "${params.scripts_dir}/lineage_snps/lineage_snps_from_fasta.py" \\
       --lineages "${params.lineage_hpv16_fasta}" \\
       --ref "${params.pave_ref_fasta}" \\
       --ref-name "${params.lineage_ref_hpv16_name}" \\
       --bed-dir "${params.pave_bed_dir}" \\
       --header > lineage_snps.tsv
 
-    "${params.scripts_dir}/lineage_snps_from_fasta.py" \\
+    "${params.scripts_dir}/lineage_snps/lineage_snps_from_fasta.py" \\
       --lineages "${params.lineage_hpv18_fasta}" \\
       --ref "${params.pave_ref_fasta}" \\
       --ref-name "${params.lineage_ref_hpv18_name}" \\
@@ -285,7 +285,7 @@ process COMPARE_LINEAGE_SNPS {
 
     script:
     """
-    "${params.scripts_dir}/compare_lineage_snps.py" \\
+    "${params.scripts_dir}/lineage_snps/compare_lineage_snps.py" \\
       --variants "${variants}" \\
       --lineage-snps "${lineage_snps}" \\
       --output "lineage_snp_comparison.tsv"

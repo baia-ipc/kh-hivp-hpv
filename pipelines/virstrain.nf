@@ -67,7 +67,7 @@ process CREATE_INDEX {
     """
     ln -sf "${params.ref_fasta}" pave_hsa.fas
     mafft --auto pave_hsa.fas > pave_hsa.msa.fas
-    "${params.scripts_dir}/fix_msa_formatting.py" pave_hsa.msa.fas > pave_hsa.msa.virstrain.fas
+    "${params.scripts_dir}/phylo_tree/fix_msa_formatting.py" pave_hsa.msa.fas > pave_hsa.msa.virstrain.fas
     virstrain_build -i pave_hsa.msa.virstrain.fas -d virstrain
     """
 }
@@ -106,7 +106,7 @@ process AGGREGATE_RESULTS {
 
     script:
     """
-    "${params.scripts_dir}/aggregate_results.py" "${params.outdir}" > "strains.tsv"
+    "${params.scripts_dir}/virstrain/aggregate_results.py" "${params.outdir}" > "strains.tsv"
     """
 }
 

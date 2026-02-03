@@ -87,14 +87,14 @@ process EXTRACT_CAMBODIA {
 
     script:
     """
-    "${params.scripts_dir}/extract_country_sequences.py" \\
+    "${params.scripts_dir}/phylo_tree/extract_country_sequences.py" \\
       --selected-fasta "${hpv16_fasta}" \\
       --selected-metadata "${hpv16_tsv}" \\
       --country "${params.target_country}" \\
       --label-prefix "HPV16" \\
       --output cambodia_hpv16.fasta
 
-    "${params.scripts_dir}/extract_country_sequences.py" \\
+    "${params.scripts_dir}/phylo_tree/extract_country_sequences.py" \\
       --selected-fasta "${hpv18_fasta}" \\
       --selected-metadata "${hpv18_tsv}" \\
       --country "${params.target_country}" \\
@@ -116,7 +116,7 @@ process GENERATE_BED {
     script:
     """
     mkdir -p bed_files
-    "${params.scripts_dir}/gff3_to_bed.run_all.sh" "${params.pave_gff3_dir}" bed_files
+    "${params.scripts_dir}/pave_reference/gff3_to_bed.run_all.sh" "${params.pave_gff3_dir}" bed_files
     """
 }
 
@@ -135,14 +135,14 @@ process LINEAGE_SNPS {
 
     script:
     """
-    "${params.scripts_dir}/lineage_snps_from_fasta.py" \\
+    "${params.scripts_dir}/lineage_snps/lineage_snps_from_fasta.py" \\
       --lineages "${lineage_hpv16}" \\
       --ref "${params.ref_fasta}" \\
       --ref-name "${params.ref_hpv16_name}" \\
       --bed-dir "${params.pave_bed_dir}" \\
       --header > lineage_snps.tsv
 
-    "${params.scripts_dir}/lineage_snps_from_fasta.py" \\
+    "${params.scripts_dir}/lineage_snps/lineage_snps_from_fasta.py" \\
       --lineages "${lineage_hpv18}" \\
       --ref "${params.ref_fasta}" \\
       --ref-name "${params.ref_hpv18_name}" \\
@@ -165,14 +165,14 @@ process CAMBODIA_SNPS {
 
     script:
     """
-    "${params.scripts_dir}/lineage_snps_from_fasta.py" \\
+    "${params.scripts_dir}/lineage_snps/lineage_snps_from_fasta.py" \\
       --lineages "${cambodia_hpv16}" \\
       --ref "${params.ref_fasta}" \\
       --ref-name "${params.ref_hpv16_name}" \\
       --bed-dir "${params.pave_bed_dir}" \\
       --header > cambodia_snps.tsv
 
-    "${params.scripts_dir}/lineage_snps_from_fasta.py" \\
+    "${params.scripts_dir}/lineage_snps/lineage_snps_from_fasta.py" \\
       --lineages "${cambodia_hpv18}" \\
       --ref "${params.ref_fasta}" \\
       --ref-name "${params.ref_hpv18_name}" \\
@@ -195,7 +195,7 @@ process COMPARE_CAMBODIA_LINEAGES {
 
     script:
     """
-    "${params.scripts_dir}/compare_query_snps_to_lineages.py" \\
+    "${params.scripts_dir}/lineage_snps/compare_query_snps_to_lineages.py" \\
       --query-snps "${cambodia_snps}" \\
       --lineage-snps "${lineage_snps}" \\
       --output cambodia_lineage_comparison.tsv
@@ -216,7 +216,7 @@ process COMPARE_CAMBODIA_SAMPLES {
 
     script:
     """
-    "${params.scripts_dir}/compare_query_snps_to_samples.py" \\
+    "${params.scripts_dir}/lineage_snps/compare_query_snps_to_samples.py" \\
       --query-snps "${cambodia_snps}" \\
       --variants "${sample_variants}" \\
       --output cambodia_sample_comparison.tsv
@@ -237,7 +237,7 @@ process COMPARE_SAMPLES_CAMBODIA {
 
     script:
     """
-    "${params.scripts_dir}/compare_samples_to_query_snps.py" \\
+    "${params.scripts_dir}/lineage_snps/compare_samples_to_query_snps.py" \\
       --variants "${sample_variants}" \\
       --query-snps "${cambodia_snps}" \\
       --allow-strains "HPV16REF,HPV18REF" \\
@@ -309,7 +309,7 @@ process HPV16_E6E7_SUMMARY {
 
     script:
     """
-    "${params.scripts_dir}/summarize_hpv16_e6e7_variants_database.py" \\
+    "${params.scripts_dir}/lineage_snps/summarize_hpv16_e6e7_variants_database.py" \\
       --sample-effects "${sample_variant_effects}" \\
       --sample-list "${sample_list}" \\
       --database-snps "${cambodia_snps}" \\
@@ -493,8 +493,8 @@ workflow {
     def cambodia_lineages = COMPARE_CAMBODIA_LINEAGES(cambodia_snps, lineage_snps)
     def cambodia_samples = COMPARE_CAMBODIA_SAMPLES(cambodia_snps, sample_variants)
     def samples_vs_cambodia = COMPARE_SAMPLES_CAMBODIA(cambodia_snps, sample_variants)
-    def compare_cambodia_sets = file("${params.scripts_dir}/compare_sample_snp_sets_to_database.py")
-    def compare_lineage_sets = file("${params.scripts_dir}/compare_sample_snp_sets_to_lineages.py")
+    def compare_cambodia_sets = file("${params.scripts_dir}/lineage_snps/compare_sample_snp_sets_to_database.py")
+    def compare_lineage_sets = file("${params.scripts_dir}/lineage_snps/compare_sample_snp_sets_to_lineages.py")
     def samples_vs_cambodia_sets = COMPARE_SNP_SETS_CAMBODIA(cambodia_snps, sample_variants, compare_cambodia_sets)
     def samples_vs_lineage_sets = COMPARE_SNP_SETS_LINEAGES(lineage_snps, sample_variants, compare_lineage_sets)
     def cambodia_hpv16 = cambodia_fastas.map { it[0] }
