@@ -11,12 +11,13 @@
 - `pipelines/conda_env/`: nextflow_java.env.yml, pipeline.env.yml, virstrain.env.yml
 - `input_reads/`: symlinks or folders pointing to raw FASTQ data (not tracked in git)
 - `scripts/`: grouped by concern in subdirectories
-  - `scripts/centrifuge_bucketing/`: build_centrifuge_db.sh, compute_lca.py, assign_to_buckets.py, bucketize_fastq.py, aggregate_bucket_counts.py
-  - `scripts/bowtie_vs_pave/`: identify_top_strains.py, aggregate_top_strains.sh, covstats.py, depth_stats.py, aggregate_covstats.py, aggregate_depth_stats.py, covplot.py, make_all_covplots.sh, report_E6_E7_variants.sh, report_E6_E7_variant_effects.sh, csq_to_tsv.py
-  - `scripts/pave_reference/`: gff3_to_features_tsv.py, gff3_to_features_tsv.run_all.sh, gff3_to_bed.py, gff3_to_bed.run_all.sh, gff3_to_csq_gff.py, make_features_plot.py, make_features_plot.run_all.sh, make_tabix_dir.sh
-  - `scripts/virstrain/`: aggregate_results.py
+  - `scripts/taxonomy_assignment/`: build_centrifuge_db.sh, compute_lca.py, assign_to_buckets.py, bucketize_fastq.py, aggregate_bucket_counts.py
+  - `scripts/top_strains/`: identify_top_strains.py, aggregate_top_strains.sh
+  - `scripts/coverage/`: covstats.py, depth_stats.py, aggregate_covstats.py, aggregate_depth_stats.py, covplot.py, make_all_covplots.sh
+  - `scripts/variants/`: report_E6_E7_variants.sh, report_E6_E7_variant_effects.sh, csq_to_tsv.py, lineage_snps_from_fasta.py, compare_lineage_snps.py, compare_query_snps_to_lineages.py, compare_query_snps_to_samples.py, compare_samples_to_query_snps.py, compare_sample_snp_sets_to_lineages.py, compare_sample_snp_sets_to_database.py, summarize_hpv16_e6e7_variants_database.py
+  - `scripts/pave/`: gff3_to_features_tsv.py, gff3_to_features_tsv.run_all.sh, gff3_to_bed.py, gff3_to_bed.run_all.sh, gff3_to_csq_gff.py, make_features_plot.py, make_features_plot.run_all.sh, make_tabix_dir.sh
+  - `scripts/virstrain/`: aggregate_virstrain_results.py
   - `scripts/phylo_tree/`: hpv16_select_ncbi_genomes.sh, hpv18_select_ncbi_genomes.sh, hpv16_extract_lineages_fasta.sh, hpv18_extract_lineages_fasta.sh, rename_lineages.py, fix_msa_formatting.py, assign_hpv18_lineages.py, hpv16_prepare_samples.sh, hpv18_prepare_samples.sh, extract_country_sequences.py
-  - `scripts/lineage_snps/`: lineage_snps_from_fasta.py, compare_lineage_snps.py, compare_query_snps_to_lineages.py, compare_query_snps_to_samples.py, compare_samples_to_query_snps.py, compare_sample_snp_sets_to_lineages.py, compare_sample_snp_sets_to_database.py, summarize_hpv16_e6e7_variants_database.py
 - `pipelines/`: bowtie_vs_pave.nf, database_snps.nf, centrifuge_bucketing.nf, centrifuge_bucketing_all.nf, pave_gene_mapping.nf, phylo_tree.nf, virstrain.nf
 - `refdata/`: external reference inputs used by pipelines (PAVE reference, NCBI downloads)
 - `intermediate_files/refdata/`: derived reference assets (feature tables, curated tree inputs)

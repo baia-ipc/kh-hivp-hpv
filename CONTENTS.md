@@ -18,7 +18,7 @@
   - multiqc/ MultiQC configuration files used by pipelines
 
 - scripts/ reusable utilities grouped by concern
-           (centrifuge_bucketing, bowtie_vs_pave, pave_reference, virstrain, phylo_tree, lineage_snps)
+           (taxonomy_assignment, top_strains, coverage, variants, pave, virstrain, phylo_tree)
 
 - bin/ step and analysis runner scripts (wrappers around Nextflow pipelines)
   - prelim_analysis.steps/ per-step wrappers (plus single_sample/)

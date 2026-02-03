@@ -39,14 +39,14 @@ bin/prelim_analysis.run.sh --run-virstrain
 Run individual steps (all samples):
 
 ```
-bin/prelim_analysis.steps/001.0.centrifuge.run.sh
-bin/targeted_analysis.steps/002.0.mapping_vs_pave.run.sh
+bin/prelim_analysis.steps/01.centrifuge.run.sh
+bin/targeted_analysis.steps/02.mapping_vs_pave.run.sh
 ```
 
 Run a single sample (for steps that support it):
 
 ```
-bin/targeted_analysis.steps/single_sample/002.0.mapping_vs_pave.run_sample.sh
+bin/targeted_analysis.steps/single_sample/02.mapping_vs_pave.run_sample.sh
 ```
 
 ### prelim_analysis bucketing (Nextflow)
@@ -62,13 +62,13 @@ nextflow run pipelines/centrifuge_bucketing_all.nf \
   -resume
 ```
 
-MultiQC report is written to `prelim_analysis/001.0.centrifuge/reports/multiqc_report.html`.
+MultiQC report is written to `prelim_analysis/01.centrifuge/reports/multiqc_report.html`.
 
 ### Build the Centrifuge database (human + RefSeq archaea/bacteria/viral)
 
 - Build the index and taxonomy under `refdata/centrifuge/`:
 ```
-scripts/centrifuge_bucketing/build_centrifuge_db.sh --outdir refdata/centrifuge --index-name human_abv --threads 24
+scripts/taxonomy_assignment/build_centrifuge_db.sh --outdir refdata/centrifuge --index-name human_abv --threads 24
 ```
 
 - Point `config/user.config` to the resulting paths, for example:
@@ -200,7 +200,7 @@ Coverage statistics use feature tables derived from the PAVE GFF3 files.
 Generate them under `intermediate_files/refdata/pave/features_tsv` with:
 
 ```
-scripts/pave_reference/gff3_to_features_tsv.run_all.sh \
+scripts/pave/gff3_to_features_tsv.run_all.sh \
   refdata/pave/gff3 \
   intermediate_files/refdata/pave/features_tsv
 ```
@@ -211,7 +211,7 @@ E6/E7 SNP extraction relies on BED intervals derived from the same PAVE GFF3s.
 Generate them under `intermediate_files/refdata/pave/bed` with:
 
 ```
-scripts/pave_reference/gff3_to_bed.run_all.sh \
+scripts/pave/gff3_to_bed.run_all.sh \
   refdata/pave/gff3 \
   intermediate_files/refdata/pave/bed
 ```

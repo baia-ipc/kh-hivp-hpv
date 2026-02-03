@@ -56,7 +56,7 @@ if [[ -z "$BCF_RUN_ID" && -z "$BCF_DIR" && -f "$SAMPLES_TSV" ]]; then
 fi
 
 if [[ -z "$BCF_DIR" && -n "$BCF_RUN_ID" ]]; then
-  BCF_DIR="$REPO_ROOT/targeted_analysis/002.0.mapping_vs_pave/output/$BCF_RUN_ID"
+  BCF_DIR="$REPO_ROOT/targeted_analysis/02.mapping_vs_pave/output/$BCF_RUN_ID"
 fi
 
 if [[ -z "$BCF_DIR" ]]; then

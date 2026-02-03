@@ -224,7 +224,7 @@ process COMPUTE_LCA {
     script:
     """
     if awk -F'\\t' '\$3 ~ /^[0-9]+\$/ {found=1; exit} END {exit !found}' "$aln"; then
-      "${params.scripts_dir}/centrifuge_bucketing/compute_lca.py" "${params.taxdump}/nodes.dmp" \\
+      "${params.scripts_dir}/taxonomy_assignment/compute_lca.py" "${params.taxdump}/nodes.dmp" \\
         "$aln" "${sample_id}.lca.tsv"
     else
       echo "No taxonomy assignments for ${sample_id}; writing empty LCA." >&2
@@ -247,7 +247,7 @@ process ASSIGN_BUCKETS {
 
     script:
     """
-    "${params.scripts_dir}/centrifuge_bucketing/assign_to_buckets.py" "${params.taxdump}/nodes.dmp" \\
+    "${params.scripts_dir}/taxonomy_assignment/assign_to_buckets.py" "${params.taxdump}/nodes.dmp" \\
       "$lca" 2 "${sample_id}.bkt.tsv" \\
       \$(tail -n+1 "${params.buckets}" | cut -f 1) > "${sample_id}.bsz.tsv"
     """
@@ -267,11 +267,11 @@ process BUCKETIZE_READS {
 
     script:
     """
-    "${params.scripts_dir}/centrifuge_bucketing/bucketize_fastq.py" \\
+    "${params.scripts_dir}/taxonomy_assignment/bucketize_fastq.py" \\
       "$bkt" 1 3 "$r1" "${sample_id}.R1" \\
       --skip "${params.homo_sapiens_tid}" > "${sample_id}.R1.log"
 
-    "${params.scripts_dir}/centrifuge_bucketing/bucketize_fastq.py" \\
+    "${params.scripts_dir}/taxonomy_assignment/bucketize_fastq.py" \\
       "$bkt" 1 3 "$r2" "${sample_id}.R2" \\
       --skip "${params.homo_sapiens_tid}" > "${sample_id}.R2.log"
 

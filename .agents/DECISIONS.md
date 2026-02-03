@@ -10,6 +10,18 @@ Format:
 
 ## Decisions
 
+- 2026-02-03: Simplify step numbering
+  - Context: step identifiers used 001.0-style labels across directories and docs.
+  - Decision: rename step identifiers to two-digit forms (01–05) throughout the repo.
+  - Rationale: shorten paths and improve readability.
+  - Consequences: update analysis directories, wrappers, configs, and documentation references.
+
+- 2026-02-03: Group scripts by concern
+  - Context: scripts were grouped by pipeline names rather than the type of task.
+  - Decision: reorganize scripts into taxonomy_assignment, top_strains, coverage, variants, pave, and virstrain subdirectories.
+  - Rationale: make script locations reflect their function and improve discoverability.
+  - Consequences: update pipeline/script references and documentation paths.
+
 - 2026-02-03: Shorten analysis directory names
   - Context: analysis names were long and repeated across configs, docs, and scripts.
   - Decision: rename the analysis directories and related runner/config references to the shorter names prelim_analysis and targeted_analysis.
@@ -35,37 +47,37 @@ Format:
   - Consequences: update scripts, pipelines, and docs to remove steps/ from paths.
 
 - 2026-01-24: Migrate bowtie vs PAVE mapping to Nextflow
-  - Context: step 002 relied on per-step scripts with hardcoded paths.
-  - Decision: centralize scripts under `scripts/` and run step 002 via `pipelines/bowtie_vs_pave.nf`.
+  - Context: step 02 relied on per-step scripts with hardcoded paths.
+  - Decision: centralize scripts under `scripts/` and run step 02 via `pipelines/bowtie_vs_pave.nf`.
   - Rationale: reduce duplication and make configuration consistent across analyses.
   - Consequences: use `config/user.config` for user inputs and `config/pipelines/bowtie_vs_pave.config` for fixed bucket selection.
 
 - 2026-01-24: Migrate VirStrain reports to Nextflow
-  - Context: step 005 used step-local scripts and hardcoded reference paths.
-  - Decision: centralize scripts under `scripts/` and run step 005 via `pipelines/virstrain.nf`.
+  - Context: step 05 used step-local scripts and hardcoded reference paths.
+  - Decision: centralize scripts under `scripts/` and run step 05 via `pipelines/virstrain.nf`.
   - Rationale: align with the shared pipeline layout and remove hardcoded paths.
   - Consequences: use `config/user.config` for user inputs and `config/pipelines/virstrain.config` for fixed bucket selection.
 
 - 2026-01-24: Migrate E6 mapping to Nextflow
-  - Context: step 003 relied on step-local scripts and per-step index creation.
+  - Context: step 03 relied on step-local scripts and per-step index creation.
   - Decision: move shared scripts to `scripts/` and run E6 mapping via `pipelines/pave_gene_mapping.nf`.
   - Rationale: standardize mapping steps and remove hardcoded references.
   - Consequences: use `bin/config/prelim_analysis.config` (profile `preliminary_pave_e6`) and shared metadata for bucket selection.
 
 - 2026-01-24: Migrate E7 mapping to Nextflow
-  - Context: step 004 relied on the same step-local scripts as E6.
+  - Context: step 04 relied on the same step-local scripts as E6.
   - Decision: use the shared `pipelines/pave_gene_mapping.nf` pipeline with a dedicated config.
   - Rationale: keep the E6/E7 analyses consistent and reduce duplication.
   - Consequences: use `bin/config/prelim_analysis.config` (profile `preliminary_pave_e7`) and shared metadata for bucket selection.
 
 - 2026-01-24: Migrate HPV16 tree build to Nextflow
-  - Context: step 003 relied on multiple per-step scripts for alignment and tree building.
+  - Context: step 03 relied on multiple per-step scripts for alignment and tree building.
   - Decision: centralize the tree build as `pipelines/phylo_tree.nf` with step config.
   - Rationale: standardize tree workflows and reduce step-local scripts.
   - Consequences: use `config/user.config` and `metadata/hpv16_tree_outgroups.txt`.
 
 - 2026-01-24: Migrate HPV18 tree build to Nextflow
-  - Context: step 004 mirrored the HPV16 tree workflow with separate scripts.
+  - Context: step 04 mirrored the HPV16 tree workflow with separate scripts.
   - Decision: use the shared `pipelines/phylo_tree.nf` pipeline with an HPV18 config.
   - Rationale: keep HPV16/HPV18 tree generation consistent and centralized.
   - Consequences: use `config/user.config` and `metadata/hpv18_tree_outgroups.txt`.
@@ -108,7 +120,7 @@ Format:
 
 - 2026-02-02: Derive PAVE BED intervals from GFF3
   - Context: multiple pipelines require BED intervals for E6/E7 SNP extraction.
-  - Decision: treat BED files as derived data under `intermediate_files/refdata/pave/bed`, generated via `scripts/pave_reference/gff3_to_bed.run_all.sh`.
+  - Decision: treat BED files as derived data under `intermediate_files/refdata/pave/bed`, generated via `scripts/pave/gff3_to_bed.run_all.sh`.
   - Rationale: BEDs are derived from GFF3s and should not live under raw reference inputs.
   - Consequences: technical configs reference the derived BED directory.
 

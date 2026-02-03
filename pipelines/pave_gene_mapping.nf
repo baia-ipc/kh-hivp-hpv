@@ -89,10 +89,10 @@ process MAP_SAMPLE {
     samtools index "\${prefix}.bam"
     samtools idxstats "\${prefix}.bam" > "\${prefix}.idxstats"
 
-    "${params.scripts_dir}/bowtie_vs_pave/identify_top_strains.py" "\${prefix}.idxstats" > "\${prefix}.top_strains"
+    "${params.scripts_dir}/top_strains/identify_top_strains.py" "\${prefix}.idxstats" > "\${prefix}.top_strains"
 
     samtools depth -aa "\${prefix}.bam" > "\${prefix}.depth"
-    "${params.scripts_dir}/bowtie_vs_pave/depth_stats.py" "\${prefix}.depth" "\${prefix}.depth.stats"
+    "${params.scripts_dir}/coverage/depth_stats.py" "\${prefix}.depth" "\${prefix}.depth.stats"
     """
 }
 
@@ -108,7 +108,7 @@ process AGGREGATE_STRAINS {
 
     script:
     """
-    "${params.scripts_dir}/bowtie_vs_pave/aggregate_top_strains.sh" "${params.outdir}" "strains.tsv"
+    "${params.scripts_dir}/top_strains/aggregate_top_strains.sh" "${params.outdir}" "strains.tsv"
     """
 }
 
@@ -125,9 +125,9 @@ process AGGREGATE_DEPTH_STATS {
 
     script:
     """
-    "${params.scripts_dir}/bowtie_vs_pave/aggregate_depth_stats.py" "${params.outdir}" \
+    "${params.scripts_dir}/coverage/aggregate_depth_stats.py" "${params.outdir}" \
       "depth_stats.unfiltered.tsv" -b 0 -d 0
-    "${params.scripts_dir}/bowtie_vs_pave/aggregate_depth_stats.py" "${params.outdir}" \
+    "${params.scripts_dir}/coverage/aggregate_depth_stats.py" "${params.outdir}" \
       "depth_stats.filtered.tsv"
     """
 }
