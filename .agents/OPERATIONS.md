@@ -251,7 +251,7 @@ To refresh the reference snapshot used for regression checks:
 mkdir -p reference-results
 for step in prelim_analysis/* targeted_analysis/*; do
   [ -d "$step" ] || continue
-  for sub in output reports index; do
+  for sub in output reports; do
     src="$step/$sub"
     if [ -d "$src" ]; then
       dest="reference-results/$step/$sub"
@@ -260,9 +260,14 @@ for step in prelim_analysis/* targeted_analysis/*; do
     fi
   done
 done
+
+if [ -d intermediate_files/indices ]; then
+  mkdir -p reference-results/intermediate_files/indices
+  cp -a intermediate_files/indices/. reference-results/intermediate_files/indices/
+fi
 ```
 
 ## Updating inputs
 
 - Update sample lists in `metadata/`.
-- Ensure reference indices exist in step `index/` or a shared `refdata/` location.
+- Ensure reference indices exist under `intermediate_files/indices/` (Bowtie/VirStrain) and raw reference inputs under `refdata/`.

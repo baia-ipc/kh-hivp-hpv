@@ -20,7 +20,7 @@ before running the analyses in this repository.
 - `refdata/`: reference inputs from external sources (PAVE FASTA/GFF3, NCBI downloads).
 - `intermediate_files/`: generated intermediate assets.
   - `intermediate_files/refdata/`: derived reference data (feature tables, renamed/filtered FASTA sets).
-  - `intermediate_files/indices/`: bowtie/virstrain indices.
+  - `intermediate_files/indices/`: shared Bowtie/VirStrain indices (split by analysis).
 - `prelim_analysis/` and `targeted_analysis/`: outputs and reports for each analysis.
 - `docs/`: technical documentation and this user manual.
 
@@ -57,9 +57,9 @@ to your local reference data paths and to set resource limits:
 
 - Base pipeline config:
   - `config/user.config`: all user-editable pipeline parameters (Centrifuge index/taxdump, PAVE reference names, target-country defaults, tree defaults, and shared threads)
-- Step‑specific path configs (inputs/outputs) are stored under `bin/config/` as profile bundles and are not typically edited by users:
-  - `bin/config/prelim_analysis.config` (profiles for steps 01‑05)
-  - `bin/config/targeted_analysis.config` (profiles for steps 01‑05)
+- Step‑specific path configs (inputs/outputs) are stored under `bin/config/` and are not typically edited by users:
+  - `bin/config/prelim_analysis.config`
+  - `bin/config/targeted_analysis.config`
 - Tree defaults are configured via `config/user.config`.
 
 Technical Nextflow settings (executor/conda wiring and derived refdata paths) live under `config/pipelines/`.

@@ -14,6 +14,7 @@ Rules:
 - Script utilities live under `scripts/` and are grouped by concern in subdirectories (taxonomy_assignment, top_strains, coverage, variants, pave, virstrain, phylo_tree).
 - Sample lists and other hardcoded data live in `metadata/`.
 - Reference inputs live in `refdata/`; derived reference assets live in `intermediate_files/refdata/` (do not place reference inputs under analysis step directories).
+- Shared Bowtie/VirStrain indices live under `intermediate_files/indices/` (split by analysis).
 - Centrifuge database build script lives at `scripts/taxonomy_assignment/build_centrifuge_db.sh` (outputs under `refdata/centrifuge/`).
 - Outputs live under each step's `output/` and `reports/` directories.
 - MultiQC reports are published to each step’s `reports/` (tree steps use `output/reports/`), with the process writing `multiqc_report.html` at the workdir root and `publishDir` targeting the final reports directory.

@@ -10,6 +10,12 @@ Format:
 
 ## Decisions
 
+- 2026-02-03: Move shared indices under intermediate_files
+  - Context: bowtie/virstrain indices were stored inside step directories.
+  - Decision: relocate step indices to `intermediate_files/indices/` with per-analysis subdirectories.
+  - Rationale: centralize reusable indices and keep step outputs focused on run artifacts.
+  - Consequences: update configs and documentation to point at shared index locations.
+
 - 2026-02-03: Simplify step numbering
   - Context: step identifiers used 001.0-style labels across directories and docs.
   - Decision: rename step identifiers to two-digit forms (01–05) throughout the repo.

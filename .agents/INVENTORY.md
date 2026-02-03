@@ -2,7 +2,7 @@
 
 ## Analysis steps and scripts
 
-- `bin/`: analysis-level runners (prelim_analysis.run.sh, targeted_analysis.run.sh) plus step runners under `bin/prelim_analysis.steps/` and `bin/targeted_analysis.steps/` with single-sample wrappers under their `single_sample/` subdirectories
+- `bin/`: analysis-level runners (`prelim_analysis.run.sh`, `targeted_analysis.run.sh`) plus step runners under `bin/prelim_analysis.steps/` and `bin/targeted_analysis.steps/` with single-sample wrappers under their `single_sample/` subdirectories
 - `metadata/`: bucket_taxonomy_ids.tsv, hpv16_tree_outgroups.txt, hpv18_lineage_refs.tsv, hpv18_tree_outgroups.txt, samples-input1.tsv, samples-input2.tsv
 - `config/`: user.config
 - `bin/config/`: prelim_analysis.config, targeted_analysis.config
@@ -21,7 +21,7 @@
 - `pipelines/`: bowtie_vs_pave.nf, database_snps.nf, centrifuge_bucketing.nf, centrifuge_bucketing_all.nf, pave_gene_mapping.nf, phylo_tree.nf, virstrain.nf
 - `refdata/`: external reference inputs used by pipelines (PAVE reference, NCBI downloads)
 - `intermediate_files/refdata/`: derived reference assets (feature tables, curated tree inputs)
-- `intermediate_files/indices/`: bowtie/virstrain indices
+- `intermediate_files/indices/`: shared Bowtie/VirStrain indices (preliminary/ and targeted/ subdirectories)
 - `reference-results/`: snapshot of outputs, reports, and indexes for regression checks (not tracked in git)
 
 ## Manual commands documented only in README.md
@@ -37,16 +37,16 @@ documented in the repository root `README.md`.
 Example (HPV18 selection workflow):
 
 ```bash
-../../scripts/phylo_tree/hpv18_select_ncbi_genomes.sh --init-selection \\
-  refdata/hpv18_tree/HPV18-NCBIVirus.tsv refdata/hpv18_tree/HPV18-NCBIVirus.fasta \\
-  refdata/hpv18_tree/HPV18-NCBIVirus.acc_country.tsv \\
-  intermediate_files/refdata/hpv18_tree/HPV18-NCBIVirus.acc_country.selected.tsv \\
+../../scripts/phylo_tree/hpv18_select_ncbi_genomes.sh --init-selection \
+  refdata/hpv18_tree/HPV18-NCBIVirus.tsv refdata/hpv18_tree/HPV18-NCBIVirus.fasta \
+  refdata/hpv18_tree/HPV18-NCBIVirus.acc_country.tsv \
+  intermediate_files/refdata/hpv18_tree/HPV18-NCBIVirus.acc_country.selected.tsv \
   intermediate_files/refdata/hpv18_tree/selected.fasta intermediate_files/refdata/hpv18_tree/selected_renamed.fasta
 # edit intermediate_files/refdata/hpv18_tree/HPV18-NCBIVirus.acc_country.selected.tsv, then:
-../../scripts/phylo_tree/hpv18_select_ncbi_genomes.sh \\
-  refdata/hpv18_tree/HPV18-NCBIVirus.tsv refdata/hpv18_tree/HPV18-NCBIVirus.fasta \\
-  refdata/hpv18_tree/HPV18-NCBIVirus.acc_country.tsv \\
-  intermediate_files/refdata/hpv18_tree/HPV18-NCBIVirus.acc_country.selected.tsv \\
+../../scripts/phylo_tree/hpv18_select_ncbi_genomes.sh \
+  refdata/hpv18_tree/HPV18-NCBIVirus.tsv refdata/hpv18_tree/HPV18-NCBIVirus.fasta \
+  refdata/hpv18_tree/HPV18-NCBIVirus.acc_country.tsv \
+  intermediate_files/refdata/hpv18_tree/HPV18-NCBIVirus.acc_country.selected.tsv \
   intermediate_files/refdata/hpv18_tree/selected.fasta intermediate_files/refdata/hpv18_tree/selected_renamed.fasta
 ../../scripts/phylo_tree/hpv18_prepare_samples.sh
 ```
