@@ -119,9 +119,140 @@ Derived tree inputs live under:
 - `intermediate_files/refdata/hpv16_tree`
 - `intermediate_files/refdata/hpv18_tree`
 
-The preparation steps for these (including the shared lineage reference
-FASTA files used by step 002 SNP‑to‑lineage comparison) are described in the
-repository root `README.md`.
+The preparation steps below include the shared lineage reference FASTA files
+used by the step 002 SNP‑to‑lineage comparison.
+
+Tools needed for the preparation commands below:
+- `seqkit`
+- `bcftools`
+- Python 3 with `biopython`, `docopt`, `loguru`
+
+#### Lineage reference preparation (shared)
+
+HPV16:
+
+```
+scripts/hpv16_extract_lineages_fasta.sh \
+  refdata/hpv16_tree/HPV16_lineages.tsv \
+  refdata/hpv16_tree/HPV16-NCBIVirus.fasta \
+  intermediate_files/refdata/hpv16_tree/lineages_ref.fasta
+
+python3 scripts/rename_lineages.py \
+  refdata/hpv16_tree/HPV16_lineages.tsv 6 4 \
+  intermediate_files/refdata/hpv16_tree/lineages_ref.fasta \
+  intermediate_files/refdata/hpv16_tree/lineages_ref_renamed.fasta
+```
+
+HPV18:
+
+```
+scripts/hpv18_extract_lineages_fasta.sh \
+  refdata/hpv18_tree/HPV18_lineages.tsv \
+  refdata/hpv18_tree/HPV18-NCBIVirus.fasta \
+  intermediate_files/refdata/hpv18_tree/lineages_ref.fasta
+
+python3 scripts/rename_lineages.py \
+  refdata/hpv18_tree/HPV18_lineages.tsv 6 4 \
+  intermediate_files/refdata/hpv18_tree/lineages_ref.fasta \
+  intermediate_files/refdata/hpv18_tree/lineages_ref_renamed.fasta
+```
+
+#### HPV16 tree
+
+1) Place these files under `refdata/hpv16_tree/`:
+   - `HPV16_lineages.tsv`
+   - `HPV16-NCBIVirus.fasta`
+   - `HPV16-NCBIVirus.tsv`
+
+2) Place prepared inputs under `intermediate_files/refdata/hpv16_tree/`:
+   - `outgroups.fasta`
+   - `lineages_ref_renamed.fasta` (from the shared lineage prep above)
+
+3) Create (then edit) the selection file, and generate `selected_renamed.fasta`:
+
+```
+scripts/hpv16_select_ncbi_genomes.sh --init-selection \
+  refdata/hpv16_tree/HPV16-NCBIVirus.tsv \
+  refdata/hpv16_tree/HPV16-NCBIVirus.fasta \
+  intermediate_files/refdata/hpv16_tree/selected \
+  intermediate_files/refdata/hpv16_tree/selected.fasta \
+  intermediate_files/refdata/hpv16_tree/selected_renamed.fasta
+
+# Edit intermediate_files/refdata/hpv16_tree/selected, then re-run without --init-selection:
+scripts/hpv16_select_ncbi_genomes.sh \
+  refdata/hpv16_tree/HPV16-NCBIVirus.tsv \
+  refdata/hpv16_tree/HPV16-NCBIVirus.fasta \
+  intermediate_files/refdata/hpv16_tree/selected \
+  intermediate_files/refdata/hpv16_tree/selected.fasta \
+  intermediate_files/refdata/hpv16_tree/selected_renamed.fasta
+```
+
+4) Build `samples.fasta` from mapping results (step 002). Set your sample IDs explicitly:
+
+```
+OUT_DIR=intermediate_files/refdata/hpv16_tree \
+SAMPLES="<space-separated sample IDs>" \
+scripts/hpv16_prepare_samples.sh
+```
+
+The mapping run ID is inferred from `metadata/samples-input2.tsv` (using the
+`fastq_dir` column). Override with `BCF_RUN_ID=...` or `BCF_DIR=...` if needed.
+
+5) Run the tree pipeline:
+
+```
+bin/targeted-analysis-hpv16-hpv18.steps/003.0.hpv16_tree.run.sh
+```
+
+#### HPV18 tree
+
+1) Place these files under `refdata/hpv18_tree/`:
+   - `HPV18_lineages.tsv`
+   - `HPV18-NCBIVirus.fasta`
+   - `HPV18-NCBIVirus.tsv`
+
+2) Place prepared inputs under `intermediate_files/refdata/hpv18_tree/`:
+   - `outgroups.fasta`
+   - `lineages_ref_renamed.fasta` (from the shared lineage prep above)
+
+3) Create (then edit) the selection file, and generate `selected_renamed.fasta`:
+
+```
+scripts/hpv18_select_ncbi_genomes.sh --init-selection \
+  refdata/hpv18_tree/HPV18-NCBIVirus.tsv \
+  refdata/hpv18_tree/HPV18-NCBIVirus.fasta \
+  refdata/hpv18_tree/HPV18-NCBIVirus.acc_country.tsv \
+  intermediate_files/refdata/hpv18_tree/HPV18-NCBIVirus.acc_country.selected.tsv \
+  intermediate_files/refdata/hpv18_tree/selected.fasta \
+  intermediate_files/refdata/hpv18_tree/selected_renamed.fasta
+
+# Edit intermediate_files/refdata/hpv18_tree/HPV18-NCBIVirus.acc_country.selected.tsv, then re-run without --init-selection:
+scripts/hpv18_select_ncbi_genomes.sh \
+  refdata/hpv18_tree/HPV18-NCBIVirus.tsv \
+  refdata/hpv18_tree/HPV18-NCBIVirus.fasta \
+  refdata/hpv18_tree/HPV18-NCBIVirus.acc_country.tsv \
+  intermediate_files/refdata/hpv18_tree/HPV18-NCBIVirus.acc_country.selected.tsv \
+  intermediate_files/refdata/hpv18_tree/selected.fasta \
+  intermediate_files/refdata/hpv18_tree/selected_renamed.fasta
+```
+
+4) Build `samples.fasta` from mapping results (step 002). By default the script
+derives samples from `targeted-analysis-hpv16-hpv18/002.0.mapping_vs_pave/reports/strains.tsv`
+by selecting rows with top strain `HPV18` for the run ID:
+
+```
+OUT_DIR=intermediate_files/refdata/hpv18_tree \
+scripts/hpv18_prepare_samples.sh
+```
+
+The mapping run ID is inferred from `metadata/samples-input2.tsv` (using the
+`fastq_dir` column). Override with `BCF_RUN_ID=...` or `BCF_DIR=...` if needed.
+
+5) Run the tree pipeline:
+
+```
+bin/targeted-analysis-hpv16-hpv18.steps/004.0.hpv18_tree.run.sh
+```
 
 ### 6.4 Centrifuge database (taxonomic index)
 
@@ -146,5 +277,78 @@ archaea/bacteria/viral. If you need a different composition, pass
 
 ## 7) Run the analyses
 
-After the preparation steps above, run the analyses using the wrapper scripts
-listed in the repository root `README.md`.
+After the preparation steps above, run the analyses using the wrapper scripts below.
+
+### 7.1 preliminary-analysis-all-patients
+
+All steps in one go:
+
+```
+bin/preliminary-analysis-all-patients.run.sh
+```
+
+Or run each step individually:
+
+```
+bin/preliminary-analysis-all-patients.steps/001.0.centrifuge.run.sh
+bin/preliminary-analysis-all-patients.steps/002.0.bowtie_vs_pave.run.sh
+bin/preliminary-analysis-all-patients.steps/003.0.virstrain.run.sh
+bin/preliminary-analysis-all-patients.steps/004.0.bowtie_vs_pave.E6.run.sh
+bin/preliminary-analysis-all-patients.steps/005.0.bowtie_vs_pave.E7.run.sh
+```
+
+Step 001 report (MultiQC):
+
+`preliminary-analysis-all-patients/001.0.centrifuge/reports/multiqc_report.html`
+
+### 7.2 targeted-analysis-hpv16-hpv18
+
+All steps in one go:
+
+```
+bin/targeted-analysis-hpv16-hpv18.run.sh
+```
+
+Or run each step individually:
+
+```
+bin/targeted-analysis-hpv16-hpv18.steps/001.0.bucketing.run.sh
+bin/targeted-analysis-hpv16-hpv18.steps/002.0.mapping_vs_pave.run.sh
+bin/targeted-analysis-hpv16-hpv18.steps/003.0.hpv16_tree.run.sh
+bin/targeted-analysis-hpv16-hpv18.steps/004.0.hpv18_tree.run.sh
+bin/targeted-analysis-hpv16-hpv18.steps/005.0.snps_samples_vs_db.run.sh
+```
+
+### 7.3 Run a single sample (optional)
+
+Some steps provide a `run_sample.sh` wrapper under `bin/*steps/single_sample/` for
+running one sample pair. The third argument is an output prefix used to infer
+`run_id` and `sample_id`; outputs still go to the step output directory configured
+in `config/`.
+
+```
+bin/preliminary-analysis-all-patients.steps/single_sample/002.0.bowtie_vs_pave.run_sample.sh \
+  /path/to/SAMPLE_R1.fastq.gz /path/to/SAMPLE_R2.fastq.gz \
+  preliminary-analysis-all-patients/002.0.bowtie_vs_pave/output/RUN_ID/SAMPLE
+```
+
+## 8) Troubleshooting
+
+If Nextflow fails to start because of Java, create and activate the provided
+Java environment:
+
+```
+conda env create -f pipelines/conda_env/nextflow_java.env.yml
+conda activate nextflow-java
+```
+
+If Nextflow behaves differently when Conda is activated in your shell, try
+`conda deactivate` and run Nextflow again.
+
+### Resume after a failure
+
+Re-run the same command with `-resume`:
+
+```
+bin/preliminary-analysis-all-patients.steps/002.0.bowtie_vs_pave.run.sh -resume
+```
