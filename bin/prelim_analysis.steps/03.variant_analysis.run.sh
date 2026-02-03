@@ -3,15 +3,15 @@ set -euo pipefail
 
 SCRIPTSDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PRJROOT="$( cd "$SCRIPTSDIR/../.." && pwd )"
-PIPELINE_NF=$PRJROOT/pipelines/bowtie_vs_pave.nf
+PIPELINE_NF=$PRJROOT/pipelines/variant_analysis.nf
 ALL_PIPELINES_CONFIG=$PRJROOT/config/pipelines/common.config
-PIPELINE_CONFIG=$PRJROOT/config/pipelines/bowtie_vs_pave.config
+PIPELINE_CONFIG=$PRJROOT/config/pipelines/variant_analysis.config
 USER_CONFIG=$PRJROOT/config/user.config
 
 THREADS=$(awk -F '=' '/^[[:space:]]*threads[[:space:]]*=/{gsub(/[^0-9]/,"",$2); print $2; exit}' "$USER_CONFIG")
 THREADS=${THREADS:-24}
 STEP_CONFIG=$PRJROOT/config/analyses/prelim_analysis.config
-PROFILE=preliminary_bowtie_vs_pave
+PROFILE=preliminary_variant_analysis
 
 if ! command -v nextflow >/dev/null 2>&1; then
   echo "Error: nextflow was not found in PATH" > /dev/stderr

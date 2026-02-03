@@ -201,7 +201,7 @@ The mapping run ID is inferred from `metadata/samples-input2.tsv` (using the
 5) Run the tree pipeline:
 
 ```
-bin/targeted_analysis.steps/03.hpv16_tree.run.sh
+bin/targeted_analysis.steps/04.hpv16_tree.run.sh
 ```
 
 #### HPV18 tree
@@ -251,7 +251,7 @@ The mapping run ID is inferred from `metadata/samples-input2.tsv` (using the
 5) Run the tree pipeline:
 
 ```
-bin/targeted_analysis.steps/04.hpv18_tree.run.sh
+bin/targeted_analysis.steps/05.hpv18_tree.run.sh
 ```
 
 ### 6.4 Centrifuge database (taxonomic index)
@@ -290,14 +290,15 @@ bin/prelim_analysis.run.sh
 Or run each step individually:
 
 ```
-bin/prelim_analysis.steps/01.centrifuge.run.sh
-bin/prelim_analysis.steps/02.bowtie_vs_pave.run.sh
-bin/prelim_analysis.steps/05.virstrain.run.sh --run-virstrain
+bin/prelim_analysis.steps/01.bucketing.run.sh
+bin/prelim_analysis.steps/02.mapping_vs_pave.run.sh
+bin/prelim_analysis.steps/03.variant_analysis.run.sh
+bin/prelim_analysis.steps/04.virstrain.run.sh --run-virstrain
 ```
 
 Step 01 report (MultiQC):
 
-`prelim_analysis/01.centrifuge/reports/multiqc_report.html`
+`prelim_analysis/01.bucketing/reports/multiqc_report.html`
 
 VirStrain (step 05) is optional and does not run unless you pass
 `--run-virstrain` to the wrapper:
@@ -319,9 +320,9 @@ Or run each step individually:
 ```
 bin/targeted_analysis.steps/01.bucketing.run.sh
 bin/targeted_analysis.steps/02.mapping_vs_pave.run.sh
-bin/targeted_analysis.steps/03.hpv16_tree.run.sh
-bin/targeted_analysis.steps/04.hpv18_tree.run.sh
-bin/targeted_analysis.steps/05.snps_samples_vs_db.run.sh
+bin/targeted_analysis.steps/03.variant_analysis.run.sh
+bin/targeted_analysis.steps/04.hpv16_tree.run.sh
+bin/targeted_analysis.steps/05.hpv18_tree.run.sh
 ```
 
 ### 7.3 Run a single sample (optional)
@@ -332,9 +333,9 @@ running one sample pair. The third argument is an output prefix used to infer
 in `config/`.
 
 ```
-bin/prelim_analysis.steps/single_sample/02.bowtie_vs_pave.run_sample.sh \
+bin/prelim_analysis.steps/single_sample/02.mapping_vs_pave.run_sample.sh \
   /path/to/SAMPLE_R1.fastq.gz /path/to/SAMPLE_R2.fastq.gz \
-  prelim_analysis/02.bowtie_vs_pave/output/RUN_ID/SAMPLE
+  prelim_analysis/02.mapping_vs_pave/output/RUN_ID/SAMPLE
 ```
 
 ## 8) Troubleshooting
@@ -355,5 +356,5 @@ If Nextflow behaves differently when Conda is activated in your shell, try
 Re-run the same command with `-resume`:
 
 ```
-bin/prelim_analysis.steps/02.bowtie_vs_pave.run.sh -resume
+bin/prelim_analysis.steps/02.mapping_vs_pave.run.sh -resume
 ```

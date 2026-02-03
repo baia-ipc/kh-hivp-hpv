@@ -1,4 +1,4 @@
-# prelim_analysis step 05: VirStrain
+# prelim_analysis step 04: VirStrain
 
 ## Overview
 
@@ -18,12 +18,12 @@ This step is implemented as a Nextflow pipeline:
 
 Wrappers:
 
-- `bin/prelim_analysis.steps/05.virstrain.run.sh --run-virstrain` (all samples)
-- `bin/prelim_analysis.steps/single_sample/05.virstrain.run_sample.sh --run-virstrain` (single sample pair)
+- `bin/prelim_analysis.steps/04.virstrain.run.sh --run-virstrain` (all samples)
+- `bin/prelim_analysis.steps/single_sample/04.virstrain.run_sample.sh --run-virstrain` (single sample pair)
 
 ## Inputs
 
-- Reads directory: output of step 01 (`prelim_analysis/01.centrifuge/output/`)
+- Reads directory: output of step 01 (`prelim_analysis/01.bucketing/output/`)
 - VirStrain reference/index: wired via `config/pipelines/virstrain.config`
 
 ## Outputs

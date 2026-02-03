@@ -1,0 +1,64 @@
+title: "Variant Analysis - E6/E7 Report"
+
+custom_data:
+  methods_summary:
+    plot_type: "html"
+    section_name: "Methods summary"
+    description: "Summary of variant analysis steps"
+    data: |
+      <ul>
+        <li><strong>Variant aggregation:</strong> summarize sample E6/E7 variants from mapping outputs.</li>
+        <li><strong>Variant effects:</strong> translate variants to amino-acid changes and effects.</li>
+        <li><strong>Lineage SNP comparison:</strong> annotate sample variants with HPV16/HPV18 lineage SNPs (optional).</li>
+      </ul>
+      <p><strong>References:</strong></p>
+      <ul>
+        <li>Li, 2011. A statistical framework for SNP calling, mutation discovery, association mapping and population genetical parameter estimation from sequencing data. <em>Bioinformatics</em>. DOI: 10.1093/bioinformatics/btr509.</li>
+      </ul>
+  output_locations:
+    plot_type: "html"
+    section_name: "Output locations"
+    description: "Default output paths (can be overridden with Nextflow params)"
+    data: |
+      <ul>
+        <li><code>&lt;reports_dir&gt;/</code> for aggregate tables and this MultiQC report</li>
+      </ul>
+  reports_tables:
+    plot_type: "html"
+    section_name: "Reports tables"
+    description: "Aggregate tables written to the reports directory"
+    data: |
+      <ul>
+        <li><code>E6_E7_variants.tsv</code></li>
+        <li><code>E6_E7_variant_effects.tsv</code></li>
+        <li><code>lineage_snp_comparison.tsv</code></li>
+      </ul>
+  variants_table:
+    file_format: "tsv"
+    section_name: "E6-E7 variants"
+    description: "Aggregated variant calls"
+    plot_type: "table"
+    pconfig:
+      col1_header: "Sample"
+  variant_effects_table:
+    file_format: "tsv"
+    section_name: "E6-E7 variant effects"
+    description: "Amino-acid consequences for E6-E7 variants"
+    plot_type: "table"
+    pconfig:
+      col1_header: "Sample"
+  lineage_snp_comparison_table:
+    file_format: "tsv"
+    section_name: "Lineage SNP comparison"
+    description: "Sample E6/E7 SNPs annotated with lineage-defining SNPs"
+    plot_type: "table"
+    pconfig:
+      col1_header: "Sample"
+
+sp:
+  variants_table:
+    fn: "E6_E7_variants.multiqc.tsv"
+  variant_effects_table:
+    fn: "E6_E7_variant_effects.multiqc.tsv"
+  lineage_snp_comparison_table:
+    fn: "lineage_snp_comparison.multiqc.tsv"

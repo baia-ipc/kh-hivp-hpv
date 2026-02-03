@@ -19,10 +19,6 @@ def projectRoot = (workflow.projectDir instanceof java.nio.file.Path \
 
 params.scripts_dir = params.scripts_dir ?: "${projectRoot}/scripts"
 params.multiqc_config = params.multiqc_config ?: "${projectRoot}/pipelines/multiqc/bowtie_vs_pave.multiqc.yml"
-params.lineage_hpv16_fasta = params.lineage_hpv16_fasta ?: "${projectRoot}/derived_data/refdata/hpv16_tree/lineages_ref_renamed.fasta"
-params.lineage_hpv18_fasta = params.lineage_hpv18_fasta ?: "${projectRoot}/derived_data/refdata/hpv18_tree/lineages_ref_renamed.fasta"
-params.lineage_ref_hpv16_name = params.lineage_ref_hpv16_name ?: "HPV16REF|lcl|Human"
-params.lineage_ref_hpv18_name = params.lineage_ref_hpv18_name ?: "HPV18REF|lcl|Human"
 params.patients_metadata = params.patients_metadata ?: "${projectRoot}/metadata/patients_metadata.txt"
 params.genexpert_results = params.genexpert_results ?: "${projectRoot}/metadata/genexpert_results.txt"
 // Avoid "Access to undefined parameter" warnings; these are optional filters/inputs.
@@ -46,12 +42,7 @@ def requiredParams = [
     'pave_ref_fasta',
     'pave_gff3_dir',
     'features_tsv_dir',
-    'pave_bed_dir',
     'scripts_dir',
-    'lineage_hpv16_fasta',
-    'lineage_hpv18_fasta',
-    'lineage_ref_hpv16_name',
-    'lineage_ref_hpv18_name',
     'patients_metadata',
     'genexpert_results'
 ]
@@ -76,21 +67,11 @@ def checkPath(String path, String label, boolean mustBeDir = false) {
 checkPath(params.pave_ref_fasta as String, 'PAVE reference fasta')
 checkPath(params.pave_gff3_dir as String, 'PAVE GFF3 directory', true)
 checkPath(params.scripts_dir as String, 'Scripts directory', true)
-checkPath(params.lineage_hpv16_fasta as String, 'HPV16 lineages reference FASTA')
-checkPath(params.lineage_hpv18_fasta as String, 'HPV18 lineages reference FASTA')
 checkPath(params.patients_metadata as String, 'Patients metadata')
 checkPath(params.genexpert_results as String, 'GeneXpert results')
 
 def indexMarker = new File("${params.index_dir}/pave_hsa.1.bt2")
 def indexReady = indexMarker.exists() ? Channel.value(true) : null
-
-def bedDir = new File(params.pave_bed_dir as String)
-if (bedDir.exists() && !bedDir.isDirectory()) {
-    error "BED directory path is not a directory: ${params.pave_bed_dir}"
-}
-def bedReady = (bedDir.isDirectory() && bedDir.listFiles()?.any { it.name.endsWith('.bed') }) \
-    ? Channel.value(true) \
-    : null
 
 def featuresDir = new File(params.features_tsv_dir as String)
 if (featuresDir.exists() && !featuresDir.isDirectory()) {
@@ -114,22 +95,6 @@ process GENERATE_FEATURES_TSV {
     """
     mkdir -p features_tsv
     "${params.scripts_dir}/pave/gff3_to_features_tsv.run_all.sh" "${params.pave_gff3_dir}" features_tsv
-    """
-}
-
-process GENERATE_BED {
-    tag "bed"
-    publishDir "${params.pave_bed_dir}", mode: 'copy'
-
-    input:
-    val(dummy)
-
-    output:
-    path "*.bed", emit: beds
-
-    script:
-    """
-    "${params.scripts_dir}/pave/gff3_to_bed.run_all.sh" "${params.pave_gff3_dir}" .
     """
 }
 
@@ -240,88 +205,6 @@ process AGGREGATE_STRAIN_COVERAGE_REPORT {
     """
 }
 
-process AGGREGATE_VARIANTS {
-    tag "aggregate_variants"
-    publishDir "${params.reports_dir}", mode: 'copy'
-
-    input:
-    val(done)
-    val(bed_ready)
-
-    output:
-    path "E6_E7_variants.tsv"
-
-    script:
-    """
-    "${params.scripts_dir}/variants/report_E6_E7_variants.sh" "${params.outdir}" "${params.pave_bed_dir}" > "E6_E7_variants.tsv"
-    """
-}
-
-process AGGREGATE_VARIANT_EFFECTS {
-    tag "aggregate_variant_effects"
-    publishDir "${params.reports_dir}", mode: 'copy'
-
-    input:
-    val(done)
-    val(bed_ready)
-
-    output:
-    path "E6_E7_variant_effects.tsv"
-
-    script:
-    """
-    "${params.scripts_dir}/variants/report_E6_E7_variant_effects.sh" "${params.outdir}" "${params.pave_bed_dir}" "${params.pave_gff3_dir}" "${params.index_dir}/pave_hsa.fas" > "E6_E7_variant_effects.tsv"
-    """
-}
-
-process LINEAGE_SNPS {
-    tag "lineage_snps"
-    publishDir "${params.reports_dir}", mode: 'copy'
-
-    input:
-    val(done)
-    val(bed_ready)
-
-    output:
-    path "lineage_snps.tsv"
-
-    script:
-    """
-    "${params.scripts_dir}/variants/lineage_snps_from_fasta.py" \\
-      --lineages "${params.lineage_hpv16_fasta}" \\
-      --ref "${params.pave_ref_fasta}" \\
-      --ref-name "${params.lineage_ref_hpv16_name}" \\
-      --bed-dir "${params.pave_bed_dir}" \\
-      --header > lineage_snps.tsv
-
-    "${params.scripts_dir}/variants/lineage_snps_from_fasta.py" \\
-      --lineages "${params.lineage_hpv18_fasta}" \\
-      --ref "${params.pave_ref_fasta}" \\
-      --ref-name "${params.lineage_ref_hpv18_name}" \\
-      --bed-dir "${params.pave_bed_dir}" \\
-      >> lineage_snps.tsv
-    """
-}
-
-process COMPARE_LINEAGE_SNPS {
-    tag "compare_lineage_snps"
-    publishDir "${params.reports_dir}", mode: 'copy'
-
-    input:
-    path variants
-    path lineage_snps
-
-    output:
-    path "lineage_snp_comparison.tsv"
-
-    script:
-    """
-    "${params.scripts_dir}/variants/compare_lineage_snps.py" \\
-      --variants "${variants}" \\
-      --lineage-snps "${lineage_snps}" \\
-      --output "lineage_snp_comparison.tsv"
-    """
-}
 process MULTIQC {
     tag "multiqc"
     conda params.conda_env
@@ -339,53 +222,11 @@ process MULTIQC {
     cp "${params.reports_dir}/strains.tsv" .
     cp "${params.reports_dir}/cov_stats.tsv" .
     cp "${params.reports_dir}/cov_stats.filtered.tsv" .
-    cp "${params.reports_dir}/E6_E7_variants.tsv" .
-    cp "${params.reports_dir}/E6_E7_variant_effects.tsv" .
-    cp "${params.reports_dir}/lineage_snp_comparison.tsv" .
     cp "${params.reports_dir}/strain_assignment_coverage.tsv" .
 
     python - <<'PY'
 import csv
 import os
-import re
-import urllib.parse
-
-def normalize_header(header, ncols):
-    if len(header) < ncols:
-        header = header + [f"col{i}" for i in range(len(header) + 1, ncols + 1)]
-    elif len(header) > ncols:
-        header = header[:ncols]
-    return header
-
-def find_col_idx(header, name):
-    if not header:
-        return None
-    for idx, col in enumerate(header):
-        if col.lower() == name:
-            return idx
-    return None
-
-def strip_transcript_name(value):
-    if not value:
-        return ""
-    name = value
-    if "_" in name:
-        name = name.split("_", 1)[1]
-    if name.endswith(".mRNA"):
-        name = name[:-5]
-    return name
-
-def format_aa_change(value, consequence):
-    if not value:
-        if consequence:
-            return consequence
-        return "unknown"
-    m = re.match(r"(\\d+)([A-Za-z*])>(\\d+)([A-Za-z*])", value)
-    if m:
-        pos1, ref, pos2, alt = m.groups()
-        if pos1 == pos2:
-            return f"{ref}{pos1}{alt}"
-    return value
 
 def is_undetermined(row):
     if not row or len(row) < 2:
@@ -393,73 +234,11 @@ def is_undetermined(row):
     sample = row[1]
     return sample.startswith("Undetermined")
 
-def build_variant_id(row, header):
-    run = row[0] if len(row) > 0 else ""
-    sample = row[1] if len(row) > 1 else ""
-    gene = row[2] if len(row) > 2 else ""
-    transcript_idx = find_col_idx(header, "transcript")
-    strain_idx = find_col_idx(header, "strain")
-    if strain_idx is None:
-        strain_idx = find_col_idx(header, "chrom")
-    pos_idx = find_col_idx(header, "pos")
-    ref_idx = find_col_idx(header, "ref")
-    alt_idx = find_col_idx(header, "alt")
-    transcript = row[transcript_idx] if transcript_idx is not None and len(row) > transcript_idx else ""
-    strain = row[strain_idx] if strain_idx is not None and len(row) > strain_idx else ""
-    if "REF" in strain:
-        strain = strain.split("REF", 1)[0]
-    pos = row[pos_idx] if pos_idx is not None and len(row) > pos_idx else ""
-    ref = row[ref_idx] if ref_idx is not None and len(row) > ref_idx else ""
-    alt = row[alt_idx] if alt_idx is not None and len(row) > alt_idx else ""
-    mut = f"{ref}{pos}{alt}" if ref and alt else pos
-    return f"{run}:{sample}:{strain}:{gene}:{mut}"
-
-def build_variant_effect_id(row, header):
-    run = row[0] if len(row) > 0 else ""
-    sample = row[1] if len(row) > 1 else ""
-    gene = row[2] if len(row) > 2 else ""
-    transcript_idx = find_col_idx(header, "transcript")
-    strain_idx = find_col_idx(header, "strain")
-    if strain_idx is None:
-        strain_idx = find_col_idx(header, "chrom")
-    pos_idx = find_col_idx(header, "pos")
-    ref_idx = find_col_idx(header, "ref")
-    alt_idx = find_col_idx(header, "alt")
-    aa_idx = find_col_idx(header, "amino_acid_change")
-    consequence_idx = find_col_idx(header, "consequence")
-
-    transcript = row[transcript_idx] if transcript_idx is not None and len(row) > transcript_idx else ""
-    gene_label = strip_transcript_name(transcript) or gene
-    strain = row[strain_idx] if strain_idx is not None and len(row) > strain_idx else ""
-    if "REF" in strain:
-        strain = strain.split("REF", 1)[0]
-    pos = row[pos_idx] if pos_idx is not None and len(row) > pos_idx else ""
-    ref = row[ref_idx] if ref_idx is not None and len(row) > ref_idx else ""
-    alt = row[alt_idx] if alt_idx is not None and len(row) > alt_idx else ""
-    mut = f"{ref}{pos}{alt}" if ref and alt else pos
-    aa = row[aa_idx] if aa_idx is not None and len(row) > aa_idx else ""
-    consequence = row[consequence_idx] if consequence_idx is not None and len(row) > consequence_idx else ""
-    aa_label = format_aa_change(aa, consequence)
-    return f"{run}:{sample}:{strain}:{gene_label}:{mut}:{aa_label}"
-
 def build_covstats_id(row, header):
     run = row[0] if len(row) > 0 else ""
     sample = row[1] if len(row) > 1 else ""
     strain = row[2] if len(row) > 2 else ""
     return f"{run}:{sample}:{strain}"
-
-def decode_row(row, header, columns):
-    if not columns or not header:
-        return row
-    header_map = {name.lower(): idx for idx, name in enumerate(header)}
-    for name in columns:
-        idx = header_map.get(name.lower())
-        if idx is None or idx >= len(row):
-            continue
-        value = row[idx]
-        if value:
-            row[idx] = urllib.parse.unquote(value)
-    return row
 
 def rewrite_with_header(src, dest, id_builder=None, decode_cols=None):
     if not os.path.exists(src):
@@ -474,41 +253,7 @@ def rewrite_with_header(src, dest, id_builder=None, decode_cols=None):
         for row in reader:
             if not row:
                 continue
-            if id_builder in (build_covstats_id, build_variant_effect_id, build_variant_id) and is_undetermined(row):
-                continue
-            row = decode_row(row, header, decode_cols)
-            if id_builder:
-                sample = id_builder(row, header)
-            else:
-                sample = f\"{row[0]}:{row[1]}\" if len(row) > 1 else row[0]
-            writer.writerow([sample] + row)
-
-def rewrite_no_header(src, dest, header, id_builder=None):
-    if not os.path.exists(src):
-        return
-    with open(src, newline='') as inp, open(dest, 'w', newline='') as out:
-        reader = csv.reader(inp, delimiter='\\t')
-        writer = csv.writer(out, delimiter='\\t')
-        first = next(reader, None)
-        if not first:
-            return
-        header = normalize_header(header, len(first))
-        writer.writerow(['Sample'] + header)
-        if id_builder == build_variant_id and is_undetermined(first):
-            first = None
-        if id_builder:
-            if first is not None:
-                sample = id_builder(first, header)
-            else:
-                sample = None
-        else:
-            sample = f\"{first[0]}:{first[1]}\" if len(first) > 1 else first[0]
-        if first is not None:
-            writer.writerow([sample] + first)
-        for row in reader:
-            if not row:
-                continue
-            if id_builder == build_variant_id and is_undetermined(row):
+            if id_builder == build_covstats_id and is_undetermined(row):
                 continue
             if id_builder:
                 sample = id_builder(row, header)
@@ -519,23 +264,6 @@ def rewrite_no_header(src, dest, header, id_builder=None):
 rewrite_with_header('strains.tsv', 'strains.multiqc.tsv')
 rewrite_with_header('cov_stats.tsv', 'cov_stats.multiqc.tsv', id_builder=build_covstats_id)
 rewrite_with_header('cov_stats.filtered.tsv', 'cov_stats.filtered.multiqc.tsv', id_builder=build_covstats_id)
-rewrite_no_header(
-    'E6_E7_variants.tsv',
-    'E6_E7_variants.multiqc.tsv',
-    ['run', 'sample', 'gene', 'chrom', 'pos', 'id', 'ref', 'alt', 'qual', 'filter', 'info', 'format', 'sample_field'],
-    id_builder=build_variant_id,
-)
-rewrite_with_header(
-    'E6_E7_variant_effects.tsv',
-    'E6_E7_variant_effects.multiqc.tsv',
-    id_builder=build_variant_effect_id,
-    decode_cols=['gene', 'transcript'],
-)
-rewrite_with_header(
-    'lineage_snp_comparison.tsv',
-    'lineage_snp_comparison.multiqc.tsv',
-    id_builder=build_variant_id,
-)
 rewrite_with_header(
     'strain_assignment_coverage.tsv',
     'strain_assignment_coverage.multiqc.tsv',
@@ -561,9 +289,6 @@ workflow {
     }
     if (!featuresReady) {
         featuresReady = GENERATE_FEATURES_TSV(Channel.value(true)).features.map { true }
-    }
-    if (!bedReady) {
-        bedReady = GENERATE_BED(Channel.value(true)).beds.map { true }
     }
 
     def samples
@@ -611,11 +336,7 @@ workflow {
     def strains = AGGREGATE_STRAINS(mappedDone)
     def covstats = AGGREGATE_COVSTATS(mappedDone)
     def strain_report = AGGREGATE_STRAIN_COVERAGE_REPORT(strains.strains, covstats.covstats)
-    def variants = AGGREGATE_VARIANTS(mappedDone, bedReady)
-    def variant_effects = AGGREGATE_VARIANT_EFFECTS(mappedDone, bedReady)
-    def lineage_snps = LINEAGE_SNPS(mappedDone, bedReady)
-    def lineage_compare = COMPARE_LINEAGE_SNPS(variants, lineage_snps)
-    def reports_done = strains.mix(covstats).mix(strain_report).mix(variants).mix(variant_effects).mix(lineage_snps).mix(lineage_compare).collect()
+    def reports_done = strains.mix(covstats).mix(strain_report).collect()
     def multiqc_config_file = file(params.multiqc_config)
     MULTIQC(multiqc_config_file, reports_done)
 }

@@ -1,4 +1,4 @@
-# prelim_analysis step 01: Centrifuge bucketing
+# prelim_analysis step 01: Bucketing
 
 ## Overview
 
@@ -14,13 +14,13 @@ This step is implemented as Nextflow pipelines:
 - Per-sample pipeline: `pipelines/centrifuge_bucketing.nf`
 - Multi-sample pipeline: `pipelines/centrifuge_bucketing_all.nf`
 - User config: `config/user.config`
-- Step path config: `config/analyses/prelim_analysis.config` (profile `preliminary_centrifuge`)
+- Step path config: `config/analyses/prelim_analysis.config` (profile `preliminary_bucketing`)
 - Technical config: `config/pipelines/common.config` + `config/pipelines/centrifuge_bucketing.config`
 
 Wrappers under `bin/` call the Nextflow pipelines:
 
-- `bin/prelim_analysis.steps/01.centrifuge.run.sh` (all samples)
-- `bin/prelim_analysis.steps/single_sample/01.centrifuge.run_sample.sh` (one sample / one pair)
+- `bin/prelim_analysis.steps/01.bucketing.run.sh` (all samples)
+- `bin/prelim_analysis.steps/single_sample/01.bucketing.run_sample.sh` (one sample / one pair)
 
 ## Inputs
 

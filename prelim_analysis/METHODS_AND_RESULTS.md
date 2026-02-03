@@ -1,6 +1,6 @@
 
 
-# Methods and Results — prelim_analysis step 01 (centrifuge bucketing)
+# Methods and Results — prelim_analysis step 01 (bucketing)
 
 ## Methods
 Paired-end reads were taxonomically classified against a human + RefSeq archaea/bacteria/viral index
@@ -62,28 +62,24 @@ HPV_250523_run02:Undetermined).
 
 **Notes on sources**
 - Counts and proportions are from:
-  - `prelim_analysis/01.centrifuge/reports/absolute_counts.tsv`
-  - `prelim_analysis/01.centrifuge/reports/relative_counts.tsv`
-  - `prelim_analysis/01.centrifuge/reports/relative_counts.wo_human.tsv`
+  - `prelim_analysis/01.bucketing/reports/absolute_counts.tsv`
+  - `prelim_analysis/01.bucketing/reports/relative_counts.tsv`
+  - `prelim_analysis/01.bucketing/reports/relative_counts.wo_human.tsv`
 - Relative abundance summaries above use the human‑excluded table.
 
-# Methods and Results — prelim_analysis step 02 (bowtie vs PAVE mapping)
+# Methods and Results — prelim_analysis step 02 (mapping vs PAVE)
 
 ## Methods
 Bucketed reads assigned to the HPV taxonomy bucket were mapped to the PAVE
 reference with Bowtie2 (Langmead & Salzberg, 2012). Alignments were processed
 with SAMtools to generate sorted/indexed BAMs and idxstats (Li et al., 2009).
 Coverage depth and breadth were computed from per‑base depth files and
-summarized with covstats. Variants were called with bcftools mpileup/call and
-per‑sample VCF statistics were produced (Li, 2011). E6/E7 variants were further
-annotated to amino‑acid consequences using bcftools csq with the PAVE GFF3
-annotations. Aggregation steps compiled top‑strain calls, coverage summaries,
-and E6/E7 variant tables across samples.
+summarized with covstats. Aggregation steps compiled top‑strain calls and
+coverage summaries across samples.
 
 **References**
 - Langmead & Salzberg, 2012. Fast gapped-read alignment with Bowtie 2. *Nature Methods*. DOI: 10.1038/nmeth.1923.
 - Li et al., 2009. The Sequence Alignment/Map format and SAMtools. *Bioinformatics*. DOI: 10.1093/bioinformatics/btp352.
-- Li, 2011. A statistical framework for SNP calling, mutation discovery, association mapping and population genetical parameter estimation from sequencing data. *Bioinformatics*. DOI: 10.1093/bioinformatics/btr509.
 
 ## Results (aggregated from step 02 reports)
 
@@ -102,6 +98,24 @@ substantial coverage breadth (≥0.5) and 13/51 reached near‑complete breadth
 18/51 samples each, indicating detectable coverage across these regions in a
 substantial subset of samples.
 
+**Notes on sources**
+- `prelim_analysis/02.mapping_vs_pave/reports/strains.tsv`
+- `prelim_analysis/02.mapping_vs_pave/reports/cov_stats.tsv`
+- `prelim_analysis/02.mapping_vs_pave/reports/cov_stats.filtered.tsv`
+
+# Methods and Results — prelim_analysis step 03 (variant analysis)
+
+## Methods
+Variants were aggregated from mapping outputs using bcftools mpileup/call and
+summarized into E6/E7 variant tables. Variant effects were annotated with
+bcftools csq using the PAVE GFF3 annotations. Sample variants were optionally
+compared to HPV16/HPV18 lineage SNPs.
+
+**References**
+- Li, 2011. A statistical framework for SNP calling, mutation discovery, association mapping and population genetical parameter estimation from sequencing data. *Bioinformatics*. DOI: 10.1093/bioinformatics/btr509.
+
+## Results (aggregated from step 03 reports)
+
 Variant calls were reported in E6 for 12 samples and in E7 for 8 samples. The
 E7‑variant samples were: HPV_150123_run01:KHCA-064,
 HPV_160823_run03:KHCA-289, HPV_160823_run03:KHCA-298,
@@ -110,63 +124,11 @@ HPV_250523_run02:KHCA-152, HPV_250523_run02:KHCA-169,
 HPV_250523_run02:KHCA-223.
 
 **Notes on sources**
-- `prelim_analysis/02.bowtie_vs_pave/reports/strains.tsv`
-- `prelim_analysis/02.bowtie_vs_pave/reports/cov_stats.tsv`
-- `prelim_analysis/02.bowtie_vs_pave/reports/cov_stats.filtered.tsv`
-- `prelim_analysis/02.bowtie_vs_pave/reports/E6_E7_variants.tsv`
-- `prelim_analysis/02.bowtie_vs_pave/reports/E6_E7_variant_effects.tsv`
+- `prelim_analysis/03.variant_analysis/reports/E6_E7_variants.tsv`
+- `prelim_analysis/03.variant_analysis/reports/E6_E7_variant_effects.tsv`
+- `prelim_analysis/03.variant_analysis/reports/lineage_snp_comparison.tsv`
 
-# Methods and Results — prelim_analysis step 03 (bowtie vs PAVE E6)
-
-## Methods
-HPV‑bucket reads were mapped against the E6 gene reference from PAVE using
-Bowtie2 (Langmead & Salzberg, 2012). Alignments were processed with SAMtools,
-and per‑base depth was summarized into depth statistics and per‑feature coverage
-metrics (Li et al., 2009). Aggregation steps compiled top‑strain calls and depth
-tables across samples.
-
-**References**
-- Langmead & Salzberg, 2012. Fast gapped-read alignment with Bowtie 2. *Nature Methods*. DOI: 10.1038/nmeth.1923.
-- Li et al., 2009. The Sequence Alignment/Map format and SAMtools. *Bioinformatics*. DOI: 10.1093/bioinformatics/btp352.
-
-## Results (aggregated from step 03 reports)
-
-Fifty‑one non‑control samples were processed for the E6‑specific mapping. Top‑strain
-calls were present in 13/51 samples, while 38/51 samples had no top‑strain call in
-the aggregated table, indicating sparse or low‑coverage E6 signal in most samples.
-The most frequent E6 top‑strain calls were HPV16_E6, HPV56_E6, HPV18_E6, HPV71_E6,
-and HPV90_E6.
-
-Depth statistics showed no samples with high breadth in the filtered table
-(0/51 with avg breadth ≥0.5), consistent with limited E6 coverage for most samples.
-
-**Notes on sources**
-
-# Methods and Results — prelim_analysis step 04 (bowtie vs PAVE E7)
-
-## Methods
-HPV‑bucket reads were mapped against the E7 gene reference from PAVE using
-Bowtie2, with SAMtools‑processed alignments and depth‑based coverage summaries
-analogous to the E6 step (Langmead & Salzberg, 2012; Li et al., 2009). Top‑strain
-and depth summaries were aggregated across samples.
-
-**References**
-- Langmead & Salzberg, 2012. Fast gapped-read alignment with Bowtie 2. *Nature Methods*. DOI: 10.1038/nmeth.1923.
-- Li et al., 2009. The Sequence Alignment/Map format and SAMtools. *Bioinformatics*. DOI: 10.1093/bioinformatics/btp352.
-
-## Results (aggregated from step 04 reports)
-
-Fifty‑one non‑control samples were processed for the E7‑specific mapping. Top‑strain
-calls were present in 13/51 samples, while 38/51 samples had no top‑strain call in
-the aggregated table. The most frequent E7 top‑strain calls were HPV16_E7,
-HPV56_E7, HPV66_E7, HPV18_E7, and HPV71_E7.
-
-As with E6, no samples reached high breadth in the filtered table (0/51 with
-avg breadth ≥0.5), indicating low E7 coverage in most samples.
-
-**Notes on sources**
-
-# Methods and Results — prelim_analysis step 05 (VirStrain)
+# Methods and Results — prelim_analysis step 04 (VirStrain)
 
 ## Methods
 Bucketed reads were classified with VirStrain using a reference index built
@@ -178,7 +140,7 @@ across samples into a single table for interpretation.
 - Li et al., 2022. VirStrain: a strain identification tool for RNA viruses. *Genome Biology*. DOI: 10.1186/s13059-022-02609-x.
 - Katoh et al., 2002. MAFFT: a novel method for rapid multiple sequence alignment. *Nucleic Acids Research*. DOI: 10.1093/nar/gkf436.
 
-## Results (aggregated from step 05 reports)
+## Results (aggregated from step 04 reports)
 
 Fifty‑one non‑control samples were processed in this step (HPV bucket only).
 VirStrain reported “No reads or too few reads” for 16/51 samples and “Too many
@@ -191,4 +153,4 @@ HPV_160823_run03:KHCA-256, HPV_250523_run02:KHCA-223. The most frequently
 assigned strains included HPV16, HPV58, HPV18, HPV71, and HPV52.
 
 **Notes on sources**
-- `prelim_analysis/05.virstrain/reports/strains.tsv`
+- `prelim_analysis/04.virstrain/reports/strains.tsv`
