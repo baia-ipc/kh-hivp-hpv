@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Summarize HPV16 E6/E7 variants for samples, Cambodia accessions, and lineages.
+Summarize HPV16 E6/E7 variants for samples, database accessions, and lineages.
 
 Outputs a two-column TSV with ID and a comma-separated list of variants
 formatted as refposalt(AAchange) for missense and refposalt(syn) for synonymous.
@@ -17,10 +17,10 @@ from collections import defaultdict
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--sample-effects", required=True, help="E6/E7 variant effects TSV")
-    parser.add_argument("--cambodia-snps", required=True, help="Cambodia SNPs TSV")
+    parser.add_argument("--database-snps", required=True, help="Database SNPs TSV")
     parser.add_argument("--lineage-snps", required=True, help="Lineage SNPs TSV")
     parser.add_argument("--sample-list", required=True, help="Samples metadata TSV")
-    parser.add_argument("--cambodia-fasta", required=True, help="Cambodian HPV16 FASTA")
+    parser.add_argument("--database-fasta", required=True, help="Database HPV16 FASTA")
     parser.add_argument("--lineage-fasta", required=True, help="HPV16 lineage FASTA")
     parser.add_argument("--ref-fasta", required=True, help="Reference FASTA")
     parser.add_argument("--bed-dir", required=True, help="Directory with pave_hsa.E6/E7.bed")
@@ -141,7 +141,7 @@ def parse_snp_table(path):
                 continue
             rows.append(
                 {
-                    "id": row.get("lineage") or row.get("cambodia_id") or row.get("query_id") or row.get("sample"),
+                    "id": row.get("lineage") or row.get("database_id") or row.get("cambodia_id") or row.get("query_id") or row.get("sample"),
                     "gene": gene,
                     "chrom": chrom,
                     "pos": pos,
@@ -342,22 +342,22 @@ def main():
 
     sample_variants = load_sample_effects(args.sample_effects)
     sample_ids = load_sample_list(args.sample_list)
-    cambodia_ids = load_fasta_ids(args.cambodia_fasta)
+    database_ids = load_fasta_ids(args.database_fasta)
     lineage_ids = load_fasta_ids(args.lineage_fasta)
 
-    cambodia_rows = parse_snp_table(args.cambodia_snps)
+    database_rows = parse_snp_table(args.database_snps)
     lineage_rows = parse_snp_table(args.lineage_snps)
 
-    cambodia_by_id = defaultdict(list)
-    for row in cambodia_rows:
+    database_by_id = defaultdict(list)
+    for row in database_rows:
         if row["id"]:
-            cambodia_by_id[row["id"]].append(row)
+            database_by_id[row["id"]].append(row)
     lineage_by_id = defaultdict(list)
     for row in lineage_rows:
         if row["id"]:
             lineage_by_id[row["id"]].append(row)
 
-    cambodia_effects = annotate_snps_by_id(cambodia_by_id, ref_seq, gene_bounds)
+    database_effects = annotate_snps_by_id(database_by_id, ref_seq, gene_bounds)
     lineage_effects = annotate_snps_by_id(lineage_by_id, ref_seq, gene_bounds)
 
     with open(args.output, "w", newline="") as out:
@@ -369,8 +369,8 @@ def main():
             labels = labels_by_gene(variants)
             writer.writerow([f"3__{sample_id}", labels["E6"], labels["E7"]])
 
-        for accession in cambodia_ids:
-            variants = cambodia_effects.get(accession, [])
+        for accession in database_ids:
+            variants = database_effects.get(accession, [])
             labels = labels_by_gene(variants)
             # remove HPV16_ prefix from accession
             if accession.startswith("HPV16_"):
