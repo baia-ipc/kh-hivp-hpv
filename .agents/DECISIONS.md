@@ -13,7 +13,7 @@ Format:
 - 2026-01-24: Consolidate analyses into preliminary-analysis-all-patients and targeted-analysis-hpv16-hpv18
   - Context: analysis-1 and analysis-2 overlapped; analysis-3 needed a stable final name.
   - Decision: merge analysis-1/analysis-2 into preliminary-analysis-all-patients and rename analysis-3 to targeted-analysis-hpv16-hpv18.
-  - Rationale: simplify layout, reduce duplication, and align with .agents/GOALS.md.
+  - Rationale: simplify layout, reduce duplication
   - Consequences: update references, inventories, and defaults to use preliminary-analysis-all-patients and targeted-analysis-hpv16-hpv18.
 
 - 2026-01-24: Centralize configuration and metadata

@@ -41,4 +41,4 @@
 
 - docs/ technical documentation for the analysis steps (human-readable)
 
-- .agents/ agent-oriented docs and instructions (GOALS, OPERATIONS, WORKFLOWS, etc.)
+- .agents/ agent-oriented docs and instructions (OPERATIONS, WORKFLOWS, etc.)

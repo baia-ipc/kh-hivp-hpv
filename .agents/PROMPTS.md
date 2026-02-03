@@ -5,7 +5,7 @@ Replace bracketed placeholders before use.
 
 ## Repo orientation
 """
-Read AGENTS.md, .agents/GOALS.md, .agents/INVENTORY.md, CONTENTS.md, and .agents/SKILLS.md. Summarize the repo's current structure, active workflows, and any constraints that matter for edits.
+Read AGENTS.md, .agents/INVENTORY.md, CONTENTS.md, and .agents/SKILLS.md. Summarize the repo's current structure, active workflows, and any constraints that matter for edits.
 """
 
 ## Add or modify a pipeline step
@@ -39,7 +39,7 @@ Compare outputs between [ANALYSIS_A] and [ANALYSIS_B].
 - Focus on reports/ outputs first.
 - Summarize differences with file and row-level highlights.
 - When computing prevalence/proportions, exclude controls / technical artifacts
-  defined in .agents/GOALS.md unless explicitly requested.
+  (HPV-19, HPV-110, Ex, H2O, Undetermined) unless explicitly requested.
 """
 
 ## Move or rename analysis directories
@@ -65,7 +65,7 @@ Constraints:
 - Use the same procedural description as the step MultiQC report Methods section, but written in
   scientific prose (avoid listing script names/filenames unless essential for reproducibility).
 - Exclude controls / technical artifacts from prevalence/proportion statements unless explicitly doing QC
-  (see .agents/GOALS.md: H2O, HPV-110, and Illumina Undetermined/unassigned reads).
+  (H2O, HPV-110, HPV-19, Ex, and Illumina Undetermined/unassigned reads).
 - Summarize results as narrative text with key proportions and ranges; use binning only to support the text.
 - Whenever you mention a small number of samples, list them as `RunID:SampleID`:
   - If count <= 5: always list.
