@@ -1,4 +1,6 @@
 title: "Bowtie vs PAVE - Mapping Report"
+disable_modules:
+  - bcftools
 
 custom_data:
   methods_summary:
@@ -15,7 +17,6 @@ custom_data:
       <ul>
         <li>Langmead &amp; Salzberg, 2012. Fast gapped-read alignment with Bowtie 2. <em>Nature Methods</em>. DOI: 10.1038/nmeth.1923.</li>
         <li>Li et al., 2009. The Sequence Alignment/Map format and SAMtools. <em>Bioinformatics</em>. DOI: 10.1093/bioinformatics/btp352.</li>
-        <li>Li, 2011. A statistical framework for SNP calling, mutation discovery, association mapping and population genetical parameter estimation from sequencing data. <em>Bioinformatics</em>. DOI: 10.1093/bioinformatics/btr509.</li>
       </ul>
   output_locations:
     plot_type: "html"
