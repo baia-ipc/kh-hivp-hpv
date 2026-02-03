@@ -170,6 +170,8 @@ nextflow run pipelines/phylo_tree.nf \
   -resume
 ```
 
+This pipeline derives any missing/out-of-date inputs under `derived_data/refdata/hpv16_tree` from `refdata/hpv16_tree` and mapping outputs.
+
 ### HPV18 phylogenetic tree (Nextflow)
 
 - Run with Nextflow:
@@ -183,6 +185,8 @@ nextflow run pipelines/phylo_tree.nf \
   -profile targeted_hpv18_tree \
   -resume
 ```
+
+This pipeline derives any missing/out-of-date inputs under `derived_data/refdata/hpv18_tree` from `refdata/hpv18_tree` and mapping outputs.
 
 ### Generate PAVE feature tables (derived)
 

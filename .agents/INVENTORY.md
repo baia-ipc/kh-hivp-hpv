@@ -20,8 +20,8 @@
   - `scripts/phylo_tree/`: hpv16_select_ncbi_genomes.sh, hpv18_select_ncbi_genomes.sh, hpv16_extract_lineages_fasta.sh, hpv18_extract_lineages_fasta.sh, rename_lineages.py, fix_msa_formatting.py, assign_hpv18_lineages.py, hpv16_prepare_samples.sh, hpv18_prepare_samples.sh, extract_country_sequences.py
 - `pipelines/`: bowtie_vs_pave.nf, centrifuge_bucketing.nf, centrifuge_bucketing_all.nf, pave_gene_mapping.nf, phylo_tree.nf, variant_analysis.nf, virstrain.nf
 - `refdata/`: external reference inputs used by pipelines (PAVE reference, NCBI downloads)
-- `derived_data/refdata/`: derived reference assets (feature tables, curated tree inputs)
-- `derived_data/indices/`: shared Bowtie/VirStrain indices (bowtie_vs_pave and preliminary/virstrain)
+- `derived_data/refdata/`: derived reference assets (auto-generated; not tracked in git)
+- `derived_data/indices/`: shared Bowtie/VirStrain indices (auto-generated; not tracked in git)
 - `reference-results/`: snapshot of outputs, reports, and indexes for regression checks (not tracked in git)
 
 ## Manual commands documented only in README.md

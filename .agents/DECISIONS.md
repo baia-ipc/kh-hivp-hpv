@@ -225,3 +225,9 @@ Format:
   - Decision: fold database comparison into `pipelines/variant_analysis.nf` behind `include_database`, enabled by default in the targeted profile and disabled in prelim.
   - Rationale: simplify step 03 execution and keep all outputs within a single pipeline run.
   - Consequences: remove `pipelines/database_snps.nf` and its config, update wrappers/docs, and extend `variant_analysis` config and workflow.
+
+- 2026-02-03: Make phylogenetic tree inputs fully derived
+  - Context: tree preparation required manual commands and checked derived inputs into git.
+  - Decision: move curated selection lists into `refdata/`, generate all derived tree inputs in `pipelines/phylo_tree.nf`, and ignore `derived_data/` in git.
+  - Rationale: eliminate manual steps and keep derived assets out of version control.
+  - Consequences: update phylo tree configs, scripts, and documentation; remove tracked `derived_data/` contents.

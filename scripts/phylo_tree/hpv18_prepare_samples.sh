@@ -14,6 +14,7 @@ SAMPLES=${SAMPLES:-}
 SAMPLES_FILE=${SAMPLES_FILE:-}
 SAMPLES_TSV=${SAMPLES_TSV:-$REPO_ROOT/metadata/samples-input2.tsv}
 STRAINS_TSV=${STRAINS_TSV:-$REPO_ROOT/targeted_analysis/02.mapping_vs_pave/reports/strains.tsv}
+MAPPING_OUTDIR=${MAPPING_OUTDIR:-$REPO_ROOT/targeted_analysis/02.mapping_vs_pave/output}
 
 if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
   cat <<'EOFHELP'
@@ -21,7 +22,7 @@ Usage: hpv18_prepare_samples.sh
 
 Environment overrides:
   PAVE_FASTA, HPV18REF_FASTA, BCF_DIR, BCF_RUN_ID
-  OUT_DIR, SAMPLES, SAMPLES_FILE, SAMPLES_TSV, STRAINS_TSV
+  OUT_DIR, SAMPLES, SAMPLES_FILE, SAMPLES_TSV, STRAINS_TSV, MAPPING_OUTDIR
 EOFHELP
   exit 0
 fi
@@ -57,10 +58,18 @@ if [[ -z "$BCF_RUN_ID" && -z "$BCF_DIR" && -f "$SAMPLES_TSV" ]]; then
 fi
 
 if [[ -z "$BCF_DIR" && -n "$BCF_RUN_ID" ]]; then
-  BCF_DIR="$REPO_ROOT/targeted_analysis/02.mapping_vs_pave/output/$BCF_RUN_ID"
+  BCF_DIR="$MAPPING_OUTDIR/$BCF_RUN_ID"
 fi
 if [[ -z "$BCF_RUN_ID" && -n "$BCF_DIR" ]]; then
   BCF_RUN_ID=$(basename "$BCF_DIR")
+fi
+
+if [[ -z "$BCF_DIR" && -d "$MAPPING_OUTDIR" ]]; then
+  mapfile -t run_dirs < <(find "$MAPPING_OUTDIR" -mindepth 1 -maxdepth 1 -type d | sort)
+  if [[ ${#run_dirs[@]} -eq 1 ]]; then
+    BCF_DIR="${run_dirs[0]}"
+    BCF_RUN_ID=$(basename "$BCF_DIR")
+  fi
 fi
 
 if [[ -z "$BCF_DIR" ]]; then

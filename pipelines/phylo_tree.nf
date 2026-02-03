@@ -14,7 +14,24 @@ def reportsDirParam = params.containsKey('reports_dir') ? params.reports_dir : n
 def outgroupsFileParam = params.containsKey('outgroups_file') ? params.outgroups_file : null
 def iqtreeOutgroupsParam = params.containsKey('iqtree_outgroups') ? params.iqtree_outgroups : null
 
+params.scripts_dir = params.scripts_dir ?: "${projectRoot}/scripts"
+params.conda_env = params.conda_env ?: "${projectRoot}/pipelines/conda_env/pipeline.env.yml"
 params.multiqc_config = params.multiqc_config ?: "${projectRoot}/pipelines/multiqc/phylo_tree.multiqc.yml"
+params.refdata_dir = params.refdata_dir ?: null
+params.derived_dir = params.derived_dir ?: null
+params.input_dir = params.input_dir ?: params.derived_dir
+params.lineages_tsv = params.lineages_tsv ?: null
+params.ncbi_tsv = params.ncbi_tsv ?: null
+params.ncbi_fasta = params.ncbi_fasta ?: null
+params.selected_tsv = params.selected_tsv ?: null
+params.selection_kind = params.selection_kind ?: null
+params.acc_country_tsv = params.acc_country_tsv ?: null
+params.outgroups_list = params.outgroups_list ?: null
+params.samples_tsv = params.samples_tsv ?: null
+params.mapping_outdir = params.mapping_outdir ?: null
+params.strains_tsv = params.strains_tsv ?: null
+params.sample_prep_script = params.sample_prep_script ?: null
+params.lineage_extract_script = params.lineage_extract_script ?: null
 
 if (!inputDirParam) {
     error "params.input_dir is required"
@@ -32,24 +49,75 @@ params.reports_dir = reportsDirParam
 params.outgroups_file = outgroupsFileParam
 params.iqtree_outgroups = iqtreeOutgroupsParam
 
-def requiredInputs = [
-    'selected_renamed.fasta',
-    'outgroups.fasta',
-    'lineages_ref_renamed.fasta',
-    'samples.fasta'
-]
-
 def inputDir = new File(params.input_dir as String)
 if (!inputDir.isDirectory()) {
-    error "input_dir not found: ${params.input_dir}"
+    inputDir.mkdirs()
 }
 
-requiredInputs.each { name ->
-    def path = new File(inputDir, name)
-    if (!path.exists()) {
-        error "missing input file: ${path}"
+def refdataDir = params.refdata_dir ? new File(params.refdata_dir as String) : null
+def derivedDir = params.derived_dir ? new File(params.derived_dir as String) : inputDir
+if (refdataDir && !refdataDir.isDirectory()) {
+    error "refdata_dir not found: ${params.refdata_dir}"
+}
+if (!derivedDir.isDirectory()) {
+    derivedDir.mkdirs()
+}
+
+def checkPath(String path, String label) {
+    def target = new File(path)
+    if (!target.exists()) {
+        error "${label} not found: ${path}"
     }
 }
+
+def checkDir(String path, String label) {
+    def target = new File(path)
+    if (!target.isDirectory()) {
+        error "${label} directory not found: ${path}"
+    }
+}
+
+def needsUpdate(File output, List<File> inputs) {
+    if (!output.exists()) return true
+    def outMtime = output.lastModified()
+    for (def inp : inputs) {
+        if (inp.exists() && inp.lastModified() > outMtime) {
+            return true
+        }
+    }
+    return false
+}
+
+if (!params.selection_kind) {
+    error "params.selection_kind is required (hpv16 or hpv18)"
+}
+if (!(params.selection_kind in ['hpv16', 'hpv18'])) {
+    error "params.selection_kind must be 'hpv16' or 'hpv18'"
+}
+
+if (!params.lineages_tsv) error "params.lineages_tsv is required"
+if (!params.ncbi_tsv) error "params.ncbi_tsv is required"
+if (!params.ncbi_fasta) error "params.ncbi_fasta is required"
+if (!params.selected_tsv) error "params.selected_tsv is required"
+if (!params.outgroups_list) error "params.outgroups_list is required"
+if (!params.samples_tsv) error "params.samples_tsv is required"
+if (!params.mapping_outdir) error "params.mapping_outdir is required"
+if (!params.sample_prep_script) error "params.sample_prep_script is required"
+if (!params.lineage_extract_script) error "params.lineage_extract_script is required"
+
+if (params.selection_kind == 'hpv18' && !params.acc_country_tsv) {
+    error "params.acc_country_tsv is required when selection_kind=hpv18"
+}
+
+checkPath(params.lineages_tsv as String, 'Lineages TSV')
+checkPath(params.ncbi_tsv as String, 'NCBI TSV')
+checkPath(params.ncbi_fasta as String, 'NCBI FASTA')
+checkPath(params.selected_tsv as String, 'Selected TSV')
+checkPath(params.outgroups_list as String, 'Outgroups list')
+checkPath(params.samples_tsv as String, 'Samples TSV')
+checkDir(params.mapping_outdir as String, 'Mapping output')
+checkPath(params.sample_prep_script as String, 'Sample prep script')
+checkPath(params.lineage_extract_script as String, 'Lineage extract script')
 
 if (!params.iqtree_outgroups && params.outgroups_file) {
     def outgroupsFile = new File(params.outgroups_file as String)
@@ -81,6 +149,111 @@ def iqtreeAlrt = params.iqtree_alrt ?: 1000
 def multiqc_config_file = new File(params.multiqc_config)
 if (!multiqc_config_file.exists()) {
     error "MultiQC config not found: ${params.multiqc_config}"
+}
+
+process PREP_LINEAGES {
+    tag "prepare_lineages"
+    publishDir "${params.derived_dir}", mode: 'copy'
+    conda params.conda_env
+
+    input:
+    path(lineages_tsv)
+    path(ncbi_fasta)
+
+    output:
+    path "lineages_ref.fasta", emit: ref
+    path "lineages_ref_renamed.fasta", emit: renamed
+
+    script:
+    """
+    "${params.lineage_extract_script}" \\
+      "${lineages_tsv}" \\
+      "${ncbi_fasta}" \\
+      lineages_ref.fasta
+
+    python3 "${params.scripts_dir}/phylo_tree/rename_lineages.py" \\
+      "${lineages_tsv}" 6 4 \\
+      lineages_ref.fasta \\
+      lineages_ref_renamed.fasta
+    """
+}
+
+process PREP_SELECTED {
+    tag "prepare_selected"
+    publishDir "${params.derived_dir}", mode: 'copy'
+    conda params.conda_env
+
+    input:
+    path(ncbi_tsv)
+    path(ncbi_fasta)
+    path(selected_tsv)
+    val(selection_kind)
+
+    output:
+    path "selected.fasta", emit: selected
+    path "selected_renamed.fasta", emit: renamed
+    path "acc_country.tsv", emit: acc_country, optional: true
+
+    script:
+    def accCountryOut = params.acc_country_tsv ? new File(params.acc_country_tsv.toString()).getName() : ""
+    def cmd = selection_kind == 'hpv18' ? """
+    "${params.scripts_dir}/phylo_tree/hpv18_select_ncbi_genomes.sh" \\
+      "${ncbi_tsv}" \\
+      "${ncbi_fasta}" \\
+      "${accCountryOut}" \\
+      "${selected_tsv}" \\
+      selected.fasta \\
+      selected_renamed.fasta
+    """ : """
+    "${params.scripts_dir}/phylo_tree/hpv16_select_ncbi_genomes.sh" \\
+      "${ncbi_tsv}" \\
+      "${ncbi_fasta}" \\
+      "${selected_tsv}" \\
+      selected.fasta \\
+      selected_renamed.fasta
+    """
+    """
+    ${cmd}
+    """
+}
+
+process PREP_OUTGROUPS {
+    tag "prepare_outgroups"
+    publishDir "${params.derived_dir}", mode: 'copy'
+    conda params.conda_env
+
+    input:
+    path(outgroups_list)
+    path(ncbi_fasta)
+
+    output:
+    path "outgroups.fasta"
+
+    script:
+    """
+    seqkit grep -f "${outgroups_list}" -r "${ncbi_fasta}" > outgroups.fasta
+    """
+}
+
+process PREP_SAMPLES {
+    tag "prepare_samples"
+    publishDir "${params.derived_dir}", mode: 'copy'
+    conda params.conda_env
+
+    input:
+    val(dummy)
+
+    output:
+    path "samples.fasta"
+
+    script:
+    """
+    OUT_DIR="${params.derived_dir}" \\
+    MAPPING_OUTDIR="${params.mapping_outdir}" \\
+    SAMPLES_TSV="${params.samples_tsv}" \\
+    STRAINS_TSV="${params.strains_tsv ?: ''}" \\
+    "${params.sample_prep_script}"
+    """
 }
 
 process CAT_ALL {
@@ -181,12 +354,52 @@ process MULTIQC {
 }
 
 workflow {
-    def selected = file("${params.input_dir}/selected_renamed.fasta")
-    def outgroups = file("${params.input_dir}/outgroups.fasta")
-    def lineages = file("${params.input_dir}/lineages_ref_renamed.fasta")
-    def samples = file("${params.input_dir}/samples.fasta")
+    def lineagesTsv = file(params.lineages_tsv)
+    def ncbiTsv = file(params.ncbi_tsv)
+    def ncbiFasta = file(params.ncbi_fasta)
+    def selectedTsv = file(params.selected_tsv)
+    def outgroupsList = file(params.outgroups_list)
+    def samplesTsv = file(params.samples_tsv)
 
-    def cat_all = CAT_ALL(selected, outgroups, lineages, samples)
+    def lineagesRenamedPath = new File(derivedDir, 'lineages_ref_renamed.fasta')
+    def selectedRenamedPath = new File(derivedDir, 'selected_renamed.fasta')
+    def outgroupsPath = new File(derivedDir, 'outgroups.fasta')
+    def samplesPath = new File(derivedDir, 'samples.fasta')
+
+    def lineagesReady
+    if (needsUpdate(lineagesRenamedPath, [lineagesTsv, ncbiFasta])) {
+        lineagesReady = PREP_LINEAGES(lineagesTsv, ncbiFasta).renamed
+    } else {
+        lineagesReady = Channel.value(file(lineagesRenamedPath.toString()))
+    }
+
+    def selectionInputs = [selectedTsv, ncbiTsv, ncbiFasta]
+    def selectedReady
+    if (needsUpdate(selectedRenamedPath, selectionInputs)) {
+        selectedReady = PREP_SELECTED(ncbiTsv, ncbiFasta, selectedTsv, params.selection_kind).renamed
+    } else {
+        selectedReady = Channel.value(file(selectedRenamedPath.toString()))
+    }
+
+    def outgroupsReady
+    if (needsUpdate(outgroupsPath, [outgroupsList, ncbiFasta])) {
+        outgroupsReady = PREP_OUTGROUPS(outgroupsList, ncbiFasta)
+    } else {
+        outgroupsReady = Channel.value(file(outgroupsPath.toString()))
+    }
+
+    def sampleInputs = [samplesTsv, new File(params.mapping_outdir as String)]
+    if (params.strains_tsv) {
+        sampleInputs << new File(params.strains_tsv as String)
+    }
+    def samplesReady
+    if (needsUpdate(samplesPath, sampleInputs)) {
+        samplesReady = PREP_SAMPLES(Channel.value(true))
+    } else {
+        samplesReady = Channel.value(file(samplesPath.toString()))
+    }
+
+    def cat_all = CAT_ALL(selectedReady, outgroupsReady, lineagesReady, samplesReady)
     def aligned = MAFFT_ALIGN(cat_all)
     def trimmed = TRIMAL(aligned)
     def tree = IQTREE(trimmed.trimal)
