@@ -125,12 +125,11 @@ process GENERATE_BED {
     val(dummy)
 
     output:
-    path "bed_files", emit: beds
+    path "*.bed", emit: beds
 
     script:
     """
-    mkdir -p bed_files
-    "${params.scripts_dir}/pave/gff3_to_bed.run_all.sh" "${params.pave_gff3_dir}" bed_files
+    "${params.scripts_dir}/pave/gff3_to_bed.run_all.sh" "${params.pave_gff3_dir}" .
     """
 }
 
@@ -246,7 +245,8 @@ process AGGREGATE_VARIANTS {
     publishDir "${params.reports_dir}", mode: 'copy'
 
     input:
-    tuple val(done), val(bed_ready)
+    val(done)
+    val(bed_ready)
 
     output:
     path "E6_E7_variants.tsv"
@@ -262,7 +262,8 @@ process AGGREGATE_VARIANT_EFFECTS {
     publishDir "${params.reports_dir}", mode: 'copy'
 
     input:
-    tuple val(done), val(bed_ready)
+    val(done)
+    val(bed_ready)
 
     output:
     path "E6_E7_variant_effects.tsv"
@@ -278,7 +279,8 @@ process LINEAGE_SNPS {
     publishDir "${params.reports_dir}", mode: 'copy'
 
     input:
-    tuple val(done), val(bed_ready)
+    val(done)
+    val(bed_ready)
 
     output:
     path "lineage_snps.tsv"
@@ -606,14 +608,12 @@ workflow {
     def samplesWithDeps = samples.combine(indexReady).combine(featuresReady)
     def mapped = MAP_SAMPLE(samplesWithDeps)
     def mappedDone = mapped.collect()
-    def mappedWithBed = mappedDone.combine(bedReady)
-
     def strains = AGGREGATE_STRAINS(mappedDone)
     def covstats = AGGREGATE_COVSTATS(mappedDone)
     def strain_report = AGGREGATE_STRAIN_COVERAGE_REPORT(strains.strains, covstats.covstats)
-    def variants = AGGREGATE_VARIANTS(mappedWithBed)
-    def variant_effects = AGGREGATE_VARIANT_EFFECTS(mappedWithBed)
-    def lineage_snps = LINEAGE_SNPS(mappedWithBed)
+    def variants = AGGREGATE_VARIANTS(mappedDone, bedReady)
+    def variant_effects = AGGREGATE_VARIANT_EFFECTS(mappedDone, bedReady)
+    def lineage_snps = LINEAGE_SNPS(mappedDone, bedReady)
     def lineage_compare = COMPARE_LINEAGE_SNPS(variants, lineage_snps)
     def reports_done = strains.mix(covstats).mix(strain_report).mix(variants).mix(variant_effects).mix(lineage_snps).mix(lineage_compare).collect()
     def multiqc_config_file = file(params.multiqc_config)

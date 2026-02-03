@@ -37,8 +37,6 @@ done
 
 "$SCRIPTSDIR/prelim_analysis.steps/01.centrifuge.run.sh" "${step1_args[@]}" "${common_args[@]}"
 "$SCRIPTSDIR/prelim_analysis.steps/02.bowtie_vs_pave.run.sh" "${common_args[@]}"
-"$SCRIPTSDIR/prelim_analysis.steps/03.bowtie_vs_pave.E6.run.sh" "${common_args[@]}"
-"$SCRIPTSDIR/prelim_analysis.steps/04.bowtie_vs_pave.E7.run.sh" "${common_args[@]}"
 if [ "$run_virstrain" = true ]; then
   "$SCRIPTSDIR/prelim_analysis.steps/05.virstrain.run.sh" "${virstrain_args[@]}" "${common_args[@]}"
 fi

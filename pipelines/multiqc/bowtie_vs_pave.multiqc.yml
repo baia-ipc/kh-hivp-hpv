@@ -67,15 +67,15 @@ custom_data:
       col1_header: "Sample"
   variants_table:
     file_format: "tsv"
-    section_name: "E6/E7 variants"
+    section_name: "E6-E7 variants"
     description: "Aggregated variant calls"
     plot_type: "table"
     pconfig:
       col1_header: "Sample"
   variant_effects_table:
     file_format: "tsv"
-    section_name: "E6/E7 variant effects"
-    description: "Amino-acid consequences for E6/E7 variants"
+    section_name: "E6-E7 variant effects"
+    description: "Amino-acid consequences for E6-E7 variants"
     plot_type: "table"
     pconfig:
       col1_header: "Sample"
