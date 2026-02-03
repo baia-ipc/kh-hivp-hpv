@@ -3,7 +3,7 @@ set -euo pipefail
 
 # Extract HPV18 reference from PAVE and build consensus sequences for samples.
 
-REPO_ROOT=$(cd "$(dirname "$0")/.." && pwd)
+REPO_ROOT=$(cd "$(dirname "$0")/../.." && pwd)
 
 PAVE_FASTA=${PAVE_FASTA:-}
 HPV18REF_FASTA=${HPV18REF_FASTA:-}
@@ -60,6 +60,10 @@ fi
 if [[ -z "$BCF_DIR" && -n "$BCF_RUN_ID" ]]; then
   BCF_DIR="$MAPPING_OUTDIR/$BCF_RUN_ID"
 fi
+
+if [[ -n "$BCF_DIR" && ! -d "$BCF_DIR" ]]; then
+  BCF_DIR=""
+fi
 if [[ -z "$BCF_RUN_ID" && -n "$BCF_DIR" ]]; then
   BCF_RUN_ID=$(basename "$BCF_DIR")
 fi
@@ -101,7 +105,7 @@ if [[ -z "$SAMPLES" && -n "$SAMPLES_FILE" ]]; then
 fi
 
 if [[ -z "$SAMPLES" && -f "$STRAINS_TSV" && -n "$BCF_RUN_ID" ]]; then
-  SAMPLES=$(awk -F'\t' -v run="$BCF_RUN_ID" 'NR>1 && $1==run && $4 ~ /(^|,)HPV18(,|$)/ {print $2}' \
+  SAMPLES=$(awk -F'\t' -v run="$BCF_RUN_ID" 'NR>1 && $1==run && $2 ~ /^KHCA-/ && $4 ~ /(^|,)HPV18(,|$)/ {print $2}' \
     "$STRAINS_TSV" | sort -u | xargs)
 fi
 
