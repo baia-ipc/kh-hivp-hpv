@@ -146,7 +146,7 @@ def iqtreeBootstrap = params.iqtree_bootstrap ?: 1000
 
 def iqtreeAlrt = params.iqtree_alrt ?: 1000
 
-def multiqc_config_file = new File(params.multiqc_config)
+def multiqc_config_file = file(params.multiqc_config)
 if (!multiqc_config_file.exists()) {
     error "MultiQC config not found: ${params.multiqc_config}"
 }
@@ -253,6 +253,7 @@ process PREP_SAMPLES {
     SAMPLES_TSV="${params.samples_tsv}" \\
     STRAINS_TSV="${params.strains_tsv ?: ''}" \\
     "${params.sample_prep_script}"
+    cp "${params.derived_dir}/samples.fasta" samples.fasta
     """
 }
 
@@ -345,6 +346,7 @@ process MULTIQC {
 
     script:
     """
+    mkdir -p "${params.reports_dir}"
     multiqc --force \\
       --filename "multiqc_report.html" \\
       --config "${multiqc_config}" \\
