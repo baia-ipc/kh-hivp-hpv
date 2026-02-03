@@ -8,20 +8,20 @@ This step builds an HPV18 phylogenetic tree from prepared sequence inputs
 ## Implementation
 
 - Pipeline: `pipelines/phylo_tree.nf`
-- User config: `config/general.config`
-- Step path config: `bin/config/targeted-analysis-hpv16-hpv18_004.hpv18_tree.config` (internal defaults)
-- Technical config: `pipelines/config/common.config` + `pipelines/config/phylo_tree.config` + `pipelines/config/phylo_tree.hpv18.config`
-- Inputs directory: `refdata/derived/hpv18_tree` (wired via technical config)
+- User config: `config/user.config`
+- Step path config: `bin/config/targeted-analysis-hpv16-hpv18.config` (profile `targeted_hpv18_tree`)
+- Technical config: `config/pipelines/common.config` + `config/pipelines/phylo_tree.config` + `config/pipelines/phylo_tree.hpv18.config`
+- Inputs directory: `intermediate_files/refdata/hpv18_tree` (wired via technical config)
 - Outgroup list: `metadata/hpv18_tree_outgroups.txt`
 
 Wrappers:
 
-- `bin/004.0.hpv18_tree.run.sh`
+- `bin/targeted-analysis-hpv16-hpv18.steps/004.0.hpv18_tree.run.sh`
 
 ## Inputs
 
-Inputs are expected under `refdata/derived/hpv18_tree/` and are prepared from
-raw inputs under `refdata/raw/hpv18_tree/` using scripts documented in the
+Inputs are expected under `intermediate_files/refdata/hpv18_tree/` and are prepared from
+raw inputs under `refdata/hpv18_tree/` using scripts documented in the
 repository root `README.md`.
 
 Sample IDs are derived automatically by `scripts/hpv18_prepare_samples.sh` from

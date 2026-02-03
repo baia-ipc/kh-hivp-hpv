@@ -32,37 +32,37 @@ Format:
   - Context: step 002 relied on per-step scripts with hardcoded paths.
   - Decision: centralize scripts under `scripts/` and run step 002 via `pipelines/bowtie_vs_pave.nf`.
   - Rationale: reduce duplication and make configuration consistent across analyses.
-  - Consequences: use `config/general.config` for user inputs and `pipelines/config/bowtie_vs_pave.config` for fixed bucket selection.
+  - Consequences: use `config/user.config` for user inputs and `config/pipelines/bowtie_vs_pave.config` for fixed bucket selection.
 
 - 2026-01-24: Migrate VirStrain reports to Nextflow
   - Context: step 003 used step-local scripts and hardcoded reference paths.
   - Decision: centralize scripts under `scripts/` and run step 003 via `pipelines/virstrain.nf`.
   - Rationale: align with the shared pipeline layout and remove hardcoded paths.
-  - Consequences: use `config/general.config` for user inputs and `pipelines/config/virstrain.config` for fixed bucket selection.
+  - Consequences: use `config/user.config` for user inputs and `config/pipelines/virstrain.config` for fixed bucket selection.
 
 - 2026-01-24: Migrate E6 mapping to Nextflow
   - Context: step 004 relied on step-local scripts and per-step index creation.
   - Decision: move shared scripts to `scripts/` and run E6 mapping via `pipelines/pave_gene_mapping.nf`.
   - Rationale: standardize mapping steps and remove hardcoded references.
-  - Consequences: use `bin/config/pave_e6.config` and shared metadata for bucket selection.
+  - Consequences: use `bin/config/preliminary-analysis-all-patients.config` (profile `preliminary_pave_e6`) and shared metadata for bucket selection.
 
 - 2026-01-24: Migrate E7 mapping to Nextflow
   - Context: step 005 relied on the same step-local scripts as E6.
   - Decision: use the shared `pipelines/pave_gene_mapping.nf` pipeline with a dedicated config.
   - Rationale: keep the E6/E7 analyses consistent and reduce duplication.
-  - Consequences: use `bin/config/pave_e7.config` and shared metadata for bucket selection.
+  - Consequences: use `bin/config/preliminary-analysis-all-patients.config` (profile `preliminary_pave_e7`) and shared metadata for bucket selection.
 
 - 2026-01-24: Migrate HPV16 tree build to Nextflow
   - Context: step 003 relied on multiple per-step scripts for alignment and tree building.
   - Decision: centralize the tree build as `pipelines/phylo_tree.nf` with step config.
   - Rationale: standardize tree workflows and reduce step-local scripts.
-  - Consequences: use `config/general.config` and `metadata/hpv16_tree_outgroups.txt`.
+  - Consequences: use `config/user.config` and `metadata/hpv16_tree_outgroups.txt`.
 
 - 2026-01-24: Migrate HPV18 tree build to Nextflow
   - Context: step 004 mirrored the HPV16 tree workflow with separate scripts.
   - Decision: use the shared `pipelines/phylo_tree.nf` pipeline with an HPV18 config.
   - Rationale: keep HPV16/HPV18 tree generation consistent and centralized.
-  - Consequences: use `config/general.config` and `metadata/hpv18_tree_outgroups.txt`.
+  - Consequences: use `config/user.config` and `metadata/hpv18_tree_outgroups.txt`.
 
 - 2026-01-24: Add reference snapshot directory
   - Context: need to compare old results vs updated pipelines.
@@ -90,7 +90,7 @@ Format:
 
 - 2026-02-02: Split user vs technical Nextflow configuration
   - Context: pipeline configs mixed user-editable parameters with executor/conda wiring, and step paths lived in wrappers.
-  - Decision: keep user-editable configs in `config/`, move technical Nextflow settings to `pipelines/config/`, and add step-specific config files for inputs/outputs.
+  - Decision: keep user-editable configs in `config/`, move technical Nextflow settings to `config/pipelines/`, and add step-specific config files for inputs/outputs.
   - Rationale: ensure users only edit `config/` while keeping technical defaults centralized.
   - Consequences: wrappers pass multiple `-c` files; new step configs define `outdir`, `reports_dir`, and inputs.
 
@@ -102,15 +102,15 @@ Format:
 
 - 2026-02-02: Derive PAVE BED intervals from GFF3
   - Context: multiple pipelines require BED intervals for E6/E7 SNP extraction.
-  - Decision: treat BED files as derived data under `refdata/derived/pave/bed`, generated via `scripts/gff3_to_bed.run_all.sh`.
+  - Decision: treat BED files as derived data under `intermediate_files/refdata/pave/bed`, generated via `scripts/gff3_to_bed.run_all.sh`.
   - Rationale: BEDs are derived from GFF3s and should not live under raw reference inputs.
   - Consequences: technical configs reference the derived BED directory.
 
-- 2026-02-02: Consolidate user config into `config/general.config`
+- 2026-02-02: Consolidate user config into `config/user.config`
   - Context: user parameters were split across multiple `config/*.config` files.
-  - Decision: move all user-editable parameters into a single `config/general.config`.
+  - Decision: move all user-editable parameters into a single `config/user.config`.
   - Rationale: keep user configuration in one place and set shared defaults (e.g., `threads`) only once.
-  - Consequences: wrappers and docs reference `config/general.config`; per-pipeline user configs are removed.
+  - Consequences: wrappers and docs reference `config/user.config`; per-pipeline user configs are removed.
 
 - 2026-02-02: Move step wrapper scripts into `bin/`
   - Context: step runner scripts lived under each analysis step directory.
@@ -126,12 +126,12 @@ Format:
 
 - 2026-02-02: Rename runners and isolate single-sample wrappers
   - Context: step wrappers used `run_all.sh` vs `run.sh` naming and lived in a single directory.
-  - Decision: rename all-step wrappers to `run.sh`, rename single-sample wrappers to `run_sample.sh`, and move them under `bin/sample/`.
+  - Decision: rename all-step wrappers to `run.sh`, rename single-sample wrappers to `run_sample.sh`, and move them under `bin/*steps/single_sample/`.
   - Rationale: make the default entry point consistent and keep per-sample utilities separate.
   - Consequences: update documentation and runner references to new paths.
 
 - 2026-02-02: Move derived refdata paths into technical configs
   - Context: derived reference paths were defined in user-editable configs.
-  - Decision: relocate derived refdata path parameters into `pipelines/config/*.config`.
+  - Decision: relocate derived refdata path parameters into `config/pipelines/*.config`.
   - Rationale: keep user configs focused on tunable inputs and avoid editing fixed internal paths.
   - Consequences: update pipelines and wrappers to read derived paths from technical configs.

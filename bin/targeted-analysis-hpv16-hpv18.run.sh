@@ -17,8 +17,8 @@ for arg in "$@"; do
   esac
 done
 
-"$SCRIPTSDIR/001.0.bucketing.run.sh" "${step1_args[@]}" "${common_args[@]}"
-"$SCRIPTSDIR/002.0.mapping_vs_pave.run.sh" "${common_args[@]}"
-"$SCRIPTSDIR/003.0.hpv16_tree.run.sh" "${common_args[@]}"
-"$SCRIPTSDIR/004.0.hpv18_tree.run.sh" "${common_args[@]}"
-"$SCRIPTSDIR/005.0.snps_samples_vs_db.run.sh" "${common_args[@]}"
+"$SCRIPTSDIR/targeted-analysis-hpv16-hpv18.steps/001.0.bucketing.run.sh" "${step1_args[@]}" "${common_args[@]}"
+"$SCRIPTSDIR/targeted-analysis-hpv16-hpv18.steps/002.0.mapping_vs_pave.run.sh" "${common_args[@]}"
+"$SCRIPTSDIR/targeted-analysis-hpv16-hpv18.steps/003.0.hpv16_tree.run.sh" "${common_args[@]}"
+"$SCRIPTSDIR/targeted-analysis-hpv16-hpv18.steps/004.0.hpv18_tree.run.sh" "${common_args[@]}"
+"$SCRIPTSDIR/targeted-analysis-hpv16-hpv18.steps/005.0.snps_samples_vs_db.run.sh" "${common_args[@]}"

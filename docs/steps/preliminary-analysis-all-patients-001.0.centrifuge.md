@@ -13,20 +13,20 @@ This step is implemented as Nextflow pipelines:
 
 - Per-sample pipeline: `pipelines/centrifuge_bucketing.nf`
 - Multi-sample pipeline: `pipelines/centrifuge_bucketing_all.nf`
-- User config: `config/general.config`
-- Step path config: `bin/config/preliminary-analysis-all-patients_001.centrifuge.config` (internal defaults)
-- Technical config: `pipelines/config/common.config` + `pipelines/config/centrifuge_bucketing.config`
+- User config: `config/user.config`
+- Step path config: `bin/config/preliminary-analysis-all-patients.config` (profile `preliminary_centrifuge`)
+- Technical config: `config/pipelines/common.config` + `config/pipelines/centrifuge_bucketing.config`
 
 Wrappers under `bin/` call the Nextflow pipelines:
 
-- `bin/001.0.centrifuge.run.sh` (all samples)
-- `bin/sample/001.0.centrifuge.run_sample.sh` (one sample / one pair)
+- `bin/preliminary-analysis-all-patients.steps/001.0.centrifuge.run.sh` (all samples)
+- `bin/preliminary-analysis-all-patients.steps/single_sample/001.0.centrifuge.run_sample.sh` (one sample / one pair)
 
 ## Inputs
 
 - Sample list: `metadata/samples-input1.tsv` (normalized `sample_id` plus `fastq_sample_id` for raw filename prefixes)
 - Bucket definitions: `metadata/bucket_taxonomy_ids.tsv`
-- Centrifuge index + taxonomy: configured in `config/general.config`
+- Centrifuge index + taxonomy: configured in `config/user.config`
 - Optional: build a local index with `scripts/build_centrifuge_db.sh`
 
 ## Outputs

@@ -13,12 +13,14 @@ before running the analyses in this repository.
 
 - `input/`: symlinks or folders pointing to raw FASTQ data (not tracked in git).
 - `metadata/`: sample sheets and other fixed inputs (TSV files).
-- `config/`: user-editable pipeline configs (base + step-specific) and MultiQC configs.
-- `pipelines/config/`: technical Nextflow config (executor/conda wiring).
+- `config/`: user-editable pipeline configs (base + step-specific).
+- `config/pipelines/`: technical Nextflow config (executor/conda wiring, derived paths).
 - `pipelines/conda_env/`: Conda environment definitions used by pipelines.
 - `pipelines/multiqc/`: MultiQC configuration files used by pipelines.
-- `refdata/raw/`: reference inputs from external sources (PAVE FASTA/GFF3, NCBI downloads).
-- `refdata/derived/`: derived reference data (feature tables, renamed/filtered FASTA sets).
+- `refdata/`: reference inputs from external sources (PAVE FASTA/GFF3, NCBI downloads).
+- `intermediate_files/`: generated intermediate assets.
+  - `intermediate_files/refdata/`: derived reference data (feature tables, renamed/filtered FASTA sets).
+  - `intermediate_files/indices/`: bowtie/virstrain indices.
 - `preliminary-analysis-all-patients/` and `targeted-analysis-hpv16-hpv18/`: outputs and reports for each analysis.
 - `docs/`: technical documentation and this user manual.
 
@@ -54,20 +56,13 @@ User-editable pipeline parameters live in `config/`. Edit these files to point
 to your local reference data paths and to set resource limits:
 
 - Base pipeline config:
-  - `config/general.config`: all user-editable pipeline parameters (Centrifuge index/taxdump, PAVE reference names, Cambodia defaults, tree defaults, and shared threads)
-- Step‑specific path configs (inputs/outputs) are stored under `bin/config/` and are not typically edited by users:
-  - `bin/config/preliminary-analysis-all-patients_001.centrifuge.config`
-  - `bin/config/preliminary-analysis-all-patients_002.bowtie_vs_pave.config`
-  - `bin/config/preliminary-analysis-all-patients_003.virstrain.config`
-  - `bin/config/targeted-analysis-hpv16-hpv18_001.bucketing.config`
-  - `bin/config/targeted-analysis-hpv16-hpv18_002.mapping_vs_pave.config`
-  - `bin/config/targeted-analysis-hpv16-hpv18_003.hpv16_tree.config`
-  - `bin/config/targeted-analysis-hpv16-hpv18_004.hpv18_tree.config`
-  - `bin/config/targeted-analysis-hpv16-hpv18_005.snps_samples_vs_db.config`
-- Gene‑mapping step configs are under `bin/config/` (`bin/config/pave_e6.config`, `bin/config/pave_e7.config`).
-- Tree defaults are configured via `config/general.config`.
+  - `config/user.config`: all user-editable pipeline parameters (Centrifuge index/taxdump, PAVE reference names, Cambodia defaults, tree defaults, and shared threads)
+- Step‑specific path configs (inputs/outputs) are stored under `bin/config/` as profile bundles and are not typically edited by users:
+  - `bin/config/preliminary-analysis-all-patients.config` (profiles for steps 001‑005)
+  - `bin/config/targeted-analysis-hpv16-hpv18.config` (profiles for steps 001‑005)
+- Tree defaults are configured via `config/user.config`.
 
-Technical Nextflow settings (executor/conda wiring and derived refdata paths) live under `pipelines/config/`.
+Technical Nextflow settings (executor/conda wiring and derived refdata paths) live under `config/pipelines/`.
 Conda environments are defined under `pipelines/conda_env/`.
 MultiQC configs are under `pipelines/multiqc/`.
 
@@ -75,14 +70,14 @@ MultiQC configs are under `pipelines/multiqc/`.
 
 ### 6.1 PAVE reference (raw)
 
-Place the PAVE reference FASTA (and gene FASTAs if used) under `refdata/raw/pave/`.
+Place the PAVE reference FASTA (and gene FASTAs if used) under `refdata/pave/`.
 If you use variant effect annotation, place the PAVE GFF3 files under
-`refdata/raw/pave/gff3/` (one GFF3 per reference sequence).
+`refdata/pave/gff3/` (one GFF3 per reference sequence).
 
 BED files used for E6/E7 SNP extraction are derived from the GFF3 inputs and
-stored under `refdata/derived/pave/bed/` (see below).
+stored under `intermediate_files/refdata/pave/bed/` (see below).
 
-These paths are wired via the technical pipeline configs (under `pipelines/config/`).
+These paths are wired via the technical pipeline configs (under `config/pipelines/`).
 
 ### 6.2 PAVE feature tables (derived)
 
@@ -91,8 +86,8 @@ Generate them with:
 
 ```
 scripts/gff3_to_features_tsv.run_all.sh \
-  refdata/raw/pave/gff3 \
-  refdata/derived/pave/features_tsv
+  refdata/pave/gff3 \
+  intermediate_files/refdata/pave/features_tsv
 ```
 
 These TSVs are consumed by the Bowtie vs PAVE steps (coverage summaries).
@@ -105,23 +100,24 @@ Generate them with:
 
 ```
 scripts/gff3_to_bed.run_all.sh \
-  refdata/raw/pave/gff3 \
-  refdata/derived/pave/bed
+  refdata/pave/gff3 \
+  intermediate_files/refdata/pave/bed
 ```
 
 These BED files are required by the Bowtie vs PAVE and SNPs samples vs database steps.
+If the directory is missing or empty, the pipelines will generate it automatically.
 
 ### 6.3 Phylogenetic tree inputs (raw + derived)
 
 Place raw inputs under:
 
-- `refdata/raw/hpv16_tree`
-- `refdata/raw/hpv18_tree`
+- `refdata/hpv16_tree`
+- `refdata/hpv18_tree`
 
 Derived tree inputs live under:
 
-- `refdata/derived/hpv16_tree`
-- `refdata/derived/hpv18_tree`
+- `intermediate_files/refdata/hpv16_tree`
+- `intermediate_files/refdata/hpv18_tree`
 
 The preparation steps for these (including the shared lineage reference
 FASTA files used by step 002 SNP‑to‑lineage comparison) are described in the
@@ -139,7 +135,7 @@ scripts/build_centrifuge_db.sh \
   --threads 24
 ```
 
-Then update `config/general.config`, for example:
+Then update `config/user.config`, for example:
 
 - `index = "refdata/centrifuge/human_abv"`
 - `taxdump = "refdata/centrifuge/taxonomy-YYYY-MM-DD"`

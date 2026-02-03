@@ -9,14 +9,14 @@ targeted-analysis-hpv16-hpv18 sample list and input FASTQ layout.
 ## Implementation
 
 - Pipeline: `pipelines/centrifuge_bucketing_all.nf`
-- User config: `config/general.config`
-- Step path config: `bin/config/targeted-analysis-hpv16-hpv18_001.bucketing.config` (internal defaults)
-- Technical config: `pipelines/config/common.config` + `pipelines/config/centrifuge_bucketing.config`
+- User config: `config/user.config`
+- Step path config: `bin/config/targeted-analysis-hpv16-hpv18.config` (profile `targeted_bucketing`)
+- Technical config: `config/pipelines/common.config` + `config/pipelines/centrifuge_bucketing.config`
 - Sample list: `metadata/samples-input2.tsv` (normalized `sample_id` plus `fastq_sample_id` for raw filename prefixes)
 
 Wrapper:
 
-- `bin/001.0.bucketing.run.sh`
+- `bin/targeted-analysis-hpv16-hpv18.steps/001.0.bucketing.run.sh`
 
 ## Inputs
 

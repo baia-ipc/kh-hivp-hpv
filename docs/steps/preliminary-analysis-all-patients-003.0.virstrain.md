@@ -10,20 +10,20 @@ produces per-sample VirStrain reports plus an aggregated summary table.
 This step is implemented as a Nextflow pipeline:
 
 - Pipeline: `pipelines/virstrain.nf`
-- User config: `config/general.config`
-- Step path config: `bin/config/preliminary-analysis-all-patients_003.virstrain.config` (internal defaults)
-- Technical config: `pipelines/config/common.config` + `pipelines/config/virstrain.config`
-- Bucket selection: `params.bucket_tid` in `pipelines/config/virstrain.config`
+- User config: `config/user.config`
+- Step path config: `bin/config/preliminary-analysis-all-patients.config` (profile `preliminary_virstrain`)
+- Technical config: `config/pipelines/common.config` + `config/pipelines/virstrain.config`
+- Bucket selection: `params.bucket_tid` in `config/pipelines/virstrain.config`
 
 Wrappers:
 
-- `bin/003.0.virstrain.run.sh` (all samples)
-- `bin/sample/003.0.virstrain.run_sample.sh` (single sample pair)
+- `bin/preliminary-analysis-all-patients.steps/003.0.virstrain.run.sh` (all samples)
+- `bin/preliminary-analysis-all-patients.steps/single_sample/003.0.virstrain.run_sample.sh` (single sample pair)
 
 ## Inputs
 
 - Reads directory: output of step 001 (`preliminary-analysis-all-patients/001.0.centrifuge/output/`)
-- VirStrain reference/index: wired via `pipelines/config/virstrain.config`
+- VirStrain reference/index: wired via `config/pipelines/virstrain.config`
 
 ## Outputs
 

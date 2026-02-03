@@ -9,6 +9,10 @@ This documentation is intended for humans (e.g. lab / bioinformatics users).
 To run the analyses, use the step wrapper scripts under `bin/`
 (see the repository root `README.md`).
 
+## Script reference
+
+- Repository script reference: `docs/SCRIPTS_TECHNICAL.md`
+
 ## preliminary-analysis-all-patients
 
 - Step 001 (Centrifuge bucketing): `docs/steps/preliminary-analysis-all-patients-001.0.centrifuge.md`

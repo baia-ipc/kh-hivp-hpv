@@ -8,10 +8,10 @@ Rules:
 
 ## Core conventions (scope only)
 
-- User-editable configuration lives in `config/` (no hardcoded paths in scripts); step path configs live under `bin/config/`; technical Nextflow config (including derived refdata paths) lives under `pipelines/config/`, and Conda env definitions live under `pipelines/conda_env/`.
+- User-editable configuration lives in `config/` (no hardcoded paths in scripts); step path configs live under `bin/config/`; technical Nextflow config (including derived refdata paths) lives under `config/pipelines/`, and Conda env definitions live under `pipelines/conda_env/`.
 - Step/analysis wrapper scripts live under `bin/` (wrappers around Nextflow pipelines).
 - Sample lists and other hardcoded data live in `metadata/`.
-- Reference inputs live in `refdata/raw/`; derived reference assets live in `refdata/derived/` (do not place reference inputs under analysis step directories).
+- Reference inputs live in `refdata/`; derived reference assets live in `intermediate_files/refdata/` (do not place reference inputs under analysis step directories).
 - Centrifuge database build script lives at `scripts/build_centrifuge_db.sh` (outputs under `refdata/centrifuge/`).
 - Outputs live under each step's `output/` and `reports/` directories.
 - MultiQC reports are published to each step’s `reports/` (tree steps use `output/reports/`), with the process writing `multiqc_report.html` at the workdir root and `publishDir` targeting the final reports directory.
@@ -34,48 +34,48 @@ Rules:
 ## Skill: bowtie vs PAVE mapping and reports
 
 - Scope: mapping and rough strain assignment.
-- Entry points: `pipelines/bowtie_vs_pave.nf` (config: `config/general.config`).
+- Entry points: `pipelines/bowtie_vs_pave.nf` (config: `config/user.config`).
 - Where:
   - preliminary-analysis-all-patients: `preliminary-analysis-all-patients/002.0.bowtie_vs_pave`
   - targeted-analysis-hpv16-hpv18: `targeted-analysis-hpv16-hpv18/002.0.mapping_vs_pave`
-- Inputs: bucketed FASTQs from the corresponding step 001 output; bucket selection via `params.bucket_tid` in `pipelines/config/bowtie_vs_pave.config`.
-- Reference assets: PAVE FASTA/GFF3 under `refdata/raw/pave/`, plus derived BEDs and feature tables under `refdata/derived/pave/`.
+- Inputs: bucketed FASTQs from the corresponding step 001 output; bucket selection via `params.bucket_tid` in `config/pipelines/bowtie_vs_pave.config`.
+- Reference assets: PAVE FASTA/GFF3 under `refdata/pave/`, plus derived BEDs and feature tables under `intermediate_files/refdata/pave/`.
 - Outputs: per-step `output/` and `reports/` under the locations above.
 
 ## Skill: VirStrain reports
 
 - Scope: VirStrain-based strain reports (preliminary-analysis-all-patients only).
-- Entry points: `pipelines/virstrain.nf` (config: `config/general.config`).
+- Entry points: `pipelines/virstrain.nf` (config: `config/user.config`).
 - Where: `preliminary-analysis-all-patients/003.0.virstrain`.
-- Inputs: bucketed FASTQs from `preliminary-analysis-all-patients/001.0.centrifuge/output`; bucket selection via `params.bucket_tid` in `pipelines/config/virstrain.config`.
+- Inputs: bucketed FASTQs from `preliminary-analysis-all-patients/001.0.centrifuge/output`; bucket selection via `params.bucket_tid` in `config/pipelines/virstrain.config`.
 - Outputs: `preliminary-analysis-all-patients/003.0.virstrain/output`, `preliminary-analysis-all-patients/003.0.virstrain/reports`.
 
 ## Skill: E6/E7 sub-analyses
 
 - Scope: separate E6 and E7 gene-only mapping analyses (preliminary-analysis-all-patients only).
-- Entry points: `pipelines/pave_gene_mapping.nf` (configs: `bin/config/pave_e6.config`, `bin/config/pave_e7.config`).
+- Entry points: `pipelines/pave_gene_mapping.nf` (config: `bin/config/preliminary-analysis-all-patients.config`, profiles `preliminary_pave_e6` and `preliminary_pave_e7`).
 - Where:
   - E6: `preliminary-analysis-all-patients/004.0.bowtie_vs_pave.E6`
   - E7: `preliminary-analysis-all-patients/005.0.bowtie_vs_pave.E7`
-- Inputs: bucketed FASTQs from `preliminary-analysis-all-patients/001.0.centrifuge/output`; bucket selection via `params.bucket_tid` in `pipelines/config/pave_gene_mapping.config`.
+- Inputs: bucketed FASTQs from `preliminary-analysis-all-patients/001.0.centrifuge/output`; bucket selection via `params.bucket_tid` in `config/pipelines/pave_gene_mapping.config`.
 - Outputs: per-step `output/` and `reports/` under the locations above.
 
 ## Skill: phylogenetic trees (HPV16/HPV18)
 
 - Scope: tree generation for HPV16 and HPV18.
-- Entry points: `pipelines/phylo_tree.nf` (user config: `config/general.config`; step path configs: `bin/config/targeted-analysis-hpv16-hpv18_003.hpv16_tree.config`, `bin/config/targeted-analysis-hpv16-hpv18_004.hpv18_tree.config`).
+- Entry points: `pipelines/phylo_tree.nf` (user config: `config/user.config`; step path config: `bin/config/targeted-analysis-hpv16-hpv18.config` with profiles `targeted_hpv16_tree`, `targeted_hpv18_tree`).
 - Where:
   - HPV16: `targeted-analysis-hpv16-hpv18/003.0.hpv16_tree`
   - HPV18: `targeted-analysis-hpv16-hpv18/004.0.hpv18_tree`
-- Inputs: curated tree inputs under `refdata/derived/hpv16_tree` and `refdata/derived/hpv18_tree` (prepared from `refdata/raw/hpv16_tree` and `refdata/raw/hpv18_tree`).
+- Inputs: curated tree inputs under `intermediate_files/refdata/hpv16_tree` and `intermediate_files/refdata/hpv18_tree` (prepared from `refdata/hpv16_tree` and `refdata/hpv18_tree`).
 - Outputs: alignment and tree artifacts under each step `output/`.
 
 ## Skill: SNPs samples vs database
 
 - Scope: extract Cambodian HPV16/HPV18 references, call E6/E7 SNPs, and compare against lineage and sample SNPs.
-- Entry points: `pipelines/cambodia_snps.nf` (config: `config/general.config`).
+- Entry points: `pipelines/cambodia_snps.nf` (config: `config/user.config`).
 - Where: `targeted-analysis-hpv16-hpv18/005.0.snps_samples_vs_db`.
 - Inputs:
-  - Selected reference sets under `refdata/derived/hpv16_tree` and `refdata/derived/hpv18_tree`
+  - Selected reference sets under `intermediate_files/refdata/hpv16_tree` and `intermediate_files/refdata/hpv18_tree`
   - Sample variants from `targeted-analysis-hpv16-hpv18/002.0.mapping_vs_pave/reports/E6_E7_variants.tsv`
 - Outputs: `targeted-analysis-hpv16-hpv18/005.0.snps_samples_vs_db/output`, `targeted-analysis-hpv16-hpv18/005.0.snps_samples_vs_db/reports`.

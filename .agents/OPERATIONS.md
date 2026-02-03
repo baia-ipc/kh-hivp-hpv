@@ -8,13 +8,13 @@ Rules:
 
 ## Conventions
 
-- User-editable configuration is in `config/`; step path configs are under `bin/config/`; technical Nextflow config is in `pipelines/config/`. Sample lists live in `metadata/`.
-- Raw reference inputs live in `refdata/raw/`; derived reference assets live in `refdata/derived/`.
+- User-editable configuration is in `config/`; step path configs are under `bin/config/`; technical Nextflow config is in `config/pipelines/`. Sample lists live in `metadata/`.
+- Raw reference inputs live in `refdata/`; derived reference assets live in `intermediate_files/refdata/`.
 - Outputs are written to each step's `output/` and `reports/`.
 - When changing directory layout, update `CONTENTS.md` and `.agents/INVENTORY.md`.
 - Avoid user-specific absolute paths in scripts; require tools via PATH or
   configurable env vars (e.g., `CONDA_EXE`).
-- Default parallelism is tied to `params.threads` (from `config/general.config`) via `process.maxForks` and `executor.queueSize` in `pipelines/config/common.config`.
+- Default parallelism is tied to `params.threads` (from `config/user.config`) via `process.maxForks` and `executor.queueSize` in `config/pipelines/common.config`.
 - MultiQC reports are written under each step's `reports/` (phylo tree steps use `output/reports/`). Ensure the MultiQC process outputs files at the process root and publish to `reports/` to avoid duplicated `multiqc/multiqc_report.html` paths.
 - MultiQC method summaries should cite the primary tool papers; update the relevant `pipelines/multiqc/*.multiqc.yml` when pipeline steps change.
 - MultiQC custom sections should be configured under `custom_data` with explicit `plot_type` and any table inputs connected via `sp:` search patterns in the same config.
@@ -33,14 +33,14 @@ bin/targeted-analysis-hpv16-hpv18.run.sh
 Run individual steps (all samples):
 
 ```
-bin/001.0.centrifuge.run.sh
-bin/002.0.mapping_vs_pave.run.sh
+bin/preliminary-analysis-all-patients.steps/001.0.centrifuge.run.sh
+bin/targeted-analysis-hpv16-hpv18.steps/002.0.mapping_vs_pave.run.sh
 ```
 
 Run a single sample (for steps that support it):
 
 ```
-bin/sample/002.0.mapping_vs_pave.run_sample.sh
+bin/targeted-analysis-hpv16-hpv18.steps/single_sample/002.0.mapping_vs_pave.run_sample.sh
 ```
 
 ### preliminary-analysis-all-patients bucketing (Nextflow)
@@ -48,10 +48,11 @@ bin/sample/002.0.mapping_vs_pave.run_sample.sh
 - Run with Nextflow:
 ```
 nextflow run pipelines/centrifuge_bucketing_all.nf \
-  -c pipelines/config/common.config \
-  -c pipelines/config/centrifuge_bucketing.config \
-  -c config/general.config \
-  -c bin/config/preliminary-analysis-all-patients_001.centrifuge.config \
+  -c config/pipelines/common.config \
+  -c config/pipelines/centrifuge_bucketing.config \
+  -c config/user.config \
+  -c bin/config/preliminary-analysis-all-patients.config \
+  -profile preliminary_centrifuge \
   -resume
 ```
 
@@ -64,7 +65,7 @@ MultiQC report is written to `preliminary-analysis-all-patients/001.0.centrifuge
 scripts/build_centrifuge_db.sh --outdir refdata/centrifuge --index-name human_abv --threads 24
 ```
 
-- Point `config/general.config` to the resulting paths, for example:
+- Point `config/user.config` to the resulting paths, for example:
 - `index = "refdata/centrifuge/human_abv"`
   - `taxdump = "refdata/centrifuge/taxonomy-YYYY-MM-DD"`
 
@@ -73,10 +74,11 @@ scripts/build_centrifuge_db.sh --outdir refdata/centrifuge --index-name human_ab
 - Run with Nextflow:
 ```
 nextflow run pipelines/centrifuge_bucketing_all.nf \
-  -c pipelines/config/common.config \
-  -c pipelines/config/centrifuge_bucketing.config \
-  -c config/general.config \
-  -c bin/config/targeted-analysis-hpv16-hpv18_001.bucketing.config \
+  -c config/pipelines/common.config \
+  -c config/pipelines/centrifuge_bucketing.config \
+  -c config/user.config \
+  -c bin/config/targeted-analysis-hpv16-hpv18.config \
+  -profile targeted_bucketing \
   -resume
 ```
 
@@ -86,10 +88,11 @@ nextflow run pipelines/centrifuge_bucketing_all.nf \
 
 ```
 nextflow run pipelines/bowtie_vs_pave.nf \
-  -c pipelines/config/common.config \
-  -c pipelines/config/bowtie_vs_pave.config \
-  -c config/general.config \
-  -c bin/config/preliminary-analysis-all-patients_002.bowtie_vs_pave.config \
+  -c config/pipelines/common.config \
+  -c config/pipelines/bowtie_vs_pave.config \
+  -c config/user.config \
+  -c bin/config/preliminary-analysis-all-patients.config \
+  -profile preliminary_bowtie_vs_pave \
   -resume
 ```
 
@@ -97,10 +100,11 @@ nextflow run pipelines/bowtie_vs_pave.nf \
 
 ```
 nextflow run pipelines/bowtie_vs_pave.nf \
-  -c pipelines/config/common.config \
-  -c pipelines/config/bowtie_vs_pave.config \
-  -c config/general.config \
-  -c bin/config/targeted-analysis-hpv16-hpv18_002.mapping_vs_pave.config \
+  -c config/pipelines/common.config \
+  -c config/pipelines/bowtie_vs_pave.config \
+  -c config/user.config \
+  -c bin/config/targeted-analysis-hpv16-hpv18.config \
+  -profile targeted_mapping_vs_pave \
   -resume
 ```
 
@@ -108,10 +112,11 @@ nextflow run pipelines/bowtie_vs_pave.nf \
 
 ```
 nextflow run pipelines/cambodia_snps.nf \
-  -c pipelines/config/common.config \
-  -c pipelines/config/cambodia_snps.config \
-  -c config/general.config \
-  -c bin/config/targeted-analysis-hpv16-hpv18_005.snps_samples_vs_db.config \
+  -c config/pipelines/common.config \
+  -c config/pipelines/cambodia_snps.config \
+  -c config/user.config \
+  -c bin/config/targeted-analysis-hpv16-hpv18.config \
+  -profile targeted_snps_samples_vs_db \
   -resume
 ```
 
@@ -120,10 +125,11 @@ nextflow run pipelines/cambodia_snps.nf \
 - Run with Nextflow:
 ```
 nextflow run pipelines/virstrain.nf \
-  -c pipelines/config/common.config \
-  -c pipelines/config/virstrain.config \
-  -c config/general.config \
-  -c bin/config/preliminary-analysis-all-patients_003.virstrain.config \
+  -c config/pipelines/common.config \
+  -c config/pipelines/virstrain.config \
+  -c config/user.config \
+  -c bin/config/preliminary-analysis-all-patients.config \
+  -profile preliminary_virstrain \
   -resume
 ```
 
@@ -132,10 +138,11 @@ nextflow run pipelines/virstrain.nf \
 - Run with Nextflow:
 ```
 nextflow run pipelines/pave_gene_mapping.nf \
-  -c pipelines/config/common.config \
-  -c pipelines/config/pave_gene_mapping.config \
-  -c config/general.config \
-  -c bin/config/pave_e6.config \
+  -c config/pipelines/common.config \
+  -c config/pipelines/pave_gene_mapping.config \
+  -c config/user.config \
+  -c bin/config/preliminary-analysis-all-patients.config \
+  -profile preliminary_pave_e6 \
   -resume
 ```
 
@@ -144,10 +151,11 @@ nextflow run pipelines/pave_gene_mapping.nf \
 - Run with Nextflow:
 ```
 nextflow run pipelines/pave_gene_mapping.nf \
-  -c pipelines/config/common.config \
-  -c pipelines/config/pave_gene_mapping.config \
-  -c config/general.config \
-  -c bin/config/pave_e7.config \
+  -c config/pipelines/common.config \
+  -c config/pipelines/pave_gene_mapping.config \
+  -c config/user.config \
+  -c bin/config/preliminary-analysis-all-patients.config \
+  -profile preliminary_pave_e7 \
   -resume
 ```
 
@@ -156,11 +164,12 @@ nextflow run pipelines/pave_gene_mapping.nf \
 - Run with Nextflow:
 ```
 nextflow run pipelines/phylo_tree.nf \
-  -c pipelines/config/common.config \
-  -c pipelines/config/phylo_tree.config \
-  -c pipelines/config/phylo_tree.hpv16.config \
-  -c config/general.config \
-  -c bin/config/targeted-analysis-hpv16-hpv18_003.hpv16_tree.config \
+  -c config/pipelines/common.config \
+  -c config/pipelines/phylo_tree.config \
+  -c config/pipelines/phylo_tree.hpv16.config \
+  -c config/user.config \
+  -c bin/config/targeted-analysis-hpv16-hpv18.config \
+  -profile targeted_hpv16_tree \
   -resume
 ```
 
@@ -169,34 +178,35 @@ nextflow run pipelines/phylo_tree.nf \
 - Run with Nextflow:
 ```
 nextflow run pipelines/phylo_tree.nf \
-  -c pipelines/config/common.config \
-  -c pipelines/config/phylo_tree.config \
-  -c pipelines/config/phylo_tree.hpv18.config \
-  -c config/general.config \
-  -c bin/config/targeted-analysis-hpv16-hpv18_004.hpv18_tree.config \
+  -c config/pipelines/common.config \
+  -c config/pipelines/phylo_tree.config \
+  -c config/pipelines/phylo_tree.hpv18.config \
+  -c config/user.config \
+  -c bin/config/targeted-analysis-hpv16-hpv18.config \
+  -profile targeted_hpv18_tree \
   -resume
 ```
 
 ### Generate PAVE feature tables (derived)
 
 Coverage statistics use feature tables derived from the PAVE GFF3 files.
-Generate them under `refdata/derived/pave/features_tsv` with:
+Generate them under `intermediate_files/refdata/pave/features_tsv` with:
 
 ```
 scripts/gff3_to_features_tsv.run_all.sh \
-  refdata/raw/pave/gff3 \
-  refdata/derived/pave/features_tsv
+  refdata/pave/gff3 \
+  intermediate_files/refdata/pave/features_tsv
 ```
 
 ### Generate PAVE BED files (derived)
 
 E6/E7 SNP extraction relies on BED intervals derived from the same PAVE GFF3s.
-Generate them under `refdata/derived/pave/bed` with:
+Generate them under `intermediate_files/refdata/pave/bed` with:
 
 ```
 scripts/gff3_to_bed.run_all.sh \
-  refdata/raw/pave/gff3 \
-  refdata/derived/pave/bed
+  refdata/pave/gff3 \
+  intermediate_files/refdata/pave/bed
 ```
 
 ## Reruns and resume
@@ -208,9 +218,9 @@ scripts/gff3_to_bed.run_all.sh \
 
 - Check `.nextflow.log` for pipeline errors.
 - Inspect process work directories under `work/` and read `.command.sh`, `.command.err`, `.command.out`.
-- If tools are missing, confirm the Conda env file under `pipelines/conda_env/` is referenced by the matching `pipelines/config/*.config`.
+- If tools are missing, confirm the Conda env file under `pipelines/conda_env/` is referenced by the matching `config/pipelines/*.config`.
 - Nextflow requires Java 17+; if Conda provides an older Java, use the env in `pipelines/conda_env/nextflow_java.env.yml`:
-- When adding a new Nextflow parameter in a pipeline (e.g. `params.multiqc_config`), also add it to `config/general.config` (user) or the matching `pipelines/config/*.config` (technical) file to avoid “undefined parameter” warnings.
+- When adding a new Nextflow parameter in a pipeline (e.g. `params.multiqc_config`), also add it to `config/user.config` (user) or the matching `config/pipelines/*.config` (technical) file to avoid “undefined parameter” warnings.
 
 ```
 conda env create -f pipelines/conda_env/nextflow_java.env.yml

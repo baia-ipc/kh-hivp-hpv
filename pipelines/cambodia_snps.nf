@@ -9,16 +9,18 @@ def projectRoot = (workflow.projectDir instanceof java.nio.file.Path \
     .resolve('..').normalize().toString()
 
 params.scripts_dir = params.scripts_dir ?: "${projectRoot}/scripts"
-params.conda_env = params.conda_env ?: "${projectRoot}/pipelines/conda_env/bowtie_vs_pave.env.yml"
+params.conda_env = params.conda_env ?: "${projectRoot}/pipelines/conda_env/pipeline.env.yml"
 params.multiqc_config = params.multiqc_config ?: "${projectRoot}/pipelines/multiqc/cambodia_snps.multiqc.yml"
 params.target_country = params.target_country ?: "Cambodia"
-params.selected_hpv16_fasta = params.selected_hpv16_fasta ?: "${projectRoot}/refdata/derived/hpv16_tree/selected.fasta"
-params.selected_hpv16_tsv = params.selected_hpv16_tsv ?: "${projectRoot}/refdata/derived/hpv16_tree/selected"
-params.selected_hpv18_fasta = params.selected_hpv18_fasta ?: "${projectRoot}/refdata/derived/hpv18_tree/selected.fasta"
-params.selected_hpv18_tsv = params.selected_hpv18_tsv ?: "${projectRoot}/refdata/derived/hpv18_tree/HPV18-NCBIVirus.acc_country.selected.tsv"
-params.lineage_hpv16_fasta = params.lineage_hpv16_fasta ?: "${projectRoot}/refdata/derived/hpv16_tree/lineages_ref_renamed.fasta"
-params.lineage_hpv18_fasta = params.lineage_hpv18_fasta ?: "${projectRoot}/refdata/derived/hpv18_tree/lineages_ref_renamed.fasta"
-params.ref_fasta = params.ref_fasta ?: "${projectRoot}/refdata/raw/pave/pave_hsa.fas"
+params.selected_hpv16_fasta = params.selected_hpv16_fasta ?: "${projectRoot}/intermediate_files/refdata/hpv16_tree/selected.fasta"
+params.selected_hpv16_tsv = params.selected_hpv16_tsv ?: "${projectRoot}/intermediate_files/refdata/hpv16_tree/selected"
+params.selected_hpv18_fasta = params.selected_hpv18_fasta ?: "${projectRoot}/intermediate_files/refdata/hpv18_tree/selected.fasta"
+params.selected_hpv18_tsv = params.selected_hpv18_tsv ?: "${projectRoot}/intermediate_files/refdata/hpv18_tree/HPV18-NCBIVirus.acc_country.selected.tsv"
+params.lineage_hpv16_fasta = params.lineage_hpv16_fasta ?: "${projectRoot}/intermediate_files/refdata/hpv16_tree/lineages_ref_renamed.fasta"
+params.lineage_hpv18_fasta = params.lineage_hpv18_fasta ?: "${projectRoot}/intermediate_files/refdata/hpv18_tree/lineages_ref_renamed.fasta"
+params.ref_fasta = params.ref_fasta ?: "${projectRoot}/refdata/pave/pave_hsa.fas"
+params.pave_gff3_dir = params.pave_gff3_dir ?: "${projectRoot}/refdata/pave/gff3"
+params.pave_bed_dir = params.pave_bed_dir ?: "${projectRoot}/intermediate_files/refdata/pave/bed"
 params.ref_hpv16_name = params.ref_hpv16_name ?: "HPV16REF|lcl|Human"
 params.ref_hpv18_name = params.ref_hpv18_name ?: "HPV18REF|lcl|Human"
 params.samples_tsv = params.samples_tsv ?: "${projectRoot}/metadata/samples-input2.tsv"
@@ -27,10 +29,11 @@ if (!params.containsKey('outdir')) params.outdir = null
 if (!params.containsKey('reports_dir')) params.reports_dir = null
 if (!params.containsKey('sample_variants')) params.sample_variants = null
 if (!params.containsKey('sample_variant_effects')) params.sample_variant_effects = null
+if (!params.containsKey('pave_gff3_dir')) params.pave_gff3_dir = null
 if (!params.containsKey('pave_bed_dir')) params.pave_bed_dir = null
 if (!params.containsKey('samples_tsv')) params.samples_tsv = null
 
-[ 'outdir', 'reports_dir', 'sample_variants', 'pave_bed_dir', 'scripts_dir',
+[ 'outdir', 'reports_dir', 'sample_variants', 'pave_gff3_dir', 'pave_bed_dir', 'scripts_dir',
   'sample_variant_effects', 'samples_tsv', 'selected_hpv16_fasta', 'selected_hpv16_tsv',
   'selected_hpv18_fasta', 'selected_hpv18_tsv', 'lineage_hpv16_fasta', 'lineage_hpv18_fasta',
   'ref_fasta', 'ref_hpv16_name', 'ref_hpv18_name'
@@ -58,7 +61,15 @@ checkPath(params.sample_variants, 'Sample E6/E7 variants')
 checkPath(params.sample_variant_effects, 'Sample E6/E7 variant effects')
 checkPath(params.samples_tsv, 'Samples metadata TSV')
 checkPath(params.multiqc_config, 'MultiQC config')
-checkPath(params.pave_bed_dir, 'PAVE BED directory')
+checkPath(params.pave_gff3_dir, 'PAVE GFF3 directory')
+
+def bedDir = new File(params.pave_bed_dir)
+if (bedDir.exists() && !bedDir.isDirectory()) {
+    error "BED directory path is not a directory: ${params.pave_bed_dir}"
+}
+def bedReady = (bedDir.isDirectory() && bedDir.listFiles()?.any { it.name.endsWith('.bed') }) \
+    ? Channel.value(true) \
+    : null
 
 process EXTRACT_CAMBODIA {
     tag "extract"
@@ -92,6 +103,23 @@ process EXTRACT_CAMBODIA {
     """
 }
 
+process GENERATE_BED {
+    tag "bed"
+    publishDir "${params.pave_bed_dir}", mode: 'copy'
+
+    input:
+    val(dummy)
+
+    output:
+    path "bed_files", emit: beds
+
+    script:
+    """
+    mkdir -p bed_files
+    "${params.scripts_dir}/gff3_to_bed.run_all.sh" "${params.pave_gff3_dir}" bed_files
+    """
+}
+
 process LINEAGE_SNPS {
     tag "lineage_snps"
     publishDir "${params.reports_dir}", mode: 'copy'
@@ -100,6 +128,7 @@ process LINEAGE_SNPS {
     input:
     path(lineage_hpv16, stageAs: 'lineages_hpv16.fasta')
     path(lineage_hpv18, stageAs: 'lineages_hpv18.fasta')
+    val(bed_ready)
 
     output:
     path('lineage_snps.tsv')
@@ -129,6 +158,7 @@ process CAMBODIA_SNPS {
 
     input:
     tuple path(cambodia_hpv16), path(cambodia_hpv18)
+    val(bed_ready)
 
     output:
     path('cambodia_snps.tsv')
@@ -453,9 +483,13 @@ workflow {
     def sample_list = file(params.samples_tsv)
     def multiqc_config = file(params.multiqc_config)
 
+    if (!bedReady) {
+        bedReady = GENERATE_BED(Channel.value(true)).beds.map { true }
+    }
+
     def cambodia_fastas = EXTRACT_CAMBODIA(hpv16_fasta, hpv16_tsv, hpv18_fasta, hpv18_tsv)
-    def lineage_snps = LINEAGE_SNPS(lineage_hpv16, lineage_hpv18)
-    def cambodia_snps = CAMBODIA_SNPS(cambodia_fastas)
+    def lineage_snps = LINEAGE_SNPS(lineage_hpv16, lineage_hpv18, bedReady)
+    def cambodia_snps = CAMBODIA_SNPS(cambodia_fastas, bedReady)
     def cambodia_lineages = COMPARE_CAMBODIA_LINEAGES(cambodia_snps, lineage_snps)
     def cambodia_samples = COMPARE_CAMBODIA_SAMPLES(cambodia_snps, sample_variants)
     def samples_vs_cambodia = COMPARE_SAMPLES_CAMBODIA(cambodia_snps, sample_variants)
