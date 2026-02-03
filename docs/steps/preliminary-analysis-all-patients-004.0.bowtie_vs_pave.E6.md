@@ -11,20 +11,20 @@ aggregated depth tables.
 This step is implemented as a Nextflow pipeline:
 
 - Pipeline: `pipelines/pave_gene_mapping.nf`
-- User config: `config/general.config`
-- Step path config: `bin/config/pave_e6.config` (internal defaults)
-- Technical config: `pipelines/config/common.config` + `pipelines/config/pave_gene_mapping.config`
-- Bucket selection: `params.bucket_tid` in `pipelines/config/pave_gene_mapping.config`
+- User config: `config/user.config`
+- Step path config: `bin/config/preliminary-analysis-all-patients.config` (profile `preliminary_pave_e6`)
+- Technical config: `config/pipelines/common.config` + `config/pipelines/pave_gene_mapping.config`
+- Bucket selection: `params.bucket_tid` in `config/pipelines/pave_gene_mapping.config`
 
 Wrappers:
 
-- `bin/004.0.bowtie_vs_pave.E6.run.sh` (all samples)
-- `bin/sample/004.0.bowtie_vs_pave.E6.run_sample.sh` (single sample pair)
+- `bin/preliminary-analysis-all-patients.steps/004.0.bowtie_vs_pave.E6.run.sh` (all samples)
+- `bin/preliminary-analysis-all-patients.steps/single_sample/004.0.bowtie_vs_pave.E6.run_sample.sh` (single sample pair)
 
 ## Inputs
 
 - Reads directory: output of step 001 (`preliminary-analysis-all-patients/001.0.centrifuge/output/`)
-- PAVE reference and gene coordinates: configured in `bin/config/pave_e6.config`
+- PAVE reference and gene coordinates: configured in `bin/config/preliminary-analysis-all-patients.config` (profile `preliminary_pave_e6`)
 
 ## Outputs
 

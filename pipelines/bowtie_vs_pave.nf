@@ -19,8 +19,8 @@ def projectRoot = (workflow.projectDir instanceof java.nio.file.Path \
 
 params.scripts_dir = params.scripts_dir ?: "${projectRoot}/scripts"
 params.multiqc_config = params.multiqc_config ?: "${projectRoot}/pipelines/multiqc/bowtie_vs_pave.multiqc.yml"
-params.lineage_hpv16_fasta = params.lineage_hpv16_fasta ?: "${projectRoot}/refdata/derived/hpv16_tree/lineages_ref_renamed.fasta"
-params.lineage_hpv18_fasta = params.lineage_hpv18_fasta ?: "${projectRoot}/refdata/derived/hpv18_tree/lineages_ref_renamed.fasta"
+params.lineage_hpv16_fasta = params.lineage_hpv16_fasta ?: "${projectRoot}/intermediate_files/refdata/hpv16_tree/lineages_ref_renamed.fasta"
+params.lineage_hpv18_fasta = params.lineage_hpv18_fasta ?: "${projectRoot}/intermediate_files/refdata/hpv18_tree/lineages_ref_renamed.fasta"
 params.lineage_ref_hpv16_name = params.lineage_ref_hpv16_name ?: "HPV16REF|lcl|Human"
 params.lineage_ref_hpv18_name = params.lineage_ref_hpv18_name ?: "HPV18REF|lcl|Human"
 // Avoid "Access to undefined parameter" warnings; these are optional filters/inputs.
@@ -71,13 +71,20 @@ def checkPath(String path, String label, boolean mustBeDir = false) {
 
 checkPath(params.pave_ref_fasta as String, 'PAVE reference fasta')
 checkPath(params.pave_gff3_dir as String, 'PAVE GFF3 directory', true)
-checkPath(params.pave_bed_dir as String, 'BED directory', true)
 checkPath(params.scripts_dir as String, 'Scripts directory', true)
 checkPath(params.lineage_hpv16_fasta as String, 'HPV16 lineages reference FASTA')
 checkPath(params.lineage_hpv18_fasta as String, 'HPV18 lineages reference FASTA')
 
 def indexMarker = new File("${params.index_dir}/pave_hsa.1.bt2")
 def indexReady = indexMarker.exists() ? Channel.value(true) : null
+
+def bedDir = new File(params.pave_bed_dir as String)
+if (bedDir.exists() && !bedDir.isDirectory()) {
+    error "BED directory path is not a directory: ${params.pave_bed_dir}"
+}
+def bedReady = (bedDir.isDirectory() && bedDir.listFiles()?.any { it.name.endsWith('.bed') }) \
+    ? Channel.value(true) \
+    : null
 
 def featuresDir = new File(params.features_tsv_dir as String)
 if (featuresDir.exists() && !featuresDir.isDirectory()) {
@@ -101,6 +108,23 @@ process GENERATE_FEATURES_TSV {
     """
     mkdir -p features_tsv
     "${params.scripts_dir}/gff3_to_features_tsv.run_all.sh" "${params.pave_gff3_dir}" features_tsv
+    """
+}
+
+process GENERATE_BED {
+    tag "bed"
+    publishDir "${params.pave_bed_dir}", mode: 'copy'
+
+    input:
+    val(dummy)
+
+    output:
+    path "bed_files", emit: beds
+
+    script:
+    """
+    mkdir -p bed_files
+    "${params.scripts_dir}/gff3_to_bed.run_all.sh" "${params.pave_gff3_dir}" bed_files
     """
 }
 
@@ -193,7 +217,7 @@ process AGGREGATE_VARIANTS {
     publishDir "${params.reports_dir}", mode: 'copy'
 
     input:
-    val(done)
+    tuple val(done), val(bed_ready)
 
     output:
     path "E6_E7_variants.tsv"
@@ -209,7 +233,7 @@ process AGGREGATE_VARIANT_EFFECTS {
     publishDir "${params.reports_dir}", mode: 'copy'
 
     input:
-    val(done)
+    tuple val(done), val(bed_ready)
 
     output:
     path "E6_E7_variant_effects.tsv"
@@ -225,7 +249,7 @@ process LINEAGE_SNPS {
     publishDir "${params.reports_dir}", mode: 'copy'
 
     input:
-    val(done)
+    tuple val(done), val(bed_ready)
 
     output:
     path "lineage_snps.tsv"
@@ -502,6 +526,9 @@ workflow {
     if (!featuresReady) {
         featuresReady = GENERATE_FEATURES_TSV(Channel.value(true)).features.map { true }
     }
+    if (!bedReady) {
+        bedReady = GENERATE_BED(Channel.value(true)).beds.map { true }
+    }
 
     def samples
     if (params.read1 && params.read2) {
@@ -545,12 +572,13 @@ workflow {
     def samplesWithDeps = samples.combine(indexReady).combine(featuresReady)
     def mapped = MAP_SAMPLE(samplesWithDeps)
     def mappedDone = mapped.collect()
+    def mappedWithBed = mappedDone.combine(bedReady)
 
     def strains = AGGREGATE_STRAINS(mappedDone)
     def covstats = AGGREGATE_COVSTATS(mappedDone)
-    def variants = AGGREGATE_VARIANTS(mappedDone)
-    def variant_effects = AGGREGATE_VARIANT_EFFECTS(mappedDone)
-    def lineage_snps = LINEAGE_SNPS(mappedDone)
+    def variants = AGGREGATE_VARIANTS(mappedWithBed)
+    def variant_effects = AGGREGATE_VARIANT_EFFECTS(mappedWithBed)
+    def lineage_snps = LINEAGE_SNPS(mappedWithBed)
     def lineage_compare = COMPARE_LINEAGE_SNPS(variants, lineage_snps)
     def reports_done = strains.mix(covstats).mix(variants).mix(variant_effects).mix(lineage_snps).mix(lineage_compare).collect()
     def multiqc_config_file = file(params.multiqc_config)

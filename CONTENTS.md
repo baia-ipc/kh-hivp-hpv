@@ -14,26 +14,30 @@
     directories described below; step runners live in `bin/`
 
 - pipelines/ wrapper scripts and Nextflow workflows
-  - conda_env/ per-pipeline Conda environment definitions
-  - config/ technical Nextflow config shared by pipelines
+  - conda_env/ Conda environment definitions
   - multiqc/ MultiQC configuration files used by pipelines
 
 - scripts/ reusable Python scripts for single operations such as
            LCA computing, bucketing, FASTQ splitting, and strain summaries
 
 - bin/ step and analysis runner scripts (wrappers around Nextflow pipelines)
-  - config/ step path configs (internal defaults; not typically edited by users)
-  - sample/ single-sample wrappers for steps that support per-sample runs
+  - preliminary-analysis-all-patients.steps/ per-step wrappers (plus single_sample/)
+  - targeted-analysis-hpv16-hpv18.steps/ per-step wrappers (plus single_sample/)
+  - config/ step path config profiles (internal defaults; not typically edited by users)
 
 - input/ symlinks to external raw data locations (not stored in-repo)
 
 - metadata/ taxonomy bucket definitions and sample lists
 
 - config/ user-editable configuration files
+  - bin/ step path config profiles used by wrappers
+  - pipelines/ technical Nextflow config shared by pipelines
 
-- refdata/ reference data split into:
-  - raw/ external inputs (PAVE FASTA/GFF3, NCBI downloads)
-  - derived/ processed reference assets (feature tables, BED intervals, curated tree inputs)
+- refdata/ external reference inputs (PAVE FASTA/GFF3, NCBI downloads)
+
+- intermediate_files/ generated intermediate assets
+  - refdata/ processed reference assets (feature tables, BED intervals, curated tree inputs)
+  - indices/ bowtie/virstrain indices
 
 - docs/ technical documentation for the analysis steps (human-readable)
 

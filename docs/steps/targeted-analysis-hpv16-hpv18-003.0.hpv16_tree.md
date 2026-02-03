@@ -8,20 +8,20 @@ This step builds an HPV16 phylogenetic tree from prepared sequence inputs
 ## Implementation
 
 - Pipeline: `pipelines/phylo_tree.nf`
-- User config: `config/general.config`
-- Step path config: `bin/config/targeted-analysis-hpv16-hpv18_003.hpv16_tree.config` (internal defaults)
-- Technical config: `pipelines/config/common.config` + `pipelines/config/phylo_tree.config` + `pipelines/config/phylo_tree.hpv16.config`
-- Inputs directory: `refdata/derived/hpv16_tree` (wired via technical config)
+- User config: `config/user.config`
+- Step path config: `bin/config/targeted-analysis-hpv16-hpv18.config` (profile `targeted_hpv16_tree`)
+- Technical config: `config/pipelines/common.config` + `config/pipelines/phylo_tree.config` + `config/pipelines/phylo_tree.hpv16.config`
+- Inputs directory: `intermediate_files/refdata/hpv16_tree` (wired via technical config)
 - Outgroup list: `metadata/hpv16_tree_outgroups.txt`
 
 Wrappers:
 
-- `bin/003.0.hpv16_tree.run.sh`
+- `bin/targeted-analysis-hpv16-hpv18.steps/003.0.hpv16_tree.run.sh`
 
 ## Inputs
 
-Inputs are expected under `refdata/derived/hpv16_tree/` and are prepared from
-raw inputs under `refdata/raw/hpv16_tree/` using scripts documented in the
+Inputs are expected under `intermediate_files/refdata/hpv16_tree/` and are prepared from
+raw inputs under `refdata/hpv16_tree/` using scripts documented in the
 repository root `README.md`.
 
 ## Outputs

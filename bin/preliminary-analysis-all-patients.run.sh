@@ -17,8 +17,8 @@ for arg in "$@"; do
   esac
 done
 
-"$SCRIPTSDIR/001.0.centrifuge.run.sh" "${step1_args[@]}" "${common_args[@]}"
-"$SCRIPTSDIR/002.0.bowtie_vs_pave.run.sh" "${common_args[@]}"
-"$SCRIPTSDIR/003.0.virstrain.run.sh" "${common_args[@]}"
-"$SCRIPTSDIR/004.0.bowtie_vs_pave.E6.run.sh" "${common_args[@]}"
-"$SCRIPTSDIR/005.0.bowtie_vs_pave.E7.run.sh" "${common_args[@]}"
+"$SCRIPTSDIR/preliminary-analysis-all-patients.steps/001.0.centrifuge.run.sh" "${step1_args[@]}" "${common_args[@]}"
+"$SCRIPTSDIR/preliminary-analysis-all-patients.steps/002.0.bowtie_vs_pave.run.sh" "${common_args[@]}"
+"$SCRIPTSDIR/preliminary-analysis-all-patients.steps/003.0.virstrain.run.sh" "${common_args[@]}"
+"$SCRIPTSDIR/preliminary-analysis-all-patients.steps/004.0.bowtie_vs_pave.E6.run.sh" "${common_args[@]}"
+"$SCRIPTSDIR/preliminary-analysis-all-patients.steps/005.0.bowtie_vs_pave.E7.run.sh" "${common_args[@]}"

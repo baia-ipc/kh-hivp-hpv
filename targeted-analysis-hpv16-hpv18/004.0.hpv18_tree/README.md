@@ -24,7 +24,7 @@ Download sequence metadata in TSV format, use custom fields definition
 (3) prepare lineages reference fasta
   This is now shared with the SNP‑to‑lineage comparison in step 002.
   Follow the repository root README instructions and place
-  refdata/derived/hpv18_tree/lineages_ref_renamed.fasta before running this step.
+  intermediate_files/refdata/hpv18_tree/lineages_ref_renamed.fasta before running this step.
 
 (4) select and prepare NCBI Virus genomes
   # one per country, except SEA and EA where all are included
@@ -53,5 +53,5 @@ Download sequence metadata in TSV format, use custom fields definition
   # defaults: run ID inferred from metadata/samples-input2.tsv (fastq_dir) and samples from reports/strains.tsv
 
 (7) build the tree
-  run bin/004.0.hpv18_tree.run.sh (Nextflow pipeline)
+  run ../../bin/targeted-analysis-hpv16-hpv18.steps/004.0.hpv18_tree.run.sh (Nextflow pipeline)
   outputs go to output/

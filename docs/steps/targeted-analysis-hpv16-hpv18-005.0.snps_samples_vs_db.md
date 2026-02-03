@@ -10,24 +10,25 @@ observed in targeted-analysis-hpv16-hpv18 step 002.
 ## Implementation
 
 - Pipeline: `pipelines/cambodia_snps.nf`
-- User config: `config/general.config`
-- Step path config: `bin/config/targeted-analysis-hpv16-hpv18_005.snps_samples_vs_db.config` (internal defaults)
-- Technical config: `pipelines/config/common.config` + `pipelines/config/cambodia_snps.config`
+- User config: `config/user.config`
+- Step path config: `bin/config/targeted-analysis-hpv16-hpv18.config` (profile `targeted_snps_samples_vs_db`)
+- Technical config: `config/pipelines/common.config` + `config/pipelines/cambodia_snps.config`
 
 Wrappers:
 
-- `bin/005.0.snps_samples_vs_db.run.sh`
+- `bin/targeted-analysis-hpv16-hpv18.steps/005.0.snps_samples_vs_db.run.sh`
 
 ## Inputs
 
 - Selected genomes and country metadata:
-  - `refdata/derived/hpv16_tree/selected.fasta`
-  - `refdata/derived/hpv16_tree/selected`
-  - `refdata/derived/hpv18_tree/selected.fasta`
-  - `refdata/derived/hpv18_tree/HPV18-NCBIVirus.acc_country.selected.tsv`
+  - `intermediate_files/refdata/hpv16_tree/selected.fasta`
+  - `intermediate_files/refdata/hpv16_tree/selected`
+  - `intermediate_files/refdata/hpv18_tree/selected.fasta`
+  - `intermediate_files/refdata/hpv18_tree/HPV18-NCBIVirus.acc_country.selected.tsv`
 - Lineage references:
-  - `refdata/derived/hpv16_tree/lineages_ref_renamed.fasta`
-  - `refdata/derived/hpv18_tree/lineages_ref_renamed.fasta`
+  - `intermediate_files/refdata/hpv16_tree/lineages_ref_renamed.fasta`
+  - `intermediate_files/refdata/hpv18_tree/lineages_ref_renamed.fasta`
+- PAVE BED directory: `intermediate_files/refdata/pave/bed` (auto-generated from `refdata/pave/gff3` if missing)
 - Sample variants from step 002:
   - `targeted-analysis-hpv16-hpv18/002.0.mapping_vs_pave/reports/E6_E7_variants.tsv`
 
