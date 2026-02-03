@@ -155,6 +155,8 @@ nextflow run pipelines/database_snps.nf \
 
 Outputs land under `targeted_analysis/03.variant_analysis/output/database_snps` and `targeted_analysis/03.variant_analysis/reports/database_snps`.
 
+When running via `bin/targeted_analysis.steps/03.variant_analysis.run.sh`, database SNP report tables are consolidated into `targeted_analysis/03.variant_analysis/reports/` and a single combined MultiQC report is generated there.
+
 ### VirStrain reports (Nextflow)
 
 - Run with Nextflow:

@@ -213,3 +213,9 @@ Format:
   - Decision: place database SNP outputs under `targeted_analysis/03.variant_analysis/output/database_snps` and `targeted_analysis/03.variant_analysis/reports/database_snps`.
   - Rationale: keep all step 03 outputs visible under the step’s output/report structure.
   - Consequences: update configs and docs to the new paths.
+
+- 2026-02-03: Consolidate targeted step 03 MultiQC report
+  - Context: database comparison produced a second MultiQC report under a subdirectory.
+  - Decision: keep a single MultiQC report in `targeted_analysis/03.variant_analysis/reports/` and consolidate database tables into that reports directory.
+  - Rationale: reduce confusion by keeping one report per step.
+  - Consequences: add a combined MultiQC config and consolidate database report tables after the database pipeline runs.
