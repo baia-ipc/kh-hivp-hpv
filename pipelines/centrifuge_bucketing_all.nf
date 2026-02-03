@@ -121,11 +121,11 @@ process AGGREGATE_COUNTS {
 
     script:
     """
-    "${params.scripts_dir}/centrifuge_bucketing/aggregate_bucket_counts.py" --skip "${params.aggregate_skip_wo_human}" \\
+    "${params.scripts_dir}/taxonomy_assignment/aggregate_bucket_counts.py" --skip "${params.aggregate_skip_wo_human}" \\
       --no-abs --rel-fname relative_counts.wo_human.tsv \\
       "${params.buckets}" "${params.outdir}" "${params.reports_dir}"
 
-    "${params.scripts_dir}/centrifuge_bucketing/aggregate_bucket_counts.py" --skip "${params.aggregate_skip}" \\
+    "${params.scripts_dir}/taxonomy_assignment/aggregate_bucket_counts.py" --skip "${params.aggregate_skip}" \\
       "${params.buckets}" "${params.outdir}" "${params.reports_dir}"
 
     touch aggregate.done

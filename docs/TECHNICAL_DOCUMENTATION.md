@@ -15,16 +15,16 @@ To run the analyses, use the step wrapper scripts under `bin/`
 
 ## prelim_analysis
 
-- Step 001 (Centrifuge bucketing): `docs/steps/prelim_analysis-001.0.centrifuge.md`
-- Step 002 (Bowtie vs PAVE): `docs/steps/prelim_analysis-002.0.bowtie_vs_pave.md`
-- Step 003 (PAVE E6 mapping): `docs/steps/prelim_analysis-003.0.bowtie_vs_pave.E6.md`
-- Step 004 (PAVE E7 mapping): `docs/steps/prelim_analysis-004.0.bowtie_vs_pave.E7.md`
-- Step 005 (VirStrain, optional): `docs/steps/prelim_analysis-005.0.virstrain.md`
+- Step 01 (Centrifuge bucketing): `docs/steps/prelim_analysis-01.centrifuge.md`
+- Step 02 (Bowtie vs PAVE): `docs/steps/prelim_analysis-02.bowtie_vs_pave.md`
+- Step 03 (PAVE E6 mapping): `docs/steps/prelim_analysis-03.bowtie_vs_pave.E6.md`
+- Step 04 (PAVE E7 mapping): `docs/steps/prelim_analysis-04.bowtie_vs_pave.E7.md`
+- Step 05 (VirStrain, optional): `docs/steps/prelim_analysis-05.virstrain.md`
 
 ## targeted_analysis
 
-- Step 001 (Centrifuge bucketing): `docs/steps/targeted_analysis-001.0.bucketing.md`
-- Step 002 (Bowtie vs PAVE): `docs/steps/targeted_analysis-002.0.mapping_vs_pave.md`
-- Step 003 (HPV16 tree): `docs/steps/targeted_analysis-003.0.hpv16_tree.md`
-- Step 004 (HPV18 tree): `docs/steps/targeted_analysis-004.0.hpv18_tree.md`
-- Step 005 (SNPs samples vs database): `docs/steps/targeted_analysis-005.0.snps_samples_vs_db.md`
+- Step 01 (Centrifuge bucketing): `docs/steps/targeted_analysis-01.bucketing.md`
+- Step 02 (Bowtie vs PAVE): `docs/steps/targeted_analysis-02.mapping_vs_pave.md`
+- Step 03 (HPV16 tree): `docs/steps/targeted_analysis-03.hpv16_tree.md`
+- Step 04 (HPV18 tree): `docs/steps/targeted_analysis-04.hpv18_tree.md`
+- Step 05 (SNPs samples vs database): `docs/steps/targeted_analysis-05.snps_samples_vs_db.md`

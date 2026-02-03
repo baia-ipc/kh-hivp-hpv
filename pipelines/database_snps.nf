@@ -116,7 +116,7 @@ process GENERATE_BED {
     script:
     """
     mkdir -p bed_files
-    "${params.scripts_dir}/pave_reference/gff3_to_bed.run_all.sh" "${params.pave_gff3_dir}" bed_files
+    "${params.scripts_dir}/pave/gff3_to_bed.run_all.sh" "${params.pave_gff3_dir}" bed_files
     """
 }
 
@@ -135,14 +135,14 @@ process LINEAGE_SNPS {
 
     script:
     """
-    "${params.scripts_dir}/lineage_snps/lineage_snps_from_fasta.py" \\
+    "${params.scripts_dir}/variants/lineage_snps_from_fasta.py" \\
       --lineages "${lineage_hpv16}" \\
       --ref "${params.ref_fasta}" \\
       --ref-name "${params.ref_hpv16_name}" \\
       --bed-dir "${params.pave_bed_dir}" \\
       --header > lineage_snps.tsv
 
-    "${params.scripts_dir}/lineage_snps/lineage_snps_from_fasta.py" \\
+    "${params.scripts_dir}/variants/lineage_snps_from_fasta.py" \\
       --lineages "${lineage_hpv18}" \\
       --ref "${params.ref_fasta}" \\
       --ref-name "${params.ref_hpv18_name}" \\
@@ -165,14 +165,14 @@ process DATABASE_SNPS {
 
     script:
     """
-    "${params.scripts_dir}/lineage_snps/lineage_snps_from_fasta.py" \\
+    "${params.scripts_dir}/variants/lineage_snps_from_fasta.py" \\
       --lineages "${database_hpv16}" \\
       --ref "${params.ref_fasta}" \\
       --ref-name "${params.ref_hpv16_name}" \\
       --bed-dir "${params.pave_bed_dir}" \\
       --header > database_snps.tsv
 
-    "${params.scripts_dir}/lineage_snps/lineage_snps_from_fasta.py" \\
+    "${params.scripts_dir}/variants/lineage_snps_from_fasta.py" \\
       --lineages "${database_hpv18}" \\
       --ref "${params.ref_fasta}" \\
       --ref-name "${params.ref_hpv18_name}" \\
@@ -195,7 +195,7 @@ process COMPARE_DATABASE_LINEAGES {
 
     script:
     """
-    "${params.scripts_dir}/lineage_snps/compare_query_snps_to_lineages.py" \\
+    "${params.scripts_dir}/variants/compare_query_snps_to_lineages.py" \\
       --query-snps "${database_snps}" \\
       --lineage-snps "${lineage_snps}" \\
       --output database_lineage_comparison.tsv
@@ -216,7 +216,7 @@ process COMPARE_DATABASE_SAMPLES {
 
     script:
     """
-    "${params.scripts_dir}/lineage_snps/compare_query_snps_to_samples.py" \\
+    "${params.scripts_dir}/variants/compare_query_snps_to_samples.py" \\
       --query-snps "${database_snps}" \\
       --variants "${sample_variants}" \\
       --output database_sample_comparison.tsv
@@ -237,7 +237,7 @@ process COMPARE_SAMPLES_DATABASE {
 
     script:
     """
-    "${params.scripts_dir}/lineage_snps/compare_samples_to_query_snps.py" \\
+    "${params.scripts_dir}/variants/compare_samples_to_query_snps.py" \\
       --variants "${sample_variants}" \\
       --query-snps "${database_snps}" \\
       --allow-strains "HPV16REF,HPV18REF" \\
@@ -309,7 +309,7 @@ process HPV16_E6E7_SUMMARY {
 
     script:
     """
-    "${params.scripts_dir}/lineage_snps/summarize_hpv16_e6e7_variants_database.py" \\
+    "${params.scripts_dir}/variants/summarize_hpv16_e6e7_variants_database.py" \\
       --sample-effects "${sample_variant_effects}" \\
       --sample-list "${sample_list}" \\
       --database-snps "${database_snps}" \\
@@ -493,8 +493,8 @@ workflow {
     def database_lineages = COMPARE_DATABASE_LINEAGES(database_snps, lineage_snps)
     def database_samples = COMPARE_DATABASE_SAMPLES(database_snps, sample_variants)
     def samples_vs_database = COMPARE_SAMPLES_DATABASE(database_snps, sample_variants)
-    def compare_database_sets = file("${params.scripts_dir}/lineage_snps/compare_sample_snp_sets_to_database.py")
-    def compare_lineage_sets = file("${params.scripts_dir}/lineage_snps/compare_sample_snp_sets_to_lineages.py")
+    def compare_database_sets = file("${params.scripts_dir}/variants/compare_sample_snp_sets_to_database.py")
+    def compare_lineage_sets = file("${params.scripts_dir}/variants/compare_sample_snp_sets_to_lineages.py")
     def samples_vs_database_sets = COMPARE_SNP_SETS_DATABASE(database_snps, sample_variants, compare_database_sets)
     def samples_vs_lineage_sets = COMPARE_SNP_SETS_LINEAGES(lineage_snps, sample_variants, compare_lineage_sets)
     def database_hpv16 = database_fastas.map { it[0] }

@@ -1,10 +1,10 @@
-title: "Centrifuge Bucketing - Step 001"
+title: "Centrifuge Bucketing - Step 01"
 
 custom_data:
   methods_summary:
     plot_type: "html"
     section_name: "Methods summary"
-    description: "Summary of processing steps for step 001"
+    description: "Summary of processing steps for step 01"
     data: |
       <p>
         Paired-end reads were taxonomically classified against a human + RefSeq archaea/bacteria/viral index using Centrifuge,

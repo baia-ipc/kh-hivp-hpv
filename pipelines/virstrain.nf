@@ -109,7 +109,7 @@ process AGGREGATE_RESULTS {
 
     script:
     """
-    "${params.scripts_dir}/virstrain/aggregate_results.py" "${params.outdir}" > "strains.tsv"
+    "${params.scripts_dir}/virstrain/aggregate_virstrain_results.py" "${params.outdir}" > "strains.tsv"
     """
 }
 

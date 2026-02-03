@@ -58,8 +58,8 @@ to your local reference data paths and to set resource limits:
 - Base pipeline config:
   - `config/user.config`: all user-editable pipeline parameters (Centrifuge index/taxdump, PAVE reference names, target-country defaults, tree defaults, and shared threads)
 - Step‑specific path configs (inputs/outputs) are stored under `bin/config/` as profile bundles and are not typically edited by users:
-  - `bin/config/prelim_analysis.config` (profiles for steps 001‑005)
-  - `bin/config/targeted_analysis.config` (profiles for steps 001‑005)
+  - `bin/config/prelim_analysis.config` (profiles for steps 01‑05)
+  - `bin/config/targeted_analysis.config` (profiles for steps 01‑05)
 - Tree defaults are configured via `config/user.config`.
 
 Technical Nextflow settings (executor/conda wiring and derived refdata paths) live under `config/pipelines/`.
@@ -85,7 +85,7 @@ Coverage statistics use tabular feature files (TSV) derived from the PAVE GFF3s.
 Generate them with:
 
 ```
-scripts/pave_reference/gff3_to_features_tsv.run_all.sh \
+scripts/pave/gff3_to_features_tsv.run_all.sh \
   refdata/pave/gff3 \
   intermediate_files/refdata/pave/features_tsv
 ```
@@ -99,7 +99,7 @@ E6/E7 SNP extraction uses BED intervals derived from the same GFF3 inputs.
 Generate them with:
 
 ```
-scripts/pave_reference/gff3_to_bed.run_all.sh \
+scripts/pave/gff3_to_bed.run_all.sh \
   refdata/pave/gff3 \
   intermediate_files/refdata/pave/bed
 ```
@@ -120,7 +120,7 @@ Derived tree inputs live under:
 - `intermediate_files/refdata/hpv18_tree`
 
 The preparation steps below include the shared lineage reference FASTA files
-used by the step 002 SNP‑to‑lineage comparison.
+used by the step 02 SNP‑to‑lineage comparison.
 
 Tools needed for the preparation commands below:
 - `seqkit`
@@ -187,7 +187,7 @@ scripts/phylo_tree/hpv16_select_ncbi_genomes.sh \
   intermediate_files/refdata/hpv16_tree/selected_renamed.fasta
 ```
 
-4) Build `samples.fasta` from mapping results (step 002). Set your sample IDs explicitly:
+4) Build `samples.fasta` from mapping results (step 02). Set your sample IDs explicitly:
 
 ```
 OUT_DIR=intermediate_files/refdata/hpv16_tree \
@@ -201,7 +201,7 @@ The mapping run ID is inferred from `metadata/samples-input2.tsv` (using the
 5) Run the tree pipeline:
 
 ```
-bin/targeted_analysis.steps/003.0.hpv16_tree.run.sh
+bin/targeted_analysis.steps/03.hpv16_tree.run.sh
 ```
 
 #### HPV18 tree
@@ -236,8 +236,8 @@ scripts/phylo_tree/hpv18_select_ncbi_genomes.sh \
   intermediate_files/refdata/hpv18_tree/selected_renamed.fasta
 ```
 
-4) Build `samples.fasta` from mapping results (step 002). By default the script
-derives samples from `targeted_analysis/002.0.mapping_vs_pave/reports/strains.tsv`
+4) Build `samples.fasta` from mapping results (step 02). By default the script
+derives samples from `targeted_analysis/02.mapping_vs_pave/reports/strains.tsv`
 by selecting rows with top strain `HPV18` for the run ID:
 
 ```
@@ -251,7 +251,7 @@ The mapping run ID is inferred from `metadata/samples-input2.tsv` (using the
 5) Run the tree pipeline:
 
 ```
-bin/targeted_analysis.steps/004.0.hpv18_tree.run.sh
+bin/targeted_analysis.steps/04.hpv18_tree.run.sh
 ```
 
 ### 6.4 Centrifuge database (taxonomic index)
@@ -260,7 +260,7 @@ Build or provide a Centrifuge database and taxonomy dump. A helper script is
 included:
 
 ```
-scripts/centrifuge_bucketing/build_centrifuge_db.sh \
+scripts/taxonomy_assignment/build_centrifuge_db.sh \
   --outdir refdata/centrifuge \
   --index-name human_abv \
   --threads 24
@@ -290,18 +290,18 @@ bin/prelim_analysis.run.sh
 Or run each step individually:
 
 ```
-bin/prelim_analysis.steps/001.0.centrifuge.run.sh
-bin/prelim_analysis.steps/002.0.bowtie_vs_pave.run.sh
-bin/prelim_analysis.steps/003.0.bowtie_vs_pave.E6.run.sh
-bin/prelim_analysis.steps/004.0.bowtie_vs_pave.E7.run.sh
-bin/prelim_analysis.steps/005.0.virstrain.run.sh --run-virstrain
+bin/prelim_analysis.steps/01.centrifuge.run.sh
+bin/prelim_analysis.steps/02.bowtie_vs_pave.run.sh
+bin/prelim_analysis.steps/03.bowtie_vs_pave.E6.run.sh
+bin/prelim_analysis.steps/04.bowtie_vs_pave.E7.run.sh
+bin/prelim_analysis.steps/05.virstrain.run.sh --run-virstrain
 ```
 
-Step 001 report (MultiQC):
+Step 01 report (MultiQC):
 
-`prelim_analysis/001.0.centrifuge/reports/multiqc_report.html`
+`prelim_analysis/01.centrifuge/reports/multiqc_report.html`
 
-VirStrain (step 005) is optional and does not run unless you pass
+VirStrain (step 05) is optional and does not run unless you pass
 `--run-virstrain` to the wrapper:
 
 ```
@@ -319,11 +319,11 @@ bin/targeted_analysis.run.sh
 Or run each step individually:
 
 ```
-bin/targeted_analysis.steps/001.0.bucketing.run.sh
-bin/targeted_analysis.steps/002.0.mapping_vs_pave.run.sh
-bin/targeted_analysis.steps/003.0.hpv16_tree.run.sh
-bin/targeted_analysis.steps/004.0.hpv18_tree.run.sh
-bin/targeted_analysis.steps/005.0.snps_samples_vs_db.run.sh
+bin/targeted_analysis.steps/01.bucketing.run.sh
+bin/targeted_analysis.steps/02.mapping_vs_pave.run.sh
+bin/targeted_analysis.steps/03.hpv16_tree.run.sh
+bin/targeted_analysis.steps/04.hpv18_tree.run.sh
+bin/targeted_analysis.steps/05.snps_samples_vs_db.run.sh
 ```
 
 ### 7.3 Run a single sample (optional)
@@ -334,9 +334,9 @@ running one sample pair. The third argument is an output prefix used to infer
 in `config/`.
 
 ```
-bin/prelim_analysis.steps/single_sample/002.0.bowtie_vs_pave.run_sample.sh \
+bin/prelim_analysis.steps/single_sample/02.bowtie_vs_pave.run_sample.sh \
   /path/to/SAMPLE_R1.fastq.gz /path/to/SAMPLE_R2.fastq.gz \
-  prelim_analysis/002.0.bowtie_vs_pave/output/RUN_ID/SAMPLE
+  prelim_analysis/02.bowtie_vs_pave/output/RUN_ID/SAMPLE
 ```
 
 ## 8) Troubleshooting
@@ -357,5 +357,5 @@ If Nextflow behaves differently when Conda is activated in your shell, try
 Re-run the same command with `-resume`:
 
 ```
-bin/prelim_analysis.steps/002.0.bowtie_vs_pave.run.sh -resume
+bin/prelim_analysis.steps/02.bowtie_vs_pave.run.sh -resume
 ```
