@@ -11,7 +11,7 @@ To run the analyses, use the step wrapper scripts under `bin/`
 
 ## Script reference
 
-- Repository script reference: `docs/SCRIPTS_TECHNICAL.md`
+- Repository script reference: `docs/SCRIPTS.md`
 
 ## preliminary-analysis-all-patients
 
