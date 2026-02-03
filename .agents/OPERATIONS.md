@@ -14,7 +14,8 @@ Rules:
 - When changing directory layout, update `CONTENTS.md` and `.agents/INVENTORY.md`.
 - Avoid user-specific absolute paths in scripts; require tools via PATH or
   configurable env vars (e.g., `CONDA_EXE`).
-- Default parallelism is tied to `params.threads` (from `config/user.config`) via `process.maxForks` and `executor.queueSize` in `config/pipelines/common.config`.
+- Default parallelism is tied to `params.threads` (from `config/user.config`) via wrapper-provided `-process.maxForks` and `-executor.queueSize`.
+- Step wrappers read `params.threads` from `config/user.config` and pass it as `-process.maxForks`, `-executor.queueSize`, and `-process.cpus` to Nextflow.
 - MultiQC reports are written under each step's `reports/` (phylo tree steps use `output/reports/`). Ensure the MultiQC process outputs files at the process root and publish to `reports/` to avoid duplicated `multiqc/multiqc_report.html` paths.
 - MultiQC method summaries should cite the primary tool papers; update the relevant `pipelines/multiqc/*.multiqc.yml` when pipeline steps change.
 - MultiQC custom sections should be configured under `custom_data` with explicit `plot_type` and any table inputs connected via `sp:` search patterns in the same config.
@@ -241,6 +242,13 @@ CONDA_OVERRIDE_CUDA=0 \
 JAVA_CMD=/usr/lib/jvm/java-21-openjdk-amd64/bin/java \
 JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64 \
 nextflow run <pipeline> -c <config> -resume
+```
+
+If the node has no network access, also set:
+
+```
+NXF_HOME=/home/$USER/.nextflow \
+NXF_OFFLINE=true \
 ```
 
 ## Reference snapshots

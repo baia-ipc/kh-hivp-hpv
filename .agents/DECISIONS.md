@@ -16,6 +16,12 @@ Format:
   - Rationale: clarify that the data are derived and reduce duplicated indices between analyses.
   - Consequences: update configs/docs to use `derived_data/` paths and move HPV16/HPV18 reference FASTAs to `refdata/`.
 
+- 2026-02-03: Derive Nextflow concurrency from wrapper args
+  - Context: Nextflow config validation rejects `params.threads` references inside `config/pipelines/*.config` on this system.
+  - Decision: remove `params.threads` from pipeline configs and have wrapper scripts pass `-process.maxForks`, `-executor.queueSize`, and `-process.cpus` based on `config/user.config`.
+  - Rationale: keep user-level control in `params.threads` without invalid config attributes.
+  - Consequences: wrappers must read `threads` from `config/user.config` before running Nextflow.
+
 - 2026-02-03: Move shared indices under intermediate_files
   - Context: bowtie/virstrain indices were stored inside step directories.
   - Decision: relocate step indices to `intermediate_files/indices/` with per-analysis subdirectories.
