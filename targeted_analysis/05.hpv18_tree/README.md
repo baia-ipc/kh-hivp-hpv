@@ -53,5 +53,5 @@ Download sequence metadata in TSV format, use custom fields definition
   # defaults: run ID inferred from metadata/samples-input2.tsv (fastq_dir) and samples from reports/strains.tsv
 
 (7) build the tree
-  run ../../bin/targeted_analysis.steps/04.hpv18_tree.run.sh (Nextflow pipeline)
+  run ../../bin/targeted_analysis.steps/05.hpv18_tree.run.sh (Nextflow pipeline)
   outputs go to output/

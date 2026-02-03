@@ -27,31 +27,41 @@ Rules:
 - Scope: read classification, bucketing, and summary tables.
 - Entry points: `pipelines/centrifuge_bucketing.nf`, `pipelines/centrifuge_bucketing_all.nf`.
 - Where:
-  - prelim_analysis: `prelim_analysis/01.centrifuge`
+  - prelim_analysis: `prelim_analysis/01.bucketing`
   - targeted_analysis: `targeted_analysis/01.bucketing`
 - Inputs: `metadata/samples-input1.tsv` or `metadata/samples-input2.tsv` (normalized `sample_id` + raw `fastq_sample_id`) plus Centrifuge index/taxdump.
 - Outputs:
-  - prelim_analysis: `prelim_analysis/01.centrifuge/output`, `prelim_analysis/01.centrifuge/reports`
+  - prelim_analysis: `prelim_analysis/01.bucketing/output`, `prelim_analysis/01.bucketing/reports`
   - targeted_analysis: `targeted_analysis/01.bucketing/output`, `targeted_analysis/01.bucketing/reports`
 
-## Skill: bowtie vs PAVE mapping and reports
+## Skill: mapping vs PAVE (Bowtie2)
 
 - Scope: mapping and rough strain assignment.
 - Entry points: `pipelines/bowtie_vs_pave.nf` (config: `config/user.config`).
 - Where:
-  - prelim_analysis: `prelim_analysis/02.bowtie_vs_pave`
+  - prelim_analysis: `prelim_analysis/02.mapping_vs_pave`
   - targeted_analysis: `targeted_analysis/02.mapping_vs_pave`
 - Inputs: bucketed FASTQs from the corresponding step 01 output; bucket selection via `params.bucket_tid` in `config/pipelines/bowtie_vs_pave.config`.
 - Reference assets: PAVE FASTA/GFF3 under `refdata/pave/`, plus derived BEDs and feature tables under `derived_data/refdata/pave/`.
 - Outputs: per-step `output/` and `reports/` under the locations above (including strain assignment + coverage table in step 02 reports).
 
+## Skill: variant analysis
+
+- Scope: aggregate E6/E7 variants, variant effects, and optional lineage SNP comparison.
+- Entry points: `pipelines/variant_analysis.nf` (config: `config/user.config`).
+- Where:
+  - prelim_analysis: `prelim_analysis/03.variant_analysis`
+  - targeted_analysis: `targeted_analysis/03.variant_analysis`
+- Inputs: mapping outputs from step 02 (`*/02.mapping_vs_pave/output`) plus PAVE reference assets under `refdata/pave/` and `derived_data/refdata/pave/`.
+- Outputs: `reports/` under the locations above (E6/E7 variants, variant effects, lineage SNP comparison, MultiQC).
+
 ## Skill: VirStrain reports (optional)
 
 - Scope: VirStrain-based strain reports (prelim_analysis only).
 - Entry points: `pipelines/virstrain.nf` (config: `config/user.config`).
-- Where: `prelim_analysis/05.virstrain`.
-- Inputs: bucketed FASTQs from `prelim_analysis/01.centrifuge/output`; bucket selection via `params.bucket_tid` in `config/pipelines/virstrain.config`.
-- Outputs: `prelim_analysis/05.virstrain/output`, `prelim_analysis/05.virstrain/reports`.
+- Where: `prelim_analysis/04.virstrain`.
+- Inputs: bucketed FASTQs from `prelim_analysis/01.bucketing/output`; bucket selection via `params.bucket_tid` in `config/pipelines/virstrain.config`.
+- Outputs: `prelim_analysis/04.virstrain/output`, `prelim_analysis/04.virstrain/reports`.
 
 ## Skill: phylogenetic trees (HPV16/HPV18)
  (HPV16/HPV18)
@@ -59,8 +69,8 @@ Rules:
 - Scope: tree generation for HPV16 and HPV18.
 - Entry points: `pipelines/phylo_tree.nf` (user config: `config/user.config`; step path config: `config/analyses/targeted_analysis.config` with profiles `targeted_hpv16_tree`, `targeted_hpv18_tree`).
 - Where:
-  - HPV16: `targeted_analysis/03.hpv16_tree`
-  - HPV18: `targeted_analysis/04.hpv18_tree`
+  - HPV16: `targeted_analysis/04.hpv16_tree`
+  - HPV18: `targeted_analysis/05.hpv18_tree`
 - Inputs: curated tree inputs under `derived_data/refdata/hpv16_tree` and `derived_data/refdata/hpv18_tree` (prepared from `refdata/hpv16_tree` and `refdata/hpv18_tree`).
 - Outputs: alignment and tree artifacts under each step `output/`.
 
@@ -68,8 +78,8 @@ Rules:
 
 - Scope: extract target-country HPV16/HPV18 references, call E6/E7 SNPs, and compare against lineage and sample SNPs.
 - Entry points: `pipelines/database_snps.nf` (config: `config/user.config`).
-- Where: `targeted_analysis/05.snps_samples_vs_db`.
+- Where: `targeted_analysis/03.variant_analysis/database_snps`.
 - Inputs:
   - Selected reference sets under `derived_data/refdata/hpv16_tree` and `derived_data/refdata/hpv18_tree`
-  - Sample variants from `targeted_analysis/02.mapping_vs_pave/reports/E6_E7_variants.tsv`
-- Outputs: `targeted_analysis/05.snps_samples_vs_db/output`, `targeted_analysis/05.snps_samples_vs_db/reports`.
+  - Sample variants from `targeted_analysis/03.variant_analysis/reports/E6_E7_variants.tsv`
+- Outputs: `targeted_analysis/03.variant_analysis/database_snps/output`, `targeted_analysis/03.variant_analysis/database_snps/reports`.

@@ -8,18 +8,22 @@ Rules:
 
 ## Workflow: prelim_analysis
 
-1) Centrifuge bucketing (Nextflow)
+1) Bucketing (Nextflow)
    - Purpose: classify reads and create per-sample bucket FASTQs.
    - Inputs: `metadata/samples-input1.tsv`
-   - Outputs: `prelim_analysis/01.centrifuge/output`, `prelim_analysis/01.centrifuge/reports`
+   - Outputs: `prelim_analysis/01.bucketing/output`, `prelim_analysis/01.bucketing/reports`
 
-2) Bowtie vs PAVE mapping
-   - Depends on: step 01 `prelim_analysis/01.centrifuge/output`
-   - Outputs: `prelim_analysis/02.bowtie_vs_pave/output`, `prelim_analysis/02.bowtie_vs_pave/reports`
+2) Mapping vs PAVE
+   - Depends on: step 01 `prelim_analysis/01.bucketing/output`
+   - Outputs: `prelim_analysis/02.mapping_vs_pave/output`, `prelim_analysis/02.mapping_vs_pave/reports`
 
-3) VirStrain reports (optional)
-   - Depends on: step 01 `prelim_analysis/01.centrifuge/output`
-   - Outputs: `prelim_analysis/05.virstrain/output`, `prelim_analysis/05.virstrain/reports`
+3) Variant analysis
+   - Depends on: step 02 `prelim_analysis/02.mapping_vs_pave/output`
+   - Outputs: `prelim_analysis/03.variant_analysis/reports`
+
+4) VirStrain reports (optional)
+   - Depends on: step 01 `prelim_analysis/01.bucketing/output`
+   - Outputs: `prelim_analysis/04.virstrain/output`, `prelim_analysis/04.virstrain/reports`
 
 ## Workflow: targeted_analysis (mapping)
 
@@ -32,9 +36,10 @@ Rules:
    - Depends on: step 01 `targeted_analysis/01.bucketing/output`
    - Outputs: `targeted_analysis/02.mapping_vs_pave/output`, `targeted_analysis/02.mapping_vs_pave/reports`
 
-3) SNPs samples vs database
-   - Depends on: step 02 reports (`targeted_analysis/02.mapping_vs_pave/reports/E6_E7_variants.tsv`)
-   - Outputs: `targeted_analysis/05.snps_samples_vs_db/output`, `targeted_analysis/05.snps_samples_vs_db/reports`
+3) Variant analysis (includes optional database comparison)
+   - Depends on: step 02 outputs (`targeted_analysis/02.mapping_vs_pave/output`)
+   - Outputs: `targeted_analysis/03.variant_analysis/reports`
+   - Database comparison outputs: `targeted_analysis/03.variant_analysis/database_snps/output`, `targeted_analysis/03.variant_analysis/database_snps/reports`
 
 ## Workflow: phylogenetic trees
 

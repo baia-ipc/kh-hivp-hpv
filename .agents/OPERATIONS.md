@@ -40,7 +40,7 @@ bin/prelim_analysis.run.sh --run-virstrain
 Run individual steps (all samples):
 
 ```
-bin/prelim_analysis.steps/01.centrifuge.run.sh
+bin/prelim_analysis.steps/01.bucketing.run.sh
 bin/targeted_analysis.steps/02.mapping_vs_pave.run.sh
 ```
 
@@ -59,11 +59,11 @@ nextflow run pipelines/centrifuge_bucketing_all.nf \
   -c config/pipelines/centrifuge_bucketing.config \
   -c config/user.config \
   -c config/analyses/prelim_analysis.config \
-  -profile preliminary_centrifuge \
+  -profile preliminary_bucketing \
   -resume
 ```
 
-MultiQC report is written to `prelim_analysis/01.centrifuge/reports/multiqc_report.html`.
+MultiQC report is written to `prelim_analysis/01.bucketing/reports/multiqc_report.html`.
 
 ### Build the Centrifuge database (human + RefSeq archaea/bacteria/viral)
 
@@ -89,7 +89,7 @@ nextflow run pipelines/centrifuge_bucketing_all.nf \
   -resume
 ```
 
-### Bowtie vs PAVE mapping (Nextflow)
+### Mapping vs PAVE (Nextflow)
 
 - prelim_analysis:
 
@@ -99,7 +99,7 @@ nextflow run pipelines/bowtie_vs_pave.nf \
   -c config/pipelines/bowtie_vs_pave.config \
   -c config/user.config \
   -c config/analyses/prelim_analysis.config \
-  -profile preliminary_bowtie_vs_pave \
+  -profile preliminary_mapping_vs_pave \
   -resume
 ```
 
@@ -115,7 +115,33 @@ nextflow run pipelines/bowtie_vs_pave.nf \
   -resume
 ```
 
-### SNPs samples vs database (targeted_analysis)
+### Variant analysis (Nextflow)
+
+- prelim_analysis:
+
+```
+nextflow run pipelines/variant_analysis.nf \
+  -c config/pipelines/common.config \
+  -c config/pipelines/variant_analysis.config \
+  -c config/user.config \
+  -c config/analyses/prelim_analysis.config \
+  -profile preliminary_variant_analysis \
+  -resume
+```
+
+- targeted_analysis:
+
+```
+nextflow run pipelines/variant_analysis.nf \
+  -c config/pipelines/common.config \
+  -c config/pipelines/variant_analysis.config \
+  -c config/user.config \
+  -c config/analyses/targeted_analysis.config \
+  -profile targeted_variant_analysis \
+  -resume
+```
+
+### Database SNP comparison (targeted_analysis)
 
 ```
 nextflow run pipelines/database_snps.nf \
@@ -123,7 +149,7 @@ nextflow run pipelines/database_snps.nf \
   -c config/pipelines/database_snps.config \
   -c config/user.config \
   -c config/analyses/targeted_analysis.config \
-  -profile targeted_snps_samples_vs_db \
+  -profile targeted_variant_analysis_db \
   -resume
 ```
 
@@ -138,32 +164,6 @@ nextflow run pipelines/virstrain.nf \
   -c config/analyses/prelim_analysis.config \
   -profile preliminary_virstrain \
   --run-virstrain \
-  -resume
-```
-
-### PAVE E6 mapping (Nextflow)
-
-- Run with Nextflow:
-```
-nextflow run pipelines/pave_gene_mapping.nf \
-  -c config/pipelines/common.config \
-  -c config/pipelines/pave_gene_mapping.config \
-  -c config/user.config \
-  -c config/analyses/prelim_analysis.config \
-  -profile preliminary_pave_e6 \
-  -resume
-```
-
-### PAVE E7 mapping (Nextflow)
-
-- Run with Nextflow:
-```
-nextflow run pipelines/pave_gene_mapping.nf \
-  -c config/pipelines/common.config \
-  -c config/pipelines/pave_gene_mapping.config \
-  -c config/user.config \
-  -c config/analyses/prelim_analysis.config \
-  -profile preliminary_pave_e7 \
   -resume
 ```
 

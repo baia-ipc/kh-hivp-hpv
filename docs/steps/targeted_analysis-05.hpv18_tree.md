@@ -16,7 +16,7 @@ This step builds an HPV18 phylogenetic tree from prepared sequence inputs
 
 Wrappers:
 
-- `bin/targeted_analysis.steps/04.hpv18_tree.run.sh`
+- `bin/targeted_analysis.steps/05.hpv18_tree.run.sh`
 
 ## Inputs
 

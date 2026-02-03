@@ -82,7 +82,7 @@ but both genes of interested are completely covered, with relatively good depth 
 
 # Variants
 
-The results are found in targeted_analysis/02.mapping_vs_pave/reports/E6_E7_variants.tsv and summarized here.
+The results are found in targeted_analysis/03.variant_analysis/reports/E6_E7_variants.tsv and summarized here.
 In total only 1 new variant has been found through the new analysis (in KHCA-152, see below)
 
 ## HPV16

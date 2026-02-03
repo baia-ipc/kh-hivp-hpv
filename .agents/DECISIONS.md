@@ -10,6 +10,12 @@ Format:
 
 ## Decisions
 
+- 2026-02-03: Split mapping vs variant analysis steps and align step naming across analyses
+  - Context: variant aggregation and database comparison were bundled with mapping in step 02, and prelim_analysis step names differed from targeted_analysis.
+  - Decision: keep step 02 as mapping-only (`mapping_vs_pave`), add step 03 `variant_analysis` in both analyses (targeted step 03 also runs database SNP comparison), renumber HPV tree steps to 04/05, and rename prelim_analysis steps to `bucketing` and `mapping_vs_pave`.
+  - Rationale: isolate variant analysis and keep step naming consistent across analyses.
+  - Consequences: new pipeline `pipelines/variant_analysis.nf`, updated wrappers/configs/docs, and new step outputs under `*/03.variant_analysis`.
+
 - 2026-02-03: Rename intermediate_files to derived_data and consolidate indices
   - Context: intermediate assets mixed derived refdata and reusable indices across analysis outputs.
   - Decision: rename `intermediate_files/` to `derived_data/`, and share the Bowtie/PAVE index under `derived_data/indices/bowtie_vs_pave`.

@@ -111,12 +111,11 @@ process GENERATE_BED {
     val(dummy)
 
     output:
-    path "bed_files", emit: beds
+    path "*.bed", emit: beds
 
     script:
     """
-    mkdir -p bed_files
-    "${params.scripts_dir}/pave/gff3_to_bed.run_all.sh" "${params.pave_gff3_dir}" bed_files
+    "${params.scripts_dir}/pave/gff3_to_bed.run_all.sh" "${params.pave_gff3_dir}" .
     """
 }
 

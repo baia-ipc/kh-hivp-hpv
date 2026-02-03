@@ -6,8 +6,8 @@
 - `metadata/`: bucket_taxonomy_ids.tsv, hpv16_tree_outgroups.txt, hpv18_lineage_refs.tsv, hpv18_tree_outgroups.txt, samples-input1.tsv, samples-input2.tsv
 - `config/`: user.config
 - `config/analyses/`: prelim_analysis.config, targeted_analysis.config
-- `config/pipelines/`: bowtie_vs_pave.config, database_snps.config, centrifuge_bucketing.config, common.config, pave_gene_mapping.config, phylo_tree.config, phylo_tree.hpv16.config, phylo_tree.hpv18.config, virstrain.config
-- `pipelines/multiqc/`: bowtie_vs_pave.multiqc.yml, database_snps.multiqc.yml, centrifuge_bucketing.multiqc.yml, pave_gene_mapping.multiqc.yml, phylo_tree.multiqc.yml, virstrain.multiqc.yml
+- `config/pipelines/`: bowtie_vs_pave.config, database_snps.config, centrifuge_bucketing.config, common.config, pave_gene_mapping.config, phylo_tree.config, phylo_tree.hpv16.config, phylo_tree.hpv18.config, variant_analysis.config, virstrain.config
+- `pipelines/multiqc/`: bowtie_vs_pave.multiqc.yml, database_snps.multiqc.yml, centrifuge_bucketing.multiqc.yml, pave_gene_mapping.multiqc.yml, phylo_tree.multiqc.yml, variant_analysis.multiqc.yml, virstrain.multiqc.yml
 - `pipelines/conda_env/`: nextflow_java.env.yml, pipeline.env.yml, virstrain.env.yml
 - `input_reads/`: symlinks or folders pointing to raw FASTQ data (not tracked in git)
 - `scripts/`: grouped by concern in subdirectories
@@ -18,7 +18,7 @@
   - `scripts/pave/`: gff3_to_features_tsv.py, gff3_to_features_tsv.run_all.sh, gff3_to_bed.py, gff3_to_bed.run_all.sh, gff3_to_csq_gff.py, make_features_plot.py, make_features_plot.run_all.sh, make_tabix_dir.sh
   - `scripts/virstrain/`: aggregate_virstrain_results.py
   - `scripts/phylo_tree/`: hpv16_select_ncbi_genomes.sh, hpv18_select_ncbi_genomes.sh, hpv16_extract_lineages_fasta.sh, hpv18_extract_lineages_fasta.sh, rename_lineages.py, fix_msa_formatting.py, assign_hpv18_lineages.py, hpv16_prepare_samples.sh, hpv18_prepare_samples.sh, extract_country_sequences.py
-- `pipelines/`: bowtie_vs_pave.nf, database_snps.nf, centrifuge_bucketing.nf, centrifuge_bucketing_all.nf, pave_gene_mapping.nf, phylo_tree.nf, virstrain.nf
+- `pipelines/`: bowtie_vs_pave.nf, database_snps.nf, centrifuge_bucketing.nf, centrifuge_bucketing_all.nf, pave_gene_mapping.nf, phylo_tree.nf, variant_analysis.nf, virstrain.nf
 - `refdata/`: external reference inputs used by pipelines (PAVE reference, NCBI downloads)
 - `derived_data/refdata/`: derived reference assets (feature tables, curated tree inputs)
 - `derived_data/indices/`: shared Bowtie/VirStrain indices (bowtie_vs_pave and preliminary/virstrain)
