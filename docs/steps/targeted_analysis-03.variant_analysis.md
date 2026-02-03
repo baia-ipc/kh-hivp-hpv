@@ -46,14 +46,19 @@ Wrapper:
 
 ## Outputs
 
-Variant aggregation reports (`reports/`):
+Variant aggregation and database comparison reports (`reports/`):
 
 - `E6_E7_variants.tsv`
 - `E6_E7_variant_effects.tsv`
 - `lineage_snp_comparison.tsv`
+- `database_snps.tsv`
+- `database_lineage_comparison.tsv`
+- `database_sample_comparison.tsv`
+- `samples_vs_database.tsv`
+- `samples_vs_database_sets.tsv`
+- `samples_vs_lineage_sets.tsv`
+- `hpv16_e6e7_variants_summary.tsv`
 - MultiQC report: `reports/multiqc_report.html`
-
-Database comparison outputs (inside step 03):
+Database comparison outputs:
 
 - `output/database_snps/` (database fasta subsets and derived files)
-- `reports/database_snps/` (SNP summaries and MultiQC report)
