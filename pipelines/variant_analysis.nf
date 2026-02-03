@@ -22,9 +22,9 @@ params.pave_ref_fasta = params.pave_ref_fasta ?: "${projectRoot}/refdata/pave/pa
 params.include_lineage = params.containsKey('include_lineage') ? params.include_lineage : true
 params.target_country = params.target_country ?: "Cambodia"
 params.selected_hpv16_fasta = params.selected_hpv16_fasta ?: "${projectRoot}/derived_data/refdata/hpv16_tree/selected.fasta"
-params.selected_hpv16_tsv = params.selected_hpv16_tsv ?: "${projectRoot}/derived_data/refdata/hpv16_tree/selected"
+params.selected_hpv16_tsv = params.selected_hpv16_tsv ?: "${projectRoot}/refdata/hpv16_tree/HPV16-NCBIVirus.selected.tsv"
 params.selected_hpv18_fasta = params.selected_hpv18_fasta ?: "${projectRoot}/derived_data/refdata/hpv18_tree/selected.fasta"
-params.selected_hpv18_tsv = params.selected_hpv18_tsv ?: "${projectRoot}/derived_data/refdata/hpv18_tree/HPV18-NCBIVirus.acc_country.selected.tsv"
+params.selected_hpv18_tsv = params.selected_hpv18_tsv ?: "${projectRoot}/refdata/hpv18_tree/HPV18-NCBIVirus.acc_country.selected.tsv"
 
 if (!params.containsKey('mapping_outdir')) params.mapping_outdir = null
 if (!params.containsKey('reports_dir')) params.reports_dir = null

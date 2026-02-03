@@ -11,5 +11,4 @@ reference-results/
 .conda/
 *.fastq.gz
 work
-derived_data/refdata/pave/bed/*.bed
-derived_data/refdata/pave/bed/bed_files/
+derived_data/

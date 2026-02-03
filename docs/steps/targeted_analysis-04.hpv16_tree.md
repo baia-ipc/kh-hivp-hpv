@@ -1,9 +1,9 @@
-# targeted_analysis step 03: HPV16 phylogenetic tree
+# targeted_analysis step 04: HPV16 phylogenetic tree
 
 ## Overview
 
-This step builds an HPV16 phylogenetic tree from prepared sequence inputs
-(references + selected outgroups + sample consensus sequences).
+This step builds an HPV16 phylogenetic tree from raw inputs in `refdata/`
+and auto-generated derived inputs (outgroups, selected references, samples).
 
 ## Implementation
 
@@ -11,7 +11,8 @@ This step builds an HPV16 phylogenetic tree from prepared sequence inputs
 - User config: `config/user.config`
 - Step path config: `config/analyses/targeted_analysis.config` (profile `targeted_hpv16_tree`)
 - Technical config: `config/pipelines/common.config` + `config/pipelines/phylo_tree.config` + `config/pipelines/phylo_tree.hpv16.config`
-- Inputs directory: `derived_data/refdata/hpv16_tree` (wired via technical config)
+- Inputs directory: `derived_data/refdata/hpv16_tree` (derived, wired via technical config)
+- Raw inputs directory: `refdata/hpv16_tree`
 - Outgroup list: `metadata/hpv16_tree_outgroups.txt`
 
 Wrappers:
@@ -20,9 +21,9 @@ Wrappers:
 
 ## Inputs
 
-Inputs are expected under `derived_data/refdata/hpv16_tree/` and are prepared from
-raw inputs under `refdata/hpv16_tree/` using scripts documented in the
-repository root `README.md`.
+Raw inputs are expected under `refdata/hpv16_tree/`. The pipeline derives
+`derived_data/refdata/hpv16_tree/` automatically if files are missing or older
+than the raw inputs (no manual preparation commands required).
 
 ## Outputs
 

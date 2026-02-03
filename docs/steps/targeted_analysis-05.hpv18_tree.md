@@ -1,9 +1,9 @@
-# targeted_analysis step 04: HPV18 phylogenetic tree
+# targeted_analysis step 05: HPV18 phylogenetic tree
 
 ## Overview
 
-This step builds an HPV18 phylogenetic tree from prepared sequence inputs
-(references + selected outgroups + sample consensus sequences).
+This step builds an HPV18 phylogenetic tree from raw inputs in `refdata/`
+and auto-generated derived inputs (outgroups, selected references, samples).
 
 ## Implementation
 
@@ -11,7 +11,8 @@ This step builds an HPV18 phylogenetic tree from prepared sequence inputs
 - User config: `config/user.config`
 - Step path config: `config/analyses/targeted_analysis.config` (profile `targeted_hpv18_tree`)
 - Technical config: `config/pipelines/common.config` + `config/pipelines/phylo_tree.config` + `config/pipelines/phylo_tree.hpv18.config`
-- Inputs directory: `derived_data/refdata/hpv18_tree` (wired via technical config)
+- Inputs directory: `derived_data/refdata/hpv18_tree` (derived, wired via technical config)
+- Raw inputs directory: `refdata/hpv18_tree`
 - Outgroup list: `metadata/hpv18_tree_outgroups.txt`
 
 Wrappers:
@@ -20,13 +21,9 @@ Wrappers:
 
 ## Inputs
 
-Inputs are expected under `derived_data/refdata/hpv18_tree/` and are prepared from
-raw inputs under `refdata/hpv18_tree/` using scripts documented in the
-repository root `README.md`.
-
-Sample IDs are derived automatically by `scripts/phylo_tree/hpv18_prepare_samples.sh` from
-`targeted_analysis/02.mapping_vs_pave/reports/strains.tsv`, selecting samples
-whose top strain is HPV18 for the configured run ID.
+Raw inputs are expected under `refdata/hpv18_tree/`. The pipeline derives
+`derived_data/refdata/hpv18_tree/` automatically if files are missing or older
+than the raw inputs (no manual preparation commands required).
 
 ## Outputs
 
