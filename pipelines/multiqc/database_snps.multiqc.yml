@@ -1,4 +1,4 @@
-title: "Cambodia SNP comparison"
+title: "Database SNP comparison"
 rename_regex: true
 sample_names_rename:
   - ["^3__",""]
@@ -9,12 +9,12 @@ custom_data:
   methods_summary:
     plot_type: "html"
     section_name: "Methods summary"
-    description: "Summary of Cambodian SNP extraction and comparison"
+    description: "Summary of database SNP extraction and comparison"
     data: |
       <ul>
-        <li><strong>Sequence extraction:</strong> filter selected NCBI HPV16/HPV18 reference genomes by country and extract Cambodian accessions.</li>
-        <li><strong>SNP calling:</strong> align each Cambodian genome to the PAVE reference with minimap2 and call SNPs with bcftools, limited to E6/E7 regions.</li>
-        <li><strong>Comparisons:</strong> annotate Cambodian SNPs with lineage-defining SNPs and with SNPs observed in study samples.</li>
+        <li><strong>Sequence extraction:</strong> filter selected NCBI HPV16/HPV18 reference genomes by country and extract database accessions.</li>
+        <li><strong>SNP calling:</strong> align each database genome to the PAVE reference with minimap2 and call SNPs with bcftools, limited to E6/E7 regions.</li>
+        <li><strong>Comparisons:</strong> annotate database SNPs with lineage-defining SNPs and with SNPs observed in study samples.</li>
       </ul>
       <p><strong>References:</strong></p>
       <ul>
@@ -27,7 +27,7 @@ custom_data:
     description: "Default output paths (can be overridden with Nextflow params)"
     data: |
       <ul>
-        <li><code>&lt;outdir&gt;/</code> for extracted Cambodian FASTA sequences</li>
+        <li><code>&lt;outdir&gt;/</code> for extracted database FASTA sequences</li>
         <li><code>&lt;reports_dir&gt;/</code> for SNP tables and this MultiQC report</li>
       </ul>
   reports_tables:
@@ -36,46 +36,46 @@ custom_data:
     description: "Tables written to the reports directory"
     data: |
       <ul>
-        <li><code>cambodia_snps.tsv</code></li>
-        <li><code>cambodia_lineage_comparison.tsv</code></li>
-        <li><code>cambodia_sample_comparison.tsv</code></li>
-        <li><code>samples_vs_cambodia.tsv</code></li>
-        <li><code>samples_vs_cambodia_sets.tsv</code></li>
+        <li><code>database_snps.tsv</code></li>
+        <li><code>database_lineage_comparison.tsv</code></li>
+        <li><code>database_sample_comparison.tsv</code></li>
+        <li><code>samples_vs_database.tsv</code></li>
+        <li><code>samples_vs_database_sets.tsv</code></li>
         <li><code>samples_vs_lineage_sets.tsv</code></li>
         <li><code>hpv16_e6e7_variants_summary.tsv</code></li>
       </ul>
-  cambodia_snps_table:
+  database_snps_table:
     file_format: "tsv"
-    section_name: "Cambodian SNPs"
-    description: "E6/E7 SNPs called from Cambodian reference genomes"
+    section_name: "Database SNPs"
+    description: "E6/E7 SNPs called from database reference genomes"
     plot_type: "table"
     pconfig:
       col1_header: "ID"
-  cambodia_lineage_table:
+  database_lineage_table:
     file_format: "tsv"
-    section_name: "Cambodia vs lineages"
-    description: "Cambodian SNPs annotated with lineage-defining SNPs"
+    section_name: "Database vs lineages"
+    description: "Database SNPs annotated with lineage-defining SNPs"
     plot_type: "table"
     pconfig:
       col1_header: "ID"
-  cambodia_sample_table:
+  database_sample_table:
     file_format: "tsv"
-    section_name: "Cambodia vs samples"
-    description: "Cambodian SNPs annotated with sample SNP matches"
+    section_name: "Database vs samples"
+    description: "Database SNPs annotated with sample SNP matches"
     plot_type: "table"
     pconfig:
       col1_header: "ID"
-  samples_vs_cambodia_table:
+  samples_vs_database_table:
     file_format: "tsv"
-    section_name: "Samples vs Cambodia"
-    description: "Sample SNPs annotated with Cambodian SNP matches"
+    section_name: "Samples vs database"
+    description: "Sample SNPs annotated with database SNP matches"
     plot_type: "table"
     pconfig:
       col1_header: "ID"
-  samples_vs_cambodia_sets_table:
+  samples_vs_database_sets_table:
     file_format: "tsv"
-    section_name: "Samples vs Cambodia (set)"
-    description: "Sample SNP sets compared against Cambodian SNP sets"
+    section_name: "Samples vs database (set)"
+    description: "Sample SNP sets compared against database SNP sets"
     plot_type: "table"
     pconfig:
       col1_header: "ID"
@@ -89,22 +89,22 @@ custom_data:
   hpv16_e6e7_summary_table:
     file_format: "tsv"
     section_name: "HPV16 E6/E7 variant summary"
-    description: "Variant summaries for samples, Cambodian accessions, and lineages"
+    description: "Variant summaries for samples, database accessions, and lineages"
     plot_type: "table"
     pconfig:
       col1_header: "ID"
 
 sp:
-  cambodia_snps_table:
-    fn: "cambodia_snps.multiqc.tsv"
-  cambodia_lineage_table:
-    fn: "cambodia_lineage_comparison.multiqc.tsv"
-  cambodia_sample_table:
-    fn: "cambodia_sample_comparison.multiqc.tsv"
-  samples_vs_cambodia_table:
-    fn: "samples_vs_cambodia.multiqc.tsv"
-  samples_vs_cambodia_sets_table:
-    fn: "samples_vs_cambodia_sets.multiqc.tsv"
+  database_snps_table:
+    fn: "database_snps.multiqc.tsv"
+  database_lineage_table:
+    fn: "database_lineage_comparison.multiqc.tsv"
+  database_sample_table:
+    fn: "database_sample_comparison.multiqc.tsv"
+  samples_vs_database_table:
+    fn: "samples_vs_database.multiqc.tsv"
+  samples_vs_database_sets_table:
+    fn: "samples_vs_database_sets.multiqc.tsv"
   samples_vs_lineage_sets_table:
     fn: "samples_vs_lineage_sets.multiqc.tsv"
   hpv16_e6e7_summary_table:

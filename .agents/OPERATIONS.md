@@ -111,9 +111,9 @@ nextflow run pipelines/bowtie_vs_pave.nf \
 ### SNPs samples vs database (targeted-analysis-hpv16-hpv18)
 
 ```
-nextflow run pipelines/cambodia_snps.nf \
+nextflow run pipelines/database_snps.nf \
   -c config/pipelines/common.config \
-  -c config/pipelines/cambodia_snps.config \
+  -c config/pipelines/database_snps.config \
   -c config/user.config \
   -c bin/config/targeted-analysis-hpv16-hpv18.config \
   -profile targeted_snps_samples_vs_db \

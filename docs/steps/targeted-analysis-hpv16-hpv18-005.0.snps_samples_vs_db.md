@@ -3,16 +3,16 @@
 ## Overview
 
 This step extracts HPV16/HPV18 genomes from the selected reference sets that
-originate from Cambodia, calls E6/E7 SNPs against the PAVE reference, and
+match the configured target country, calls E6/E7 SNPs against the PAVE reference, and
 compares those SNPs to (1) lineage‑defining SNPs and (2) the E6/E7 variants
 observed in targeted-analysis-hpv16-hpv18 step 002.
 
 ## Implementation
 
-- Pipeline: `pipelines/cambodia_snps.nf`
+- Pipeline: `pipelines/database_snps.nf`
 - User config: `config/user.config`
 - Step path config: `bin/config/targeted-analysis-hpv16-hpv18.config` (profile `targeted_snps_samples_vs_db`)
-- Technical config: `config/pipelines/common.config` + `config/pipelines/cambodia_snps.config`
+- Technical config: `config/pipelines/common.config` + `config/pipelines/database_snps.config`
 
 Wrappers:
 
@@ -34,15 +34,15 @@ Wrappers:
 
 ## Outputs
 
-- Extracted Cambodian FASTA files under `output/`:
-  - `cambodia_hpv16.fasta`
-  - `cambodia_hpv18.fasta`
+- Extracted database FASTA files under `output/`:
+  - `database_hpv16.fasta`
+  - `database_hpv18.fasta`
 - Reports under `reports/`:
-  - `cambodia_snps.tsv`
+  - `database_snps.tsv`
   - `lineage_snps.tsv`
-  - `cambodia_lineage_comparison.tsv`
-  - `cambodia_sample_comparison.tsv`
-  - `samples_vs_cambodia.tsv`
-  - `samples_vs_cambodia_sets.tsv`
+  - `database_lineage_comparison.tsv`
+  - `database_sample_comparison.tsv`
+  - `samples_vs_database.tsv`
+  - `samples_vs_database_sets.tsv`
   - `samples_vs_lineage_sets.tsv`
   - `multiqc_report.html`

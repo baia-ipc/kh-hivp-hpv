@@ -141,3 +141,9 @@ Format:
   - Decision: organize scripts into subdirectories that match the sections in `docs/SCRIPTS.md`.
   - Rationale: improve discoverability and keep documentation and paths aligned.
   - Consequences: update all references to scripts with the new subdirectory paths.
+
+- 2026-02-03: Rename the Cambodia SNP pipeline to database_snps
+  - Context: the targeted SNP comparison pipeline was named after a specific country.
+  - Decision: rename `pipelines/cambodia_snps.nf` to `pipelines/database_snps.nf`, along with its configs and outputs, and update variable names to use database/target-country terminology.
+  - Rationale: keep the workflow reusable for other target countries without changing names.
+  - Consequences: update pipeline, configs, MultiQC config, and docs to reflect the new naming.

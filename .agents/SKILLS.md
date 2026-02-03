@@ -73,8 +73,8 @@ Rules:
 
 ## Skill: SNPs samples vs database
 
-- Scope: extract Cambodian HPV16/HPV18 references, call E6/E7 SNPs, and compare against lineage and sample SNPs.
-- Entry points: `pipelines/cambodia_snps.nf` (config: `config/user.config`).
+- Scope: extract target-country HPV16/HPV18 references, call E6/E7 SNPs, and compare against lineage and sample SNPs.
+- Entry points: `pipelines/database_snps.nf` (config: `config/user.config`).
 - Where: `targeted-analysis-hpv16-hpv18/005.0.snps_samples_vs_db`.
 - Inputs:
   - Selected reference sets under `intermediate_files/refdata/hpv16_tree` and `intermediate_files/refdata/hpv18_tree`

@@ -19,7 +19,7 @@ def read_query_snps(path):
         rows = list(reader)
     if not rows:
         return []
-    start = 1 if rows[0] and rows[0][0] in ("lineage", "cambodia_id", "query_id") else 0
+    start = 1 if rows[0] and rows[0][0] in ("lineage", "database_id", "cambodia_id", "query_id") else 0
     return rows[start:]
 
 
@@ -41,7 +41,7 @@ def main():
     with open(args.output, "w", newline="") as out:
         writer = csv.writer(out, delimiter="\t")
         writer.writerow([
-            "cambodia_id",
+            "database_id",
             "gene",
             "chrom",
             "pos",
@@ -53,14 +53,14 @@ def main():
         for row in read_query_snps(args.query_snps):
             if len(row) < 6:
                 continue
-            cambodia_id, gene, chrom, pos, ref, alt = row[:6]
+            database_id, gene, chrom, pos, ref, alt = row[:6]
             samples = set()
             for alt_allele in alt.split(","):
                 key = (gene, chrom, pos, ref, alt_allele)
                 samples.update(sample_map.get(key, set()))
             samples_sorted = sorted(samples)
             writer.writerow([
-                cambodia_id,
+                database_id,
                 gene,
                 chrom,
                 pos,

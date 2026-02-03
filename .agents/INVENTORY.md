@@ -6,8 +6,8 @@
 - `metadata/`: bucket_taxonomy_ids.tsv, hpv16_tree_outgroups.txt, hpv18_lineage_refs.tsv, hpv18_tree_outgroups.txt, samples-input1.tsv, samples-input2.tsv
 - `config/`: user.config
 - `bin/config/`: preliminary-analysis-all-patients.config, targeted-analysis-hpv16-hpv18.config
-- `config/pipelines/`: bowtie_vs_pave.config, cambodia_snps.config, centrifuge_bucketing.config, common.config, pave_gene_mapping.config, phylo_tree.config, phylo_tree.hpv16.config, phylo_tree.hpv18.config, virstrain.config
-- `pipelines/multiqc/`: bowtie_vs_pave.multiqc.yml, cambodia_snps.multiqc.yml, centrifuge_bucketing.multiqc.yml, pave_gene_mapping.multiqc.yml, phylo_tree.multiqc.yml, virstrain.multiqc.yml
+- `config/pipelines/`: bowtie_vs_pave.config, database_snps.config, centrifuge_bucketing.config, common.config, pave_gene_mapping.config, phylo_tree.config, phylo_tree.hpv16.config, phylo_tree.hpv18.config, virstrain.config
+- `pipelines/multiqc/`: bowtie_vs_pave.multiqc.yml, database_snps.multiqc.yml, centrifuge_bucketing.multiqc.yml, pave_gene_mapping.multiqc.yml, phylo_tree.multiqc.yml, virstrain.multiqc.yml
 - `pipelines/conda_env/`: nextflow_java.env.yml, pipeline.env.yml, virstrain.env.yml
 - `scripts/`: grouped by concern in subdirectories
   - `scripts/centrifuge_bucketing/`: build_centrifuge_db.sh, compute_lca.py, assign_to_buckets.py, bucketize_fastq.py, aggregate_bucket_counts.py
@@ -16,7 +16,7 @@
   - `scripts/virstrain/`: aggregate_results.py
   - `scripts/phylo_tree/`: hpv16_select_ncbi_genomes.sh, hpv18_select_ncbi_genomes.sh, hpv16_extract_lineages_fasta.sh, hpv18_extract_lineages_fasta.sh, rename_lineages.py, fix_msa_formatting.py, assign_hpv18_lineages.py, hpv16_prepare_samples.sh, hpv18_prepare_samples.sh, extract_country_sequences.py
   - `scripts/lineage_snps/`: lineage_snps_from_fasta.py, compare_lineage_snps.py, compare_query_snps_to_lineages.py, compare_query_snps_to_samples.py, compare_samples_to_query_snps.py, compare_sample_snp_sets_to_lineages.py, compare_sample_snp_sets_to_database.py, summarize_hpv16_e6e7_variants_database.py
-- `pipelines/`: bowtie_vs_pave.nf, cambodia_snps.nf, centrifuge_bucketing.nf, centrifuge_bucketing_all.nf, pave_gene_mapping.nf, phylo_tree.nf, virstrain.nf
+- `pipelines/`: bowtie_vs_pave.nf, database_snps.nf, centrifuge_bucketing.nf, centrifuge_bucketing_all.nf, pave_gene_mapping.nf, phylo_tree.nf, virstrain.nf
 - `refdata/`: external reference inputs used by pipelines (PAVE reference, NCBI downloads)
 - `intermediate_files/refdata/`: derived reference assets (feature tables, curated tree inputs)
 - `intermediate_files/indices/`: bowtie/virstrain indices
