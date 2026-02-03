@@ -47,13 +47,13 @@ Rules:
 
 ## Skill: variant analysis
 
-- Scope: aggregate E6/E7 variants, variant effects, and optional lineage SNP comparison.
+- Scope: aggregate E6/E7 variants, variant effects, optional lineage SNP comparison, and (targeted only) optional database comparison.
 - Entry points: `pipelines/variant_analysis.nf` (config: `config/user.config`).
 - Where:
   - prelim_analysis: `prelim_analysis/03.variant_analysis`
   - targeted_analysis: `targeted_analysis/03.variant_analysis`
 - Inputs: mapping outputs from step 02 (`*/02.mapping_vs_pave/output`) plus PAVE reference assets under `refdata/pave/` and `derived_data/refdata/pave/`.
-- Outputs: `reports/` under the locations above (E6/E7 variants, variant effects, lineage SNP comparison, MultiQC).
+- Outputs: `reports/` under the locations above (E6/E7 variants, variant effects, lineage SNP comparison, database comparison tables when enabled, MultiQC).
 
 ## Skill: VirStrain reports (optional)
 
@@ -73,13 +73,3 @@ Rules:
   - HPV18: `targeted_analysis/05.hpv18_tree`
 - Inputs: curated tree inputs under `derived_data/refdata/hpv16_tree` and `derived_data/refdata/hpv18_tree` (prepared from `refdata/hpv16_tree` and `refdata/hpv18_tree`).
 - Outputs: alignment and tree artifacts under each step `output/`.
-
-## Skill: SNPs samples vs database
-
-- Scope: extract target-country HPV16/HPV18 references, call E6/E7 SNPs, and compare against lineage and sample SNPs.
-- Entry points: `pipelines/database_snps.nf` (config: `config/user.config`).
-- Where: `targeted_analysis/03.variant_analysis/database_snps`.
-- Inputs:
-  - Selected reference sets under `derived_data/refdata/hpv16_tree` and `derived_data/refdata/hpv18_tree`
-  - Sample variants from `targeted_analysis/03.variant_analysis/reports/E6_E7_variants.tsv`
-- Outputs: `targeted_analysis/03.variant_analysis/database_snps/output`, `targeted_analysis/03.variant_analysis/database_snps/reports`.

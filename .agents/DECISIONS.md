@@ -218,4 +218,10 @@ Format:
   - Context: database comparison produced a second MultiQC report under a subdirectory.
   - Decision: keep a single MultiQC report in `targeted_analysis/03.variant_analysis/reports/` and consolidate database tables into that reports directory.
   - Rationale: reduce confusion by keeping one report per step.
-  - Consequences: add a combined MultiQC config and consolidate database report tables after the database pipeline runs.
+  - Consequences: add a combined MultiQC config and consolidate database report tables into the step 03 reports directory.
+
+- 2026-02-03: Merge database comparison into variant analysis pipeline
+  - Context: targeted step 03 ran a separate database SNP pipeline after variant analysis.
+  - Decision: fold database comparison into `pipelines/variant_analysis.nf` behind `include_database`, enabled by default in the targeted profile and disabled in prelim.
+  - Rationale: simplify step 03 execution and keep all outputs within a single pipeline run.
+  - Consequences: remove `pipelines/database_snps.nf` and its config, update wrappers/docs, and extend `variant_analysis` config and workflow.

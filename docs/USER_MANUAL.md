@@ -104,7 +104,8 @@ scripts/pave/gff3_to_bed.run_all.sh \
   derived_data/refdata/pave/bed
 ```
 
-These BED files are required by the Bowtie vs PAVE and SNPs samples vs database steps.
+These BED files are required by the Bowtie vs PAVE steps and the variant analysis
+database comparison.
 If the directory is missing or empty, the pipelines will generate it automatically.
 
 ### 6.3 Phylogenetic tree inputs (raw + derived)

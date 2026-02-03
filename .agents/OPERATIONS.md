@@ -140,22 +140,7 @@ nextflow run pipelines/variant_analysis.nf \
   -profile targeted_variant_analysis \
   -resume
 ```
-
-### Database SNP comparison (targeted_analysis)
-
-```
-nextflow run pipelines/database_snps.nf \
-  -c config/pipelines/common.config \
-  -c config/pipelines/database_snps.config \
-  -c config/user.config \
-  -c config/analyses/targeted_analysis.config \
-  -profile targeted_variant_analysis_db \
-  -resume
-```
-
-Outputs land under `targeted_analysis/03.variant_analysis/output/database_snps` and `targeted_analysis/03.variant_analysis/reports/database_snps`.
-
-When running via `bin/targeted_analysis.steps/03.variant_analysis.run.sh`, database SNP report tables are consolidated into `targeted_analysis/03.variant_analysis/reports/` and a single combined MultiQC report is generated there.
+Database comparison is enabled by default in the targeted profile. To skip it when using the wrapper, pass `--skip-database` (the report will use the base MultiQC config and omit database tables).
 
 ### VirStrain reports (Nextflow)
 
