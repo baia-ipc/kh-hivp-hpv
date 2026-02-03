@@ -25,7 +25,7 @@
   - targeted-analysis-hpv16-hpv18.steps/ per-step wrappers (plus single_sample/)
   - config/ step path config profiles (internal defaults; not typically edited by users)
 
-- input/ symlinks to external raw data locations (not stored in-repo)
+- input_reads/ symlinks to external raw data locations (not stored in-repo)
 
 - metadata/ taxonomy bucket definitions and sample lists
 
