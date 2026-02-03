@@ -8,7 +8,7 @@ Rules:
 
 ## Conventions
 
-- User-editable configuration is in `config/`; step path configs are under `bin/config/`; technical Nextflow config is in `config/pipelines/`. Sample lists live in `metadata/`.
+- User-editable configuration is in `config/`; step path configs are under `config/analyses/`; technical Nextflow config is in `config/pipelines/`. Sample lists live in `metadata/`.
 - Raw reference inputs live in `refdata/`; derived reference assets live in `derived_data/refdata/`.
 - Outputs are written to each step's `output/` and `reports/`.
 - When changing directory layout, update `CONTENTS.md` and `.agents/INVENTORY.md`.
@@ -58,7 +58,7 @@ nextflow run pipelines/centrifuge_bucketing_all.nf \
   -c config/pipelines/common.config \
   -c config/pipelines/centrifuge_bucketing.config \
   -c config/user.config \
-  -c bin/config/prelim_analysis.config \
+  -c config/analyses/prelim_analysis.config \
   -profile preliminary_centrifuge \
   -resume
 ```
@@ -84,7 +84,7 @@ nextflow run pipelines/centrifuge_bucketing_all.nf \
   -c config/pipelines/common.config \
   -c config/pipelines/centrifuge_bucketing.config \
   -c config/user.config \
-  -c bin/config/targeted_analysis.config \
+  -c config/analyses/targeted_analysis.config \
   -profile targeted_bucketing \
   -resume
 ```
@@ -98,7 +98,7 @@ nextflow run pipelines/bowtie_vs_pave.nf \
   -c config/pipelines/common.config \
   -c config/pipelines/bowtie_vs_pave.config \
   -c config/user.config \
-  -c bin/config/prelim_analysis.config \
+  -c config/analyses/prelim_analysis.config \
   -profile preliminary_bowtie_vs_pave \
   -resume
 ```
@@ -110,7 +110,7 @@ nextflow run pipelines/bowtie_vs_pave.nf \
   -c config/pipelines/common.config \
   -c config/pipelines/bowtie_vs_pave.config \
   -c config/user.config \
-  -c bin/config/targeted_analysis.config \
+  -c config/analyses/targeted_analysis.config \
   -profile targeted_mapping_vs_pave \
   -resume
 ```
@@ -122,7 +122,7 @@ nextflow run pipelines/database_snps.nf \
   -c config/pipelines/common.config \
   -c config/pipelines/database_snps.config \
   -c config/user.config \
-  -c bin/config/targeted_analysis.config \
+  -c config/analyses/targeted_analysis.config \
   -profile targeted_snps_samples_vs_db \
   -resume
 ```
@@ -135,7 +135,7 @@ nextflow run pipelines/virstrain.nf \
   -c config/pipelines/common.config \
   -c config/pipelines/virstrain.config \
   -c config/user.config \
-  -c bin/config/prelim_analysis.config \
+  -c config/analyses/prelim_analysis.config \
   -profile preliminary_virstrain \
   --run-virstrain \
   -resume
@@ -149,7 +149,7 @@ nextflow run pipelines/pave_gene_mapping.nf \
   -c config/pipelines/common.config \
   -c config/pipelines/pave_gene_mapping.config \
   -c config/user.config \
-  -c bin/config/prelim_analysis.config \
+  -c config/analyses/prelim_analysis.config \
   -profile preliminary_pave_e6 \
   -resume
 ```
@@ -162,7 +162,7 @@ nextflow run pipelines/pave_gene_mapping.nf \
   -c config/pipelines/common.config \
   -c config/pipelines/pave_gene_mapping.config \
   -c config/user.config \
-  -c bin/config/prelim_analysis.config \
+  -c config/analyses/prelim_analysis.config \
   -profile preliminary_pave_e7 \
   -resume
 ```
@@ -176,7 +176,7 @@ nextflow run pipelines/phylo_tree.nf \
   -c config/pipelines/phylo_tree.config \
   -c config/pipelines/phylo_tree.hpv16.config \
   -c config/user.config \
-  -c bin/config/targeted_analysis.config \
+  -c config/analyses/targeted_analysis.config \
   -profile targeted_hpv16_tree \
   -resume
 ```
@@ -190,7 +190,7 @@ nextflow run pipelines/phylo_tree.nf \
   -c config/pipelines/phylo_tree.config \
   -c config/pipelines/phylo_tree.hpv18.config \
   -c config/user.config \
-  -c bin/config/targeted_analysis.config \
+  -c config/analyses/targeted_analysis.config \
   -profile targeted_hpv18_tree \
   -resume
 ```

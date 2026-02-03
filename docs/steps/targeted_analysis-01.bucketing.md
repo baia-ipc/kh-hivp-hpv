@@ -10,7 +10,7 @@ targeted_analysis sample list and input FASTQ layout.
 
 - Pipeline: `pipelines/centrifuge_bucketing_all.nf`
 - User config: `config/user.config`
-- Step path config: `bin/config/targeted_analysis.config` (profile `targeted_bucketing`)
+- Step path config: `config/analyses/targeted_analysis.config` (profile `targeted_bucketing`)
 - Technical config: `config/pipelines/common.config` + `config/pipelines/centrifuge_bucketing.config`
 - Sample list: `metadata/samples-input2.tsv` (normalized `sample_id` plus `fastq_sample_id` for raw filename prefixes)
 

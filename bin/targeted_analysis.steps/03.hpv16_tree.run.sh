@@ -11,7 +11,7 @@ USER_CONFIG=$PRJROOT/config/user.config
 
 THREADS=$(awk -F '=' '/^[[:space:]]*threads[[:space:]]*=/{gsub(/[^0-9]/,"",$2); print $2; exit}' "$USER_CONFIG")
 THREADS=${THREADS:-24}
-STEP_CONFIG=$PRJROOT/bin/config/targeted_analysis.config
+STEP_CONFIG=$PRJROOT/config/analyses/targeted_analysis.config
 PROFILE=targeted_hpv16_tree
 
 if ! command -v nextflow >/dev/null 2>&1; then

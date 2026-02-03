@@ -12,7 +12,7 @@ This step is implemented as a Nextflow pipeline:
 
 - Pipeline: `pipelines/pave_gene_mapping.nf`
 - User config: `config/user.config`
-- Step path config: `bin/config/prelim_analysis.config` (profile `preliminary_pave_e7`)
+- Step path config: `config/analyses/prelim_analysis.config` (profile `preliminary_pave_e7`)
 - Technical config: `config/pipelines/common.config` + `config/pipelines/pave_gene_mapping.config`
 - Bucket selection: `params.bucket_tid` in `config/pipelines/pave_gene_mapping.config`
 
@@ -24,7 +24,7 @@ Wrappers:
 ## Inputs
 
 - Reads directory: output of step 01 (`prelim_analysis/01.centrifuge/output/`)
-- PAVE reference and gene coordinates: configured in `bin/config/prelim_analysis.config` (profile `preliminary_pave_e7`)
+- PAVE reference and gene coordinates: configured in `config/analyses/prelim_analysis.config` (profile `preliminary_pave_e7`)
 
 ## Outputs
 

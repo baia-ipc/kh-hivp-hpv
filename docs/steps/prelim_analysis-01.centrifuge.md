@@ -14,7 +14,7 @@ This step is implemented as Nextflow pipelines:
 - Per-sample pipeline: `pipelines/centrifuge_bucketing.nf`
 - Multi-sample pipeline: `pipelines/centrifuge_bucketing_all.nf`
 - User config: `config/user.config`
-- Step path config: `bin/config/prelim_analysis.config` (profile `preliminary_centrifuge`)
+- Step path config: `config/analyses/prelim_analysis.config` (profile `preliminary_centrifuge`)
 - Technical config: `config/pipelines/common.config` + `config/pipelines/centrifuge_bucketing.config`
 
 Wrappers under `bin/` call the Nextflow pipelines:

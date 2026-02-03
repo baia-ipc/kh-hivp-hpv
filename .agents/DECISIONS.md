@@ -80,13 +80,13 @@ Format:
   - Context: step 03 relied on step-local scripts and per-step index creation.
   - Decision: move shared scripts to `scripts/` and run E6 mapping via `pipelines/pave_gene_mapping.nf`.
   - Rationale: standardize mapping steps and remove hardcoded references.
-  - Consequences: use `bin/config/prelim_analysis.config` (profile `preliminary_pave_e6`) and shared metadata for bucket selection.
+  - Consequences: use `config/analyses/prelim_analysis.config` (profile `preliminary_pave_e6`) and shared metadata for bucket selection.
 
 - 2026-01-24: Migrate E7 mapping to Nextflow
   - Context: step 04 relied on the same step-local scripts as E6.
   - Decision: use the shared `pipelines/pave_gene_mapping.nf` pipeline with a dedicated config.
   - Rationale: keep the E6/E7 analyses consistent and reduce duplication.
-  - Consequences: use `bin/config/prelim_analysis.config` (profile `preliminary_pave_e7`) and shared metadata for bucket selection.
+  - Consequences: use `config/analyses/prelim_analysis.config` (profile `preliminary_pave_e7`) and shared metadata for bucket selection.
 
 - 2026-01-24: Migrate HPV16 tree build to Nextflow
   - Context: step 03 relied on multiple per-step scripts for alignment and tree building.
@@ -158,7 +158,7 @@ Format:
   - Context: step-specific configs only contained fixed input/output paths and were not user-editable.
   - Decision: relocate path-only configs under `bin/config` and keep user-editable configs in `config/`.
   - Rationale: separate internal path wiring from user-facing configuration.
-  - Consequences: update wrapper scripts and docs to point at `bin/config/*`.
+  - Consequences: update wrapper scripts and docs to point at `config/analyses/*`.
 
 - 2026-02-02: Rename runners and isolate single-sample wrappers
   - Context: step wrappers used `run_all.sh` vs `run.sh` naming and lived in a single directory.

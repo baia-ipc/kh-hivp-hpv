@@ -37,7 +37,7 @@ and reports under its own step directory (`output/` and `reports/`).
 
 [2] Configuration
 - `config`: user-editable configuration (`user.config`) and technical configs
-- `config/bin`: step path config profiles used by wrappers
+- `config/analyses`: step path config profiles used by wrappers
 - `config/pipelines`: technical Nextflow configuration
 - `metadata`: taxonomy bins, sample lists, and reference metadata
 

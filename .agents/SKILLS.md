@@ -8,7 +8,7 @@ Rules:
 
 ## Core conventions (scope only)
 
-- User-editable configuration lives in `config/` (no hardcoded paths in scripts); step path configs live under `bin/config/`; technical Nextflow config (including derived refdata paths) lives under `config/pipelines/`, and Conda env definitions live under `pipelines/conda_env/`.
+- User-editable configuration lives in `config/` (no hardcoded paths in scripts); step path configs live under `config/analyses/`; technical Nextflow config (including derived refdata paths) lives under `config/pipelines/`, and Conda env definitions live under `pipelines/conda_env/`.
 - Step/analysis wrapper scripts live under `bin/` (wrappers around Nextflow pipelines).
 - Raw FASTQ inputs live under `input_reads/` (symlinks or folders to external data).
 - Script utilities live under `scripts/` and are grouped by concern in subdirectories (taxonomy_assignment, top_strains, coverage, variants, pave, virstrain, phylo_tree).
@@ -56,7 +56,7 @@ Rules:
 ## Skill: E6/E7 sub-analyses
 
 - Scope: separate E6 and E7 gene-only mapping analyses (prelim_analysis only).
-- Entry points: `pipelines/pave_gene_mapping.nf` (config: `bin/config/prelim_analysis.config`, profiles `preliminary_pave_e6` and `preliminary_pave_e7`).
+- Entry points: `pipelines/pave_gene_mapping.nf` (config: `config/analyses/prelim_analysis.config`, profiles `preliminary_pave_e6` and `preliminary_pave_e7`).
 - Where:
   - E6: `prelim_analysis/03.bowtie_vs_pave.E6`
   - E7: `prelim_analysis/04.bowtie_vs_pave.E7`
@@ -66,7 +66,7 @@ Rules:
 ## Skill: phylogenetic trees (HPV16/HPV18)
 
 - Scope: tree generation for HPV16 and HPV18.
-- Entry points: `pipelines/phylo_tree.nf` (user config: `config/user.config`; step path config: `bin/config/targeted_analysis.config` with profiles `targeted_hpv16_tree`, `targeted_hpv18_tree`).
+- Entry points: `pipelines/phylo_tree.nf` (user config: `config/user.config`; step path config: `config/analyses/targeted_analysis.config` with profiles `targeted_hpv16_tree`, `targeted_hpv18_tree`).
 - Where:
   - HPV16: `targeted_analysis/03.hpv16_tree`
   - HPV18: `targeted_analysis/04.hpv18_tree`

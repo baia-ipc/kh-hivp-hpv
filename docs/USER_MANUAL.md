@@ -57,9 +57,9 @@ to your local reference data paths and to set resource limits:
 
 - Base pipeline config:
   - `config/user.config`: all user-editable pipeline parameters (Centrifuge index/taxdump, PAVE reference names, target-country defaults, tree defaults, and shared threads)
-- Step‑specific path configs (inputs/outputs) are stored under `bin/config/` and are not typically edited by users:
-  - `bin/config/prelim_analysis.config`
-  - `bin/config/targeted_analysis.config`
+- Step‑specific path configs (inputs/outputs) are stored under `config/analyses/` and are not typically edited by users:
+  - `config/analyses/prelim_analysis.config`
+  - `config/analyses/targeted_analysis.config`
 - Tree defaults are configured via `config/user.config`.
 
 Technical Nextflow settings (executor/conda wiring and derived refdata paths) live under `config/pipelines/`.

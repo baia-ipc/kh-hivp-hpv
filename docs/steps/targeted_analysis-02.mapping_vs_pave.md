@@ -12,7 +12,7 @@ lineage‑defining SNPs from HPV16/HPV18 lineage references.
 
 - Pipeline: `pipelines/bowtie_vs_pave.nf`
 - User config: `config/user.config`
-- Step path config: `bin/config/targeted_analysis.config` (profile `targeted_mapping_vs_pave`)
+- Step path config: `config/analyses/targeted_analysis.config` (profile `targeted_mapping_vs_pave`)
 - Technical config: `config/pipelines/common.config` + `config/pipelines/bowtie_vs_pave.config`
 - Bucket selection: `params.bucket_tid` in `config/pipelines/bowtie_vs_pave.config`
 
