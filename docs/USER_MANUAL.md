@@ -292,8 +292,6 @@ Or run each step individually:
 ```
 bin/prelim_analysis.steps/01.centrifuge.run.sh
 bin/prelim_analysis.steps/02.bowtie_vs_pave.run.sh
-bin/prelim_analysis.steps/03.bowtie_vs_pave.E6.run.sh
-bin/prelim_analysis.steps/04.bowtie_vs_pave.E7.run.sh
 bin/prelim_analysis.steps/05.virstrain.run.sh --run-virstrain
 ```
 

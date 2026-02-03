@@ -17,15 +17,7 @@ Rules:
    - Depends on: step 01 `prelim_analysis/01.centrifuge/output`
    - Outputs: `prelim_analysis/02.bowtie_vs_pave/output`, `prelim_analysis/02.bowtie_vs_pave/reports`
 
-3) E6 mapping
-   - Depends on: step 01 `prelim_analysis/01.centrifuge/output`
-   - Outputs: `prelim_analysis/03.bowtie_vs_pave.E6/output`, `prelim_analysis/03.bowtie_vs_pave.E6/reports`
-
-4) E7 mapping
-   - Depends on: step 01 `prelim_analysis/01.centrifuge/output`
-   - Outputs: `prelim_analysis/04.bowtie_vs_pave.E7/output`, `prelim_analysis/04.bowtie_vs_pave.E7/reports`
-
-5) VirStrain reports (optional)
+3) VirStrain reports (optional)
    - Depends on: step 01 `prelim_analysis/01.centrifuge/output`
    - Outputs: `prelim_analysis/05.virstrain/output`, `prelim_analysis/05.virstrain/reports`
 

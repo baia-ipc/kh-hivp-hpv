@@ -141,9 +141,6 @@ Depth statistics showed no samples with high breadth in the filtered table
 (0/51 with avg breadth ≥0.5), consistent with limited E6 coverage for most samples.
 
 **Notes on sources**
-- `prelim_analysis/03.bowtie_vs_pave.E6/reports/strains.tsv`
-- `prelim_analysis/03.bowtie_vs_pave.E6/reports/depth_stats.unfiltered.tsv`
-- `prelim_analysis/03.bowtie_vs_pave.E6/reports/depth_stats.filtered.tsv`
 
 # Methods and Results — prelim_analysis step 04 (bowtie vs PAVE E7)
 
@@ -168,9 +165,6 @@ As with E6, no samples reached high breadth in the filtered table (0/51 with
 avg breadth ≥0.5), indicating low E7 coverage in most samples.
 
 **Notes on sources**
-- `prelim_analysis/04.bowtie_vs_pave.E7/reports/strains.tsv`
-- `prelim_analysis/04.bowtie_vs_pave.E7/reports/depth_stats.unfiltered.tsv`
-- `prelim_analysis/04.bowtie_vs_pave.E7/reports/depth_stats.filtered.tsv`
 
 # Methods and Results — prelim_analysis step 05 (VirStrain)
 

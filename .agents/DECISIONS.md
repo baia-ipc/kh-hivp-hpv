@@ -28,6 +28,12 @@ Format:
   - Rationale: consolidate strain assignment, coverage, and clinical context in a single table.
   - Consequences: step 02 reports and MultiQC now include the new table.
 
+- 2026-02-03: Drop prelim_analysis gene-only E6/E7 steps
+  - Context: prelim_analysis steps 03/04 duplicated E6/E7 variant extraction already covered by step 02.
+  - Decision: remove steps 03/04 and rely on step 02 full-genome mapping with BED-based E6/E7 extraction.
+  - Rationale: keep one consistent strategy with targeted_analysis and reduce redundant outputs.
+  - Consequences: remove E6/E7 step wrappers/docs/configs; step 02 reports remain the source for E6/E7 variants and coverage summaries.
+
 - 2026-02-03: Move shared indices under intermediate_files
   - Context: bowtie/virstrain indices were stored inside step directories.
   - Decision: relocate step indices to `intermediate_files/indices/` with per-analysis subdirectories.

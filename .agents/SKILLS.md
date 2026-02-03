@@ -53,17 +53,8 @@ Rules:
 - Inputs: bucketed FASTQs from `prelim_analysis/01.centrifuge/output`; bucket selection via `params.bucket_tid` in `config/pipelines/virstrain.config`.
 - Outputs: `prelim_analysis/05.virstrain/output`, `prelim_analysis/05.virstrain/reports`.
 
-## Skill: E6/E7 sub-analyses
-
-- Scope: separate E6 and E7 gene-only mapping analyses (prelim_analysis only).
-- Entry points: `pipelines/pave_gene_mapping.nf` (config: `config/analyses/prelim_analysis.config`, profiles `preliminary_pave_e6` and `preliminary_pave_e7`).
-- Where:
-  - E6: `prelim_analysis/03.bowtie_vs_pave.E6`
-  - E7: `prelim_analysis/04.bowtie_vs_pave.E7`
-- Inputs: bucketed FASTQs from `prelim_analysis/01.centrifuge/output`; bucket selection via `params.bucket_tid` in `config/pipelines/pave_gene_mapping.config`.
-- Outputs: per-step `output/` and `reports/` under the locations above.
-
 ## Skill: phylogenetic trees (HPV16/HPV18)
+ (HPV16/HPV18)
 
 - Scope: tree generation for HPV16 and HPV18.
 - Entry points: `pipelines/phylo_tree.nf` (user config: `config/user.config`; step path config: `config/analyses/targeted_analysis.config` with profiles `targeted_hpv16_tree`, `targeted_hpv18_tree`).
