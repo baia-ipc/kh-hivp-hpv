@@ -6,7 +6,7 @@ usage() {
 Build a Centrifuge index from human (GRCh) + RefSeq archaea/bacteria/viral sequences.
 
 Usage:
-  scripts/build_centrifuge_db.sh [--outdir DIR] [--taxonomy-date YYYY-MM-DD]
+  scripts/centrifuge_bucketing/build_centrifuge_db.sh [--outdir DIR] [--taxonomy-date YYYY-MM-DD]
                                  [--index-name NAME] [--threads N]
                                  [--refseq-domains LIST]
 

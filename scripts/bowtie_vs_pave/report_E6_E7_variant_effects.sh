@@ -11,6 +11,7 @@ BEDDIR=$2
 GFFDIR=$3
 REFFA=$4
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 
 if [ ! -d "$BEDDIR" ]; then
   echo "Error: bed directory not found: $BEDDIR" >&2
@@ -29,7 +30,7 @@ tmp_gff=$(mktemp)
 trap 'rm -f "$tmp_gff"' EXIT
 
 # Build a csq-friendly GFF with gene/mRNA/CDS structure
-"$SCRIPT_DIR/gff3_to_csq_gff.py" "$GFFDIR" -o "$tmp_gff" --fasta "$REFFA"
+"$SCRIPT_ROOT/pave_reference/gff3_to_csq_gff.py" "$GFFDIR" -o "$tmp_gff" --fasta "$REFFA"
 
 header_written=false
 for subdir in "$OUTDIR"/*; do

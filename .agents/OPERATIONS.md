@@ -62,7 +62,7 @@ MultiQC report is written to `preliminary-analysis-all-patients/001.0.centrifuge
 
 - Build the index and taxonomy under `refdata/centrifuge/`:
 ```
-scripts/build_centrifuge_db.sh --outdir refdata/centrifuge --index-name human_abv --threads 24
+scripts/centrifuge_bucketing/build_centrifuge_db.sh --outdir refdata/centrifuge --index-name human_abv --threads 24
 ```
 
 - Point `config/user.config` to the resulting paths, for example:
@@ -193,7 +193,7 @@ Coverage statistics use feature tables derived from the PAVE GFF3 files.
 Generate them under `intermediate_files/refdata/pave/features_tsv` with:
 
 ```
-scripts/gff3_to_features_tsv.run_all.sh \
+scripts/pave_reference/gff3_to_features_tsv.run_all.sh \
   refdata/pave/gff3 \
   intermediate_files/refdata/pave/features_tsv
 ```
@@ -204,7 +204,7 @@ E6/E7 SNP extraction relies on BED intervals derived from the same PAVE GFF3s.
 Generate them under `intermediate_files/refdata/pave/bed` with:
 
 ```
-scripts/gff3_to_bed.run_all.sh \
+scripts/pave_reference/gff3_to_bed.run_all.sh \
   refdata/pave/gff3 \
   intermediate_files/refdata/pave/bed
 ```

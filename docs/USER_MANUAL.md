@@ -85,7 +85,7 @@ Coverage statistics use tabular feature files (TSV) derived from the PAVE GFF3s.
 Generate them with:
 
 ```
-scripts/gff3_to_features_tsv.run_all.sh \
+scripts/pave_reference/gff3_to_features_tsv.run_all.sh \
   refdata/pave/gff3 \
   intermediate_files/refdata/pave/features_tsv
 ```
@@ -99,7 +99,7 @@ E6/E7 SNP extraction uses BED intervals derived from the same GFF3 inputs.
 Generate them with:
 
 ```
-scripts/gff3_to_bed.run_all.sh \
+scripts/pave_reference/gff3_to_bed.run_all.sh \
   refdata/pave/gff3 \
   intermediate_files/refdata/pave/bed
 ```
@@ -132,12 +132,12 @@ Tools needed for the preparation commands below:
 HPV16:
 
 ```
-scripts/hpv16_extract_lineages_fasta.sh \
+scripts/phylo_tree/hpv16_extract_lineages_fasta.sh \
   refdata/hpv16_tree/HPV16_lineages.tsv \
   refdata/hpv16_tree/HPV16-NCBIVirus.fasta \
   intermediate_files/refdata/hpv16_tree/lineages_ref.fasta
 
-python3 scripts/rename_lineages.py \
+python3 scripts/phylo_tree/rename_lineages.py \
   refdata/hpv16_tree/HPV16_lineages.tsv 6 4 \
   intermediate_files/refdata/hpv16_tree/lineages_ref.fasta \
   intermediate_files/refdata/hpv16_tree/lineages_ref_renamed.fasta
@@ -146,12 +146,12 @@ python3 scripts/rename_lineages.py \
 HPV18:
 
 ```
-scripts/hpv18_extract_lineages_fasta.sh \
+scripts/phylo_tree/hpv18_extract_lineages_fasta.sh \
   refdata/hpv18_tree/HPV18_lineages.tsv \
   refdata/hpv18_tree/HPV18-NCBIVirus.fasta \
   intermediate_files/refdata/hpv18_tree/lineages_ref.fasta
 
-python3 scripts/rename_lineages.py \
+python3 scripts/phylo_tree/rename_lineages.py \
   refdata/hpv18_tree/HPV18_lineages.tsv 6 4 \
   intermediate_files/refdata/hpv18_tree/lineages_ref.fasta \
   intermediate_files/refdata/hpv18_tree/lineages_ref_renamed.fasta
@@ -171,7 +171,7 @@ python3 scripts/rename_lineages.py \
 3) Create (then edit) the selection file, and generate `selected_renamed.fasta`:
 
 ```
-scripts/hpv16_select_ncbi_genomes.sh --init-selection \
+scripts/phylo_tree/hpv16_select_ncbi_genomes.sh --init-selection \
   refdata/hpv16_tree/HPV16-NCBIVirus.tsv \
   refdata/hpv16_tree/HPV16-NCBIVirus.fasta \
   intermediate_files/refdata/hpv16_tree/selected \
@@ -179,7 +179,7 @@ scripts/hpv16_select_ncbi_genomes.sh --init-selection \
   intermediate_files/refdata/hpv16_tree/selected_renamed.fasta
 
 # Edit intermediate_files/refdata/hpv16_tree/selected, then re-run without --init-selection:
-scripts/hpv16_select_ncbi_genomes.sh \
+scripts/phylo_tree/hpv16_select_ncbi_genomes.sh \
   refdata/hpv16_tree/HPV16-NCBIVirus.tsv \
   refdata/hpv16_tree/HPV16-NCBIVirus.fasta \
   intermediate_files/refdata/hpv16_tree/selected \
@@ -192,7 +192,7 @@ scripts/hpv16_select_ncbi_genomes.sh \
 ```
 OUT_DIR=intermediate_files/refdata/hpv16_tree \
 SAMPLES="<space-separated sample IDs>" \
-scripts/hpv16_prepare_samples.sh
+scripts/phylo_tree/hpv16_prepare_samples.sh
 ```
 
 The mapping run ID is inferred from `metadata/samples-input2.tsv` (using the
@@ -218,7 +218,7 @@ bin/targeted-analysis-hpv16-hpv18.steps/003.0.hpv16_tree.run.sh
 3) Create (then edit) the selection file, and generate `selected_renamed.fasta`:
 
 ```
-scripts/hpv18_select_ncbi_genomes.sh --init-selection \
+scripts/phylo_tree/hpv18_select_ncbi_genomes.sh --init-selection \
   refdata/hpv18_tree/HPV18-NCBIVirus.tsv \
   refdata/hpv18_tree/HPV18-NCBIVirus.fasta \
   refdata/hpv18_tree/HPV18-NCBIVirus.acc_country.tsv \
@@ -227,7 +227,7 @@ scripts/hpv18_select_ncbi_genomes.sh --init-selection \
   intermediate_files/refdata/hpv18_tree/selected_renamed.fasta
 
 # Edit intermediate_files/refdata/hpv18_tree/HPV18-NCBIVirus.acc_country.selected.tsv, then re-run without --init-selection:
-scripts/hpv18_select_ncbi_genomes.sh \
+scripts/phylo_tree/hpv18_select_ncbi_genomes.sh \
   refdata/hpv18_tree/HPV18-NCBIVirus.tsv \
   refdata/hpv18_tree/HPV18-NCBIVirus.fasta \
   refdata/hpv18_tree/HPV18-NCBIVirus.acc_country.tsv \
@@ -242,7 +242,7 @@ by selecting rows with top strain `HPV18` for the run ID:
 
 ```
 OUT_DIR=intermediate_files/refdata/hpv18_tree \
-scripts/hpv18_prepare_samples.sh
+scripts/phylo_tree/hpv18_prepare_samples.sh
 ```
 
 The mapping run ID is inferred from `metadata/samples-input2.tsv` (using the
@@ -260,7 +260,7 @@ Build or provide a Centrifuge database and taxonomy dump. A helper script is
 included:
 
 ```
-scripts/build_centrifuge_db.sh \
+scripts/centrifuge_bucketing/build_centrifuge_db.sh \
   --outdir refdata/centrifuge \
   --index-name human_abv \
   --threads 24

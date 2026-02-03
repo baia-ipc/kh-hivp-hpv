@@ -1,4 +1,4 @@
-(files are organized as: input/, scripts/, output/; commands assume this directory as cwd)
+(files are organized as: input/ and output/; commands assume this directory as cwd)
 
 (1) HPV18 lineages table HPV18_lineages.tsv downloaded from PAVE
 website link: https://pave.niaid.nih.gov/explore/variants/variant_genomes
@@ -28,13 +28,13 @@ Download sequence metadata in TSV format, use custom fields definition
 
 (4) select and prepare NCBI Virus genomes
   # one per country, except SEA and EA where all are included
-  run ../../scripts/hpv18_select_ncbi_genomes.sh --init-selection \
+  run ../../scripts/phylo_tree/hpv18_select_ncbi_genomes.sh --init-selection \
     input/HPV18-NCBIVirus.tsv input/HPV18-NCBIVirus.fasta \
     input/HPV18-NCBIVirus.acc_country.tsv \
     input/HPV18-NCBIVirus.acc_country.selected.tsv \
     input/selected.fasta input/selected_renamed.fasta
   manually edit input/HPV18-NCBIVirus.acc_country.selected.tsv to select genomes to include
-  re-run ../../scripts/hpv18_select_ncbi_genomes.sh with the same arguments
+  re-run ../../scripts/phylo_tree/hpv18_select_ncbi_genomes.sh with the same arguments
   # this writes input/selected.fasta and input/selected_renamed.fasta
   # it also removes spaces in FASTA IDs and skips THAILAND/GQ180787.1 by default
 
@@ -48,7 +48,7 @@ Download sequence metadata in TSV format, use custom fields definition
 
 (6) prepare samples.fasta
   extracted the reference sequence from the downloaded PAVE:
-  ../../scripts/hpv18_prepare_samples.sh
+  ../../scripts/phylo_tree/hpv18_prepare_samples.sh
   # this writes input/HPV18REF.fas, the consensus FASTAs (with KHCA-<sample>-HPV18 IDs), and input/samples.fasta
   # defaults: run ID inferred from metadata/samples-input2.tsv (fastq_dir) and samples from reports/strains.tsv
 

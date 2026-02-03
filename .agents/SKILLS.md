@@ -10,9 +10,10 @@ Rules:
 
 - User-editable configuration lives in `config/` (no hardcoded paths in scripts); step path configs live under `bin/config/`; technical Nextflow config (including derived refdata paths) lives under `config/pipelines/`, and Conda env definitions live under `pipelines/conda_env/`.
 - Step/analysis wrapper scripts live under `bin/` (wrappers around Nextflow pipelines).
+- Script utilities live under `scripts/` and are grouped by concern in subdirectories (centrifuge_bucketing, bowtie_vs_pave, pave_reference, virstrain, phylo_tree, lineage_snps).
 - Sample lists and other hardcoded data live in `metadata/`.
 - Reference inputs live in `refdata/`; derived reference assets live in `intermediate_files/refdata/` (do not place reference inputs under analysis step directories).
-- Centrifuge database build script lives at `scripts/build_centrifuge_db.sh` (outputs under `refdata/centrifuge/`).
+- Centrifuge database build script lives at `scripts/centrifuge_bucketing/build_centrifuge_db.sh` (outputs under `refdata/centrifuge/`).
 - Outputs live under each step's `output/` and `reports/` directories.
 - MultiQC reports are published to each step’s `reports/` (tree steps use `output/reports/`), with the process writing `multiqc_report.html` at the workdir root and `publishDir` targeting the final reports directory.
 - MultiQC methods sections include primary literature references for the tools used in each step (see the step-specific `pipelines/multiqc/*.multiqc.yml`).

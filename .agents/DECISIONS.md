@@ -102,7 +102,7 @@ Format:
 
 - 2026-02-02: Derive PAVE BED intervals from GFF3
   - Context: multiple pipelines require BED intervals for E6/E7 SNP extraction.
-  - Decision: treat BED files as derived data under `intermediate_files/refdata/pave/bed`, generated via `scripts/gff3_to_bed.run_all.sh`.
+  - Decision: treat BED files as derived data under `intermediate_files/refdata/pave/bed`, generated via `scripts/pave_reference/gff3_to_bed.run_all.sh`.
   - Rationale: BEDs are derived from GFF3s and should not live under raw reference inputs.
   - Consequences: technical configs reference the derived BED directory.
 
@@ -135,3 +135,9 @@ Format:
   - Decision: relocate derived refdata path parameters into `config/pipelines/*.config`.
   - Rationale: keep user configs focused on tunable inputs and avoid editing fixed internal paths.
   - Consequences: update pipelines and wrappers to read derived paths from technical configs.
+
+- 2026-02-03: Group scripts into concern-based subdirectories
+  - Context: the scripts directory had a flat list that was hard to scan and maintain.
+  - Decision: organize scripts into subdirectories that match the sections in `docs/SCRIPTS.md`.
+  - Rationale: improve discoverability and keep documentation and paths aligned.
+  - Consequences: update all references to scripts with the new subdirectory paths.

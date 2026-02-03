@@ -24,7 +24,7 @@ Inputs are expected under `intermediate_files/refdata/hpv18_tree/` and are prepa
 raw inputs under `refdata/hpv18_tree/` using scripts documented in the
 repository root `README.md`.
 
-Sample IDs are derived automatically by `scripts/hpv18_prepare_samples.sh` from
+Sample IDs are derived automatically by `scripts/phylo_tree/hpv18_prepare_samples.sh` from
 `targeted-analysis-hpv16-hpv18/002.0.mapping_vs_pave/reports/strains.tsv`, selecting samples
 whose top strain is HPV18 for the configured run ID.
 
