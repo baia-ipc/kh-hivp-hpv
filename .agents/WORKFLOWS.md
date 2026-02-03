@@ -17,14 +17,17 @@ Rules:
    - Depends on: step 001 `prelim_analysis/001.0.centrifuge/output`
    - Outputs: `prelim_analysis/002.0.bowtie_vs_pave/output`, `prelim_analysis/002.0.bowtie_vs_pave/reports`
 
-3) VirStrain reports
+3) E6 mapping
    - Depends on: step 001 `prelim_analysis/001.0.centrifuge/output`
-   - Outputs: `prelim_analysis/003.0.virstrain/output`, `prelim_analysis/003.0.virstrain/reports`
+   - Outputs: `prelim_analysis/003.0.bowtie_vs_pave.E6/output`, `prelim_analysis/003.0.bowtie_vs_pave.E6/reports`
 
-4) E6/E7 sub-analyses
+4) E7 mapping
    - Depends on: step 001 `prelim_analysis/001.0.centrifuge/output`
-   - E6 outputs: `prelim_analysis/004.0.bowtie_vs_pave.E6/output`, `prelim_analysis/004.0.bowtie_vs_pave.E6/reports`
-   - E7 outputs: `prelim_analysis/005.0.bowtie_vs_pave.E7/output`, `prelim_analysis/005.0.bowtie_vs_pave.E7/reports`
+   - Outputs: `prelim_analysis/004.0.bowtie_vs_pave.E7/output`, `prelim_analysis/004.0.bowtie_vs_pave.E7/reports`
+
+5) VirStrain reports (optional)
+   - Depends on: step 001 `prelim_analysis/001.0.centrifuge/output`
+   - Outputs: `prelim_analysis/005.0.virstrain/output`, `prelim_analysis/005.0.virstrain/reports`
 
 ## Workflow: targeted_analysis (mapping)
 

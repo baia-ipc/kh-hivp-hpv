@@ -41,19 +41,19 @@ Format:
   - Consequences: use `config/user.config` for user inputs and `config/pipelines/bowtie_vs_pave.config` for fixed bucket selection.
 
 - 2026-01-24: Migrate VirStrain reports to Nextflow
-  - Context: step 003 used step-local scripts and hardcoded reference paths.
-  - Decision: centralize scripts under `scripts/` and run step 003 via `pipelines/virstrain.nf`.
+  - Context: step 005 used step-local scripts and hardcoded reference paths.
+  - Decision: centralize scripts under `scripts/` and run step 005 via `pipelines/virstrain.nf`.
   - Rationale: align with the shared pipeline layout and remove hardcoded paths.
   - Consequences: use `config/user.config` for user inputs and `config/pipelines/virstrain.config` for fixed bucket selection.
 
 - 2026-01-24: Migrate E6 mapping to Nextflow
-  - Context: step 004 relied on step-local scripts and per-step index creation.
+  - Context: step 003 relied on step-local scripts and per-step index creation.
   - Decision: move shared scripts to `scripts/` and run E6 mapping via `pipelines/pave_gene_mapping.nf`.
   - Rationale: standardize mapping steps and remove hardcoded references.
   - Consequences: use `bin/config/prelim_analysis.config` (profile `preliminary_pave_e6`) and shared metadata for bucket selection.
 
 - 2026-01-24: Migrate E7 mapping to Nextflow
-  - Context: step 005 relied on the same step-local scripts as E6.
+  - Context: step 004 relied on the same step-local scripts as E6.
   - Decision: use the shared `pipelines/pave_gene_mapping.nf` pipeline with a dedicated config.
   - Rationale: keep the E6/E7 analyses consistent and reduce duplication.
   - Consequences: use `bin/config/prelim_analysis.config` (profile `preliminary_pave_e7`) and shared metadata for bucket selection.

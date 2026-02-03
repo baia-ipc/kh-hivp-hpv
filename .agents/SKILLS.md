@@ -44,21 +44,21 @@ Rules:
 - Reference assets: PAVE FASTA/GFF3 under `refdata/pave/`, plus derived BEDs and feature tables under `intermediate_files/refdata/pave/`.
 - Outputs: per-step `output/` and `reports/` under the locations above.
 
-## Skill: VirStrain reports
+## Skill: VirStrain reports (optional)
 
 - Scope: VirStrain-based strain reports (prelim_analysis only).
 - Entry points: `pipelines/virstrain.nf` (config: `config/user.config`).
-- Where: `prelim_analysis/003.0.virstrain`.
+- Where: `prelim_analysis/005.0.virstrain`.
 - Inputs: bucketed FASTQs from `prelim_analysis/001.0.centrifuge/output`; bucket selection via `params.bucket_tid` in `config/pipelines/virstrain.config`.
-- Outputs: `prelim_analysis/003.0.virstrain/output`, `prelim_analysis/003.0.virstrain/reports`.
+- Outputs: `prelim_analysis/005.0.virstrain/output`, `prelim_analysis/005.0.virstrain/reports`.
 
 ## Skill: E6/E7 sub-analyses
 
 - Scope: separate E6 and E7 gene-only mapping analyses (prelim_analysis only).
 - Entry points: `pipelines/pave_gene_mapping.nf` (config: `bin/config/prelim_analysis.config`, profiles `preliminary_pave_e6` and `preliminary_pave_e7`).
 - Where:
-  - E6: `prelim_analysis/004.0.bowtie_vs_pave.E6`
-  - E7: `prelim_analysis/005.0.bowtie_vs_pave.E7`
+  - E6: `prelim_analysis/003.0.bowtie_vs_pave.E6`
+  - E7: `prelim_analysis/004.0.bowtie_vs_pave.E7`
 - Inputs: bucketed FASTQs from `prelim_analysis/001.0.centrifuge/output`; bucket selection via `params.bucket_tid` in `config/pipelines/pave_gene_mapping.config`.
 - Outputs: per-step `output/` and `reports/` under the locations above.
 

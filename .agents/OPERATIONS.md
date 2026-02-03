@@ -30,6 +30,12 @@ bin/prelim_analysis.run.sh
 bin/targeted_analysis.run.sh
 ```
 
+VirStrain is optional for prelim_analysis; run it with:
+
+```
+bin/prelim_analysis.run.sh --run-virstrain
+```
+
 Run individual steps (all samples):
 
 ```
@@ -130,6 +136,7 @@ nextflow run pipelines/virstrain.nf \
   -c config/user.config \
   -c bin/config/prelim_analysis.config \
   -profile preliminary_virstrain \
+  --run-virstrain \
   -resume
 ```
 

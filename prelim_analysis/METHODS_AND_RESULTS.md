@@ -1,3 +1,5 @@
+
+
 # Methods and Results — prelim_analysis step 001 (centrifuge bucketing)
 
 ## Methods
@@ -114,34 +116,7 @@ HPV_250523_run02:KHCA-223.
 - `prelim_analysis/002.0.bowtie_vs_pave/reports/E6_E7_variants.tsv`
 - `prelim_analysis/002.0.bowtie_vs_pave/reports/E6_E7_variant_effects.tsv`
 
-# Methods and Results — prelim_analysis step 003 (VirStrain)
-
-## Methods
-Bucketed reads were classified with VirStrain using a reference index built
-from the PAVE HPV reference aligned by MAFFT (Li et al., 2022; Katoh et al.,
-2002). VirStrain reports per‑sample strain assignments, which were aggregated
-across samples into a single table for interpretation.
-
-**References**
-- Li et al., 2022. VirStrain: a strain identification tool for RNA viruses. *Genome Biology*. DOI: 10.1186/s13059-022-02609-x.
-- Katoh et al., 2002. MAFFT: a novel method for rapid multiple sequence alignment. *Nucleic Acids Research*. DOI: 10.1093/nar/gkf436.
-
-## Results (aggregated from step 003 reports)
-
-Fifty‑one non‑control samples were processed in this step (HPV bucket only).
-VirStrain reported “No reads or too few reads” for 16/51 samples and “Too many
-possible strains” for 11/51 samples. The remaining 24/51 samples received a
-strain assignment.
-
-Among the assigned samples, 21 had a single strain call and three had multiple
-strain calls. The multi‑strain samples were: HPV_150123_run01:KHCA-037,
-HPV_160823_run03:KHCA-256, HPV_250523_run02:KHCA-223. The most frequently
-assigned strains included HPV16, HPV58, HPV18, HPV71, and HPV52.
-
-**Notes on sources**
-- `prelim_analysis/003.0.virstrain/reports/strains.tsv`
-
-# Methods and Results — prelim_analysis step 004 (bowtie vs PAVE E6)
+# Methods and Results — prelim_analysis step 003 (bowtie vs PAVE E6)
 
 ## Methods
 HPV‑bucket reads were mapped against the E6 gene reference from PAVE using
@@ -154,7 +129,7 @@ tables across samples.
 - Langmead & Salzberg, 2012. Fast gapped-read alignment with Bowtie 2. *Nature Methods*. DOI: 10.1038/nmeth.1923.
 - Li et al., 2009. The Sequence Alignment/Map format and SAMtools. *Bioinformatics*. DOI: 10.1093/bioinformatics/btp352.
 
-## Results (aggregated from step 004 reports)
+## Results (aggregated from step 003 reports)
 
 Fifty‑one non‑control samples were processed for the E6‑specific mapping. Top‑strain
 calls were present in 13/51 samples, while 38/51 samples had no top‑strain call in
@@ -166,11 +141,11 @@ Depth statistics showed no samples with high breadth in the filtered table
 (0/51 with avg breadth ≥0.5), consistent with limited E6 coverage for most samples.
 
 **Notes on sources**
-- `prelim_analysis/004.0.bowtie_vs_pave.E6/reports/strains.tsv`
-- `prelim_analysis/004.0.bowtie_vs_pave.E6/reports/depth_stats.unfiltered.tsv`
-- `prelim_analysis/004.0.bowtie_vs_pave.E6/reports/depth_stats.filtered.tsv`
+- `prelim_analysis/003.0.bowtie_vs_pave.E6/reports/strains.tsv`
+- `prelim_analysis/003.0.bowtie_vs_pave.E6/reports/depth_stats.unfiltered.tsv`
+- `prelim_analysis/003.0.bowtie_vs_pave.E6/reports/depth_stats.filtered.tsv`
 
-# Methods and Results — prelim_analysis step 005 (bowtie vs PAVE E7)
+# Methods and Results — prelim_analysis step 004 (bowtie vs PAVE E7)
 
 ## Methods
 HPV‑bucket reads were mapped against the E7 gene reference from PAVE using
@@ -182,7 +157,7 @@ and depth summaries were aggregated across samples.
 - Langmead & Salzberg, 2012. Fast gapped-read alignment with Bowtie 2. *Nature Methods*. DOI: 10.1038/nmeth.1923.
 - Li et al., 2009. The Sequence Alignment/Map format and SAMtools. *Bioinformatics*. DOI: 10.1093/bioinformatics/btp352.
 
-## Results (aggregated from step 005 reports)
+## Results (aggregated from step 004 reports)
 
 Fifty‑one non‑control samples were processed for the E7‑specific mapping. Top‑strain
 calls were present in 13/51 samples, while 38/51 samples had no top‑strain call in
@@ -193,6 +168,33 @@ As with E6, no samples reached high breadth in the filtered table (0/51 with
 avg breadth ≥0.5), indicating low E7 coverage in most samples.
 
 **Notes on sources**
-- `prelim_analysis/005.0.bowtie_vs_pave.E7/reports/strains.tsv`
-- `prelim_analysis/005.0.bowtie_vs_pave.E7/reports/depth_stats.unfiltered.tsv`
-- `prelim_analysis/005.0.bowtie_vs_pave.E7/reports/depth_stats.filtered.tsv`
+- `prelim_analysis/004.0.bowtie_vs_pave.E7/reports/strains.tsv`
+- `prelim_analysis/004.0.bowtie_vs_pave.E7/reports/depth_stats.unfiltered.tsv`
+- `prelim_analysis/004.0.bowtie_vs_pave.E7/reports/depth_stats.filtered.tsv`
+
+# Methods and Results — prelim_analysis step 005 (VirStrain)
+
+## Methods
+Bucketed reads were classified with VirStrain using a reference index built
+from the PAVE HPV reference aligned by MAFFT (Li et al., 2022; Katoh et al.,
+2002). VirStrain reports per‑sample strain assignments, which were aggregated
+across samples into a single table for interpretation.
+
+**References**
+- Li et al., 2022. VirStrain: a strain identification tool for RNA viruses. *Genome Biology*. DOI: 10.1186/s13059-022-02609-x.
+- Katoh et al., 2002. MAFFT: a novel method for rapid multiple sequence alignment. *Nucleic Acids Research*. DOI: 10.1093/nar/gkf436.
+
+## Results (aggregated from step 005 reports)
+
+Fifty‑one non‑control samples were processed in this step (HPV bucket only).
+VirStrain reported “No reads or too few reads” for 16/51 samples and “Too many
+possible strains” for 11/51 samples. The remaining 24/51 samples received a
+strain assignment.
+
+Among the assigned samples, 21 had a single strain call and three had multiple
+strain calls. The multi‑strain samples were: HPV_150123_run01:KHCA-037,
+HPV_160823_run03:KHCA-256, HPV_250523_run02:KHCA-223. The most frequently
+assigned strains included HPV16, HPV58, HPV18, HPV71, and HPV52.
+
+**Notes on sources**
+- `prelim_analysis/005.0.virstrain/reports/strains.tsv`

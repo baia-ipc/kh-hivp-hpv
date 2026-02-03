@@ -19,6 +19,7 @@ def projectRoot = (workflow.projectDir instanceof java.nio.file.Path \
 
 params.scripts_dir = params.scripts_dir ?: "${projectRoot}/scripts"
 params.multiqc_config = params.multiqc_config ?: "${projectRoot}/pipelines/multiqc/virstrain.multiqc.yml"
+params.run_virstrain = params.run_virstrain ?: false
 
 def requiredParams = [
     'bucket_tid',
@@ -30,7 +31,7 @@ def requiredParams = [
 ]
 
 requiredParams.each { key ->
-    if (!params[key]) {
+    if (params.run_virstrain && !params[key]) {
         error "params.${key} is required"
     }
 }
@@ -46,8 +47,10 @@ def checkPath(String path, String label, boolean mustBeDir = false) {
     }
 }
 
-checkPath(params.ref_fasta as String, 'VirStrain reference fasta')
-checkPath(params.scripts_dir as String, 'Scripts directory', true)
+if (params.run_virstrain) {
+    checkPath(params.ref_fasta as String, 'VirStrain reference fasta')
+    checkPath(params.scripts_dir as String, 'Scripts directory', true)
+}
 
 def indexMarker = new File("${params.index_dir}/virstrain")
 
@@ -159,6 +162,10 @@ PY
 }
 
 workflow {
+    if (!params.run_virstrain) {
+        log.info "VirStrain run disabled (set --run-virstrain to enable)."
+        return
+    }
     def multiqc_config_path = new File(params.multiqc_config)
     if (!multiqc_config_path.exists()) {
         error "MultiQC config not found: ${params.multiqc_config}"
