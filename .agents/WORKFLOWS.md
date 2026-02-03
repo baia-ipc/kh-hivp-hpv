@@ -39,7 +39,7 @@ Rules:
 3) Variant analysis (includes optional database comparison)
    - Depends on: step 02 outputs (`targeted_analysis/02.mapping_vs_pave/output`)
    - Outputs: `targeted_analysis/03.variant_analysis/reports`
-   - Database comparison outputs: `targeted_analysis/03.variant_analysis/database_snps/output`, `targeted_analysis/03.variant_analysis/database_snps/reports`
+   - Database comparison outputs: `targeted_analysis/03.variant_analysis/output/database_snps`, `targeted_analysis/03.variant_analysis/reports/database_snps`
 
 ## Workflow: phylogenetic trees
 

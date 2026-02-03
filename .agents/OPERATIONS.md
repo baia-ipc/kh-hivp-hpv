@@ -153,6 +153,8 @@ nextflow run pipelines/database_snps.nf \
   -resume
 ```
 
+Outputs land under `targeted_analysis/03.variant_analysis/output/database_snps` and `targeted_analysis/03.variant_analysis/reports/database_snps`.
+
 ### VirStrain reports (Nextflow)
 
 - Run with Nextflow:

@@ -207,3 +207,9 @@ Format:
   - Decision: rename the top-level directory to `input_reads/` and update references in metadata and documentation.
   - Rationale: clarify that the directory contains raw reads.
   - Consequences: update sample sheets and docs to use `input_reads/`.
+
+- 2026-02-03: Move database SNP outputs under step 03 reports/output
+  - Context: database SNP comparison outputs lived under `targeted_analysis/03.variant_analysis/database_snps/`, which looked detached from step 03 reports.
+  - Decision: place database SNP outputs under `targeted_analysis/03.variant_analysis/output/database_snps` and `targeted_analysis/03.variant_analysis/reports/database_snps`.
+  - Rationale: keep all step 03 outputs visible under the step’s output/report structure.
+  - Consequences: update configs and docs to the new paths.
