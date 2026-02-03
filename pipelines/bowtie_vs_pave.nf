@@ -151,6 +151,7 @@ process CREATE_INDEX {
 
 process MAP_SAMPLE {
     tag "${run_id}:${sample_id}"
+    conda params.conda_env
     publishDir { "${params.outdir}/${run_id}" }, mode: 'copy'
 
     input:
