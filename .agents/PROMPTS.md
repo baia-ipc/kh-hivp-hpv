@@ -10,7 +10,7 @@ Read AGENTS.md, .agents/INVENTORY.md, CONTENTS.md, and .agents/SKILLS.md. Summar
 
 ## Add or modify a pipeline step
 """
-Update step [STEP_ID] in [preliminary-analysis-all-patients|targeted-analysis-hpv16-hpv18].
+Update step [STEP_ID] in [prelim_analysis|targeted_analysis].
 - Keep configuration in config/ and hardcoded data in metadata/.
 - Do not hardcode user-specific absolute paths; rely on PATH/env/config.
 - Update CONTENTS.md and .agents/INVENTORY.md if the directory layout changes.
@@ -59,7 +59,7 @@ Create [DOC_NAME].md describing [TOPIC].
 
 ## Create a METHODS_AND_RESULTS summary (human-readable)
 """
-Create or update [preliminary-analysis-all-patients|targeted-analysis-hpv16-hpv18]/METHODS_AND_RESULTS.md for step [STEP_ID].
+Create or update [prelim_analysis|targeted_analysis]/METHODS_AND_RESULTS.md for step [STEP_ID].
 
 Constraints:
 - Use the same procedural description as the step MultiQC report Methods section, but written in

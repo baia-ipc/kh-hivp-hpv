@@ -5,17 +5,17 @@ the analysis of HPV sequencing data in our study.
 
 ## Analyses
 
-Two sets of analyses are contained. The first (`preliminary-analysis-all-patients`) contains an analysis of
+Two sets of analyses are contained. The first (`prelim_analysis`) contains an analysis of
 all 64 patients (and some controls), based on the first 3 Miseq runs. After that, we followed with an deeper sequencing
 analysis of the patients for which the first analysis and the GenExpert results indicated infection with HPV16 and
-HPV18 (`targeted-analysis-hpv16-hpv18`).
+HPV18 (`targeted_analysis`).
 
 To run the analysis:
 - the input readsets must be copied or linked into the `input` directory
 - appropriate reference data must be copied or linked into the `refdata` directory
 - Nextflow and Conda must be installed on the system
-- the scripts `bin/preliminary-analysis-all-patients.run.sh` and/or
-  `bin/targeted-analysis-hpv16-hpv18.run.sh` must be run
+- the scripts `bin/prelim_analysis.run.sh` and/or
+  `bin/targeted_analysis.run.sh` must be run
 
 A detailed user manual is available under `docs/USER_MANUAL.md`.
 The results of the analysis will be stored under directories named after the analysis title.
@@ -49,8 +49,8 @@ The repository has the following structure:
 - `testdata`: mini-datasets consisting of just a few reads, used by tests
 
 [4] Output
-- `preliminary-analysis-all-patients/`: analysis for the first input dataset (all patients)
-- `targeted-analysis-hpv16-hpv18/`: analysis for the second input dataset (HPV16/18-focused)
+- `prelim_analysis/`: analysis for the first input dataset (all patients)
+- `targeted_analysis/`: analysis for the second input dataset (HPV16/18-focused)
 - `intermediate_files`: intermediate files, e.g. indices or format conversions from the reference results
 
 [5] Documentation

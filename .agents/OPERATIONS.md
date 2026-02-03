@@ -26,24 +26,24 @@ Rules:
 Run whole analyses:
 
 ```
-bin/preliminary-analysis-all-patients.run.sh
-bin/targeted-analysis-hpv16-hpv18.run.sh
+bin/prelim_analysis.run.sh
+bin/targeted_analysis.run.sh
 ```
 
 Run individual steps (all samples):
 
 ```
-bin/preliminary-analysis-all-patients.steps/001.0.centrifuge.run.sh
-bin/targeted-analysis-hpv16-hpv18.steps/002.0.mapping_vs_pave.run.sh
+bin/prelim_analysis.steps/001.0.centrifuge.run.sh
+bin/targeted_analysis.steps/002.0.mapping_vs_pave.run.sh
 ```
 
 Run a single sample (for steps that support it):
 
 ```
-bin/targeted-analysis-hpv16-hpv18.steps/single_sample/002.0.mapping_vs_pave.run_sample.sh
+bin/targeted_analysis.steps/single_sample/002.0.mapping_vs_pave.run_sample.sh
 ```
 
-### preliminary-analysis-all-patients bucketing (Nextflow)
+### prelim_analysis bucketing (Nextflow)
 
 - Run with Nextflow:
 ```
@@ -51,12 +51,12 @@ nextflow run pipelines/centrifuge_bucketing_all.nf \
   -c config/pipelines/common.config \
   -c config/pipelines/centrifuge_bucketing.config \
   -c config/user.config \
-  -c bin/config/preliminary-analysis-all-patients.config \
+  -c bin/config/prelim_analysis.config \
   -profile preliminary_centrifuge \
   -resume
 ```
 
-MultiQC report is written to `preliminary-analysis-all-patients/001.0.centrifuge/reports/multiqc_report.html`.
+MultiQC report is written to `prelim_analysis/001.0.centrifuge/reports/multiqc_report.html`.
 
 ### Build the Centrifuge database (human + RefSeq archaea/bacteria/viral)
 
@@ -69,7 +69,7 @@ scripts/centrifuge_bucketing/build_centrifuge_db.sh --outdir refdata/centrifuge 
 - `index = "refdata/centrifuge/human_abv"`
   - `taxdump = "refdata/centrifuge/taxonomy-YYYY-MM-DD"`
 
-### targeted-analysis-hpv16-hpv18 bucketing (Nextflow)
+### targeted_analysis bucketing (Nextflow)
 
 - Run with Nextflow:
 ```
@@ -77,45 +77,45 @@ nextflow run pipelines/centrifuge_bucketing_all.nf \
   -c config/pipelines/common.config \
   -c config/pipelines/centrifuge_bucketing.config \
   -c config/user.config \
-  -c bin/config/targeted-analysis-hpv16-hpv18.config \
+  -c bin/config/targeted_analysis.config \
   -profile targeted_bucketing \
   -resume
 ```
 
 ### Bowtie vs PAVE mapping (Nextflow)
 
-- preliminary-analysis-all-patients:
+- prelim_analysis:
 
 ```
 nextflow run pipelines/bowtie_vs_pave.nf \
   -c config/pipelines/common.config \
   -c config/pipelines/bowtie_vs_pave.config \
   -c config/user.config \
-  -c bin/config/preliminary-analysis-all-patients.config \
+  -c bin/config/prelim_analysis.config \
   -profile preliminary_bowtie_vs_pave \
   -resume
 ```
 
-- targeted-analysis-hpv16-hpv18:
+- targeted_analysis:
 
 ```
 nextflow run pipelines/bowtie_vs_pave.nf \
   -c config/pipelines/common.config \
   -c config/pipelines/bowtie_vs_pave.config \
   -c config/user.config \
-  -c bin/config/targeted-analysis-hpv16-hpv18.config \
+  -c bin/config/targeted_analysis.config \
   -profile targeted_mapping_vs_pave \
   -resume
 ```
 
-### SNPs samples vs database (targeted-analysis-hpv16-hpv18)
+### SNPs samples vs database (targeted_analysis)
 
 ```
 nextflow run pipelines/database_snps.nf \
   -c config/pipelines/common.config \
   -c config/pipelines/database_snps.config \
   -c config/user.config \
-  -c bin/config/targeted-analysis-hpv16-hpv18.config \
+  -c bin/config/targeted_analysis.config \
   -profile targeted_snps_samples_vs_db \
   -resume
 ```
@@ -128,7 +128,7 @@ nextflow run pipelines/virstrain.nf \
   -c config/pipelines/common.config \
   -c config/pipelines/virstrain.config \
   -c config/user.config \
-  -c bin/config/preliminary-analysis-all-patients.config \
+  -c bin/config/prelim_analysis.config \
   -profile preliminary_virstrain \
   -resume
 ```
@@ -141,7 +141,7 @@ nextflow run pipelines/pave_gene_mapping.nf \
   -c config/pipelines/common.config \
   -c config/pipelines/pave_gene_mapping.config \
   -c config/user.config \
-  -c bin/config/preliminary-analysis-all-patients.config \
+  -c bin/config/prelim_analysis.config \
   -profile preliminary_pave_e6 \
   -resume
 ```
@@ -154,7 +154,7 @@ nextflow run pipelines/pave_gene_mapping.nf \
   -c config/pipelines/common.config \
   -c config/pipelines/pave_gene_mapping.config \
   -c config/user.config \
-  -c bin/config/preliminary-analysis-all-patients.config \
+  -c bin/config/prelim_analysis.config \
   -profile preliminary_pave_e7 \
   -resume
 ```
@@ -168,7 +168,7 @@ nextflow run pipelines/phylo_tree.nf \
   -c config/pipelines/phylo_tree.config \
   -c config/pipelines/phylo_tree.hpv16.config \
   -c config/user.config \
-  -c bin/config/targeted-analysis-hpv16-hpv18.config \
+  -c bin/config/targeted_analysis.config \
   -profile targeted_hpv16_tree \
   -resume
 ```
@@ -182,7 +182,7 @@ nextflow run pipelines/phylo_tree.nf \
   -c config/pipelines/phylo_tree.config \
   -c config/pipelines/phylo_tree.hpv18.config \
   -c config/user.config \
-  -c bin/config/targeted-analysis-hpv16-hpv18.config \
+  -c bin/config/targeted_analysis.config \
   -profile targeted_hpv18_tree \
   -resume
 ```
@@ -242,7 +242,7 @@ To refresh the reference snapshot used for regression checks:
 
 ```
 mkdir -p reference-results
-for step in preliminary-analysis-all-patients/* targeted-analysis-hpv16-hpv18/*; do
+for step in prelim_analysis/* targeted_analysis/*; do
   [ -d "$step" ] || continue
   for sub in output reports index; do
     src="$step/$sub"

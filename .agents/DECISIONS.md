@@ -10,11 +10,17 @@ Format:
 
 ## Decisions
 
-- 2026-01-24: Consolidate analyses into preliminary-analysis-all-patients and targeted-analysis-hpv16-hpv18
+- 2026-02-03: Shorten analysis directory names
+  - Context: analysis names were long and repeated across configs, docs, and scripts.
+  - Decision: rename the analysis directories and related runner/config references to the shorter names prelim_analysis and targeted_analysis.
+  - Rationale: make paths and commands shorter while keeping intent clear.
+  - Consequences: update wrappers, configs, metadata sample paths, and documentation references.
+
+- 2026-01-24: Consolidate analyses into prelim_analysis and targeted_analysis
   - Context: analysis-1 and analysis-2 overlapped; analysis-3 needed a stable final name.
-  - Decision: merge analysis-1/analysis-2 into preliminary-analysis-all-patients and rename analysis-3 to targeted-analysis-hpv16-hpv18.
+  - Decision: merge analysis-1/analysis-2 into prelim_analysis and rename analysis-3 to targeted_analysis.
   - Rationale: simplify layout, reduce duplication
-  - Consequences: update references, inventories, and defaults to use preliminary-analysis-all-patients and targeted-analysis-hpv16-hpv18.
+  - Consequences: update references, inventories, and defaults to use prelim_analysis and targeted_analysis.
 
 - 2026-01-24: Centralize configuration and metadata
   - Context: scripts contained hardcoded paths and sample lists.
@@ -23,8 +29,8 @@ Format:
   - Consequences: pipelines/scripts must read config/metadata and avoid inline literals.
 
 - 2026-01-24: Flatten analysis step directories
-  - Context: preliminary-analysis-all-patients/ and targeted-analysis-hpv16-hpv18/ used a nested steps/ folder.
-  - Decision: move step directories directly under preliminary-analysis-all-patients/ and targeted-analysis-hpv16-hpv18/.
+  - Context: prelim_analysis/ and targeted_analysis/ used a nested steps/ folder.
+  - Decision: move step directories directly under prelim_analysis/ and targeted_analysis/.
   - Rationale: simplify paths and reduce redundant nesting.
   - Consequences: update scripts, pipelines, and docs to remove steps/ from paths.
 
@@ -44,13 +50,13 @@ Format:
   - Context: step 004 relied on step-local scripts and per-step index creation.
   - Decision: move shared scripts to `scripts/` and run E6 mapping via `pipelines/pave_gene_mapping.nf`.
   - Rationale: standardize mapping steps and remove hardcoded references.
-  - Consequences: use `bin/config/preliminary-analysis-all-patients.config` (profile `preliminary_pave_e6`) and shared metadata for bucket selection.
+  - Consequences: use `bin/config/prelim_analysis.config` (profile `preliminary_pave_e6`) and shared metadata for bucket selection.
 
 - 2026-01-24: Migrate E7 mapping to Nextflow
   - Context: step 005 relied on the same step-local scripts as E6.
   - Decision: use the shared `pipelines/pave_gene_mapping.nf` pipeline with a dedicated config.
   - Rationale: keep the E6/E7 analyses consistent and reduce duplication.
-  - Consequences: use `bin/config/preliminary-analysis-all-patients.config` (profile `preliminary_pave_e7`) and shared metadata for bucket selection.
+  - Consequences: use `bin/config/prelim_analysis.config` (profile `preliminary_pave_e7`) and shared metadata for bucket selection.
 
 - 2026-01-24: Migrate HPV16 tree build to Nextflow
   - Context: step 003 relied on multiple per-step scripts for alignment and tree building.

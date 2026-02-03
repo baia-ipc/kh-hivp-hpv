@@ -2,10 +2,10 @@
 
 ## Analysis steps and scripts
 
-- `bin/`: analysis-level runners (preliminary-analysis-all-patients.run.sh, targeted-analysis-hpv16-hpv18.run.sh) plus step runners under `bin/preliminary-analysis-all-patients.steps/` and `bin/targeted-analysis-hpv16-hpv18.steps/` with single-sample wrappers under their `single_sample/` subdirectories
+- `bin/`: analysis-level runners (prelim_analysis.run.sh, targeted_analysis.run.sh) plus step runners under `bin/prelim_analysis.steps/` and `bin/targeted_analysis.steps/` with single-sample wrappers under their `single_sample/` subdirectories
 - `metadata/`: bucket_taxonomy_ids.tsv, hpv16_tree_outgroups.txt, hpv18_lineage_refs.tsv, hpv18_tree_outgroups.txt, samples-input1.tsv, samples-input2.tsv
 - `config/`: user.config
-- `bin/config/`: preliminary-analysis-all-patients.config, targeted-analysis-hpv16-hpv18.config
+- `bin/config/`: prelim_analysis.config, targeted_analysis.config
 - `config/pipelines/`: bowtie_vs_pave.config, database_snps.config, centrifuge_bucketing.config, common.config, pave_gene_mapping.config, phylo_tree.config, phylo_tree.hpv16.config, phylo_tree.hpv18.config, virstrain.config
 - `pipelines/multiqc/`: bowtie_vs_pave.multiqc.yml, database_snps.multiqc.yml, centrifuge_bucketing.multiqc.yml, pave_gene_mapping.multiqc.yml, phylo_tree.multiqc.yml, virstrain.multiqc.yml
 - `pipelines/conda_env/`: nextflow_java.env.yml, pipeline.env.yml, virstrain.env.yml
