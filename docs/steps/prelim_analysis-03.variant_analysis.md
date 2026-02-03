@@ -4,6 +4,7 @@
 
 This step aggregates E6/E7 variants and variant effects from the mapping outputs
 (step 02), and optionally annotates sample variants with HPV16/HPV18 lineage SNPs.
+Database comparison is disabled for prelim_analysis.
 
 ## Implementation
 

@@ -8,26 +8,21 @@ This step aggregates E6/E7 variants and variant effects from the mapping outputs
 
 ## Implementation
 
-This step runs two Nextflow pipelines in sequence:
-
-- Variant aggregation: `pipelines/variant_analysis.nf`
-- Database comparison: `pipelines/database_snps.nf`
+This step runs a single Nextflow pipeline with an optional database comparison
+branch: `pipelines/variant_analysis.nf`.
 
 Configs and profiles:
 
 - User config: `config/user.config`
 - Step path config: `config/analyses/targeted_analysis.config`
-  - `targeted_variant_analysis` (variant aggregation)
-  - `targeted_variant_analysis_db` (database comparison)
+  - `targeted_variant_analysis` (variant + optional database comparison)
 - Technical config: `config/pipelines/common.config`
-- Pipeline configs:
-  - `config/pipelines/variant_analysis.config`
-  - `config/pipelines/database_snps.config`
+- Pipeline config: `config/pipelines/variant_analysis.config`
 
 Wrapper:
 
 - `bin/targeted_analysis.steps/03.variant_analysis.run.sh`
-  - add `--skip-database` to skip the database comparison
+  - add `--skip-database` to skip the database comparison (and use the base MultiQC config)
 
 ## Inputs
 
@@ -43,6 +38,10 @@ Wrapper:
   - `derived_data/refdata/hpv16_tree/selected.fasta`
   - `derived_data/refdata/hpv18_tree/selected.fasta`
   - `derived_data/refdata/hpv18_tree/HPV18-NCBIVirus.acc_country.selected.tsv`
+- Sample metadata for the HPV16 E6/E7 summary:
+  - `metadata/samples-input2.tsv`
+- Target-country selection (user config):
+  - `config/user.config` (`params.target_country`)
 
 ## Outputs
 
