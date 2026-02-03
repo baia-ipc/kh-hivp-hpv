@@ -292,14 +292,21 @@ Or run each step individually:
 ```
 bin/prelim_analysis.steps/001.0.centrifuge.run.sh
 bin/prelim_analysis.steps/002.0.bowtie_vs_pave.run.sh
-bin/prelim_analysis.steps/003.0.virstrain.run.sh
-bin/prelim_analysis.steps/004.0.bowtie_vs_pave.E6.run.sh
-bin/prelim_analysis.steps/005.0.bowtie_vs_pave.E7.run.sh
+bin/prelim_analysis.steps/003.0.bowtie_vs_pave.E6.run.sh
+bin/prelim_analysis.steps/004.0.bowtie_vs_pave.E7.run.sh
+bin/prelim_analysis.steps/005.0.virstrain.run.sh --run-virstrain
 ```
 
 Step 001 report (MultiQC):
 
 `prelim_analysis/001.0.centrifuge/reports/multiqc_report.html`
+
+VirStrain (step 005) is optional and does not run unless you pass
+`--run-virstrain` to the wrapper:
+
+```
+bin/prelim_analysis.run.sh --run-virstrain
+```
 
 ### 7.2 targeted_analysis
 

@@ -17,9 +17,9 @@ To run the analyses, use the step wrapper scripts under `bin/`
 
 - Step 001 (Centrifuge bucketing): `docs/steps/prelim_analysis-001.0.centrifuge.md`
 - Step 002 (Bowtie vs PAVE): `docs/steps/prelim_analysis-002.0.bowtie_vs_pave.md`
-- Step 003 (VirStrain): `docs/steps/prelim_analysis-003.0.virstrain.md`
-- Step 004 (PAVE E6 mapping): `docs/steps/prelim_analysis-004.0.bowtie_vs_pave.E6.md`
-- Step 005 (PAVE E7 mapping): `docs/steps/prelim_analysis-005.0.bowtie_vs_pave.E7.md`
+- Step 003 (PAVE E6 mapping): `docs/steps/prelim_analysis-003.0.bowtie_vs_pave.E6.md`
+- Step 004 (PAVE E7 mapping): `docs/steps/prelim_analysis-004.0.bowtie_vs_pave.E7.md`
+- Step 005 (VirStrain, optional): `docs/steps/prelim_analysis-005.0.virstrain.md`
 
 ## targeted_analysis
 

@@ -11,7 +11,7 @@ STEP_CONFIG=$PRJROOT/bin/config/prelim_analysis.config
 PROFILE=preliminary_virstrain
 
 if [ $# -lt 3 ]; then
-  echo "Usage: $0 <fwd> <rev> <out_prefix> [nextflow args...]"
+  echo "Usage: $0 <fwd> <rev> <out_prefix> --run-virstrain [nextflow args...]"
   exit 1
 fi
 
@@ -19,6 +19,25 @@ fwd=$1
 rev=$2
 out=$3
 shift 3
+
+run_virstrain=false
+for arg in "$@"; do
+  case "$arg" in
+    --run-virstrain|--run_virstrain)
+      run_virstrain=true
+      ;;
+    --run-virstrain=*|--run_virstrain=*)
+      value="${arg#*=}"
+      if [ "$value" = "true" ] || [ "$value" = "1" ]; then
+        run_virstrain=true
+      fi
+      ;;
+  esac
+done
+if ! $run_virstrain; then
+  echo "VirStrain disabled (pass --run-virstrain to run)."
+  exit 0
+fi
 
 run_id=$(basename "$(dirname "$out")")
 sample_id=$(basename "$out")

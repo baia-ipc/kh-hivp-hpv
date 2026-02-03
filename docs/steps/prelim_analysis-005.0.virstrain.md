@@ -1,9 +1,10 @@
-# prelim_analysis step 003: VirStrain
+# prelim_analysis step 005: VirStrain
 
 ## Overview
 
 This step runs VirStrain on bucketed reads to infer HPV strain composition and
 produces per-sample VirStrain reports plus an aggregated summary table.
+It is optional and does not run unless `--run-virstrain` is provided.
 
 ## Implementation
 
@@ -17,8 +18,8 @@ This step is implemented as a Nextflow pipeline:
 
 Wrappers:
 
-- `bin/prelim_analysis.steps/003.0.virstrain.run.sh` (all samples)
-- `bin/prelim_analysis.steps/single_sample/003.0.virstrain.run_sample.sh` (single sample pair)
+- `bin/prelim_analysis.steps/005.0.virstrain.run.sh --run-virstrain` (all samples)
+- `bin/prelim_analysis.steps/single_sample/005.0.virstrain.run_sample.sh --run-virstrain` (single sample pair)
 
 ## Inputs
 

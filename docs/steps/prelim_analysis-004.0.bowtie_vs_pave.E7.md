@@ -1,9 +1,9 @@
-# prelim_analysis step 004: PAVE E6 mapping
+# prelim_analysis step 004: PAVE E7 mapping
 
 ## Overview
 
 This step maps bucketed reads against the PAVE reference and computes depth /
-coverage statistics for the E6 gene region, producing per-sample statistics and
+coverage statistics for the E7 gene region, producing per-sample statistics and
 aggregated depth tables.
 
 ## Implementation
@@ -12,19 +12,19 @@ This step is implemented as a Nextflow pipeline:
 
 - Pipeline: `pipelines/pave_gene_mapping.nf`
 - User config: `config/user.config`
-- Step path config: `bin/config/prelim_analysis.config` (profile `preliminary_pave_e6`)
+- Step path config: `bin/config/prelim_analysis.config` (profile `preliminary_pave_e7`)
 - Technical config: `config/pipelines/common.config` + `config/pipelines/pave_gene_mapping.config`
 - Bucket selection: `params.bucket_tid` in `config/pipelines/pave_gene_mapping.config`
 
 Wrappers:
 
-- `bin/prelim_analysis.steps/004.0.bowtie_vs_pave.E6.run.sh` (all samples)
-- `bin/prelim_analysis.steps/single_sample/004.0.bowtie_vs_pave.E6.run_sample.sh` (single sample pair)
+- `bin/prelim_analysis.steps/004.0.bowtie_vs_pave.E7.run.sh` (all samples)
+- `bin/prelim_analysis.steps/single_sample/004.0.bowtie_vs_pave.E7.run_sample.sh` (single sample pair)
 
 ## Inputs
 
 - Reads directory: output of step 001 (`prelim_analysis/001.0.centrifuge/output/`)
-- PAVE reference and gene coordinates: configured in `bin/config/prelim_analysis.config` (profile `preliminary_pave_e6`)
+- PAVE reference and gene coordinates: configured in `bin/config/prelim_analysis.config` (profile `preliminary_pave_e7`)
 
 ## Outputs
 
