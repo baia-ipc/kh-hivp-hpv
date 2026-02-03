@@ -53,7 +53,7 @@ Variant aggregation reports (`reports/`):
 - `lineage_snp_comparison.tsv`
 - MultiQC report: `reports/multiqc_report.html`
 
-Database comparison outputs (`database_snps/`):
+Database comparison outputs (inside step 03):
 
-- `output/` (database fasta subsets and derived files)
-- `reports/` (SNP summaries and MultiQC report)
+- `output/database_snps/` (database fasta subsets and derived files)
+- `reports/database_snps/` (SNP summaries and MultiQC report)
