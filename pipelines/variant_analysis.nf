@@ -183,6 +183,9 @@ process MULTIQC {
 
     output:
     path("multiqc_report.html")
+    path("E6_E7_variants.multiqc.tsv")
+    path("E6_E7_variant_effects.multiqc.tsv")
+    path("lineage_snp_comparison.multiqc.tsv"), optional: true
 
     script:
     """
