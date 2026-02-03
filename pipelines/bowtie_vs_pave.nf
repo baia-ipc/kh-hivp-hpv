@@ -23,6 +23,8 @@ params.lineage_hpv16_fasta = params.lineage_hpv16_fasta ?: "${projectRoot}/deriv
 params.lineage_hpv18_fasta = params.lineage_hpv18_fasta ?: "${projectRoot}/derived_data/refdata/hpv18_tree/lineages_ref_renamed.fasta"
 params.lineage_ref_hpv16_name = params.lineage_ref_hpv16_name ?: "HPV16REF|lcl|Human"
 params.lineage_ref_hpv18_name = params.lineage_ref_hpv18_name ?: "HPV18REF|lcl|Human"
+params.patients_metadata = params.patients_metadata ?: "${projectRoot}/metadata/patients_metadata.txt"
+params.genexpert_results = params.genexpert_results ?: "${projectRoot}/metadata/genexpert_results.txt"
 // Avoid "Access to undefined parameter" warnings; these are optional filters/inputs.
 if (!params.containsKey('reads_dir'))  params.reads_dir = null
 if (!params.containsKey('read1'))      params.read1 = null
@@ -49,7 +51,9 @@ def requiredParams = [
     'lineage_hpv16_fasta',
     'lineage_hpv18_fasta',
     'lineage_ref_hpv16_name',
-    'lineage_ref_hpv18_name'
+    'lineage_ref_hpv18_name',
+    'patients_metadata',
+    'genexpert_results'
 ]
 
 requiredParams.each { key ->
@@ -74,6 +78,8 @@ checkPath(params.pave_gff3_dir as String, 'PAVE GFF3 directory', true)
 checkPath(params.scripts_dir as String, 'Scripts directory', true)
 checkPath(params.lineage_hpv16_fasta as String, 'HPV16 lineages reference FASTA')
 checkPath(params.lineage_hpv18_fasta as String, 'HPV18 lineages reference FASTA')
+checkPath(params.patients_metadata as String, 'Patients metadata')
+checkPath(params.genexpert_results as String, 'GeneXpert results')
 
 def indexMarker = new File("${params.index_dir}/pave_hsa.1.bt2")
 def indexReady = indexMarker.exists() ? Channel.value(true) : null
@@ -186,7 +192,7 @@ process AGGREGATE_STRAINS {
     val(done)
 
     output:
-    path "strains.tsv"
+    path "strains.tsv", emit: strains
 
     script:
     """
@@ -202,13 +208,35 @@ process AGGREGATE_COVSTATS {
     val(done)
 
     output:
-    path "cov_stats.tsv"
-    path "cov_stats.filtered.tsv"
+    path "cov_stats.tsv", emit: covstats
+    path "cov_stats.filtered.tsv", emit: covstats_filtered
 
     script:
     """
     "${params.scripts_dir}/coverage/aggregate_covstats.py" "${params.outdir}" "cov_stats.tsv" -b 0 -d 0
     "${params.scripts_dir}/coverage/aggregate_covstats.py" "${params.outdir}" "cov_stats.filtered.tsv"
+    """
+}
+
+process AGGREGATE_STRAIN_COVERAGE_REPORT {
+    tag "strain_coverage_report"
+    publishDir "${params.reports_dir}", mode: 'copy'
+
+    input:
+    path strains
+    path covstats
+
+    output:
+    path "strain_assignment_coverage.tsv"
+
+    script:
+    """
+    "${params.scripts_dir}/coverage/strain_assignment_coverage_report.py" \\
+      "${strains}" \\
+      "${covstats}" \\
+      "${params.patients_metadata}" \\
+      "${params.genexpert_results}" \\
+      "strain_assignment_coverage.tsv"
     """
 }
 
@@ -311,6 +339,7 @@ process MULTIQC {
     cp "${params.reports_dir}/E6_E7_variants.tsv" .
     cp "${params.reports_dir}/E6_E7_variant_effects.tsv" .
     cp "${params.reports_dir}/lineage_snp_comparison.tsv" .
+    cp "${params.reports_dir}/strain_assignment_coverage.tsv" .
 
     python - <<'PY'
 import csv
@@ -504,6 +533,10 @@ rewrite_with_header(
     'lineage_snp_comparison.multiqc.tsv',
     id_builder=build_variant_id,
 )
+rewrite_with_header(
+    'strain_assignment_coverage.tsv',
+    'strain_assignment_coverage.multiqc.tsv',
+)
 PY
 
     multiqc --force \\
@@ -576,11 +609,12 @@ workflow {
 
     def strains = AGGREGATE_STRAINS(mappedDone)
     def covstats = AGGREGATE_COVSTATS(mappedDone)
+    def strain_report = AGGREGATE_STRAIN_COVERAGE_REPORT(strains.strains, covstats.covstats)
     def variants = AGGREGATE_VARIANTS(mappedWithBed)
     def variant_effects = AGGREGATE_VARIANT_EFFECTS(mappedWithBed)
     def lineage_snps = LINEAGE_SNPS(mappedWithBed)
     def lineage_compare = COMPARE_LINEAGE_SNPS(variants, lineage_snps)
-    def reports_done = strains.mix(covstats).mix(variants).mix(variant_effects).mix(lineage_snps).mix(lineage_compare).collect()
+    def reports_done = strains.mix(covstats).mix(strain_report).mix(variants).mix(variant_effects).mix(lineage_snps).mix(lineage_compare).collect()
     def multiqc_config_file = file(params.multiqc_config)
     MULTIQC(multiqc_config_file, reports_done)
 }

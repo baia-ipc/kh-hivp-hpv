@@ -39,4 +39,5 @@ Wrappers:
   - mapping/coverage summaries
   - E6/E7 variant effects (amino‑acid consequences)
   - lineage SNP comparison table
+  - strain assignment + coverage table (top strains with averaged genome/E6/E7 coverage and patient metadata)
   - `reports/multiqc_report.html`

@@ -22,6 +22,12 @@ Format:
   - Rationale: keep user-level control in `params.threads` without invalid config attributes.
   - Consequences: wrappers must read `threads` from `config/user.config` before running Nextflow.
 
+- 2026-02-03: Add strain assignment + coverage report to step 02
+  - Context: needed a per-sample table combining top strains, coverage, and patient metadata.
+  - Decision: generate `strain_assignment_coverage.tsv` in step 02 reports by joining top strains, coverage stats, and metadata files.
+  - Rationale: consolidate strain assignment, coverage, and clinical context in a single table.
+  - Consequences: step 02 reports and MultiQC now include the new table.
+
 - 2026-02-03: Move shared indices under intermediate_files
   - Context: bowtie/virstrain indices were stored inside step directories.
   - Decision: relocate step indices to `intermediate_files/indices/` with per-analysis subdirectories.

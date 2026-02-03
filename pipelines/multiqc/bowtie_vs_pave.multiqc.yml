@@ -39,6 +39,7 @@ custom_data:
         <li><code>strains.tsv</code></li>
         <li><code>cov_stats.tsv</code></li>
         <li><code>cov_stats.filtered.tsv</code></li>
+        <li><code>strain_assignment_coverage.tsv</code></li>
         <li><code>E6_E7_variants.tsv</code></li>
         <li><code>E6_E7_variant_effects.tsv</code></li>
         <li><code>lineage_snp_comparison.tsv</code></li>
@@ -85,6 +86,13 @@ custom_data:
     plot_type: "table"
     pconfig:
       col1_header: "Sample"
+  strain_assignment_coverage_table:
+    file_format: "tsv"
+    section_name: "Strain assignment + coverage"
+    description: "Top strains with averaged genome/E6/E7 coverage and patient metadata"
+    plot_type: "table"
+    pconfig:
+      col1_header: "Sample"
 
 sp:
   strains_table:
@@ -99,3 +107,5 @@ sp:
     fn: "E6_E7_variant_effects.multiqc.tsv"
   lineage_snp_comparison_table:
     fn: "lineage_snp_comparison.multiqc.tsv"
+  strain_assignment_coverage_table:
+    fn: "strain_assignment_coverage.multiqc.tsv"

@@ -13,7 +13,7 @@
 - `scripts/`: grouped by concern in subdirectories
   - `scripts/taxonomy_assignment/`: build_centrifuge_db.sh, compute_lca.py, assign_to_buckets.py, bucketize_fastq.py, aggregate_bucket_counts.py
   - `scripts/top_strains/`: identify_top_strains.py, aggregate_top_strains.sh
-  - `scripts/coverage/`: covstats.py, depth_stats.py, aggregate_covstats.py, aggregate_depth_stats.py, covplot.py, make_all_covplots.sh
+  - `scripts/coverage/`: covstats.py, depth_stats.py, aggregate_covstats.py, aggregate_depth_stats.py, covplot.py, make_all_covplots.sh, strain_assignment_coverage_report.py
   - `scripts/variants/`: report_E6_E7_variants.sh, report_E6_E7_variant_effects.sh, csq_to_tsv.py, lineage_snps_from_fasta.py, compare_lineage_snps.py, compare_query_snps_to_lineages.py, compare_query_snps_to_samples.py, compare_samples_to_query_snps.py, compare_sample_snp_sets_to_lineages.py, compare_sample_snp_sets_to_database.py, summarize_hpv16_e6e7_variants_database.py
   - `scripts/pave/`: gff3_to_features_tsv.py, gff3_to_features_tsv.run_all.sh, gff3_to_bed.py, gff3_to_bed.run_all.sh, gff3_to_csq_gff.py, make_features_plot.py, make_features_plot.run_all.sh, make_tabix_dir.sh
   - `scripts/virstrain/`: aggregate_virstrain_results.py

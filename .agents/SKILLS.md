@@ -43,7 +43,7 @@ Rules:
   - targeted_analysis: `targeted_analysis/02.mapping_vs_pave`
 - Inputs: bucketed FASTQs from the corresponding step 01 output; bucket selection via `params.bucket_tid` in `config/pipelines/bowtie_vs_pave.config`.
 - Reference assets: PAVE FASTA/GFF3 under `refdata/pave/`, plus derived BEDs and feature tables under `derived_data/refdata/pave/`.
-- Outputs: per-step `output/` and `reports/` under the locations above.
+- Outputs: per-step `output/` and `reports/` under the locations above (including strain assignment + coverage table in step 02 reports).
 
 ## Skill: VirStrain reports (optional)
 
