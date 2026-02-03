@@ -47,8 +47,8 @@ Rules:
 ## Workflow: phylogenetic trees
 
 - HPV16 depends on:
-  - prepared inputs under `intermediate_files/refdata/hpv16_tree` (from raw inputs in `refdata/hpv16_tree`)
+  - prepared inputs under `derived_data/refdata/hpv16_tree` (from raw inputs in `refdata/hpv16_tree`)
   - (for sample consensus) mapping outputs under `targeted_analysis/02.mapping_vs_pave/output`
 - HPV18 depends on:
-  - prepared inputs under `intermediate_files/refdata/hpv18_tree` (from raw inputs in `refdata/hpv18_tree`)
+  - prepared inputs under `derived_data/refdata/hpv18_tree` (from raw inputs in `refdata/hpv18_tree`)
   - (for sample consensus) mapping outputs under `targeted_analysis/02.mapping_vs_pave/output`

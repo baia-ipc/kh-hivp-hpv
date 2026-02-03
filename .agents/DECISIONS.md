@@ -10,6 +10,12 @@ Format:
 
 ## Decisions
 
+- 2026-02-03: Rename intermediate_files to derived_data and consolidate indices
+  - Context: intermediate assets mixed derived refdata and reusable indices across analysis outputs.
+  - Decision: rename `intermediate_files/` to `derived_data/`, and share the Bowtie/PAVE index under `derived_data/indices/bowtie_vs_pave`.
+  - Rationale: clarify that the data are derived and reduce duplicated indices between analyses.
+  - Consequences: update configs/docs to use `derived_data/` paths and move HPV16/HPV18 reference FASTAs to `refdata/`.
+
 - 2026-02-03: Move shared indices under intermediate_files
   - Context: bowtie/virstrain indices were stored inside step directories.
   - Decision: relocate step indices to `intermediate_files/indices/` with per-analysis subdirectories.

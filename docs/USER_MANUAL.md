@@ -18,9 +18,9 @@ before running the analyses in this repository.
 - `pipelines/conda_env/`: Conda environment definitions used by pipelines.
 - `pipelines/multiqc/`: MultiQC configuration files used by pipelines.
 - `refdata/`: reference inputs from external sources (PAVE FASTA/GFF3, NCBI downloads).
-- `intermediate_files/`: generated intermediate assets.
-  - `intermediate_files/refdata/`: derived reference data (feature tables, renamed/filtered FASTA sets).
-  - `intermediate_files/indices/`: shared Bowtie/VirStrain indices (split by analysis).
+- `derived_data/`: generated intermediate assets.
+  - `derived_data/refdata/`: derived reference data (feature tables, renamed/filtered FASTA sets).
+- `derived_data/indices/`: shared Bowtie/VirStrain indices (Bowtie index + preliminary VirStrain index).
 - `prelim_analysis/` and `targeted_analysis/`: outputs and reports for each analysis.
 - `docs/`: technical documentation and this user manual.
 
@@ -75,7 +75,7 @@ If you use variant effect annotation, place the PAVE GFF3 files under
 `refdata/pave/gff3/` (one GFF3 per reference sequence).
 
 BED files used for E6/E7 SNP extraction are derived from the GFF3 inputs and
-stored under `intermediate_files/refdata/pave/bed/` (see below).
+stored under `derived_data/refdata/pave/bed/` (see below).
 
 These paths are wired via the technical pipeline configs (under `config/pipelines/`).
 
@@ -87,7 +87,7 @@ Generate them with:
 ```
 scripts/pave/gff3_to_features_tsv.run_all.sh \
   refdata/pave/gff3 \
-  intermediate_files/refdata/pave/features_tsv
+  derived_data/refdata/pave/features_tsv
 ```
 
 These TSVs are consumed by the Bowtie vs PAVE steps (coverage summaries).
@@ -101,7 +101,7 @@ Generate them with:
 ```
 scripts/pave/gff3_to_bed.run_all.sh \
   refdata/pave/gff3 \
-  intermediate_files/refdata/pave/bed
+  derived_data/refdata/pave/bed
 ```
 
 These BED files are required by the Bowtie vs PAVE and SNPs samples vs database steps.
@@ -116,8 +116,8 @@ Place raw inputs under:
 
 Derived tree inputs live under:
 
-- `intermediate_files/refdata/hpv16_tree`
-- `intermediate_files/refdata/hpv18_tree`
+- `derived_data/refdata/hpv16_tree`
+- `derived_data/refdata/hpv18_tree`
 
 The preparation steps below include the shared lineage reference FASTA files
 used by the step 02 SNP‑to‑lineage comparison.
@@ -135,12 +135,12 @@ HPV16:
 scripts/phylo_tree/hpv16_extract_lineages_fasta.sh \
   refdata/hpv16_tree/HPV16_lineages.tsv \
   refdata/hpv16_tree/HPV16-NCBIVirus.fasta \
-  intermediate_files/refdata/hpv16_tree/lineages_ref.fasta
+  derived_data/refdata/hpv16_tree/lineages_ref.fasta
 
 python3 scripts/phylo_tree/rename_lineages.py \
   refdata/hpv16_tree/HPV16_lineages.tsv 6 4 \
-  intermediate_files/refdata/hpv16_tree/lineages_ref.fasta \
-  intermediate_files/refdata/hpv16_tree/lineages_ref_renamed.fasta
+  derived_data/refdata/hpv16_tree/lineages_ref.fasta \
+  derived_data/refdata/hpv16_tree/lineages_ref_renamed.fasta
 ```
 
 HPV18:
@@ -149,12 +149,12 @@ HPV18:
 scripts/phylo_tree/hpv18_extract_lineages_fasta.sh \
   refdata/hpv18_tree/HPV18_lineages.tsv \
   refdata/hpv18_tree/HPV18-NCBIVirus.fasta \
-  intermediate_files/refdata/hpv18_tree/lineages_ref.fasta
+  derived_data/refdata/hpv18_tree/lineages_ref.fasta
 
 python3 scripts/phylo_tree/rename_lineages.py \
   refdata/hpv18_tree/HPV18_lineages.tsv 6 4 \
-  intermediate_files/refdata/hpv18_tree/lineages_ref.fasta \
-  intermediate_files/refdata/hpv18_tree/lineages_ref_renamed.fasta
+  derived_data/refdata/hpv18_tree/lineages_ref.fasta \
+  derived_data/refdata/hpv18_tree/lineages_ref_renamed.fasta
 ```
 
 #### HPV16 tree
@@ -164,7 +164,7 @@ python3 scripts/phylo_tree/rename_lineages.py \
    - `HPV16-NCBIVirus.fasta`
    - `HPV16-NCBIVirus.tsv`
 
-2) Place prepared inputs under `intermediate_files/refdata/hpv16_tree/`:
+2) Place prepared inputs under `derived_data/refdata/hpv16_tree/`:
    - `outgroups.fasta`
    - `lineages_ref_renamed.fasta` (from the shared lineage prep above)
 
@@ -174,23 +174,23 @@ python3 scripts/phylo_tree/rename_lineages.py \
 scripts/phylo_tree/hpv16_select_ncbi_genomes.sh --init-selection \
   refdata/hpv16_tree/HPV16-NCBIVirus.tsv \
   refdata/hpv16_tree/HPV16-NCBIVirus.fasta \
-  intermediate_files/refdata/hpv16_tree/selected \
-  intermediate_files/refdata/hpv16_tree/selected.fasta \
-  intermediate_files/refdata/hpv16_tree/selected_renamed.fasta
+  derived_data/refdata/hpv16_tree/selected \
+  derived_data/refdata/hpv16_tree/selected.fasta \
+  derived_data/refdata/hpv16_tree/selected_renamed.fasta
 
-# Edit intermediate_files/refdata/hpv16_tree/selected, then re-run without --init-selection:
+# Edit derived_data/refdata/hpv16_tree/selected, then re-run without --init-selection:
 scripts/phylo_tree/hpv16_select_ncbi_genomes.sh \
   refdata/hpv16_tree/HPV16-NCBIVirus.tsv \
   refdata/hpv16_tree/HPV16-NCBIVirus.fasta \
-  intermediate_files/refdata/hpv16_tree/selected \
-  intermediate_files/refdata/hpv16_tree/selected.fasta \
-  intermediate_files/refdata/hpv16_tree/selected_renamed.fasta
+  derived_data/refdata/hpv16_tree/selected \
+  derived_data/refdata/hpv16_tree/selected.fasta \
+  derived_data/refdata/hpv16_tree/selected_renamed.fasta
 ```
 
 4) Build `samples.fasta` from mapping results (step 02). Set your sample IDs explicitly:
 
 ```
-OUT_DIR=intermediate_files/refdata/hpv16_tree \
+OUT_DIR=derived_data/refdata/hpv16_tree \
 SAMPLES="<space-separated sample IDs>" \
 scripts/phylo_tree/hpv16_prepare_samples.sh
 ```
@@ -211,7 +211,7 @@ bin/targeted_analysis.steps/03.hpv16_tree.run.sh
    - `HPV18-NCBIVirus.fasta`
    - `HPV18-NCBIVirus.tsv`
 
-2) Place prepared inputs under `intermediate_files/refdata/hpv18_tree/`:
+2) Place prepared inputs under `derived_data/refdata/hpv18_tree/`:
    - `outgroups.fasta`
    - `lineages_ref_renamed.fasta` (from the shared lineage prep above)
 
@@ -222,18 +222,18 @@ scripts/phylo_tree/hpv18_select_ncbi_genomes.sh --init-selection \
   refdata/hpv18_tree/HPV18-NCBIVirus.tsv \
   refdata/hpv18_tree/HPV18-NCBIVirus.fasta \
   refdata/hpv18_tree/HPV18-NCBIVirus.acc_country.tsv \
-  intermediate_files/refdata/hpv18_tree/HPV18-NCBIVirus.acc_country.selected.tsv \
-  intermediate_files/refdata/hpv18_tree/selected.fasta \
-  intermediate_files/refdata/hpv18_tree/selected_renamed.fasta
+  derived_data/refdata/hpv18_tree/HPV18-NCBIVirus.acc_country.selected.tsv \
+  derived_data/refdata/hpv18_tree/selected.fasta \
+  derived_data/refdata/hpv18_tree/selected_renamed.fasta
 
-# Edit intermediate_files/refdata/hpv18_tree/HPV18-NCBIVirus.acc_country.selected.tsv, then re-run without --init-selection:
+# Edit derived_data/refdata/hpv18_tree/HPV18-NCBIVirus.acc_country.selected.tsv, then re-run without --init-selection:
 scripts/phylo_tree/hpv18_select_ncbi_genomes.sh \
   refdata/hpv18_tree/HPV18-NCBIVirus.tsv \
   refdata/hpv18_tree/HPV18-NCBIVirus.fasta \
   refdata/hpv18_tree/HPV18-NCBIVirus.acc_country.tsv \
-  intermediate_files/refdata/hpv18_tree/HPV18-NCBIVirus.acc_country.selected.tsv \
-  intermediate_files/refdata/hpv18_tree/selected.fasta \
-  intermediate_files/refdata/hpv18_tree/selected_renamed.fasta
+  derived_data/refdata/hpv18_tree/HPV18-NCBIVirus.acc_country.selected.tsv \
+  derived_data/refdata/hpv18_tree/selected.fasta \
+  derived_data/refdata/hpv18_tree/selected_renamed.fasta
 ```
 
 4) Build `samples.fasta` from mapping results (step 02). By default the script
@@ -241,7 +241,7 @@ derives samples from `targeted_analysis/02.mapping_vs_pave/reports/strains.tsv`
 by selecting rows with top strain `HPV18` for the run ID:
 
 ```
-OUT_DIR=intermediate_files/refdata/hpv18_tree \
+OUT_DIR=derived_data/refdata/hpv18_tree \
 scripts/phylo_tree/hpv18_prepare_samples.sh
 ```
 

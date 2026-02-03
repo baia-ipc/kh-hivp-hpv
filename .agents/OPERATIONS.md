@@ -9,7 +9,7 @@ Rules:
 ## Conventions
 
 - User-editable configuration is in `config/`; step path configs are under `bin/config/`; technical Nextflow config is in `config/pipelines/`. Sample lists live in `metadata/`.
-- Raw reference inputs live in `refdata/`; derived reference assets live in `intermediate_files/refdata/`.
+- Raw reference inputs live in `refdata/`; derived reference assets live in `derived_data/refdata/`.
 - Outputs are written to each step's `output/` and `reports/`.
 - When changing directory layout, update `CONTENTS.md` and `.agents/INVENTORY.md`.
 - Avoid user-specific absolute paths in scripts; require tools via PATH or
@@ -197,23 +197,23 @@ nextflow run pipelines/phylo_tree.nf \
 ### Generate PAVE feature tables (derived)
 
 Coverage statistics use feature tables derived from the PAVE GFF3 files.
-Generate them under `intermediate_files/refdata/pave/features_tsv` with:
+Generate them under `derived_data/refdata/pave/features_tsv` with:
 
 ```
 scripts/pave/gff3_to_features_tsv.run_all.sh \
   refdata/pave/gff3 \
-  intermediate_files/refdata/pave/features_tsv
+  derived_data/refdata/pave/features_tsv
 ```
 
 ### Generate PAVE BED files (derived)
 
 E6/E7 SNP extraction relies on BED intervals derived from the same PAVE GFF3s.
-Generate them under `intermediate_files/refdata/pave/bed` with:
+Generate them under `derived_data/refdata/pave/bed` with:
 
 ```
 scripts/pave/gff3_to_bed.run_all.sh \
   refdata/pave/gff3 \
-  intermediate_files/refdata/pave/bed
+  derived_data/refdata/pave/bed
 ```
 
 ## Reruns and resume
@@ -261,13 +261,13 @@ for step in prelim_analysis/* targeted_analysis/*; do
   done
 done
 
-if [ -d intermediate_files/indices ]; then
-  mkdir -p reference-results/intermediate_files/indices
-  cp -a intermediate_files/indices/. reference-results/intermediate_files/indices/
+if [ -d derived_data/indices ]; then
+  mkdir -p reference-results/derived_data/indices
+  cp -a derived_data/indices/. reference-results/derived_data/indices/
 fi
 ```
 
 ## Updating inputs
 
 - Update sample lists in `metadata/`.
-- Ensure reference indices exist under `intermediate_files/indices/` (Bowtie/VirStrain) and raw reference inputs under `refdata/`.
+- Ensure reference indices exist under `derived_data/indices/` (Bowtie/VirStrain) and raw reference inputs under `refdata/`.

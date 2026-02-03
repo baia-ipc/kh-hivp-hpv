@@ -13,8 +13,8 @@ Rules:
 - Raw FASTQ inputs live under `input_reads/` (symlinks or folders to external data).
 - Script utilities live under `scripts/` and are grouped by concern in subdirectories (taxonomy_assignment, top_strains, coverage, variants, pave, virstrain, phylo_tree).
 - Sample lists and other hardcoded data live in `metadata/`.
-- Reference inputs live in `refdata/`; derived reference assets live in `intermediate_files/refdata/` (do not place reference inputs under analysis step directories).
-- Shared Bowtie/VirStrain indices live under `intermediate_files/indices/` (split by analysis).
+- Reference inputs live in `refdata/`; derived reference assets live in `derived_data/refdata/` (do not place reference inputs under analysis step directories).
+- Shared Bowtie/VirStrain indices live under `derived_data/indices/` (Bowtie index + preliminary/virstrain).
 - Centrifuge database build script lives at `scripts/taxonomy_assignment/build_centrifuge_db.sh` (outputs under `refdata/centrifuge/`).
 - Outputs live under each step's `output/` and `reports/` directories.
 - MultiQC reports are published to each step’s `reports/` (tree steps use `output/reports/`), with the process writing `multiqc_report.html` at the workdir root and `publishDir` targeting the final reports directory.
@@ -42,7 +42,7 @@ Rules:
   - prelim_analysis: `prelim_analysis/02.bowtie_vs_pave`
   - targeted_analysis: `targeted_analysis/02.mapping_vs_pave`
 - Inputs: bucketed FASTQs from the corresponding step 01 output; bucket selection via `params.bucket_tid` in `config/pipelines/bowtie_vs_pave.config`.
-- Reference assets: PAVE FASTA/GFF3 under `refdata/pave/`, plus derived BEDs and feature tables under `intermediate_files/refdata/pave/`.
+- Reference assets: PAVE FASTA/GFF3 under `refdata/pave/`, plus derived BEDs and feature tables under `derived_data/refdata/pave/`.
 - Outputs: per-step `output/` and `reports/` under the locations above.
 
 ## Skill: VirStrain reports (optional)
@@ -70,7 +70,7 @@ Rules:
 - Where:
   - HPV16: `targeted_analysis/03.hpv16_tree`
   - HPV18: `targeted_analysis/04.hpv18_tree`
-- Inputs: curated tree inputs under `intermediate_files/refdata/hpv16_tree` and `intermediate_files/refdata/hpv18_tree` (prepared from `refdata/hpv16_tree` and `refdata/hpv18_tree`).
+- Inputs: curated tree inputs under `derived_data/refdata/hpv16_tree` and `derived_data/refdata/hpv18_tree` (prepared from `refdata/hpv16_tree` and `refdata/hpv18_tree`).
 - Outputs: alignment and tree artifacts under each step `output/`.
 
 ## Skill: SNPs samples vs database
@@ -79,6 +79,6 @@ Rules:
 - Entry points: `pipelines/database_snps.nf` (config: `config/user.config`).
 - Where: `targeted_analysis/05.snps_samples_vs_db`.
 - Inputs:
-  - Selected reference sets under `intermediate_files/refdata/hpv16_tree` and `intermediate_files/refdata/hpv18_tree`
+  - Selected reference sets under `derived_data/refdata/hpv16_tree` and `derived_data/refdata/hpv18_tree`
   - Sample variants from `targeted_analysis/02.mapping_vs_pave/reports/E6_E7_variants.tsv`
 - Outputs: `targeted_analysis/05.snps_samples_vs_db/output`, `targeted_analysis/05.snps_samples_vs_db/reports`.

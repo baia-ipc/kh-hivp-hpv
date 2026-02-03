@@ -19,8 +19,8 @@ def projectRoot = (workflow.projectDir instanceof java.nio.file.Path \
 
 params.scripts_dir = params.scripts_dir ?: "${projectRoot}/scripts"
 params.multiqc_config = params.multiqc_config ?: "${projectRoot}/pipelines/multiqc/bowtie_vs_pave.multiqc.yml"
-params.lineage_hpv16_fasta = params.lineage_hpv16_fasta ?: "${projectRoot}/intermediate_files/refdata/hpv16_tree/lineages_ref_renamed.fasta"
-params.lineage_hpv18_fasta = params.lineage_hpv18_fasta ?: "${projectRoot}/intermediate_files/refdata/hpv18_tree/lineages_ref_renamed.fasta"
+params.lineage_hpv16_fasta = params.lineage_hpv16_fasta ?: "${projectRoot}/derived_data/refdata/hpv16_tree/lineages_ref_renamed.fasta"
+params.lineage_hpv18_fasta = params.lineage_hpv18_fasta ?: "${projectRoot}/derived_data/refdata/hpv18_tree/lineages_ref_renamed.fasta"
 params.lineage_ref_hpv16_name = params.lineage_ref_hpv16_name ?: "HPV16REF|lcl|Human"
 params.lineage_ref_hpv18_name = params.lineage_ref_hpv18_name ?: "HPV18REF|lcl|Human"
 // Avoid "Access to undefined parameter" warnings; these are optional filters/inputs.
