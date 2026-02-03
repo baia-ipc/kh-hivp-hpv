@@ -31,9 +31,9 @@
 
 - `refdata/`: external reference inputs (PAVE FASTA/GFF3, NCBI downloads)
 
-- `intermediate_files/`: generated intermediate assets
+- `derived_data/`: generated intermediate assets
   - `refdata/`: processed reference assets (feature tables, BED intervals, curated tree inputs)
-  - `indices/`: shared indices (Bowtie/PAVE + VirStrain), split by analysis
+  - `indices/`: shared indices (Bowtie/PAVE + VirStrain)
 
 - `docs/`: technical documentation for the analysis steps (human-readable)
 

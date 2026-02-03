@@ -21,14 +21,14 @@ Wrappers:
 ## Inputs
 
 - Selected genomes and country metadata:
-  - `intermediate_files/refdata/hpv16_tree/selected.fasta`
-  - `intermediate_files/refdata/hpv16_tree/selected`
-  - `intermediate_files/refdata/hpv18_tree/selected.fasta`
-  - `intermediate_files/refdata/hpv18_tree/HPV18-NCBIVirus.acc_country.selected.tsv`
+  - `derived_data/refdata/hpv16_tree/selected.fasta`
+  - `derived_data/refdata/hpv16_tree/selected`
+  - `derived_data/refdata/hpv18_tree/selected.fasta`
+  - `derived_data/refdata/hpv18_tree/HPV18-NCBIVirus.acc_country.selected.tsv`
 - Lineage references:
-  - `intermediate_files/refdata/hpv16_tree/lineages_ref_renamed.fasta`
-  - `intermediate_files/refdata/hpv18_tree/lineages_ref_renamed.fasta`
-- PAVE BED directory: `intermediate_files/refdata/pave/bed` (auto-generated from `refdata/pave/gff3` if missing)
+  - `derived_data/refdata/hpv16_tree/lineages_ref_renamed.fasta`
+  - `derived_data/refdata/hpv18_tree/lineages_ref_renamed.fasta`
+- PAVE BED directory: `derived_data/refdata/pave/bed` (auto-generated from `refdata/pave/gff3` if missing)
 - Sample variants from step 02:
   - `targeted_analysis/02.mapping_vs_pave/reports/E6_E7_variants.tsv`
 

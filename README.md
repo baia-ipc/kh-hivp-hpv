@@ -49,9 +49,9 @@ and reports under its own step directory (`output/` and `reports/`).
 [4] Output
 - `prelim_analysis/`: outputs and reports for the preliminary analysis
 - `targeted_analysis/`: outputs and reports for the targeted analysis
-- `intermediate_files/`: derived reference assets and shared indices
-  - `intermediate_files/refdata`: derived reference assets (BED/TSV/tree inputs)
-  - `intermediate_files/indices`: shared Bowtie/VirStrain indices
+- `derived_data/`: derived reference assets and shared indices
+  - `derived_data/refdata`: derived reference assets (BED/TSV/tree inputs)
+  - `derived_data/indices`: shared Bowtie/VirStrain indices
 
 [5] Documentation
 - `docs`: user manual and technical documentation

@@ -11,7 +11,7 @@ This step builds an HPV18 phylogenetic tree from prepared sequence inputs
 - User config: `config/user.config`
 - Step path config: `bin/config/targeted_analysis.config` (profile `targeted_hpv18_tree`)
 - Technical config: `config/pipelines/common.config` + `config/pipelines/phylo_tree.config` + `config/pipelines/phylo_tree.hpv18.config`
-- Inputs directory: `intermediate_files/refdata/hpv18_tree` (wired via technical config)
+- Inputs directory: `derived_data/refdata/hpv18_tree` (wired via technical config)
 - Outgroup list: `metadata/hpv18_tree_outgroups.txt`
 
 Wrappers:
@@ -20,7 +20,7 @@ Wrappers:
 
 ## Inputs
 
-Inputs are expected under `intermediate_files/refdata/hpv18_tree/` and are prepared from
+Inputs are expected under `derived_data/refdata/hpv18_tree/` and are prepared from
 raw inputs under `refdata/hpv18_tree/` using scripts documented in the
 repository root `README.md`.
 
