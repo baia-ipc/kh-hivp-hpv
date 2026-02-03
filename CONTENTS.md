@@ -1,9 +1,9 @@
 # High level summary of the contents of the repository
 
-- preliminary-analysis-all-patients/ and targeted-analysis-hpv16-hpv18/ workflows used for the analyses; in total 2 analyses were done
-  - analysis of the first three batches of sequences (Miseq): preliminary-analysis-all-patients/
+- prelim_analysis/ and targeted_analysis/ workflows used for the analyses; in total 2 analyses were done
+  - analysis of the first three batches of sequences (Miseq): prelim_analysis/
   - analysis of the subsequent sequencing, focused on HPV16/HPV18 samples:
-    targeted-analysis-hpv16-hpv18/
+    targeted_analysis/
 
 - analysis directories:
   - each analysis directory contain subdirectories for each step, numbered
@@ -21,8 +21,8 @@
            (centrifuge_bucketing, bowtie_vs_pave, pave_reference, virstrain, phylo_tree, lineage_snps)
 
 - bin/ step and analysis runner scripts (wrappers around Nextflow pipelines)
-  - preliminary-analysis-all-patients.steps/ per-step wrappers (plus single_sample/)
-  - targeted-analysis-hpv16-hpv18.steps/ per-step wrappers (plus single_sample/)
+  - prelim_analysis.steps/ per-step wrappers (plus single_sample/)
+  - targeted_analysis.steps/ per-step wrappers (plus single_sample/)
   - config/ step path config profiles (internal defaults; not typically edited by users)
 
 - input_reads/ symlinks to external raw data locations (not stored in-repo)

@@ -21,7 +21,7 @@ before running the analyses in this repository.
 - `intermediate_files/`: generated intermediate assets.
   - `intermediate_files/refdata/`: derived reference data (feature tables, renamed/filtered FASTA sets).
   - `intermediate_files/indices/`: bowtie/virstrain indices.
-- `preliminary-analysis-all-patients/` and `targeted-analysis-hpv16-hpv18/`: outputs and reports for each analysis.
+- `prelim_analysis/` and `targeted_analysis/`: outputs and reports for each analysis.
 - `docs/`: technical documentation and this user manual.
 
 ## 3) Prepare raw input data (`input_reads/`)
@@ -58,8 +58,8 @@ to your local reference data paths and to set resource limits:
 - Base pipeline config:
   - `config/user.config`: all user-editable pipeline parameters (Centrifuge index/taxdump, PAVE reference names, target-country defaults, tree defaults, and shared threads)
 - Step‑specific path configs (inputs/outputs) are stored under `bin/config/` as profile bundles and are not typically edited by users:
-  - `bin/config/preliminary-analysis-all-patients.config` (profiles for steps 001‑005)
-  - `bin/config/targeted-analysis-hpv16-hpv18.config` (profiles for steps 001‑005)
+  - `bin/config/prelim_analysis.config` (profiles for steps 001‑005)
+  - `bin/config/targeted_analysis.config` (profiles for steps 001‑005)
 - Tree defaults are configured via `config/user.config`.
 
 Technical Nextflow settings (executor/conda wiring and derived refdata paths) live under `config/pipelines/`.
@@ -201,7 +201,7 @@ The mapping run ID is inferred from `metadata/samples-input2.tsv` (using the
 5) Run the tree pipeline:
 
 ```
-bin/targeted-analysis-hpv16-hpv18.steps/003.0.hpv16_tree.run.sh
+bin/targeted_analysis.steps/003.0.hpv16_tree.run.sh
 ```
 
 #### HPV18 tree
@@ -237,7 +237,7 @@ scripts/phylo_tree/hpv18_select_ncbi_genomes.sh \
 ```
 
 4) Build `samples.fasta` from mapping results (step 002). By default the script
-derives samples from `targeted-analysis-hpv16-hpv18/002.0.mapping_vs_pave/reports/strains.tsv`
+derives samples from `targeted_analysis/002.0.mapping_vs_pave/reports/strains.tsv`
 by selecting rows with top strain `HPV18` for the run ID:
 
 ```
@@ -251,7 +251,7 @@ The mapping run ID is inferred from `metadata/samples-input2.tsv` (using the
 5) Run the tree pipeline:
 
 ```
-bin/targeted-analysis-hpv16-hpv18.steps/004.0.hpv18_tree.run.sh
+bin/targeted_analysis.steps/004.0.hpv18_tree.run.sh
 ```
 
 ### 6.4 Centrifuge database (taxonomic index)
@@ -279,44 +279,44 @@ archaea/bacteria/viral. If you need a different composition, pass
 
 After the preparation steps above, run the analyses using the wrapper scripts below.
 
-### 7.1 preliminary-analysis-all-patients
+### 7.1 prelim_analysis
 
 All steps in one go:
 
 ```
-bin/preliminary-analysis-all-patients.run.sh
+bin/prelim_analysis.run.sh
 ```
 
 Or run each step individually:
 
 ```
-bin/preliminary-analysis-all-patients.steps/001.0.centrifuge.run.sh
-bin/preliminary-analysis-all-patients.steps/002.0.bowtie_vs_pave.run.sh
-bin/preliminary-analysis-all-patients.steps/003.0.virstrain.run.sh
-bin/preliminary-analysis-all-patients.steps/004.0.bowtie_vs_pave.E6.run.sh
-bin/preliminary-analysis-all-patients.steps/005.0.bowtie_vs_pave.E7.run.sh
+bin/prelim_analysis.steps/001.0.centrifuge.run.sh
+bin/prelim_analysis.steps/002.0.bowtie_vs_pave.run.sh
+bin/prelim_analysis.steps/003.0.virstrain.run.sh
+bin/prelim_analysis.steps/004.0.bowtie_vs_pave.E6.run.sh
+bin/prelim_analysis.steps/005.0.bowtie_vs_pave.E7.run.sh
 ```
 
 Step 001 report (MultiQC):
 
-`preliminary-analysis-all-patients/001.0.centrifuge/reports/multiqc_report.html`
+`prelim_analysis/001.0.centrifuge/reports/multiqc_report.html`
 
-### 7.2 targeted-analysis-hpv16-hpv18
+### 7.2 targeted_analysis
 
 All steps in one go:
 
 ```
-bin/targeted-analysis-hpv16-hpv18.run.sh
+bin/targeted_analysis.run.sh
 ```
 
 Or run each step individually:
 
 ```
-bin/targeted-analysis-hpv16-hpv18.steps/001.0.bucketing.run.sh
-bin/targeted-analysis-hpv16-hpv18.steps/002.0.mapping_vs_pave.run.sh
-bin/targeted-analysis-hpv16-hpv18.steps/003.0.hpv16_tree.run.sh
-bin/targeted-analysis-hpv16-hpv18.steps/004.0.hpv18_tree.run.sh
-bin/targeted-analysis-hpv16-hpv18.steps/005.0.snps_samples_vs_db.run.sh
+bin/targeted_analysis.steps/001.0.bucketing.run.sh
+bin/targeted_analysis.steps/002.0.mapping_vs_pave.run.sh
+bin/targeted_analysis.steps/003.0.hpv16_tree.run.sh
+bin/targeted_analysis.steps/004.0.hpv18_tree.run.sh
+bin/targeted_analysis.steps/005.0.snps_samples_vs_db.run.sh
 ```
 
 ### 7.3 Run a single sample (optional)
@@ -327,9 +327,9 @@ running one sample pair. The third argument is an output prefix used to infer
 in `config/`.
 
 ```
-bin/preliminary-analysis-all-patients.steps/single_sample/002.0.bowtie_vs_pave.run_sample.sh \
+bin/prelim_analysis.steps/single_sample/002.0.bowtie_vs_pave.run_sample.sh \
   /path/to/SAMPLE_R1.fastq.gz /path/to/SAMPLE_R2.fastq.gz \
-  preliminary-analysis-all-patients/002.0.bowtie_vs_pave/output/RUN_ID/SAMPLE
+  prelim_analysis/002.0.bowtie_vs_pave/output/RUN_ID/SAMPLE
 ```
 
 ## 8) Troubleshooting
@@ -350,5 +350,5 @@ If Nextflow behaves differently when Conda is activated in your shell, try
 Re-run the same command with `-resume`:
 
 ```
-bin/preliminary-analysis-all-patients.steps/002.0.bowtie_vs_pave.run.sh -resume
+bin/prelim_analysis.steps/002.0.bowtie_vs_pave.run.sh -resume
 ```
