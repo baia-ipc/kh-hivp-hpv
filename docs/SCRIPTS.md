@@ -312,6 +312,24 @@ Key parameters:
 - `--label-prefix`: optional prefix added to output IDs.
 - `--output`: output FASTA path.
 
+### `scripts/phylo_tree/render_tree_svg.py`
+Purpose: Render an IQ-TREE Newick tree to offline SVG/PNG for MultiQC.
+Key parameters:
+- `--treefile`: Newick tree file.
+- `--svg`: output SVG path.
+- `--png`: optional output PNG path.
+- `--width` / `--height`: figure size controls.
+- `--no-ladderize`: disable ladderization.
+
+### `scripts/phylo_tree/compute_tree_stats.py`
+Purpose: Summarize alignment and IQ-TREE statistics for MultiQC.
+Key parameters:
+- `--selected`, `--outgroups`, `--lineages`, `--samples`: input FASTAs.
+- `--aligned`, `--trimmed`: alignment FASTAs.
+- `--iqtree`: IQ-TREE report file.
+- `--treefile`: Newick tree file.
+- `--output`: TSV output path.
+
 ## Lineage SNP calling and comparisons
 
 ### `scripts/variants/lineage_snps_from_fasta.py`
