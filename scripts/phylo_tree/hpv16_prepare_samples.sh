@@ -117,6 +117,9 @@ fi
 
 seqkit grep -r -p "HPV16REF.*" "$PAVE_FASTA" > "$HPV16REF_FASTA"
 
+consensus_dir="$OUT_DIR/samples_consensus"
+mkdir -p "$consensus_dir"
+
 read -r -a sample_list <<< "$SAMPLES"
 for sample in "${sample_list[@]}"; do
   sample_id="$sample"
@@ -124,7 +127,7 @@ for sample in "${sample_list[@]}"; do
     sample_id="KHCA-$sample_id"
   fi
   bcf_path="$BCF_DIR/$sample_id.bcf.gz"
-  out_path="$OUT_DIR/$sample_id.HPV16REF.consensus.fa"
+  out_path="$consensus_dir/$sample_id.HPV16REF.consensus.fa"
   if [[ ! -f "$bcf_path" ]]; then
     echo "Error: missing BCF: $bcf_path" >&2
     exit 1
@@ -144,5 +147,5 @@ for sample in "${sample_list[@]}"; do
   if [[ "$sample_id" != KHCA-* ]]; then
     sample_id="KHCA-$sample_id"
   fi
-  cat "$OUT_DIR/$sample_id.HPV16REF.consensus.fa" >> "$samples_fasta"
+  cat "$consensus_dir/$sample_id.HPV16REF.consensus.fa" >> "$samples_fasta"
 done
