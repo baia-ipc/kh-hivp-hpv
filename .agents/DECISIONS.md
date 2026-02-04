@@ -10,6 +10,12 @@ Format:
 
 ## Decisions
 
+- 2026-02-04: Move analysis outputs to `outs/` and track curated results under `results/`
+  - Context: analysis outputs and reports were stored under analysis directories, and MultiQC reports lived alongside other reports.
+  - Decision: write outputs and non‑MultiQC reports under `outs/<analysis>/<step>/`, store MultiQC reports under `results/multiqc/<analysis>/`, and keep curated results tracked in git under `results/` while ignoring raw analysis outputs.
+  - Rationale: separate large run artifacts from tracked outputs and standardize report locations.
+  - Consequences: update configs, pipelines, scripts, and documentation; migrate existing outputs into `outs/` and `results/`.
+
 - 2026-02-04: Add offline tree visualization + MultiQC tree summary stats
   - Context: tree construction steps relied on step-local READMEs for manual guidance and MultiQC lacked tree previews and intermediate statistics.
   - Decision: move tree reference acquisition instructions to the user manual, remove step README files, and extend the phylo tree pipeline to render offline tree images and emit summary stats for MultiQC.

@@ -2,7 +2,9 @@
 
 This directory contains technical documentation for the analysis steps in this
 repository: what each step does, how it is implemented (pipelines + configs),
-and where to find its inputs and outputs.
+and where to find its inputs and outputs. Outputs and non‑MultiQC reports live
+under `outs/<analysis>/<step>/`, while MultiQC reports are collected under
+`results/multiqc/<analysis>/`.
 
 This documentation is intended for humans (e.g. lab / bioinformatics users).
 

@@ -26,7 +26,7 @@ Wrapper:
 
 ## Inputs
 
-- Mapping output directory: `targeted_analysis/02.mapping_vs_pave/output/`
+- Mapping output directory: `outs/targeted_analysis/02.mapping_vs_pave/`
 - PAVE reference inputs (wired via configs):
   - Reference FASTA: `refdata/pave/pave_hsa.fas`
   - GFF3 directory: `refdata/pave/gff3`
@@ -46,7 +46,7 @@ Wrapper:
 
 ## Outputs
 
-Variant aggregation and database comparison reports (`reports/`):
+Variant aggregation and database comparison reports (`outs/targeted_analysis/03.variant_analysis/reports/`):
 
 - `E6_E7_variants.tsv`
 - `E6_E7_variant_effects.tsv`
@@ -58,7 +58,7 @@ Variant aggregation and database comparison reports (`reports/`):
 - `samples_vs_database_sets.tsv`
 - `samples_vs_lineage_sets.tsv`
 - `hpv16_e6e7_variants_summary.tsv`
-- MultiQC report: `reports/multiqc_report.html`
+- MultiQC report: `results/multiqc/targeted_analysis/03_variant_analysis.report.html`
 Database comparison outputs:
 
-- `output/database_snps/` (database fasta subsets and derived files)
+- `outs/targeted_analysis/03.variant_analysis/database_snps/` (database fasta subsets and derived files)

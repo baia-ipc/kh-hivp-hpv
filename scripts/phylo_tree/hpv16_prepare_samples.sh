@@ -13,8 +13,8 @@ OUT_DIR=${OUT_DIR:-}
 SAMPLES=${SAMPLES:-}
 SAMPLES_FILE=${SAMPLES_FILE:-}
 SAMPLES_TSV=${SAMPLES_TSV:-$REPO_ROOT/metadata/samples-input2.tsv}
-STRAINS_TSV=${STRAINS_TSV:-$REPO_ROOT/targeted_analysis/02.mapping_vs_pave/reports/strains.tsv}
-MAPPING_OUTDIR=${MAPPING_OUTDIR:-$REPO_ROOT/targeted_analysis/02.mapping_vs_pave/output}
+STRAINS_TSV=${STRAINS_TSV:-$REPO_ROOT/outs/targeted_analysis/02.mapping_vs_pave/reports/strains.tsv}
+MAPPING_OUTDIR=${MAPPING_OUTDIR:-$REPO_ROOT/outs/targeted_analysis/02.mapping_vs_pave}
 
 if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
   cat <<'EOFHELP'

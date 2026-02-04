@@ -21,7 +21,7 @@ Wrappers:
 
 ## Inputs
 
-- Reads directory: output of targeted_analysis step 01 (`targeted_analysis/01.bucketing/output/`)
+- Reads directory: output of targeted_analysis step 01 (`outs/targeted_analysis/01.bucketing/`)
 - PAVE reference inputs (wired via `config/pipelines/bowtie_vs_pave.config`):
   - Reference FASTA: `refdata/pave/pave_hsa.fas`
   - GFF3 directory: `refdata/pave/gff3`
@@ -29,8 +29,8 @@ Wrappers:
 
 ## Outputs
 
-- Outputs under `output/<RUN_ID>/`
-- Reports under `reports/`, including:
+- Outputs under `outs/targeted_analysis/02.mapping_vs_pave/<RUN_ID>/`
+- Reports under `outs/targeted_analysis/02.mapping_vs_pave/reports/`, including:
   - mapping/coverage summaries
   - strain assignment + coverage table (top strains with averaged genome/E6/E7 coverage and patient metadata)
-  - `reports/multiqc_report.html`
+  - MultiQC report: `results/multiqc/targeted_analysis/02_mapping_vs_pave.report.html`

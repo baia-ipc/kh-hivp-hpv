@@ -17,6 +17,8 @@ def iqtreeOutgroupsParam = params.containsKey('iqtree_outgroups') ? params.iqtre
 params.scripts_dir = params.scripts_dir ?: "${projectRoot}/scripts"
 params.conda_env = params.conda_env ?: "${projectRoot}/pipelines/conda_env/pipeline.env.yml"
 params.multiqc_config = params.multiqc_config ?: "${projectRoot}/pipelines/multiqc/phylo_tree.multiqc.yml"
+params.multiqc_outdir = params.multiqc_outdir ?: params.reports_dir
+params.multiqc_report_name = params.multiqc_report_name ?: "multiqc_report.html"
 params.refdata_dir = params.refdata_dir ?: null
 params.derived_dir = params.derived_dir ?: null
 params.input_dir = params.input_dir ?: params.derived_dir
@@ -395,20 +397,20 @@ process TREE_STATS {
 process MULTIQC {
     tag "multiqc"
     conda params.conda_env
-    publishDir "${params.reports_dir}", mode: 'copy'
+    publishDir "${params.multiqc_outdir}", mode: 'copy'
 
     input:
     path(multiqc_config)
     path(done)
 
     output:
-    path("multiqc_report.html")
+    path("${params.multiqc_report_name}")
 
     script:
     """
     mkdir -p "${params.reports_dir}"
     multiqc --force \\
-      --filename "multiqc_report.html" \\
+      --filename "${params.multiqc_report_name}" \\
       --config "${multiqc_config}" \\
       --outdir . \\
       "${params.outdir}" "${params.reports_dir}"

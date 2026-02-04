@@ -45,6 +45,12 @@ if (!params.containsKey('skip_align') || params.skip_align == null) {
 if (!params.containsKey('precomputed_root') || !params.precomputed_root) {
     params.precomputed_root = params.outdir
 }
+if (!params.containsKey('multiqc_outdir') || !params.multiqc_outdir) {
+    params.multiqc_outdir = params.reports_dir
+}
+if (!params.containsKey('multiqc_report_name') || !params.multiqc_report_name) {
+    params.multiqc_report_name = "multiqc_report.html"
+}
 
 def aggregateSkipList = params.aggregate_skip.toString()
     .split(',')
@@ -135,14 +141,14 @@ process AGGREGATE_COUNTS {
 process MULTIQC {
     tag "multiqc"
     conda params.conda_env
-    publishDir "${params.reports_dir}", mode: 'copy'
+    publishDir "${params.multiqc_outdir}", mode: 'copy'
 
     input:
     path(multiqc_config)
     path(done)
 
     output:
-    path("multiqc_report.html")
+    path("${params.multiqc_report_name}")
 
     script:
     """
@@ -172,7 +178,7 @@ rewrite('relative_counts.wo_human.tsv', 'relative_counts.wo_human.multiqc.tsv')
 PY
 
     multiqc --force \\
-      --filename "multiqc_report.html" \\
+      --filename "${params.multiqc_report_name}" \\
       --config "${multiqc_config}" \\
       --outdir . \\
       . "${params.outdir}" "${params.reports_dir}"

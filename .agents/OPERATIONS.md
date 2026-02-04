@@ -64,7 +64,7 @@ nextflow run pipelines/centrifuge_bucketing_all.nf \
   -resume
 ```
 
-MultiQC report is written to `prelim_analysis/01.bucketing/reports/multiqc_report.html`.
+MultiQC report is written to `results/multiqc/prelim_analysis/01_bucketing.report.html`.
 
 ### Build the Centrifuge database (human + RefSeq archaea/bacteria/viral)
 
@@ -253,16 +253,11 @@ To refresh the reference snapshot used for regression checks:
 
 ```
 mkdir -p reference-results
-for step in prelim_analysis/* targeted_analysis/*; do
+for step in outs/prelim_analysis/* outs/targeted_analysis/*; do
   [ -d "$step" ] || continue
-  for sub in output reports; do
-    src="$step/$sub"
-    if [ -d "$src" ]; then
-      dest="reference-results/$step/$sub"
-      mkdir -p "$dest"
-      cp -a "$src/." "$dest/"
-    fi
-  done
+  dest="reference-results/$step"
+  mkdir -p "$dest"
+  cp -a "$step/." "$dest/"
 done
 
 if [ -d derived_data/indices ]; then

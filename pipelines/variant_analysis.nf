@@ -11,6 +11,8 @@ def projectRoot = (workflow.projectDir instanceof java.nio.file.Path \
 params.scripts_dir = params.scripts_dir ?: "${projectRoot}/scripts"
 params.conda_env = params.conda_env ?: "${projectRoot}/pipelines/conda_env/pipeline.env.yml"
 params.multiqc_config = params.multiqc_config ?: "${projectRoot}/pipelines/multiqc/variant_analysis.multiqc.yml"
+params.multiqc_outdir = params.multiqc_outdir ?: params.reports_dir
+params.multiqc_report_name = params.multiqc_report_name ?: "multiqc_report.html"
 params.include_database = params.containsKey('include_database') ? params.include_database : false
 params.pave_bed_dir = params.pave_bed_dir ?: "${projectRoot}/derived_data/refdata/pave/bed"
 params.pave_gff3_dir = params.pave_gff3_dir ?: "${projectRoot}/refdata/pave/gff3"
@@ -534,14 +536,14 @@ process COMPARE_LINEAGE_SNPS {
 process MULTIQC {
     tag "multiqc"
     conda params.conda_env
-    publishDir "${params.reports_dir}", mode: 'copy'
+    publishDir "${params.multiqc_outdir}", mode: 'copy'
 
     input:
     path(multiqc_config)
     path(done)
 
     output:
-    path("multiqc_report.html")
+    path("${params.multiqc_report_name}")
     path("E6_E7_variants.multiqc.tsv")
     path("E6_E7_variant_effects.multiqc.tsv")
     path("lineage_snp_comparison.multiqc.tsv"), optional: true
@@ -740,7 +742,7 @@ rewrite_with_header(
 PY
 
     multiqc --force \\
-      --filename "multiqc_report.html" \\
+      --filename "${params.multiqc_report_name}" \\
       --config "${multiqc_config}" \\
       --outdir . \\
       . "${params.reports_dir}"

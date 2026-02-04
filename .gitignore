@@ -2,9 +2,10 @@
 *.DS_Store
 *.bt2
 *.fai
-output/
-prelim_analysis/
-targeted_analysis/
+/output/
+/outs/
+/prelim_analysis/
+/targeted_analysis/
 dev/
 reference-results/
 .nextflow/
