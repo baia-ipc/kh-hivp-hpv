@@ -22,7 +22,7 @@ Wrappers:
 
 ## Inputs
 
-- Reads directory: output of step 01 (`prelim_analysis/01.bucketing/output/`)
+- Reads directory: output of step 01 (`outs/prelim_analysis/01.bucketing/`)
 - PAVE reference inputs (wired via `config/pipelines/bowtie_vs_pave.config`):
   - Reference FASTA: `refdata/pave/pave_hsa.fas`
   - GFF3 directory: `refdata/pave/gff3`
@@ -30,12 +30,12 @@ Wrappers:
 
 ## Outputs
 
-Per run (`output/<RUN_ID>/`):
+Per run (`outs/prelim_analysis/02.mapping_vs_pave/<RUN_ID>/`):
 
 - per-sample mapping artifacts (SAM/BAM, indexes, and intermediate files)
-Aggregated, step-level reports (`reports/`):
+Aggregated, step-level reports (`outs/prelim_analysis/02.mapping_vs_pave/reports/`):
 
 - mapping and strain summaries
 - coverage summaries
 - Strain assignment + coverage table (top strains with averaged genome/E6/E7 coverage and patient metadata)
-- MultiQC report: `reports/multiqc_report.html`
+- MultiQC report: `results/multiqc/prelim_analysis/02_mapping_vs_pave.report.html`

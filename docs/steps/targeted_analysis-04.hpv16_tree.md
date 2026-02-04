@@ -27,7 +27,7 @@ than the raw inputs (no manual preparation commands required).
 
 ## Outputs
 
-- Tree outputs and intermediate artifacts under `output/`
-- MultiQC report: `output/reports/multiqc_report.html`
-- Tree preview image: `reports/phylo_tree.svg` (PNG fallback alongside)
-- MultiQC summary table: `reports/phylo_tree_summary.multiqc.tsv`
+- Tree outputs and intermediate artifacts under `outs/targeted_analysis/04.hpv16_tree/`
+- MultiQC report: `results/multiqc/targeted_analysis/04_hpv16_tree.report.html`
+- Tree preview image: `outs/targeted_analysis/04.hpv16_tree/reports/phylo_tree.svg` (PNG fallback alongside)
+- MultiQC summary table: `outs/targeted_analysis/04.hpv16_tree/reports/phylo_tree_summary.multiqc.tsv`

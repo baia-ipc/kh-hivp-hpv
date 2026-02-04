@@ -6,8 +6,8 @@ This repository contains a reproducible workflow used for HPV sequencing analysi
 
 Two analyses are included:
 
-- `prelim_analysis/`: analysis of the first three MiSeq runs (all patients + controls).
-- `targeted_analysis/`: deeper sequencing for HPV16/HPV18‑positive samples.
+- `prelim_analysis`: analysis of the first three MiSeq runs (all patients + controls).
+- `targeted_analysis`: deeper sequencing for HPV16/HPV18‑positive samples.
 
 To run the analyses:
 
@@ -23,8 +23,10 @@ Wrapper entry points:
 
 A detailed user manual is available under `docs/USER_MANUAL.md`.
 
-Each analysis consists of multiple steps (01, 02, …). Each step stores outputs
-and reports under its own step directory (`output/` and `reports/`).
+Each analysis consists of multiple steps (01, 02, …). Outputs are written under
+`outs/<analysis>/<step>/` with non‑MultiQC reports under
+`outs/<analysis>/<step>/reports`. MultiQC reports are collected under
+`results/multiqc/<analysis>/`.
 
 ## Repository content
 
@@ -47,8 +49,8 @@ and reports under its own step directory (`output/` and `reports/`).
 - `testdata`: small datasets used by tests
 
 [4] Output
-- `prelim_analysis/`: outputs and reports for the preliminary analysis
-- `targeted_analysis/`: outputs and reports for the targeted analysis
+- `outs/`: outputs and non‑MultiQC reports for each analysis
+- `results/`: curated results (including MultiQC reports)
 - `derived_data/`: derived reference assets and shared indices
   - `derived_data/refdata`: derived reference assets (BED/TSV/tree inputs)
   - `derived_data/indices`: shared Bowtie/VirStrain indices

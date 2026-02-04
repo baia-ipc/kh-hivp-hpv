@@ -34,7 +34,9 @@
   - `refdata/`: processed reference assets (feature tables, BED intervals, curated tree inputs)
   - `indices/`: shared indices (Bowtie/PAVE + VirStrain)
 
-- `results/`: curated links to key outputs (selected reports and reference results)
+- `outs/`: analysis outputs and non‑MultiQC reports (ignored in git)
+
+- `results/`: curated copies of key outputs (selected reports and reference results)
 
 - `docs/`: technical documentation for the analysis steps (human-readable)
 

@@ -52,6 +52,8 @@ requiredParams.each { key ->
         error "params.${key} is required"
     }
 }
+params.multiqc_outdir = params.multiqc_outdir ?: params.reports_dir
+params.multiqc_report_name = params.multiqc_report_name ?: "multiqc_report.html"
 
 def checkPath(String path, String label, boolean mustBeDir = false) {
     def target = new File(path)
@@ -208,14 +210,14 @@ process AGGREGATE_STRAIN_COVERAGE_REPORT {
 process MULTIQC {
     tag "multiqc"
     conda params.conda_env
-    publishDir "${params.reports_dir}", mode: 'copy'
+    publishDir "${params.multiqc_outdir}", mode: 'copy'
 
     input:
     path(multiqc_config)
     path(done)
 
     output:
-    path("multiqc_report.html")
+    path("${params.multiqc_report_name}")
 
     script:
     """
@@ -271,7 +273,7 @@ rewrite_with_header(
 PY
 
     multiqc --force \\
-      --filename "multiqc_report.html" \\
+      --filename "${params.multiqc_report_name}" \\
       --config "${multiqc_config}" \\
       --outdir . \\
       . "${params.outdir}" "${params.reports_dir}"

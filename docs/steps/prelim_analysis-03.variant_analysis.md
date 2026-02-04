@@ -21,7 +21,7 @@ Wrappers:
 
 ## Inputs
 
-- Mapping output directory: `prelim_analysis/02.mapping_vs_pave/output/`
+- Mapping output directory: `outs/prelim_analysis/02.mapping_vs_pave/`
 - PAVE reference inputs (wired via configs):
   - Reference FASTA: `refdata/pave/pave_hsa.fas`
   - GFF3 directory: `refdata/pave/gff3`
@@ -32,9 +32,9 @@ Wrappers:
 
 ## Outputs
 
-Aggregated reports (`reports/`):
+Aggregated reports (`outs/prelim_analysis/03.variant_analysis/reports/`):
 
 - `E6_E7_variants.tsv`
 - `E6_E7_variant_effects.tsv`
 - `lineage_snp_comparison.tsv` (when lineage comparison is enabled)
-- MultiQC report: `reports/multiqc_report.html`
+- MultiQC report: `results/multiqc/prelim_analysis/03_variant_analysis.report.html`

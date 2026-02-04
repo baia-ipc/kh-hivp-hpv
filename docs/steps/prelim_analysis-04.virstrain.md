@@ -23,17 +23,17 @@ Wrappers:
 
 ## Inputs
 
-- Reads directory: output of step 01 (`prelim_analysis/01.bucketing/output/`)
+- Reads directory: output of step 01 (`outs/prelim_analysis/01.bucketing/`)
 - VirStrain reference/index: wired via `config/pipelines/virstrain.config`
 
 ## Outputs
 
-Aggregated reports (`reports/`):
+Aggregated reports (`outs/prelim_analysis/04.virstrain/reports/`):
 
 - `strains.tsv` (aggregated VirStrain results)
-- MultiQC report: `reports/multiqc_report.html`
+- MultiQC report: `results/multiqc/prelim_analysis/04_virstrain.report.html`
 
-Per sample (`output/<RUN_ID>/<SAMPLE_ID>/`):
+Per sample (`outs/prelim_analysis/04.virstrain/<RUN_ID>/<SAMPLE_ID>/`):
 
 - `VirStrain_report.txt`
 - `VirStrain_report.html`

@@ -62,9 +62,9 @@ HPV_250523_run02:Undetermined).
 
 **Notes on sources**
 - Counts and proportions are from:
-  - `prelim_analysis/01.bucketing/reports/absolute_counts.tsv`
-  - `prelim_analysis/01.bucketing/reports/relative_counts.tsv`
-  - `prelim_analysis/01.bucketing/reports/relative_counts.wo_human.tsv`
+  - `outs/prelim_analysis/01.bucketing/reports/absolute_counts.tsv`
+  - `outs/prelim_analysis/01.bucketing/reports/relative_counts.tsv`
+  - `outs/prelim_analysis/01.bucketing/reports/relative_counts.wo_human.tsv`
 - Relative abundance summaries above use the human‑excluded table.
 
 # Methods and Results — prelim_analysis step 02 (mapping vs PAVE)
@@ -99,9 +99,9 @@ substantial coverage breadth (≥0.5) and 13/51 reached near‑complete breadth
 substantial subset of samples.
 
 **Notes on sources**
-- `prelim_analysis/02.mapping_vs_pave/reports/strains.tsv`
-- `prelim_analysis/02.mapping_vs_pave/reports/cov_stats.tsv`
-- `prelim_analysis/02.mapping_vs_pave/reports/cov_stats.filtered.tsv`
+- `outs/prelim_analysis/02.mapping_vs_pave/reports/strains.tsv`
+- `outs/prelim_analysis/02.mapping_vs_pave/reports/cov_stats.tsv`
+- `outs/prelim_analysis/02.mapping_vs_pave/reports/cov_stats.filtered.tsv`
 
 # Methods and Results — prelim_analysis step 03 (variant analysis)
 
@@ -124,9 +124,9 @@ HPV_250523_run02:KHCA-152, HPV_250523_run02:KHCA-169,
 HPV_250523_run02:KHCA-223.
 
 **Notes on sources**
-- `prelim_analysis/03.variant_analysis/reports/E6_E7_variants.tsv`
-- `prelim_analysis/03.variant_analysis/reports/E6_E7_variant_effects.tsv`
-- `prelim_analysis/03.variant_analysis/reports/lineage_snp_comparison.tsv`
+- `outs/prelim_analysis/03.variant_analysis/reports/E6_E7_variants.tsv`
+- `outs/prelim_analysis/03.variant_analysis/reports/E6_E7_variant_effects.tsv`
+- `outs/prelim_analysis/03.variant_analysis/reports/lineage_snp_comparison.tsv`
 
 # Methods and Results — prelim_analysis step 04 (VirStrain)
 
@@ -153,4 +153,4 @@ HPV_160823_run03:KHCA-256, HPV_250523_run02:KHCA-223. The most frequently
 assigned strains included HPV16, HPV58, HPV18, HPV71, and HPV52.
 
 **Notes on sources**
-- `prelim_analysis/04.virstrain/reports/strains.tsv`
+- `outs/prelim_analysis/04.virstrain/reports/strains.tsv`

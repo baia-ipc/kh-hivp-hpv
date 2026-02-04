@@ -21,8 +21,8 @@ before running the analyses in this repository.
 - `derived_data/`: generated intermediate assets.
   - `derived_data/refdata/`: derived reference data (feature tables, renamed/filtered FASTA sets).
 - `derived_data/indices/`: shared Bowtie/VirStrain indices (Bowtie index + preliminary VirStrain index).
-- `prelim_analysis/` and `targeted_analysis/`: outputs and reports for each analysis.
-- `results/`: curated copies of selected outputs (tracked in git for sharing/review).
+- `outs/`: analysis outputs and non‑MultiQC reports.
+- `results/`: curated copies of selected outputs (tracked in git for sharing/review), including MultiQC reports.
 - `docs/`: technical documentation and this user manual.
 
 ## 3) Prepare raw input data (`input_reads/`)
@@ -269,9 +269,9 @@ bin/prelim_analysis.steps/04.virstrain.run.sh --run-virstrain
 
 Step 01 report (MultiQC):
 
-`prelim_analysis/01.bucketing/reports/multiqc_report.html`
+`results/multiqc/prelim_analysis/01_bucketing.report.html`
 
-VirStrain (step 05) is optional and does not run unless you pass
+VirStrain (step 04) is optional and does not run unless you pass
 `--run-virstrain` to the wrapper:
 
 ```
@@ -306,7 +306,7 @@ in `config/`.
 ```
 bin/prelim_analysis.steps/single_sample/02.mapping_vs_pave.run_sample.sh \
   /path/to/SAMPLE_R1.fastq.gz /path/to/SAMPLE_R2.fastq.gz \
-  prelim_analysis/02.mapping_vs_pave/output/RUN_ID/SAMPLE
+  outs/prelim_analysis/02.mapping_vs_pave/RUN_ID/SAMPLE
 ```
 
 ## 8) Troubleshooting

@@ -31,7 +31,7 @@ Wrappers under `bin/` call the Nextflow pipelines:
 
 ## Outputs
 
-Per run (`output/<RUN_ID>/`):
+Per run (`outs/prelim_analysis/01.bucketing/<RUN_ID>/`):
 
 - `alignments/`: Centrifuge alignment output (`*.aln.tsv`)
 - `reports/`: Centrifuge report files (`*.report.tsv`)
@@ -41,12 +41,12 @@ Per run (`output/<RUN_ID>/`):
 - `bucket_assignments/` and `bucket_sizes/`: bucket assignment and size tables
 - `buckets/`: bucketed FASTQ outputs (`*.fastq.gz`) and logs
 
-Aggregated, step-level reports (`reports/`):
+Aggregated, step-level reports (`outs/prelim_analysis/01.bucketing/reports/`):
 
 - bucket count tables (absolute and relative abundances; with and without human)
-- MultiQC report: `reports/multiqc_report.html`
+- MultiQC report: `results/multiqc/prelim_analysis/01_bucketing.report.html`
 
 ## Notes
 
-- The same pipelines are also reused for `targeted_analysis/01.bucketing/` with a
+- The same pipelines are also reused for `outs/targeted_analysis/01.bucketing/` with a
   different sample list (`metadata/samples-input2.tsv`) and different output paths.
