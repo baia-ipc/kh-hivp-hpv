@@ -10,6 +10,12 @@ Format:
 
 ## Decisions
 
+- 2026-02-04: Add offline tree visualization + MultiQC tree summary stats
+  - Context: tree construction steps relied on step-local READMEs for manual guidance and MultiQC lacked tree previews and intermediate statistics.
+  - Decision: move tree reference acquisition instructions to the user manual, remove step README files, and extend the phylo tree pipeline to render offline tree images and emit summary stats for MultiQC.
+  - Rationale: keep user-facing instructions centralized and make tree outputs self-contained in the MultiQC report.
+  - Consequences: new tree rendering/stats scripts, updated phylo tree pipeline and MultiQC config, and a Biopython dependency in the pipeline env.
+
 - 2026-02-03: Split mapping vs variant analysis steps and align step naming across analyses
   - Context: variant aggregation and database comparison were bundled with mapping in step 02, and prelim_analysis step names differed from targeted_analysis.
   - Decision: keep step 02 as mapping-only (`mapping_vs_pave`), add step 03 `variant_analysis` in both analyses (targeted step 03 also runs database SNP comparison), renumber HPV tree steps to 04/05, and rename prelim_analysis steps to `bucketing` and `mapping_vs_pave`.

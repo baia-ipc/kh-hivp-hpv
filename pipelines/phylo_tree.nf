@@ -32,6 +32,8 @@ params.mapping_outdir = params.mapping_outdir ?: null
 params.strains_tsv = params.strains_tsv ?: null
 params.sample_prep_script = params.sample_prep_script ?: null
 params.lineage_extract_script = params.lineage_extract_script ?: null
+params.tree_render_script = params.tree_render_script ?: "${params.scripts_dir}/phylo_tree/render_tree_svg.py"
+params.tree_stats_script = params.tree_stats_script ?: "${params.scripts_dir}/phylo_tree/compute_tree_stats.py"
 
 if (!inputDirParam) {
     error "params.input_dir is required"
@@ -118,6 +120,8 @@ checkPath(params.samples_tsv as String, 'Samples TSV')
 checkDir(params.mapping_outdir as String, 'Mapping output')
 checkPath(params.sample_prep_script as String, 'Sample prep script')
 checkPath(params.lineage_extract_script as String, 'Lineage extract script')
+checkPath(params.tree_render_script as String, 'Tree render script')
+checkPath(params.tree_stats_script as String, 'Tree stats script')
 
 if (!params.iqtree_outgroups && params.outgroups_file) {
     def outgroupsFile = new File(params.outgroups_file as String)
@@ -323,12 +327,68 @@ process IQTREE {
     path trimal_fasta
 
     output:
-    path "all_trimal.fasta.*"
+    path "all_trimal.fasta.treefile", emit: treefile
+    path "all_trimal.fasta.iqtree", emit: iqtree
+    path "all_trimal.fasta.*", emit: all_files
 
     script:
     def outgroupsArg = params.iqtree_outgroups ? "-o ${params.iqtree_outgroups}" : ""
     """
     iqtree -s "${trimal_fasta}" ${outgroupsArg} -m ${iqtreeModel} -nt ${iqtreeThreads} -bb ${iqtreeBootstrap} -alrt ${iqtreeAlrt}
+    """
+}
+
+process RENDER_TREE {
+    tag "render_tree"
+    publishDir "${params.reports_dir}", mode: 'copy'
+    conda params.conda_env
+
+    input:
+    path treefile
+
+    output:
+    path "phylo_tree.svg", emit: svg
+    path "phylo_tree.png", emit: png
+
+    script:
+    """
+    python3 "${params.tree_render_script}" \\
+      --treefile "${treefile}" \\
+      --svg phylo_tree.svg \\
+      --png phylo_tree.png
+    """
+}
+
+process TREE_STATS {
+    tag "tree_stats"
+    publishDir "${params.reports_dir}", mode: 'copy'
+    conda params.conda_env
+
+    input:
+    path selected
+    path outgroups
+    path lineages
+    path samples
+    path aligned
+    path trimmed
+    path iqtree_file
+    path treefile
+
+    output:
+    path "phylo_tree_summary.multiqc.tsv"
+
+    script:
+    """
+    python3 "${params.tree_stats_script}" \\
+      --selected "${selected}" \\
+      --outgroups "${outgroups}" \\
+      --lineages "${lineages}" \\
+      --samples "${samples}" \\
+      --aligned "${aligned}" \\
+      --trimmed "${trimmed}" \\
+      --iqtree "${iqtree_file}" \\
+      --treefile "${treefile}" \\
+      --output phylo_tree_summary.multiqc.tsv
     """
 }
 
@@ -405,5 +465,8 @@ workflow {
     def aligned = MAFFT_ALIGN(cat_all)
     def trimmed = TRIMAL(aligned)
     def tree = IQTREE(trimmed.trimal)
-    MULTIQC(multiqc_config_file, tree.collect())
+    def tree_rendered = RENDER_TREE(tree.treefile)
+    def stats = TREE_STATS(selectedReady, outgroupsReady, lineagesReady, samplesReady, aligned, trimmed.trimal, tree.iqtree, tree.treefile)
+    def qc_inputs = tree_rendered.svg.mix(stats)
+    MULTIQC(multiqc_config_file, qc_inputs.collect())
 }

@@ -171,6 +171,7 @@ nextflow run pipelines/phylo_tree.nf \
 ```
 
 This pipeline derives any missing/out-of-date inputs under `derived_data/refdata/hpv16_tree` from `refdata/hpv16_tree` and mapping outputs.
+Tree reports include `output/reports/phylo_tree.svg` (PNG fallback) and `output/reports/phylo_tree_summary.multiqc.tsv`.
 
 ### HPV18 phylogenetic tree (Nextflow)
 
@@ -187,6 +188,7 @@ nextflow run pipelines/phylo_tree.nf \
 ```
 
 This pipeline derives any missing/out-of-date inputs under `derived_data/refdata/hpv18_tree` from `refdata/hpv18_tree` and mapping outputs.
+Tree reports include `output/reports/phylo_tree.svg` (PNG fallback) and `output/reports/phylo_tree_summary.multiqc.tsv`.
 
 ### Generate PAVE feature tables (derived)
 

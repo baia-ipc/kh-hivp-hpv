@@ -27,3 +27,23 @@ custom_data:
         <li><code>&lt;outdir&gt;/</code> for alignment and tree outputs</li>
         <li><code>&lt;reports_dir&gt;/</code> for this MultiQC report</li>
       </ul>
+  tree_preview:
+    plot_type: "html"
+    section_name: "Tree preview"
+    description: "Offline preview of the inferred phylogeny"
+    data: |
+      <figure>
+        <img src="phylo_tree.svg" alt="Phylogenetic tree" style="max-width: 100%; height: auto;">
+        <figcaption>Rendered from the IQ-TREE Newick output. Download as <code>phylo_tree.svg</code> or <code>phylo_tree.png</code> in the reports directory.</figcaption>
+      </figure>
+  tree_summary_table:
+    file_format: "tsv"
+    section_name: "Tree summary"
+    description: "Alignment and IQ-TREE summary statistics"
+    plot_type: "table"
+    pconfig:
+      col1_header: "Metric"
+
+sp:
+  tree_summary_table:
+    fn: "phylo_tree_summary.multiqc.tsv"
