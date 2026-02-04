@@ -19,7 +19,7 @@ Rules:
 - MultiQC reports are written under each step's `reports/` (phylo tree steps use `output/reports/`). Ensure the MultiQC process outputs files at the process root and publish to `reports/` to avoid duplicated `multiqc/multiqc_report.html` paths.
 - MultiQC method summaries should cite the primary tool papers; update the relevant `pipelines/multiqc/*.multiqc.yml` when pipeline steps change.
 - MultiQC custom sections should be configured under `custom_data` with explicit `plot_type` and any table inputs connected via `sp:` search patterns in the same config.
-- Curated outputs can be symlinked under `results/` for sharing or downstream review.
+- Curated outputs can be copied under `results/` for sharing or downstream review (tracked in git).
 
 ## Running pipelines
 

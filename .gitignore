@@ -3,6 +3,8 @@
 *.bt2
 *.fai
 output/
+prelim_analysis/
+targeted_analysis/
 dev/
 reference-results/
 .nextflow/

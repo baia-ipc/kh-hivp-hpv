@@ -14,7 +14,7 @@ Rules:
 - Script utilities live under `scripts/` and are grouped by concern in subdirectories (taxonomy_assignment, top_strains, coverage, variants, pave, virstrain, phylo_tree).
 - Sample lists and other hardcoded data live in `metadata/`.
 - Reference inputs live in `refdata/`; derived reference assets live in `derived_data/refdata/` (do not place reference inputs under analysis step directories).
-- Curated output links live under `results/` (selected outputs linked for sharing/review).
+- Curated output copies live under `results/` (selected outputs tracked for sharing/review).
 - Shared Bowtie/VirStrain indices live under `derived_data/indices/` (Bowtie index + preliminary/virstrain).
 - Centrifuge database build script lives at `scripts/taxonomy_assignment/build_centrifuge_db.sh` (outputs under `refdata/centrifuge/`).
 - Outputs live under each step's `output/` and `reports/` directories.

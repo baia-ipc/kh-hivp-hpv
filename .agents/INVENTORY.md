@@ -22,7 +22,7 @@
 - `refdata/`: external reference inputs used by pipelines (PAVE reference, NCBI downloads)
 - `derived_data/refdata/`: derived reference assets (auto-generated; not tracked in git)
 - `derived_data/indices/`: shared Bowtie/VirStrain indices (auto-generated; not tracked in git)
-- `results/`: curated links to key outputs for sharing or review
+- `results/`: curated copies of key outputs for sharing or review (tracked in git)
 - `reference-results/`: snapshot of outputs, reports, and indexes for regression checks (not tracked in git)
 
 ## Documentation index
