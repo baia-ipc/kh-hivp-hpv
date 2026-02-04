@@ -29,6 +29,8 @@ params.selected_tsv = params.selected_tsv ?: null
 params.selection_kind = params.selection_kind ?: null
 params.acc_country_tsv = params.acc_country_tsv ?: null
 params.outgroups_list = params.outgroups_list ?: null
+params.selection_list = params.selection_list ?: null
+params.selection_columns = params.selection_columns ?: null
 params.samples_tsv = params.samples_tsv ?: null
 params.mapping_outdir = params.mapping_outdir ?: null
 params.strains_tsv = params.strains_tsv ?: null
@@ -36,6 +38,7 @@ params.sample_prep_script = params.sample_prep_script ?: null
 params.lineage_extract_script = params.lineage_extract_script ?: null
 params.tree_render_script = params.tree_render_script ?: "${params.scripts_dir}/phylo_tree/render_tree_svg.py"
 params.tree_stats_script = params.tree_stats_script ?: "${params.scripts_dir}/phylo_tree/compute_tree_stats.py"
+params.selection_build_script = params.selection_build_script ?: "${params.scripts_dir}/phylo_tree/build_tree_selection_tsv.py"
 
 if (!inputDirParam) {
     error "params.input_dir is required"
@@ -52,6 +55,10 @@ params.outdir = outdirParam
 params.reports_dir = reportsDirParam
 params.outgroups_file = outgroupsFileParam
 params.iqtree_outgroups = iqtreeOutgroupsParam
+
+if (!params.outgroups_file && params.outgroups_list) {
+    params.outgroups_file = params.outgroups_list
+}
 
 def inputDir = new File(params.input_dir as String)
 if (!inputDir.isDirectory()) {
@@ -103,6 +110,8 @@ if (!params.lineages_tsv) error "params.lineages_tsv is required"
 if (!params.ncbi_tsv) error "params.ncbi_tsv is required"
 if (!params.ncbi_fasta) error "params.ncbi_fasta is required"
 if (!params.selected_tsv) error "params.selected_tsv is required"
+if (!params.selection_list) error "params.selection_list is required"
+if (!params.selection_columns) error "params.selection_columns is required"
 if (!params.outgroups_list) error "params.outgroups_list is required"
 if (!params.samples_tsv) error "params.samples_tsv is required"
 if (!params.mapping_outdir) error "params.mapping_outdir is required"
@@ -116,7 +125,7 @@ if (params.selection_kind == 'hpv18' && !params.acc_country_tsv) {
 checkPath(params.lineages_tsv as String, 'Lineages TSV')
 checkPath(params.ncbi_tsv as String, 'NCBI TSV')
 checkPath(params.ncbi_fasta as String, 'NCBI FASTA')
-checkPath(params.selected_tsv as String, 'Selected TSV')
+checkPath(params.selection_list as String, 'Selection list')
 checkPath(params.outgroups_list as String, 'Outgroups list')
 checkPath(params.samples_tsv as String, 'Samples TSV')
 checkDir(params.mapping_outdir as String, 'Mapping output')
@@ -124,6 +133,7 @@ checkPath(params.sample_prep_script as String, 'Sample prep script')
 checkPath(params.lineage_extract_script as String, 'Lineage extract script')
 checkPath(params.tree_render_script as String, 'Tree render script')
 checkPath(params.tree_stats_script as String, 'Tree stats script')
+checkPath(params.selection_build_script as String, 'Selection build script')
 
 if (!params.iqtree_outgroups && params.outgroups_file) {
     def outgroupsFile = new File(params.outgroups_file as String)
@@ -220,6 +230,30 @@ process PREP_SELECTED {
     """
     """
     ${cmd}
+    """
+}
+
+process PREP_SELECTION_TSV {
+    tag "prepare_selection_tsv"
+    publishDir "${params.derived_dir}", mode: 'copy'
+    conda params.conda_env
+
+    input:
+    path(ncbi_tsv)
+    path(selection_list)
+    val(selection_columns)
+
+    output:
+    path("${selectedName}")
+
+    script:
+    def selectedName = new File(params.selected_tsv.toString()).getName()
+    """
+    python3 "${params.selection_build_script}" \\
+      --ncbi-tsv "${ncbi_tsv}" \\
+      --selection-list "${selection_list}" \\
+      --columns "${selection_columns}" \\
+      --output "${selectedName}"
     """
 }
 
@@ -429,6 +463,7 @@ workflow {
     def selectedRenamedPath = new File(derivedDir, 'selected_renamed.fasta')
     def outgroupsPath = new File(derivedDir, 'outgroups.fasta')
     def samplesPath = new File(derivedDir, 'samples.fasta')
+    def selectedTsvPath = file(params.selected_tsv)
 
     def lineagesReady
     if (needsUpdate(lineagesRenamedPath, [lineagesTsv, ncbiFasta])) {
@@ -437,10 +472,17 @@ workflow {
         lineagesReady = Channel.value(file(lineagesRenamedPath.toString()))
     }
 
-    def selectionInputs = [selectedTsv, ncbiTsv, ncbiFasta]
+    def selectionInputs = [file(params.selection_list as String), ncbiTsv]
+    def selectedTsvReady
+    if (needsUpdate(selectedTsvPath, selectionInputs)) {
+        selectedTsvReady = PREP_SELECTION_TSV(ncbiTsv, file(params.selection_list as String), params.selection_columns)
+    } else {
+        selectedTsvReady = Channel.value(selectedTsvPath)
+    }
+
     def selectedReady
-    if (needsUpdate(selectedRenamedPath, selectionInputs)) {
-        selectedReady = PREP_SELECTED(ncbiTsv, ncbiFasta, selectedTsv, params.selection_kind).renamed
+    if (needsUpdate(selectedRenamedPath, [selectedTsvPath, ncbiTsv, ncbiFasta])) {
+        selectedReady = PREP_SELECTED(ncbiTsv, ncbiFasta, selectedTsvReady, params.selection_kind).renamed
     } else {
         selectedReady = Channel.value(file(selectedRenamedPath.toString()))
     }

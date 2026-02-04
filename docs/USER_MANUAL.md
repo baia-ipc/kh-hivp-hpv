@@ -131,7 +131,6 @@ Place these files under `refdata/hpv16_tree/`:
 - `HPV16_lineages.tsv`
 - `HPV16-NCBIVirus.fasta`
 - `HPV16-NCBIVirus.tsv`
-- `HPV16-NCBIVirus.selected.tsv` (curated selection list)
 
 Outgroup accessions are provided in:
 - `metadata/hpv16_tree_outgroups.txt`
@@ -157,19 +156,10 @@ How to obtain the HPV16 inputs:
       `Collection_Date`, `Release_Date`, `Molecule_type`
   - Save as `refdata/hpv16_tree/HPV16-NCBIVirus.tsv`.
 - Selection list:
-  - The selection list is a two-column TSV (`Accession`, `Country`) used to pick
-    which NCBI genomes are included.
-  - To initialize it from the NCBI TSV, run:
-    ```
-    scripts/phylo_tree/hpv16_select_ncbi_genomes.sh --init-selection \
-      refdata/hpv16_tree/HPV16-NCBIVirus.tsv \
-      refdata/hpv16_tree/HPV16-NCBIVirus.fasta \
-      refdata/hpv16_tree/HPV16-NCBIVirus.selected.tsv \
-      derived_data/refdata/hpv16_tree/selected.fasta \
-      derived_data/refdata/hpv16_tree/selected_renamed.fasta
-    ```
-  - Edit `refdata/hpv16_tree/HPV16-NCBIVirus.selected.tsv` to keep only the
-    accessions you want to include (or leave all rows to include everything).
+  - List the accessions to include (one per line) in:
+    - `metadata/hpv16_tree_db_selection.txt`
+  - The pipeline derives `derived_data/refdata/hpv16_tree/HPV16-NCBIVirus.selected.tsv`
+    from the NCBI TSV plus this accession list.
 
 #### Required raw inputs (HPV18)
 
@@ -177,7 +167,6 @@ Place these files under `refdata/hpv18_tree/`:
 - `HPV18_lineages.tsv`
 - `HPV18-NCBIVirus.fasta`
 - `HPV18-NCBIVirus.tsv`
-- `HPV18-NCBIVirus.acc_country.selected.tsv` (curated selection list)
 
 Outgroup accessions are provided in:
 - `metadata/hpv18_tree_outgroups.txt`
@@ -203,20 +192,10 @@ How to obtain the HPV18 inputs:
       `Collection_Date`, `Release_Date`, `Molecule_type`
   - Save as `refdata/hpv18_tree/HPV18-NCBIVirus.tsv`.
 - Selection list:
-  - The selection list is a TSV of accessions and country metadata used to pick
-    which NCBI genomes are included.
-  - To initialize it from the NCBI TSV, run:
-    ```
-    scripts/phylo_tree/hpv18_select_ncbi_genomes.sh --init-selection \
-      refdata/hpv18_tree/HPV18-NCBIVirus.tsv \
-      refdata/hpv18_tree/HPV18-NCBIVirus.fasta \
-      derived_data/refdata/hpv18_tree/HPV18-NCBIVirus.acc_country.tsv \
-      refdata/hpv18_tree/HPV18-NCBIVirus.acc_country.selected.tsv \
-      derived_data/refdata/hpv18_tree/selected.fasta \
-      derived_data/refdata/hpv18_tree/selected_renamed.fasta
-    ```
-  - Edit `refdata/hpv18_tree/HPV18-NCBIVirus.acc_country.selected.tsv` to keep
-    only the accessions you want to include (or leave all rows to include everything).
+  - List the accessions to include (one per line) in:
+    - `metadata/hpv18_tree_db_selection.txt`
+  - The pipeline derives `derived_data/refdata/hpv18_tree/HPV18-NCBIVirus.acc_country.selected.tsv`
+    from the NCBI TSV plus this accession list.
 
 #### Running the tree pipelines
 

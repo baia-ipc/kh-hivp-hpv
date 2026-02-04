@@ -24,6 +24,7 @@ Wrappers:
 Raw inputs are expected under `refdata/hpv18_tree/`. The pipeline derives
 `derived_data/refdata/hpv18_tree/` automatically if files are missing or older
 than the raw inputs (no manual preparation commands required).
+The selected NCBI accessions are listed in `metadata/hpv18_tree_db_selection.txt`.
 
 ## Outputs
 
