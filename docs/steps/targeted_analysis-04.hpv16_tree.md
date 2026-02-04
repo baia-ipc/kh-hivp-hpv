@@ -29,5 +29,5 @@ than the raw inputs (no manual preparation commands required).
 
 - Tree outputs and intermediate artifacts under `output/`
 - MultiQC report: `output/reports/multiqc_report.html`
-- Tree preview image: `output/reports/phylo_tree.svg` (PNG fallback alongside)
-- MultiQC summary table: `output/reports/phylo_tree_summary.multiqc.tsv`
+- Tree preview image: `reports/phylo_tree.svg` (PNG fallback alongside)
+- MultiQC summary table: `reports/phylo_tree_summary.multiqc.tsv`
