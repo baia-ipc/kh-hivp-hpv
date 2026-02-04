@@ -34,6 +34,8 @@
   - `refdata/`: processed reference assets (feature tables, BED intervals, curated tree inputs)
   - `indices/`: shared indices (Bowtie/PAVE + VirStrain)
 
+- `results/`: curated links to key outputs (selected reports and reference results)
+
 - `docs/`: technical documentation for the analysis steps (human-readable)
 
 - `.agents/`: agent-oriented docs and instructions (OPERATIONS, WORKFLOWS, etc.)

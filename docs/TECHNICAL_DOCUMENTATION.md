@@ -9,6 +9,9 @@ This documentation is intended for humans (e.g. lab / bioinformatics users).
 To run the analyses, use the step wrapper scripts under `bin/`
 (see the repository root `README.md`).
 
+Curated outputs can be linked under `results/` for convenient access to
+selected reports or sequences.
+
 ## Script reference
 
 - Repository script reference: `docs/SCRIPTS.md`

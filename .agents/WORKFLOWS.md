@@ -51,3 +51,5 @@ Rules:
   - prepared inputs under `derived_data/refdata/hpv18_tree` (from raw inputs in `refdata/hpv18_tree`)
   - (for sample consensus) mapping outputs under `targeted_analysis/02.mapping_vs_pave/output`
 - Outputs include alignment/tree artifacts under `targeted_analysis/05.hpv18_tree/output` and a MultiQC report with an offline tree preview.
+
+Curated outputs (selected reports/sequences) can be symlinked under `results/`.
