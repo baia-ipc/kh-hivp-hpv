@@ -22,7 +22,7 @@ before running the analyses in this repository.
   - `derived_data/refdata/`: derived reference data (feature tables, renamed/filtered FASTA sets).
 - `derived_data/indices/`: shared Bowtie/VirStrain indices (Bowtie index + preliminary VirStrain index).
 - `prelim_analysis/` and `targeted_analysis/`: outputs and reports for each analysis.
-- `results/`: curated links to selected outputs (for sharing or downstream review).
+- `results/`: curated copies of selected outputs (tracked in git for sharing/review).
 - `docs/`: technical documentation and this user manual.
 
 ## 3) Prepare raw input data (`input_reads/`)
