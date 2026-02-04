@@ -16,6 +16,12 @@ Format:
   - Rationale: separate large run artifacts from tracked outputs and standardize report locations.
   - Consequences: update configs, pipelines, scripts, and documentation; migrate existing outputs into `outs/` and `results/`.
 
+- 2026-02-04: Derive NCBI selection TSVs from metadata accession lists
+  - Context: tree selection lists moved out of `refdata/`, and selection TSVs should be derived consistently for HPV16/HPV18.
+  - Decision: store accession lists in `metadata/hpv16_tree_db_selection.txt` and `metadata/hpv18_tree_db_selection.txt`, and derive the selection TSVs in the phylo tree pipeline.
+  - Rationale: keep user-editable selections in metadata and generate consistent derived inputs.
+  - Consequences: add a selection-build script, update phylo tree configs/pipeline, and update documentation references.
+
 - 2026-02-04: Add offline tree visualization + MultiQC tree summary stats
   - Context: tree construction steps relied on step-local READMEs for manual guidance and MultiQC lacked tree previews and intermediate statistics.
   - Decision: move tree reference acquisition instructions to the user manual, remove step README files, and extend the phylo tree pipeline to render offline tree images and emit summary stats for MultiQC.

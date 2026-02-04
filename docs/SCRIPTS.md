@@ -312,6 +312,14 @@ Key parameters:
 - `--label-prefix`: optional prefix added to output IDs.
 - `--output`: output FASTA path.
 
+### `scripts/phylo_tree/build_tree_selection_tsv.py`
+Purpose: Build a selected NCBI metadata TSV from an accession list and the NCBI TSV.
+Key parameters:
+- `--ncbi-tsv`: NCBI metadata TSV.
+- `--selection-list`: accession list (one per line).
+- `--columns`: comma-separated 1-based column indices to export.
+- `--output`: output TSV path.
+
 ### `scripts/phylo_tree/render_tree_svg.py`
 Purpose: Render an IQ-TREE Newick tree to offline SVG/PNG for MultiQC.
 Key parameters:

@@ -14,6 +14,11 @@ To run the analyses, use the step wrapper scripts under `bin/`
 Curated outputs can be copied under `results/` for convenient access to
 selected reports or sequences (tracked in git).
 
+Tree selection lists live in `metadata/hpv16_tree_db_selection.txt` and
+`metadata/hpv18_tree_db_selection.txt`; the phylo tree pipeline derives the
+selected TSVs under `derived_data/refdata/hpv16_tree/` and
+`derived_data/refdata/hpv18_tree/`.
+
 ## Script reference
 
 - Repository script reference: `docs/SCRIPTS.md`
