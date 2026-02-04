@@ -287,7 +287,7 @@ Key parameters:
 Purpose: Build HPV16 consensus sequences for samples (for tree inputs) using
 BCF outputs from the mapping step and the PAVE reference FASTA.
 Key parameters (environment overrides):
-- `OUT_DIR`: required output directory for consensus FASTAs.
+- `OUT_DIR`: required output directory for consensus FASTAs (written under `OUT_DIR/samples_consensus/`).
 - `PAVE_FASTA`: path to PAVE FASTA.
 - `BCF_DIR` / `BCF_RUN_ID`: where to find per-sample BCFs.
 - `SAMPLES` / `SAMPLES_FILE` / `SAMPLES_TSV`: which samples to process.
@@ -296,7 +296,7 @@ Key parameters (environment overrides):
 Purpose: Build HPV18 consensus sequences for samples (for tree inputs) using
 BCF outputs and the PAVE reference FASTA, plus strains.tsv for sample detection.
 Key parameters (environment overrides):
-- `OUT_DIR`: required output directory for consensus FASTAs.
+- `OUT_DIR`: required output directory for consensus FASTAs (written under `OUT_DIR/samples_consensus/`).
 - `PAVE_FASTA`, `HPV18REF_FASTA`: reference FASTA locations.
 - `BCF_DIR` / `BCF_RUN_ID`: where to find per-sample BCFs.
 - `SAMPLES` / `SAMPLES_FILE` / `SAMPLES_TSV`: which samples to process.
