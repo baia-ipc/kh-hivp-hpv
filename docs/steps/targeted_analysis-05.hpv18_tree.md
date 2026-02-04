@@ -28,6 +28,6 @@ than the raw inputs (no manual preparation commands required).
 ## Outputs
 
 - Tree outputs and intermediate artifacts under `outs/targeted_analysis/05.hpv18_tree/`
-- MultiQC report: `results/multiqc/targeted_analysis/05_hpv18_tree.report.html`
+- MultiQC report: `results/reports/targeted_analysis/05_hpv18_tree.report.html`
 - Tree preview image: `outs/targeted_analysis/05.hpv18_tree/reports/phylo_tree.svg` (PNG fallback alongside)
 - MultiQC summary table: `outs/targeted_analysis/05.hpv18_tree/reports/phylo_tree_summary.multiqc.tsv`

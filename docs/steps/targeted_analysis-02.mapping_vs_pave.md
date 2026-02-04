@@ -33,4 +33,4 @@ Wrappers:
 - Reports under `outs/targeted_analysis/02.mapping_vs_pave/reports/`, including:
   - mapping/coverage summaries
   - strain assignment + coverage table (top strains with averaged genome/E6/E7 coverage and patient metadata)
-  - MultiQC report: `results/multiqc/targeted_analysis/02_mapping_vs_pave.report.html`
+  - MultiQC report: `results/reports/targeted_analysis/02_mapping_vs_pave.report.html`

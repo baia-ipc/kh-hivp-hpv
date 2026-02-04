@@ -44,7 +44,7 @@ Per run (`outs/prelim_analysis/01.bucketing/<RUN_ID>/`):
 Aggregated, step-level reports (`outs/prelim_analysis/01.bucketing/reports/`):
 
 - bucket count tables (absolute and relative abundances; with and without human)
-- MultiQC report: `results/multiqc/prelim_analysis/01_bucketing.report.html`
+- MultiQC report: `results/reports/prelim_analysis/01_bucketing.report.html`
 
 ## Notes
 

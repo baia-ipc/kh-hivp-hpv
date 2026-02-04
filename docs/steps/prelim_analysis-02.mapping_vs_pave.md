@@ -38,4 +38,4 @@ Aggregated, step-level reports (`outs/prelim_analysis/02.mapping_vs_pave/reports
 - mapping and strain summaries
 - coverage summaries
 - Strain assignment + coverage table (top strains with averaged genome/E6/E7 coverage and patient metadata)
-- MultiQC report: `results/multiqc/prelim_analysis/02_mapping_vs_pave.report.html`
+- MultiQC report: `results/reports/prelim_analysis/02_mapping_vs_pave.report.html`

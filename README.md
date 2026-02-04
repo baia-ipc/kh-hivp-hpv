@@ -26,7 +26,7 @@ A detailed user manual is available under `docs/USER_MANUAL.md`.
 Each analysis consists of multiple steps (01, 02, …). Outputs are written under
 `outs/<analysis>/<step>/` with non‑MultiQC reports under
 `outs/<analysis>/<step>/reports`. MultiQC reports are collected under
-`results/multiqc/<analysis>/`.
+`results/reports/<analysis>/`.
 
 ## Repository content
 
