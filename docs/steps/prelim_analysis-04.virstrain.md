@@ -31,7 +31,7 @@ Wrappers:
 Aggregated reports (`outs/prelim_analysis/04.virstrain/reports/`):
 
 - `strains.tsv` (aggregated VirStrain results)
-- MultiQC report: `results/multiqc/prelim_analysis/04_virstrain.report.html`
+- MultiQC report: `results/reports/prelim_analysis/04_virstrain.report.html`
 
 Per sample (`outs/prelim_analysis/04.virstrain/<RUN_ID>/<SAMPLE_ID>/`):
 

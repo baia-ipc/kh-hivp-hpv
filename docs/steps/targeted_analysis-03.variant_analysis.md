@@ -58,7 +58,7 @@ Variant aggregation and database comparison reports (`outs/targeted_analysis/03.
 - `samples_vs_database_sets.tsv`
 - `samples_vs_lineage_sets.tsv`
 - `hpv16_e6e7_variants_summary.tsv`
-- MultiQC report: `results/multiqc/targeted_analysis/03_variant_analysis.report.html`
+- MultiQC report: `results/reports/targeted_analysis/03_variant_analysis.report.html`
 Database comparison outputs:
 
 - `outs/targeted_analysis/03.variant_analysis/database_snps/` (database fasta subsets and derived files)

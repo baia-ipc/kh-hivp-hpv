@@ -37,4 +37,4 @@ Aggregated reports (`outs/prelim_analysis/03.variant_analysis/reports/`):
 - `E6_E7_variants.tsv`
 - `E6_E7_variant_effects.tsv`
 - `lineage_snp_comparison.tsv` (when lineage comparison is enabled)
-- MultiQC report: `results/multiqc/prelim_analysis/03_variant_analysis.report.html`
+- MultiQC report: `results/reports/prelim_analysis/03_variant_analysis.report.html`

@@ -33,4 +33,4 @@ it differs from the normalized `sample_id`.
 
 - Per-run outputs under `outs/targeted_analysis/01.bucketing/<RUN_ID>/` (alignments, reports, buckets, etc.)
 - Aggregated reports under `outs/targeted_analysis/01.bucketing/reports/`
-- MultiQC report: `results/multiqc/targeted_analysis/01_bucketing.report.html`
+- MultiQC report: `results/reports/targeted_analysis/01_bucketing.report.html`

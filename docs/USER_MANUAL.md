@@ -269,7 +269,7 @@ bin/prelim_analysis.steps/04.virstrain.run.sh --run-virstrain
 
 Step 01 report (MultiQC):
 
-`results/multiqc/prelim_analysis/01_bucketing.report.html`
+`results/reports/prelim_analysis/01_bucketing.report.html`
 
 VirStrain (step 04) is optional and does not run unless you pass
 `--run-virstrain` to the wrapper:
