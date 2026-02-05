@@ -1,0 +1,14 @@
+{
+  "pipeline_nf": "pipelines/centrifuge_bucketing_all.nf",
+  "configs": [
+    "config/pipelines/common.config",
+    "config/pipelines/centrifuge_bucketing.config",
+    "config/user.config",
+    "config/analyses/prelim_analysis.config"
+  ],
+  "profile": "preliminary_bucketing",
+  "require_conda": true,
+  "arg_transforms": {
+    "--skip-align": "--skip_align"
+  }
+}

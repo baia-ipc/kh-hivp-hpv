@@ -1,0 +1,21 @@
+{
+  "pipeline_nf": "pipelines/virstrain.nf",
+  "configs": [
+    "config/pipelines/common.config",
+    "config/pipelines/virstrain.config",
+    "config/user.config",
+    "config/analyses/prelim_analysis.config"
+  ],
+  "profile": "preliminary_virstrain",
+  "require_flag": {
+    "names": ["--run-virstrain", "--run_virstrain"],
+    "truthy_values": ["true", "1"],
+    "message": "VirStrain disabled (pass --run-virstrain to run)."
+  },
+  "flag_behaviors": [
+    {
+      "flags": ["--run-virstrain", "--run_virstrain"],
+      "drop": true
+    }
+  ]
+}

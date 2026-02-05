@@ -1,0 +1,10 @@
+{
+  "pipeline_nf": "pipelines/bowtie_vs_pave.nf",
+  "configs": [
+    "config/pipelines/common.config",
+    "config/pipelines/bowtie_vs_pave.config",
+    "config/user.config",
+    "config/analyses/targeted_analysis.config"
+  ],
+  "profile": "targeted_mapping_vs_pave"
+}

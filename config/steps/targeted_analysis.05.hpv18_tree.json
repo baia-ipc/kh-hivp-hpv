@@ -1,0 +1,11 @@
+{
+  "pipeline_nf": "pipelines/phylo_tree.nf",
+  "configs": [
+    "config/pipelines/common.config",
+    "config/pipelines/phylo_tree.config",
+    "config/pipelines/phylo_tree.hpv18.config",
+    "config/user.config",
+    "config/analyses/targeted_analysis.config"
+  ],
+  "profile": "targeted_hpv18_tree"
+}

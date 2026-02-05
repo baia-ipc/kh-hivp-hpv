@@ -1,12 +1,8 @@
 # High level summary of the contents of the repository
 
-- analyses (two runs):
-  - `prelim_analysis/`: analysis of the first three batches of sequences (MiSeq)
-  - `targeted_analysis/`: analysis of subsequent sequencing focused on HPV16/HPV18 samples
-
-- analysis directories:
-  - each analysis directory contains subdirectories for each step, numbered by execution order (01, 02, etc.)
-  - each step subdirectory contains outputs and reports and, in some cases, step-specific inputs
+- analyses:
+  - outputs live under `outs/` by analysis/step (not tracked in git)
+  - curated, tracked outputs live under `results/`
   - most of the code is in `scripts/` and `pipelines/`; step runners live in `bin/`
 
 - `pipelines/`: Nextflow workflows and wrapper assets
@@ -19,6 +15,7 @@
 - `bin/`: step and analysis runner scripts (wrappers around Nextflow pipelines)
   - `prelim_analysis.steps/`: per-step wrappers (plus `single_sample/`)
   - `targeted_analysis.steps/`: per-step wrappers (plus `single_sample/`)
+  - `run_step.py`: generic step runner used by per-step wrappers
 
 - `input_reads/`: symlinks to external raw data locations (not stored in-repo)
 
@@ -27,6 +24,7 @@
 - `config/`: user-editable configuration files
   - `analyses/`: step path config profiles used by wrappers
   - `pipelines/`: technical Nextflow config shared by pipelines
+  - `steps/`: JSON configs for the generic step runner
 
 - `refdata/`: external reference inputs (PAVE FASTA/GFF3, NCBI downloads)
 
