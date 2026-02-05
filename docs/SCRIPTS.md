@@ -59,6 +59,17 @@ Key parameters:
 - `--no-abs` / `--no-rel`: disable one of the tables.
 - `--abs-fname` / `--rel-fname`: override output filenames.
 
+### `scripts/taxonomy_assignment/prepare_centrifuge_multiqc_inputs.py`
+Purpose: Reformat bucketing count tables into MultiQC-ready TSVs with a Sample
+ID column.
+Key parameters:
+- `--absolute`: input absolute counts TSV.
+- `--absolute-out`: output MultiQC TSV.
+- `--relative`: input relative counts TSV.
+- `--relative-out`: output MultiQC TSV.
+- `--relative-wo-human`: input relative counts without human TSV.
+- `--relative-wo-human-out`: output MultiQC TSV.
+
 ## Bowtie vs PaVE mapping, coverage, and variant calling
 
 ### `scripts/top_strains/identify_top_strains.py`
@@ -129,6 +140,33 @@ Key parameters:
 - `<features_tsv_dir>`: directory of feature TSVs.
 - `[plots_outdir]`: optional output directory.
 
+### `scripts/coverage/strain_assignment_coverage_report.py`
+Purpose: Combine strain assignment and coverage stats with cohort metadata for
+reporting and MultiQC.
+Key parameters:
+- `<strains.tsv>`: aggregated strain calls (run/sample/strain).
+- `<cov_stats.tsv>`: aggregated coverage stats.
+- `<patients_metadata.tsv>`: cohort metadata table.
+- `<genexpert_results.tsv>`: GeneXpert summary table.
+- `<output_tsv>`: output report TSV.
+
+### `scripts/coverage/prepare_bowtie_multiqc_inputs.py`
+Purpose: Reformat bowtie-vs-PAVE coverage tables into MultiQC-ready TSVs with
+sample IDs.
+Key parameters:
+- `--strains` / `--strains-out`: strains input/output TSVs.
+- `--cov-stats` / `--cov-stats-out`: coverage stats input/output TSVs.
+- `--cov-stats-filtered` / `--cov-stats-filtered-out`: filtered coverage stats input/output TSVs.
+- `--coverage` / `--coverage-out`: strain assignment coverage input/output TSVs.
+
+### `scripts/coverage/prepare_pave_multiqc_inputs.py`
+Purpose: Reformat PAVE gene mapping depth tables into MultiQC-ready TSVs with
+sample IDs.
+Key parameters:
+- `--strains` / `--strains-out`: strains input/output TSVs.
+- `--depth-unfiltered` / `--depth-unfiltered-out`: unfiltered depth stats input/output TSVs.
+- `--depth-filtered` / `--depth-filtered-out`: filtered depth stats input/output TSVs.
+
 ### `scripts/variants/report_E6_E7_variants.sh`
 Purpose: Extract E6/E7 variants from per-sample BCFs using BED intervals. Used
 by the bowtie-vs-PaVE pipeline to build variants tables.
@@ -154,6 +192,26 @@ Key parameters:
 - `--gene`: gene label (E6/E7).
 - `--tag`: INFO tag containing csq annotations (default `BCSQ`).
 - `--no-header`: suppress header emission (used for multi-file concatenation).
+
+### `scripts/variants/prepare_variant_multiqc_inputs.py`
+Purpose: Reformat E6/E7 variant tables into MultiQC-ready TSVs with stable
+sample IDs and decoded metadata fields.
+Key parameters:
+- `--variants` / `--variants-out`: E6/E7 variants input/output TSVs.
+- `--variant-effects` / `--variant-effects-out`: variant effects input/output TSVs.
+- `--lineage-compare` / `--lineage-compare-out`: optional lineage comparison input/output TSVs.
+
+### `scripts/variants/prepare_database_multiqc_tables.py`
+Purpose: Reformat database comparison tables into MultiQC-ready TSVs with
+stable row IDs and pass-through summary tables.
+Key parameters:
+- `--database-snps` / `--database-snps-out`: database SNPs input/output TSVs.
+- `--database-lineage-comparison` / `--database-lineage-comparison-out`: lineage comparison input/output TSVs.
+- `--database-sample-comparison` / `--database-sample-comparison-out`: sample comparison input/output TSVs.
+- `--samples-vs-database` / `--samples-vs-database-out`: samples vs database input/output TSVs.
+- `--samples-vs-database-sets` / `--samples-vs-database-sets-out`: SNP set comparison input/output TSVs.
+- `--samples-vs-lineage-sets` / `--samples-vs-lineage-sets-out`: lineage SNP set comparison input/output TSVs.
+- `--hpv16-e6e7-summary` / `--hpv16-e6e7-summary-out`: HPV16 E6/E7 summary input/output TSVs.
 
 ## PaVE reference feature derivation
 
@@ -219,6 +277,12 @@ samples into a single TSV. Used by the VirStrain report pipeline.
 Key parameters:
 - `<results_dir>`: root containing `run/sample/VirStrain_report.txt`.
 - `--maxstrains`: cap on number of strains listed before flagging.
+
+### `scripts/virstrain/prepare_virstrain_multiqc_inputs.py`
+Purpose: Reformat VirStrain strain tables into MultiQC-ready TSVs with sample IDs.
+Key parameters:
+- `--strains`: input strains TSV.
+- `--out`: output MultiQC TSV.
 
 ## Phylogenetic tree preparation
 
