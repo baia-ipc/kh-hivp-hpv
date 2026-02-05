@@ -10,6 +10,12 @@ Format:
 
 ## Decisions
 
+- 2026-02-05: Consolidate step wrappers with a generic runner
+  - Context: per-step `bin/*.steps/*.run.sh` scripts duplicated Nextflow invocation logic.
+  - Decision: add a generic runner (`bin/run_step.py`) and JSON step configs under `config/steps/`, keeping the per-step wrappers as thin shims.
+  - Rationale: reduce duplication and centralize runner logic while preserving existing entry points.
+  - Consequences: update docs and inventories to reference the generic runner and JSON configs.
+
 - 2026-02-05: Make phylo tree helper scripts generic
   - Context: separate HPV16/HPV18 scripts duplicated logic and drifted over time.
   - Decision: replace HPV16/HPV18-specific selection, lineage extraction, sample prep, and lineage assignment scripts with generic versions parameterized by config/env.

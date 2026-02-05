@@ -8,7 +8,7 @@ Rules:
 
 ## Conventions
 
-- User-editable configuration is in `config/`; step path configs are under `config/analyses/`; technical Nextflow config is in `config/pipelines/`. Sample lists live in `metadata/`.
+- User-editable configuration is in `config/`; step path configs are under `config/analyses/`; per-step runner JSON configs are under `config/steps/`; technical Nextflow config is in `config/pipelines/`. Sample lists live in `metadata/`.
 - Raw reference inputs live in `refdata/`; derived reference assets live in `derived_data/refdata/`.
 - Outputs are written under `outs/<analysis>/<step>/` with non‑MultiQC reports under `outs/<analysis>/<step>/reports/`.
 - When changing directory layout, update `CONTENTS.md` and `.agents/INVENTORY.md`.
@@ -44,6 +44,9 @@ Run individual steps (all samples):
 bin/prelim_analysis.steps/01.bucketing.run.sh
 bin/targeted_analysis.steps/02.mapping_vs_pave.run.sh
 ```
+
+Per-step wrappers call the generic runner `bin/run_step.py`, which reads JSON
+configs from `config/steps/` to select the pipeline, configs, and flags.
 
 Run a single sample (for steps that support it):
 

@@ -1,0 +1,22 @@
+{
+  "pipeline_nf": "pipelines/variant_analysis.nf",
+  "configs": [
+    "config/pipelines/common.config",
+    "config/pipelines/variant_analysis.config",
+    "config/user.config",
+    "config/analyses/targeted_analysis.config"
+  ],
+  "profile": "targeted_variant_analysis",
+  "flag_behaviors": [
+    {
+      "flags": ["--skip-database", "--skip_database"],
+      "drop": true,
+      "append": [
+        "--include_database",
+        "false",
+        "--multiqc_config",
+        "pipelines/multiqc/variant_analysis.multiqc.yml"
+      ]
+    }
+  ]
+}

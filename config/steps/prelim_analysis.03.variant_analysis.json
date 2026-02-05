@@ -1,0 +1,10 @@
+{
+  "pipeline_nf": "pipelines/variant_analysis.nf",
+  "configs": [
+    "config/pipelines/common.config",
+    "config/pipelines/variant_analysis.config",
+    "config/user.config",
+    "config/analyses/prelim_analysis.config"
+  ],
+  "profile": "preliminary_variant_analysis"
+}
