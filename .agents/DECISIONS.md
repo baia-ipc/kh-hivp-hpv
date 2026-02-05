@@ -10,9 +10,15 @@ Format:
 
 ## Decisions
 
+- 2026-02-05: Align lineage reference handling across HPV16 and HPV18 trees
+  - Context: HPV18 lineage assignment had a reference-tip list and helper script, but HPV16 lacked the equivalent assets.
+  - Decision: add `metadata/hpv16_lineage_refs.tsv` and `scripts/phylo_tree/assign_hpv16_lineages.py` mirroring the HPV18 workflow.
+  - Rationale: keep lineage annotation workflows consistent across HPV16 and HPV18.
+  - Consequences: update inventories and documentation to mention the new HPV16 lineage refs and helper.
+
 - 2026-02-04: Move analysis outputs to `outs/` and track curated results under `results/`
   - Context: analysis outputs and reports were stored under analysis directories, and MultiQC reports lived alongside other reports.
-  - Decision: write outputs and non‑MultiQC reports under `outs/<analysis>/<step>/`, store MultiQC reports under `results/multiqc/<analysis>/`, and keep curated results tracked in git under `results/` while ignoring raw analysis outputs.
+  - Decision: write outputs and non‑MultiQC reports under `outs/<analysis>/<step>/`, store MultiQC reports under `results/reports/<analysis>/`, and keep curated results tracked in git under `results/` while ignoring raw analysis outputs.
   - Rationale: separate large run artifacts from tracked outputs and standardize report locations.
   - Consequences: update configs, pipelines, scripts, and documentation; migrate existing outputs into `outs/` and `results/`.
 
@@ -228,13 +234,13 @@ Format:
 
 - 2026-02-03: Move database SNP outputs under step 03 reports/output
   - Context: database SNP comparison outputs lived under `targeted_analysis/03.variant_analysis/database_snps/`, which looked detached from step 03 reports.
-  - Decision: place database SNP outputs under `targeted_analysis/03.variant_analysis/output/database_snps` and `targeted_analysis/03.variant_analysis/reports/database_snps`.
+  - Decision: place database SNP outputs under `outs/targeted_analysis/03.variant_analysis/database_snps` and `outs/targeted_analysis/03.variant_analysis/reports/database_snps`.
   - Rationale: keep all step 03 outputs visible under the step’s output/report structure.
   - Consequences: update configs and docs to the new paths.
 
 - 2026-02-03: Consolidate targeted step 03 MultiQC report
   - Context: database comparison produced a second MultiQC report under a subdirectory.
-  - Decision: keep a single MultiQC report in `targeted_analysis/03.variant_analysis/reports/` and consolidate database tables into that reports directory.
+  - Decision: keep a single MultiQC report in `results/reports/targeted_analysis/03_variant_analysis.report.html` and consolidate database tables into `outs/targeted_analysis/03.variant_analysis/reports/`.
   - Rationale: reduce confusion by keeping one report per step.
   - Consequences: add a combined MultiQC config and consolidate database report tables into the step 03 reports directory.
 

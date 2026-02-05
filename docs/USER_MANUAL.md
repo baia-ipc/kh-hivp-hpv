@@ -137,6 +137,10 @@ Outgroup accessions are provided in:
 If you want different outgroups, edit the list and ensure those accessions are
 present in the corresponding NCBI FASTA.
 
+Lineage reference tips for optional lineage assignment live in:
+- `metadata/hpv16_lineage_refs.tsv`
+If you update the lineages table, regenerate the references accordingly.
+
 How to obtain the HPV16 inputs:
 
 - PAVE lineages table:
@@ -172,6 +176,10 @@ Outgroup accessions are provided in:
 - `metadata/hpv18_tree_outgroups.txt`
 If you want different outgroups, edit the list and ensure those accessions are
 present in the corresponding NCBI FASTA.
+
+Lineage reference tips for optional lineage assignment live in:
+- `metadata/hpv18_lineage_refs.tsv`
+If you update the lineages table, regenerate the references accordingly.
 
 How to obtain the HPV18 inputs:
 

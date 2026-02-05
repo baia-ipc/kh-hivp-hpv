@@ -10,7 +10,7 @@ Rules:
 
 1) Bucketing (Nextflow)
    - Purpose: classify reads and create per-sample bucket FASTQs.
-   - Inputs: `metadata/samples-input1.tsv`
+   - Inputs: `metadata/samples_prelim_analysis.tsv`
    - Outputs: `outs/prelim_analysis/01.bucketing`, `outs/prelim_analysis/01.bucketing/reports`
 
 2) Mapping vs PAVE
@@ -29,7 +29,7 @@ Rules:
 
 1) Bucketing
    - Purpose: classify reads and create per-sample bucket FASTQs.
-   - Inputs: `metadata/samples-input2.tsv`
+   - Inputs: `metadata/samples_targeted_analysis.tsv`
    - Outputs: `outs/targeted_analysis/01.bucketing`, `outs/targeted_analysis/01.bucketing/reports`
 
 2) Mapping vs PAVE
@@ -46,10 +46,11 @@ Rules:
 - HPV16 depends on:
   - prepared inputs under `derived_data/refdata/hpv16_tree` (from raw inputs in `refdata/hpv16_tree`)
   - (for sample consensus) mapping outputs under `outs/targeted_analysis/02.mapping_vs_pave`
-- Outputs include alignment/tree artifacts under `outs/targeted_analysis/04.hpv16_tree` and a MultiQC report with an offline tree preview (under `results/multiqc/targeted_analysis/`).
+- Outputs include alignment/tree artifacts under `outs/targeted_analysis/04.hpv16_tree` and a MultiQC report with an offline tree preview (under `results/reports/targeted_analysis/`).
 - HPV18 depends on:
   - prepared inputs under `derived_data/refdata/hpv18_tree` (from raw inputs in `refdata/hpv18_tree`)
   - (for sample consensus) mapping outputs under `outs/targeted_analysis/02.mapping_vs_pave`
-- Outputs include alignment/tree artifacts under `outs/targeted_analysis/05.hpv18_tree` and a MultiQC report with an offline tree preview (under `results/multiqc/targeted_analysis/`).
+- Outputs include alignment/tree artifacts under `outs/targeted_analysis/05.hpv18_tree` and a MultiQC report with an offline tree preview (under `results/reports/targeted_analysis/`).
+- Optional: lineage annotations can be generated for tree tips using the lineage reference lists in `metadata/`.
 
 Curated outputs (selected reports/sequences) can be copied under `results/`.

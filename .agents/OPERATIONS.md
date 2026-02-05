@@ -10,13 +10,13 @@ Rules:
 
 - User-editable configuration is in `config/`; step path configs are under `config/analyses/`; technical Nextflow config is in `config/pipelines/`. Sample lists live in `metadata/`.
 - Raw reference inputs live in `refdata/`; derived reference assets live in `derived_data/refdata/`.
-- Outputs are written to each step's `output/` and `reports/`.
+- Outputs are written under `outs/<analysis>/<step>/` with non‑MultiQC reports under `outs/<analysis>/<step>/reports/`.
 - When changing directory layout, update `CONTENTS.md` and `.agents/INVENTORY.md`.
 - Avoid user-specific absolute paths in scripts; require tools via PATH or
   configurable env vars (e.g., `CONDA_EXE`).
 - Default parallelism is tied to `params.threads` (from `config/user.config`) via wrapper-provided `-process.maxForks` and `-executor.queueSize`.
 - Step wrappers read `params.threads` from `config/user.config` and pass it as `-process.maxForks`, `-executor.queueSize`, and `-process.cpus` to Nextflow.
-- MultiQC reports are written under each step's `reports/` (phylo tree steps use `output/reports/`). Ensure the MultiQC process outputs files at the process root and publish to `reports/` to avoid duplicated `multiqc/multiqc_report.html` paths.
+- MultiQC reports are written under `results/reports/<analysis>/`. Ensure the MultiQC process outputs files at the process root and publish to the `results/reports` target to avoid duplicated `multiqc/multiqc_report.html` paths.
 - MultiQC method summaries should cite the primary tool papers; update the relevant `pipelines/multiqc/*.multiqc.yml` when pipeline steps change.
 - MultiQC custom sections should be configured under `custom_data` with explicit `plot_type` and any table inputs connected via `sp:` search patterns in the same config.
 - Curated outputs can be copied under `results/` for sharing or downstream review (tracked in git).
@@ -64,7 +64,7 @@ nextflow run pipelines/centrifuge_bucketing_all.nf \
   -resume
 ```
 
-MultiQC report is written to `results/multiqc/prelim_analysis/01_bucketing.report.html`.
+MultiQC report is written to `results/reports/prelim_analysis/01_bucketing.report.html`.
 
 ### Build the Centrifuge database (human + RefSeq archaea/bacteria/viral)
 
@@ -216,7 +216,7 @@ scripts/pave/gff3_to_bed.run_all.sh \
 ## Reruns and resume
 
 - Nextflow: use `-resume` to reuse successful tasks.
-- Scripts: remove a step's `output/` to force a full rerun.
+- Scripts: remove a step's `outs/<analysis>/<step>/` to force a full rerun.
 
 ## Troubleshooting
 
