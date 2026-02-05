@@ -8,12 +8,6 @@ def projectRoot = (workflow.projectDir instanceof java.nio.file.Path \
     : Paths.get(workflow.projectDir.toString())) \
     .resolve('..').normalize().toString()
 
-def inputDirParam = params.containsKey('input_dir') ? params.input_dir : null
-def outdirParam = params.containsKey('outdir') ? params.outdir : null
-def reportsDirParam = params.containsKey('reports_dir') ? params.reports_dir : null
-def outgroupsFileParam = params.containsKey('outgroups_file') ? params.outgroups_file : null
-def iqtreeOutgroupsParam = params.containsKey('iqtree_outgroups') ? params.iqtree_outgroups : null
-
 params.scripts_dir = params.scripts_dir ?: "${projectRoot}/scripts"
 params.conda_env = params.conda_env ?: "${projectRoot}/pipelines/conda_env/pipeline.env.yml"
 params.multiqc_config = params.multiqc_config ?: "${projectRoot}/pipelines/multiqc/phylo_tree.multiqc.yml"
@@ -43,6 +37,7 @@ params.input_dir = params.input_dir ?: params.derived_dir
 params.lineages_tsv = params.lineages_tsv ?: null
 params.ncbi_tsv = params.ncbi_tsv ?: null
 params.ncbi_fasta = params.ncbi_fasta ?: null
+params.outgroups_fasta = params.outgroups_fasta ?: null
 params.selected_tsv = params.selected_tsv ?: null
 params.acc_country_tsv = params.acc_country_tsv ?: null
 params.acc_country_cols = params.acc_country_cols ?: null
@@ -52,12 +47,15 @@ params.selection_columns = params.selection_columns ?: null
 params.samples_tsv = params.samples_tsv ?: null
 params.mapping_outdir = params.mapping_outdir ?: null
 params.strains_tsv = params.strains_tsv ?: null
+params.bcf_dir = params.bcf_dir ?: null
+params.bcf_run_id = params.bcf_run_id ?: null
 params.sample_prep_script = params.sample_prep_script ?: null
 params.lineage_extract_script = params.lineage_extract_script ?: null
 params.selection_script = params.selection_script ?: null
 params.rename_tsv = params.rename_tsv ?: null
 params.rename_acc_col = params.rename_acc_col ?: null
 params.rename_prefix_col = params.rename_prefix_col ?: null
+params.skip_id = params.skip_id ?: null
 params.hpv_type = params.hpv_type ?: null
 params.ref_name = params.ref_name ?: null
 params.ref_pattern = params.ref_pattern ?: null
@@ -66,8 +64,17 @@ params.tree_render_script = params.tree_render_script ?: "${params.scripts_dir}/
 params.tree_stats_script = params.tree_stats_script ?: "${params.scripts_dir}/phylo_tree/compute_tree_stats.py"
 params.selection_build_script = params.selection_build_script ?: "${params.scripts_dir}/phylo_tree/build_tree_selection_tsv.py"
 
+def inputDirParam = params.input_dir
+def outdirParam = params.outdir
+def reportsDirParam = params.reports_dir
+def outgroupsFileParam = params.outgroups_file
+def iqtreeOutgroupsParam = params.iqtree_outgroups
+
 if (!inputDirParam) {
     error "params.input_dir is required"
+}
+if (!outdirParam && params.analysis_name && params.step_name) {
+    outdirParam = "${projectRoot}/outs/${params.analysis_name}/${params.step_name}"
 }
 if (!outdirParam) {
     error "params.outdir is required"
@@ -114,17 +121,6 @@ def checkDir(String path, String label) {
     }
 }
 
-def needsUpdate(File output, List<File> inputs) {
-    if (!output.exists()) return true
-    def outMtime = output.lastModified()
-    for (def inp : inputs) {
-        if (inp.exists() && inp.lastModified() > outMtime) {
-            return true
-        }
-    }
-    return false
-}
-
 if (!params.lineages_tsv) error "params.lineages_tsv is required"
 if (!params.ncbi_tsv) error "params.ncbi_tsv is required"
 if (!params.ncbi_fasta) error "params.ncbi_fasta is required"
@@ -144,6 +140,10 @@ checkPath(params.ncbi_tsv as String, 'NCBI TSV')
 checkPath(params.ncbi_fasta as String, 'NCBI FASTA')
 checkPath(params.selection_list as String, 'Selection list')
 checkPath(params.outgroups_list as String, 'Outgroups list')
+if (!params.outgroups_fasta) {
+    params.outgroups_fasta = params.ncbi_fasta
+}
+checkPath(params.outgroups_fasta as String, 'Outgroups FASTA')
 checkPath(params.samples_tsv as String, 'Samples TSV')
 checkDir(params.mapping_outdir as String, 'Mapping output')
 checkPath(params.sample_prep_script as String, 'Sample prep script')
@@ -237,7 +237,7 @@ process PREP_SELECTED {
     if (params.rename_acc_col) { envLines << "RENAME_ACC_COL=\"${params.rename_acc_col}\"" }
     if (params.rename_prefix_col) { envLines << "RENAME_PREFIX_COL=\"${params.rename_prefix_col}\"" }
     if (params.skip_id) { envLines << "SKIP_ID=\"${params.skip_id}\"" }
-    def envBlock = envLines ? envLines.join(" \\\\\n    ") + " \\\\\n" : ""
+    def envBlock = envLines ? envLines.join(" \\\n    ") + " \\\n" : ""
     """
     ${envBlock}"${params.selection_script}" \\
       "${ncbi_tsv}" \\
@@ -260,7 +260,7 @@ process PREP_SELECTION_TSV {
     val(selection_columns)
 
     output:
-    path(selectedName)
+    path "${selectedName}"
 
     script:
     """
@@ -279,14 +279,14 @@ process PREP_OUTGROUPS {
 
     input:
     path(outgroups_list)
-    path(ncbi_fasta)
+    path(outgroups_fasta)
 
     output:
     path "outgroups.fasta"
 
     script:
     """
-    seqkit grep -f "${outgroups_list}" -r "${ncbi_fasta}" > outgroups.fasta
+    seqkit grep -f "${outgroups_list}" -r "${outgroups_fasta}" > outgroups.fasta
     """
 }
 
@@ -309,6 +309,8 @@ process PREP_SAMPLES {
     STRAINS_MATCH="${params.strains_match ?: ''}" \\
     OUT_DIR="${params.derived_dir}" \\
     MAPPING_OUTDIR="${params.mapping_outdir}" \\
+    BCF_DIR="${params.bcf_dir ?: ''}" \\
+    BCF_RUN_ID="${params.bcf_run_id ?: ''}" \\
     SAMPLES_TSV="${params.samples_tsv}" \\
     STRAINS_TSV="${params.strains_tsv ?: ''}" \\
     "${params.sample_prep_script}"
@@ -369,7 +371,7 @@ process TRIMAL {
 
     script:
     """
-    sed 's/[a-z]/\\U&/g' "${aligned}" > all_mafft_aligned.UPPER.fasta
+    awk 'BEGIN{FS=""} /^>/{gsub(":", "_");} {print}' "${aligned}" | sed 's/[a-z]/\\U&/g' > all_mafft_aligned.UPPER.fasta
     trimal -in all_mafft_aligned.UPPER.fasta -out all_trimal.fasta -gt ${trimalGt} -st ${trimalSt}
     """
 }
@@ -474,55 +476,22 @@ workflow {
     def lineagesTsv = file(params.lineages_tsv)
     def ncbiTsv = file(params.ncbi_tsv)
     def ncbiFasta = file(params.ncbi_fasta)
-    def selectedTsv = file(params.selected_tsv)
     def outgroupsList = file(params.outgroups_list)
-    def samplesTsv = file(params.samples_tsv)
 
-    def lineagesRenamedPath = new File(derivedDir, 'lineages_ref_renamed.fasta')
-    def selectedRenamedPath = new File(derivedDir, 'selected_renamed.fasta')
-    def outgroupsPath = new File(derivedDir, 'outgroups.fasta')
-    def samplesPath = new File(derivedDir, 'samples.fasta')
-    def selectedTsvPath = file(params.selected_tsv)
+    def lineagesReady = PREP_LINEAGES(lineagesTsv, ncbiFasta).renamed
 
-    def lineagesReady
-    if (needsUpdate(lineagesRenamedPath, [lineagesTsv, ncbiFasta])) {
-        lineagesReady = PREP_LINEAGES(lineagesTsv, ncbiFasta).renamed
-    } else {
-        lineagesReady = Channel.value(file(lineagesRenamedPath.toString()))
-    }
+    def selectedTsvReady = PREP_SELECTION_TSV(
+        ncbiTsv,
+        file(params.selection_list as String),
+        params.selection_columns
+    )
 
-    def selectionInputs = [file(params.selection_list as String), ncbiTsv]
-    def selectedTsvReady
-    if (needsUpdate(selectedTsvPath, selectionInputs)) {
-        selectedTsvReady = PREP_SELECTION_TSV(ncbiTsv, file(params.selection_list as String), params.selection_columns)
-    } else {
-        selectedTsvReady = Channel.value(selectedTsvPath)
-    }
+    def selectedReady = PREP_SELECTED(ncbiTsv, ncbiFasta, selectedTsvReady).renamed
 
-    def selectedReady
-    if (needsUpdate(selectedRenamedPath, [selectedTsvPath, ncbiTsv, ncbiFasta])) {
-        selectedReady = PREP_SELECTED(ncbiTsv, ncbiFasta, selectedTsvReady).renamed
-    } else {
-        selectedReady = Channel.value(file(selectedRenamedPath.toString()))
-    }
+    def outgroupsFasta = file(params.outgroups_fasta as String)
+    def outgroupsReady = PREP_OUTGROUPS(outgroupsList, outgroupsFasta)
 
-    def outgroupsReady
-    if (needsUpdate(outgroupsPath, [outgroupsList, ncbiFasta])) {
-        outgroupsReady = PREP_OUTGROUPS(outgroupsList, ncbiFasta)
-    } else {
-        outgroupsReady = Channel.value(file(outgroupsPath.toString()))
-    }
-
-    def sampleInputs = [samplesTsv, new File(params.mapping_outdir as String)]
-    if (params.strains_tsv) {
-        sampleInputs << new File(params.strains_tsv as String)
-    }
-    def samplesReady
-    if (needsUpdate(samplesPath, sampleInputs)) {
-        samplesReady = PREP_SAMPLES(Channel.value(true))
-    } else {
-        samplesReady = Channel.value(file(samplesPath.toString()))
-    }
+    def samplesReady = PREP_SAMPLES(Channel.value(true))
 
     def cat_all = CAT_ALL(selectedReady, outgroupsReady, lineagesReady, samplesReady)
     def aligned = MAFFT_ALIGN(cat_all)

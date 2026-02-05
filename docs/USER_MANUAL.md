@@ -1,40 +1,22 @@
 # User Manual
 
-This manual explains how to prepare inputs, configuration, and reference data
-before running the analyses in this repository.
-
 ## 1) Prerequisites
 
 - Nextflow available in `PATH` (Java 17+ is required by Nextflow).
 - Conda available in `PATH` (pipelines use per‑process Conda environments).
 - Basic UNIX tools (`bash`, `coreutils`).
 
-## 2) Repository layout (what goes where)
+## 2) Copy or link input reads (`input_reads/`)
 
-- `input_reads/`: symlinks or folders pointing to raw FASTQ data (not tracked in git).
-- `metadata/`: sample sheets and other fixed inputs (TSV files).
-- `config/`: user-editable pipeline configs (base + step-specific).
-- `config/pipelines/`: technical Nextflow config (executor/conda wiring, derived paths).
-- `pipelines/conda_env/`: Conda environment definitions used by pipelines.
-- `pipelines/multiqc/`: MultiQC configuration files used by pipelines.
-- `refdata/`: reference inputs from external sources (PAVE FASTA/GFF3, NCBI downloads).
-- `derived_data/`: generated intermediate assets.
-  - `derived_data/refdata/`: derived reference data (feature tables, renamed/filtered FASTA sets).
-- `derived_data/indices/`: shared Bowtie/VirStrain indices (Bowtie index + preliminary VirStrain index).
-- `outs/`: analysis outputs and non‑MultiQC reports.
-- `results/`: curated copies of selected outputs (tracked in git for sharing/review), including MultiQC reports.
-- `docs/`: technical documentation and this user manual.
-
-## 3) Prepare raw input data (`input_reads/`)
-
-Put or link each sequencing run folder under `input_reads/`. Examples:
+Copy or link each sequencing run folder under `input_reads/`.
+Two possible layouts are supported:
 
 - If your runs are organized as `.../RUN_ID/Fastq/`, put the run under `input_reads/RUN_ID/`.
 - If FASTQs are directly under the run directory, put them under `input_reads/RUN_ID/`.
 
 These paths are referenced in the sample sheets (next section).
 
-## 4) Prepare sample sheets (`metadata/`)
+## 3) Prepare sample sheets (`metadata/`)
 
 Sample sheets define which runs and samples to process:
 
@@ -46,12 +28,15 @@ repo root), and the `fastq_sample_id` (the exact prefix used in FASTQ filenames)
 If a run uses a flat FASTQ layout, point to the run folder directly. If it has a
 `Fastq/` subdirectory, point to that.
 
-`sample_id` is the normalized identifier used in outputs (e.g., `KHCA-064`,
-`HPV-019`). `fastq_sample_id` preserves the original naming found in the FASTQ
-files (e.g., `KHCA064`, `HPV019`, `HVP-110`) so the pipelines can locate reads
-even when the raw file prefix differs from the normalized ID.
+### What are the IDs?
 
-## 5) Configure pipelines (`config/`)
+- `sample_id` is the normalized identifier used in outputs (e.g., `KHCA-064`,
+`HPV-019`)
+- `fastq_sample_id` preserves the original naming found in the FASTQ
+files (e.g., `KHCA064`, `HPV019`, `HVP-110`) so the pipelines can locate reads
+even when the raw file prefix differs from the normalized ID
+
+## 4) Configure pipelines (`config/`)
 
 User-editable pipeline parameters live in `config/`. Edit these files to point
 to your local reference data paths and to set resource limits:
@@ -67,9 +52,9 @@ Technical Nextflow settings (executor/conda wiring and derived refdata paths) li
 Conda environments are defined under `pipelines/conda_env/`.
 MultiQC configs are under `pipelines/multiqc/`.
 
-## 6) Prepare reference data (`refdata/`)
+## 5) Prepare reference data (`refdata/`)
 
-### 6.1 PAVE reference (raw)
+### 5.1 PAVE reference (raw)
 
 Place the PAVE reference FASTA (and gene FASTAs if used) under `refdata/pave/`.
 If you use variant effect annotation, place the PAVE GFF3 files under
@@ -80,7 +65,7 @@ stored under `derived_data/refdata/pave/bed/` (see below).
 
 These paths are wired via the technical pipeline configs (under `config/pipelines/`).
 
-### 6.2 PAVE feature tables (derived)
+### 5.2 PAVE feature tables (derived)
 
 Coverage statistics use tabular feature files (TSV) derived from the PAVE GFF3s.
 Generate them with:
@@ -94,7 +79,7 @@ scripts/pave/gff3_to_features_tsv.run_all.sh \
 These TSVs are consumed by the Bowtie vs PAVE steps (coverage summaries).
 If the directory is missing or empty, the pipeline will generate it automatically.
 
-### 6.2b PAVE BED files (derived)
+### 5.2b PAVE BED files (derived)
 
 E6/E7 SNP extraction uses BED intervals derived from the same GFF3 inputs.
 Generate them with:
@@ -135,7 +120,7 @@ Place these files under `refdata/hpv16_tree/`:
 Outgroup accessions are provided in:
 - `metadata/hpv16_tree_outgroups.txt`
 If you want different outgroups, edit the list and ensure those accessions are
-present in the corresponding NCBI FASTA.
+present in the PAVE FASTA (`refdata/pave/pave_hsa.fas`).
 
 Lineage reference tips for optional lineage assignment live in:
 - `metadata/hpv16_lineage_refs.tsv`
@@ -175,7 +160,7 @@ Place these files under `refdata/hpv18_tree/`:
 Outgroup accessions are provided in:
 - `metadata/hpv18_tree_outgroups.txt`
 If you want different outgroups, edit the list and ensure those accessions are
-present in the corresponding NCBI FASTA.
+present in the PAVE FASTA (`refdata/pave/pave_hsa.fas`).
 
 Lineage reference tips for optional lineage assignment live in:
 - `metadata/hpv18_lineage_refs.tsv`
@@ -211,6 +196,10 @@ How to obtain the HPV18 inputs:
 bin/targeted_analysis.steps/04.hpv16_tree.run.sh
 bin/targeted_analysis.steps/05.hpv18_tree.run.sh
 ```
+
+If the targeted mapping step contains multiple run IDs, set `bcf_run_id` in the
+`targeted_hpv16_tree` / `targeted_hpv18_tree` profiles inside
+`config/analyses/targeted_analysis.config` so sample consensus can be built.
 
 ### 6.4 Centrifuge database (taxonomic index)
 
