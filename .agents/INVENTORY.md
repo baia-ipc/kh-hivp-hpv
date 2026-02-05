@@ -31,7 +31,7 @@
 
 Technical documentation is maintained under `docs/`.
 
-Step documentation index: `docs/TECHNICAL_DOCUMENTATION.md`
+Developer documentation index: `docs/developers/DEVELOPER_MANUAL.md`
 
 Tree reference preparation guidance lives in the user manual:
 `docs/USER_MANUAL.md` (Phylogenetic tree inputs section).

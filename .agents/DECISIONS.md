@@ -240,7 +240,7 @@ Format:
 
 - 2026-02-03: Group scripts into concern-based subdirectories
   - Context: the scripts directory had a flat list that was hard to scan and maintain.
-  - Decision: organize scripts into subdirectories that match the sections in `docs/SCRIPTS.md`.
+  - Decision: organize scripts into subdirectories that match the sections in `docs/developers/SCRIPTS.md`.
   - Rationale: improve discoverability and keep documentation and paths aligned.
   - Consequences: update all references to scripts with the new subdirectory paths.
 
