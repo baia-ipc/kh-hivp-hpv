@@ -19,6 +19,24 @@ params.conda_env = params.conda_env ?: "${projectRoot}/pipelines/conda_env/pipel
 params.multiqc_config = params.multiqc_config ?: "${projectRoot}/pipelines/multiqc/phylo_tree.multiqc.yml"
 params.multiqc_outdir = params.multiqc_outdir ?: params.reports_dir
 params.multiqc_report_name = params.multiqc_report_name ?: "multiqc_report.html"
+params.analysis_name = params.analysis_name ?: null
+params.step_name = params.step_name ?: null
+params.input_step_name = params.input_step_name ?: null
+if (!params.outdir && params.analysis_name && params.step_name) {
+    params.outdir = "${projectRoot}/outs/${params.analysis_name}/${params.step_name}"
+}
+if (!params.reports_dir && params.outdir) {
+    params.reports_dir = "${params.outdir}/reports"
+}
+if (!params.multiqc_report_name && params.step_name) {
+    params.multiqc_report_name = params.step_name.replace('.', '_') + ".report.html"
+}
+if ((!params.multiqc_outdir || params.multiqc_outdir.contains('unknown_analysis')) && params.analysis_name) {
+    params.multiqc_outdir = "${projectRoot}/results/reports/${params.analysis_name}"
+}
+if (!params.mapping_outdir && params.analysis_name && params.input_step_name) {
+    params.mapping_outdir = "${projectRoot}/outs/${params.analysis_name}/${params.input_step_name}"
+}
 params.refdata_dir = params.refdata_dir ?: null
 params.derived_dir = params.derived_dir ?: null
 params.input_dir = params.input_dir ?: params.derived_dir
@@ -237,6 +255,7 @@ process PREP_SELECTION_TSV {
     tag "prepare_selection_tsv"
     publishDir "${params.derived_dir}", mode: 'copy'
     conda params.conda_env
+    def selectedName = new File(params.selected_tsv.toString()).getName()
 
     input:
     path(ncbi_tsv)
@@ -244,10 +263,9 @@ process PREP_SELECTION_TSV {
     val(selection_columns)
 
     output:
-    path("${selectedName}")
+    path(selectedName)
 
     script:
-    def selectedName = new File(params.selected_tsv.toString()).getName()
     """
     python3 "${params.selection_build_script}" \\
       --ncbi-tsv "${ncbi_tsv}" \\

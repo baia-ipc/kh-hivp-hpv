@@ -24,7 +24,7 @@ custom_data:
       <ul>
         <li><code>&lt;outdir&gt;/&lt;run_id&gt;/&lt;sample&gt;/</code> for per-sample VirStrain outputs</li>
         <li><code>&lt;reports_dir&gt;/</code> for aggregate tables and this MultiQC report</li>
-        <li><code>&lt;index_dir&gt;/</code> for the VirStrain index</li>
+        <li><code>&lt;virstrain_index_dir&gt;/</code> for the VirStrain index</li>
       </ul>
   reports_tables:
     plot_type: "html"
