@@ -38,8 +38,8 @@ These paths are referenced in the sample sheets (next section).
 
 Sample sheets define which runs and samples to process:
 
-- `metadata/samples-input1.tsv`
-- `metadata/samples-input2.tsv`
+- `metadata/samples_prelim_analysis.tsv`
+- `metadata/samples_targeted_analysis.tsv`
 
 Each row should include the run ID, sample ID, FASTQ directory (relative to the
 repo root), and the `fastq_sample_id` (the exact prefix used in FASTQ filenames).

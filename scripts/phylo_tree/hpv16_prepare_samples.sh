@@ -12,7 +12,7 @@ BCF_RUN_ID=${BCF_RUN_ID:-}
 OUT_DIR=${OUT_DIR:-}
 SAMPLES=${SAMPLES:-}
 SAMPLES_FILE=${SAMPLES_FILE:-}
-SAMPLES_TSV=${SAMPLES_TSV:-$REPO_ROOT/metadata/samples-input2.tsv}
+SAMPLES_TSV=${SAMPLES_TSV:-$REPO_ROOT/metadata/samples_targeted_analysis.tsv}
 STRAINS_TSV=${STRAINS_TSV:-$REPO_ROOT/outs/targeted_analysis/02.mapping_vs_pave/reports/strains.tsv}
 MAPPING_OUTDIR=${MAPPING_OUTDIR:-$REPO_ROOT/outs/targeted_analysis/02.mapping_vs_pave}
 

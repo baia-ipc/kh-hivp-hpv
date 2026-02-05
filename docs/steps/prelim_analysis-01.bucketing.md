@@ -24,7 +24,7 @@ Wrappers under `bin/` call the Nextflow pipelines:
 
 ## Inputs
 
-- Sample list: `metadata/samples-input1.tsv` (normalized `sample_id` plus `fastq_sample_id` for raw filename prefixes)
+- Sample list: `metadata/samples_prelim_analysis.tsv` (normalized `sample_id` plus `fastq_sample_id` for raw filename prefixes)
 - Bucket definitions: `metadata/bucket_taxonomy_ids.tsv`
 - Centrifuge index + taxonomy: configured in `config/user.config`
 - Optional: build a local index with `scripts/taxonomy_assignment/build_centrifuge_db.sh`
@@ -49,4 +49,4 @@ Aggregated, step-level reports (`outs/prelim_analysis/01.bucketing/reports/`):
 ## Notes
 
 - The same pipelines are also reused for `outs/targeted_analysis/01.bucketing/` with a
-  different sample list (`metadata/samples-input2.tsv`) and different output paths.
+  different sample list (`metadata/samples_targeted_analysis.tsv`) and different output paths.

@@ -3,7 +3,7 @@
 ## Analysis steps and scripts
 
 - `bin/`: analysis-level runners (`prelim_analysis.run.sh`, `targeted_analysis.run.sh`) plus step runners under `bin/prelim_analysis.steps/` and `bin/targeted_analysis.steps/` with single-sample wrappers under their `single_sample/` subdirectories
-- `metadata/`: bucket_taxonomy_ids.tsv, hpv16_tree_db_selection.txt, hpv16_tree_outgroups.txt, hpv18_lineage_refs.tsv, hpv18_tree_db_selection.txt, hpv18_tree_outgroups.txt, samples-input1.tsv, samples-input2.tsv
+- `metadata/`: bucket_taxonomy_ids.tsv, hpv16_tree_db_selection.txt, hpv16_tree_outgroups.txt, hpv18_lineage_refs.tsv, hpv18_tree_db_selection.txt, hpv18_tree_outgroups.txt, samples_prelim_analysis.tsv, samples_targeted_analysis.tsv
 - `config/`: user.config
 - `config/analyses/`: prelim_analysis.config, targeted_analysis.config
 - `config/pipelines/`: bowtie_vs_pave.config, centrifuge_bucketing.config, common.config, pave_gene_mapping.config, phylo_tree.config, phylo_tree.hpv16.config, phylo_tree.hpv18.config, variant_analysis.config, virstrain.config
