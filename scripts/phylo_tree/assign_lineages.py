@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import argparse
+import os
 import sys
 from pathlib import Path
 
@@ -22,7 +23,9 @@ def load_refs(refs_file: Path):
     return refs
 
 
-def load_outgroups(outgroups_file: Path):
+def load_outgroups(outgroups_file: Path | None):
+    if outgroups_file is None:
+        return set()
     outgroups = set()
     with outgroups_file.open("r") as handle:
         for line in handle:
@@ -33,7 +36,7 @@ def load_outgroups(outgroups_file: Path):
     return outgroups
 
 
-def main(treefile: Path, refs_file: Path, outgroups_file: Path):
+def main(treefile: Path, refs_file: Path, outgroups_file: Path | None):
     refs = load_refs(refs_file)
     outgroups = load_outgroups(outgroups_file)
 
@@ -83,24 +86,24 @@ def main(treefile: Path, refs_file: Path, outgroups_file: Path):
 
 
 if __name__ == "__main__":
-    repo_root = Path(__file__).resolve().parent.parent
-    default_refs = repo_root / "metadata" / "hpv16_lineage_refs.tsv"
-    default_outgroups = repo_root / "metadata" / "hpv16_tree_outgroups.txt"
-
     parser = argparse.ArgumentParser(
-        description="Assign HPV16 lineages by distance to reference tips."
+        description="Assign lineages by distance to reference tips."
     )
     parser.add_argument("treefile", help="Input Newick tree file")
     parser.add_argument(
         "--refs-file",
-        default=str(default_refs),
-        help="TSV file with lineage and reference tip IDs",
+        default=os.environ.get("LINEAGE_REFS"),
+        help="TSV file with lineage -> reference tip IDs (or set LINEAGE_REFS)",
     )
     parser.add_argument(
         "--outgroups-file",
-        default=str(default_outgroups),
-        help="Text file listing outgroup tip IDs",
+        default=os.environ.get("OUTGROUPS_FILE"),
+        help="Optional list of outgroup tips (or set OUTGROUPS_FILE)",
     )
     args = parser.parse_args()
 
-    main(Path(args.treefile), Path(args.refs_file), Path(args.outgroups_file))
+    if not args.refs_file:
+        parser.error("refs-file is required (set --refs-file or LINEAGE_REFS).")
+
+    outgroups_path = Path(args.outgroups_file) if args.outgroups_file else None
+    main(Path(args.treefile), Path(args.refs_file), outgroups_path)

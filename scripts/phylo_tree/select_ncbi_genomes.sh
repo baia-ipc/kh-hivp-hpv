@@ -1,14 +1,17 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Prepare selected NCBI Virus genomes and rename headers with country prefix.
+# Prepare selected NCBI Virus genomes and rename headers with a prefix column.
 
 if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
   cat <<'EOFHELP'
-Usage: hpv16_select_ncbi_genomes.sh [--init-selection] <ncbi_tsv> <ncbi_fasta> <selected_tsv> <selected_fasta> <selected_renamed_fasta>
+Usage: select_ncbi_genomes.sh [--init-selection] <ncbi_tsv> <ncbi_fasta> <selected_tsv> <selected_fasta> <selected_renamed_fasta>
 
 Environment overrides:
-  NCBI_ACC_COL, NCBI_COUNTRY_COL, SELECTED_ACC_COL, SELECTED_PREFIX_COL, SKIP_ID
+  ACC_COL, SELECTION_COLS
+  RENAME_TSV, RENAME_ACC_COL, RENAME_PREFIX_COL
+  ACC_COUNTRY_TSV, ACC_COUNTRY_COLS
+  SKIP_ID
 EOFHELP
   exit 0
 fi
@@ -30,10 +33,13 @@ SELECTED_TSV=$3
 SELECTED_FASTA=$4
 SELECTED_RENAMED_FASTA=$5
 
-NCBI_ACC_COL=${NCBI_ACC_COL:-1}
-NCBI_COUNTRY_COL=${NCBI_COUNTRY_COL:-10}
-SELECTED_ACC_COL=${SELECTED_ACC_COL:-1}
-SELECTED_PREFIX_COL=${SELECTED_PREFIX_COL:-2}
+ACC_COL=${ACC_COL:-1}
+RENAME_TSV=${RENAME_TSV:-$SELECTED_TSV}
+RENAME_ACC_COL=${RENAME_ACC_COL:-$ACC_COL}
+RENAME_PREFIX_COL=${RENAME_PREFIX_COL:-2}
+SELECTION_COLS=${SELECTION_COLS:-${ACC_COL},${RENAME_PREFIX_COL}}
+ACC_COUNTRY_TSV=${ACC_COUNTRY_TSV:-}
+ACC_COUNTRY_COLS=${ACC_COUNTRY_COLS:-1,10,11}
 SKIP_ID=${SKIP_ID:-}
 
 if ! command -v seqkit >/dev/null 2>&1; then
@@ -46,22 +52,34 @@ if [[ ! -f "$NCBI_TSV" || ! -f "$NCBI_FASTA" ]]; then
   exit 1
 fi
 
+if [[ -n "$ACC_COUNTRY_TSV" ]]; then
+  cut -f "$ACC_COUNTRY_COLS" "$NCBI_TSV" > "$ACC_COUNTRY_TSV"
+fi
+
 if [[ "$init_selection" == true ]]; then
-  cut -f "$NCBI_ACC_COL","$NCBI_COUNTRY_COL" "$NCBI_TSV" > "$SELECTED_TSV"
+  if [[ -n "$ACC_COUNTRY_TSV" && -f "$ACC_COUNTRY_TSV" ]]; then
+    cp "$ACC_COUNTRY_TSV" "$SELECTED_TSV"
+  else
+    cut -f "$SELECTION_COLS" "$NCBI_TSV" > "$SELECTED_TSV"
+  fi
   echo "Created $SELECTED_TSV. Edit it to select genomes, then re-run." >&2
   exit 0
 fi
 
 if [[ ! -f "$SELECTED_TSV" ]]; then
-  cut -f "$NCBI_ACC_COL","$NCBI_COUNTRY_COL" "$NCBI_TSV" > "$SELECTED_TSV"
+  if [[ -n "$ACC_COUNTRY_TSV" && -f "$ACC_COUNTRY_TSV" ]]; then
+    cp "$ACC_COUNTRY_TSV" "$SELECTED_TSV"
+  else
+    cut -f "$SELECTION_COLS" "$NCBI_TSV" > "$SELECTED_TSV"
+  fi
   echo "Created $SELECTED_TSV. Edit it to select genomes, then re-run." >&2
   exit 1
 fi
 
-seqkit grep -f <(cut -f 1 "$SELECTED_TSV") -r "$NCBI_FASTA" > "$SELECTED_FASTA"
+seqkit grep -f <(cut -f "$ACC_COL" "$SELECTED_TSV") -r "$NCBI_FASTA" > "$SELECTED_FASTA"
 
 python3 "$(dirname "$0")/rename_lineages.py" \
-  "$SELECTED_TSV" "$SELECTED_ACC_COL" "$SELECTED_PREFIX_COL" \
+  "$RENAME_TSV" "$RENAME_ACC_COL" "$RENAME_PREFIX_COL" \
   "$SELECTED_FASTA" "$SELECTED_RENAMED_FASTA"
 
 tmp_headers=$(mktemp)

@@ -222,42 +222,25 @@ Key parameters:
 
 ## Phylogenetic tree preparation
 
-### `scripts/phylo_tree/hpv16_select_ncbi_genomes.sh`
-Purpose: Select and rename HPV16 NCBI Virus genomes for phylogenetic trees.
-Creates/uses a user-edited TSV of selected accessions.
+### `scripts/phylo_tree/select_ncbi_genomes.sh`
+Purpose: Select and rename NCBI Virus genomes for phylogenetic trees.
+Optionally emits a full accession+country table for review.
 Key parameters:
 - `--init-selection`: create a starter selection TSV and exit.
 - `<ncbi_tsv>` / `<ncbi_fasta>`: NCBI Virus metadata + FASTA.
 - `<selected_tsv>` / `<selected_fasta>`: selection TSV and extracted FASTA.
 - `<selected_renamed_fasta>`: FASTA with country/lineage prefixes.
 Environment overrides:
-- `NCBI_ACC_COL`, `NCBI_COUNTRY_COL`, `SELECTED_ACC_COL`, `SELECTED_PREFIX_COL`, `SKIP_ID`.
+- `ACC_COL`, `SELECTION_COLS`
+- `RENAME_TSV`, `RENAME_ACC_COL`, `RENAME_PREFIX_COL`
+- `ACC_COUNTRY_TSV`, `ACC_COUNTRY_COLS`
+- `SKIP_ID`
 
-### `scripts/phylo_tree/hpv18_select_ncbi_genomes.sh`
-Purpose: Select and rename HPV18 NCBI Virus genomes using a two-step selection
-workflow (acc+country table, then selected subset).
-Key parameters:
-- `--init-selection`: create the selection TSV and exit.
-- `<ncbi_tsv>` / `<ncbi_fasta>`: NCBI Virus metadata + FASTA.
-- `<acc_country_tsv>`: full accession/country table.
-- `<acc_country_selected_tsv>`: edited selection table.
-- `<selected_fasta>` / `<selected_renamed_fasta>`: output FASTAs.
-Environment overrides:
-- `ACCESSION_COL`, `COUNTRY_COL`, `SKIP_ID`.
-
-### `scripts/phylo_tree/hpv16_extract_lineages_fasta.sh`
-Purpose: Extract lineage reference sequences from the HPV16 NCBI FASTA.
+### `scripts/phylo_tree/extract_lineages_fasta.sh`
+Purpose: Extract lineage reference sequences from an NCBI FASTA.
 Key parameters:
 - `<lineages_tsv>`: lineage metadata TSV (accession column).
-- `<ncbi_fasta>`: HPV16 NCBI FASTA.
-- `<output_fasta>`: extracted FASTA.
-- `[accession_col]`: accession column in the TSV (default 6).
-
-### `scripts/phylo_tree/hpv18_extract_lineages_fasta.sh`
-Purpose: Extract lineage reference sequences from the HPV18 NCBI FASTA.
-Key parameters:
-- `<lineages_tsv>`: lineage metadata TSV (accession column).
-- `<ncbi_fasta>`: HPV18 NCBI FASTA.
+- `<ncbi_fasta>`: NCBI FASTA.
 - `<output_fasta>`: extracted FASTA.
 - `[accession_col]`: accession column in the TSV (default 6).
 
@@ -275,40 +258,25 @@ Purpose: Simplify FASTA headers in alignments to be compatible with
 Key parameters:
 - `<msa>`: input FASTA alignment.
 
-### `scripts/phylo_tree/assign_hpv18_lineages.py`
-Purpose: Assign HPV18 lineage labels to tree tips based on distance to
-reference tips in a tree. Used to annotate tree outputs.
+### `scripts/phylo_tree/assign_lineages.py`
+Purpose: Assign lineage labels to tree tips based on distance to reference tips
+in a tree. Used to annotate tree outputs.
 Key parameters:
 - `treefile`: input Newick tree.
-- `--refs-file`: TSV of lineage -> reference tip ID (default from metadata).
-- `--outgroups-file`: list of outgroup tips (default from metadata).
+- `--refs-file`: TSV of lineage -> reference tip ID (or `LINEAGE_REFS` env).
+- `--outgroups-file`: list of outgroup tips (or `OUTGROUPS_FILE` env).
 
-### `scripts/phylo_tree/assign_hpv16_lineages.py`
-Purpose: Assign HPV16 lineage labels to tree tips based on distance to
-reference tips in a tree. Used to annotate tree outputs.
-Key parameters:
-- `treefile`: input Newick tree.
-- `--refs-file`: TSV of lineage -> reference tip ID (default from metadata).
-- `--outgroups-file`: list of outgroup tips (default from metadata).
-
-### `scripts/phylo_tree/hpv16_prepare_samples.sh`
-Purpose: Build HPV16 consensus sequences for samples (for tree inputs) using
+### `scripts/phylo_tree/prepare_samples.sh`
+Purpose: Build consensus sequences for samples (for tree inputs) using
 BCF outputs from the mapping step and the PAVE reference FASTA.
 Key parameters (environment overrides):
+- `HPV_TYPE`: HPV type label (e.g., HPV16 or HPV18).
+- `REF_NAME`, `REF_PATTERN`: reference ID/pattern to extract from PAVE.
 - `OUT_DIR`: required output directory for consensus FASTAs (written under `OUT_DIR/samples_consensus/`).
 - `PAVE_FASTA`: path to PAVE FASTA.
 - `BCF_DIR` / `BCF_RUN_ID`: where to find per-sample BCFs.
 - `SAMPLES` / `SAMPLES_FILE` / `SAMPLES_TSV`: which samples to process.
-
-### `scripts/phylo_tree/hpv18_prepare_samples.sh`
-Purpose: Build HPV18 consensus sequences for samples (for tree inputs) using
-BCF outputs and the PAVE reference FASTA, plus strains.tsv for sample detection.
-Key parameters (environment overrides):
-- `OUT_DIR`: required output directory for consensus FASTAs (written under `OUT_DIR/samples_consensus/`).
-- `PAVE_FASTA`, `HPV18REF_FASTA`: reference FASTA locations.
-- `BCF_DIR` / `BCF_RUN_ID`: where to find per-sample BCFs.
-- `SAMPLES` / `SAMPLES_FILE` / `SAMPLES_TSV`: which samples to process.
-- `STRAINS_TSV`: strains table used to infer HPV18 samples when `SAMPLES` is empty.
+- `STRAINS_TSV` / `STRAINS_MATCH`: strains table used to infer samples when `SAMPLES` is empty.
 
 ### `scripts/phylo_tree/extract_country_sequences.py`
 Purpose: Extract sequences from a selected FASTA for a specific country, used

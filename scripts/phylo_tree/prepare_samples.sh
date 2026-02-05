@@ -1,12 +1,16 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Extract HPV16 reference from PAVE and build consensus sequences for samples.
+# Build consensus sequences for samples to be included in tree inputs.
 
 REPO_ROOT=$(cd "$(dirname "$0")/../.." && pwd)
 
 PAVE_FASTA=${PAVE_FASTA:-}
-HPV16REF_FASTA=${HPV16REF_FASTA:-}
+REF_FASTA=${REF_FASTA:-}
+REF_NAME=${REF_NAME:-}
+REF_PATTERN=${REF_PATTERN:-}
+HPV_TYPE=${HPV_TYPE:-}
+STRAINS_MATCH=${STRAINS_MATCH:-}
 BCF_DIR=${BCF_DIR:-}
 BCF_RUN_ID=${BCF_RUN_ID:-}
 OUT_DIR=${OUT_DIR:-}
@@ -18,17 +22,16 @@ MAPPING_OUTDIR=${MAPPING_OUTDIR:-$REPO_ROOT/outs/targeted_analysis/02.mapping_vs
 
 if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
   cat <<'EOFHELP'
-Usage: hpv16_prepare_samples.sh
+Usage: prepare_samples.sh
 
 Environment overrides:
-  PAVE_FASTA, HPV16REF_FASTA, BCF_DIR, BCF_RUN_ID
-  OUT_DIR, SAMPLES, SAMPLES_FILE, SAMPLES_TSV, STRAINS_TSV, MAPPING_OUTDIR
+  HPV_TYPE, REF_NAME, REF_PATTERN
+  PAVE_FASTA, REF_FASTA
+  BCF_DIR, BCF_RUN_ID, OUT_DIR
+  SAMPLES, SAMPLES_FILE, SAMPLES_TSV
+  STRAINS_TSV, STRAINS_MATCH, MAPPING_OUTDIR
 EOFHELP
   exit 0
-fi
-
-if [[ -z "$PAVE_FASTA" ]]; then
-PAVE_FASTA="$REPO_ROOT/refdata/pave/pave_hsa.fas"
 fi
 
 if [[ -z "$OUT_DIR" ]]; then
@@ -36,8 +39,29 @@ if [[ -z "$OUT_DIR" ]]; then
   exit 1
 fi
 
-if [[ -z "$HPV16REF_FASTA" ]]; then
-  HPV16REF_FASTA="$OUT_DIR/HPV16REF.fas"
+if [[ -z "$HPV_TYPE" ]]; then
+  echo "Error: HPV_TYPE is required (e.g., HPV16 or HPV18)." >&2
+  exit 1
+fi
+
+if [[ -z "$REF_NAME" ]]; then
+  REF_NAME="${HPV_TYPE}REF"
+fi
+
+if [[ -z "$REF_PATTERN" ]]; then
+  REF_PATTERN="${REF_NAME}.*"
+fi
+
+if [[ -z "$PAVE_FASTA" ]]; then
+  PAVE_FASTA="$REPO_ROOT/refdata/pave/pave_hsa.fas"
+fi
+
+if [[ -z "$REF_FASTA" ]]; then
+  REF_FASTA="$OUT_DIR/${REF_NAME}.fas"
+fi
+
+if [[ -z "$STRAINS_MATCH" ]]; then
+  STRAINS_MATCH="$HPV_TYPE"
 fi
 
 if [[ -z "$BCF_RUN_ID" && -z "$BCF_DIR" && -f "$SAMPLES_TSV" ]]; then
@@ -63,6 +87,10 @@ fi
 
 if [[ -n "$BCF_DIR" && ! -d "$BCF_DIR" ]]; then
   BCF_DIR=""
+fi
+
+if [[ -z "$BCF_RUN_ID" && -n "$BCF_DIR" ]]; then
+  BCF_RUN_ID=$(basename "$BCF_DIR")
 fi
 
 if [[ -z "$BCF_DIR" && -d "$MAPPING_OUTDIR" ]]; then
@@ -102,12 +130,18 @@ if [[ -z "$SAMPLES" && -n "$SAMPLES_FILE" ]]; then
 fi
 
 if [[ -z "$SAMPLES" && -f "$STRAINS_TSV" && -n "$BCF_RUN_ID" ]]; then
-  SAMPLES=$(awk -F'\t' -v run="$BCF_RUN_ID" 'NR>1 && $1==run && $2 ~ /^KHCA-/ && $4 ~ /(^|,)HPV16(,|$)/ {print $2}' \
+  SAMPLES=$(awk -F'\t' -v run="$BCF_RUN_ID" -v hpv="$STRAINS_MATCH" \
+    'NR>1 && $1==run && $2 ~ /^KHCA-/ && $4 ~ ("(^|,)"hpv"(,|$)") {print $2}' \
     "$STRAINS_TSV" | sort -u | xargs)
 fi
 
 if [[ -z "$SAMPLES" && -f "$OUT_DIR/samples.fasta" ]]; then
-  SAMPLES=$(awk -F'-' '/^>KHCA-/{print $2}' "$OUT_DIR/samples.fasta" | sort -u | xargs)
+  SAMPLES=$(awk -v hpv="$HPV_TYPE" '
+    /^>/{
+      h=substr($0,2);
+      sub("-"hpv"$","",h);
+      print h;
+    }' "$OUT_DIR/samples.fasta" | sort -u | xargs)
 fi
 
 if [[ -z "$SAMPLES" ]]; then
@@ -115,7 +149,7 @@ if [[ -z "$SAMPLES" ]]; then
   exit 1
 fi
 
-seqkit grep -r -p "HPV16REF.*" "$PAVE_FASTA" > "$HPV16REF_FASTA"
+seqkit grep -r -p "$REF_PATTERN" "$PAVE_FASTA" > "$REF_FASTA"
 
 consensus_dir="$OUT_DIR/samples_consensus"
 mkdir -p "$consensus_dir"
@@ -126,17 +160,17 @@ for sample in "${sample_list[@]}"; do
   if [[ "$sample_id" != KHCA-* ]]; then
     sample_id="KHCA-$sample_id"
   fi
-  bcf_path="$BCF_DIR/$sample_id.bcf.gz"
-  out_path="$consensus_dir/$sample_id.HPV16REF.consensus.fa"
+  bcf_path="$BCF_DIR/${sample_id}.bcf.gz"
+  out_path="$consensus_dir/${sample_id}.${REF_NAME}.consensus.fa"
   if [[ ! -f "$bcf_path" ]]; then
     echo "Error: missing BCF: $bcf_path" >&2
     exit 1
   fi
 
-  bcftools consensus -f "$HPV16REF_FASTA" "$bcf_path" > "$out_path"
+  bcftools consensus -f "$REF_FASTA" "$bcf_path" > "$out_path"
 
   tmp_out=$(mktemp)
-  awk -v id="$sample_id-HPV16" 'NR==1{print ">"id; next} {print}' "$out_path" > "$tmp_out"
+  awk -v id="${sample_id}-${HPV_TYPE}" 'NR==1{print ">"id; next} {print}' "$out_path" > "$tmp_out"
   mv "$tmp_out" "$out_path"
 done
 
@@ -147,5 +181,5 @@ for sample in "${sample_list[@]}"; do
   if [[ "$sample_id" != KHCA-* ]]; then
     sample_id="KHCA-$sample_id"
   fi
-  cat "$consensus_dir/$sample_id.HPV16REF.consensus.fa" >> "$samples_fasta"
+  cat "$consensus_dir/${sample_id}.${REF_NAME}.consensus.fa" >> "$samples_fasta"
 done
