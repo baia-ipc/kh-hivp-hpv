@@ -19,10 +19,28 @@ def projectRoot = (workflow.projectDir instanceof java.nio.file.Path \
 
 params.scripts_dir = params.scripts_dir ?: "${projectRoot}/scripts"
 params.multiqc_config = params.multiqc_config ?: "${projectRoot}/pipelines/multiqc/pave_gene_mapping.multiqc.yml"
+params.analysis_name = params.analysis_name ?: null
+params.step_name = params.step_name ?: null
+params.input_step_name = params.input_step_name ?: null
+if (!params.outdir && params.analysis_name && params.step_name) {
+    params.outdir = "${projectRoot}/outs/${params.analysis_name}/${params.step_name}"
+}
+if (!params.reports_dir && params.outdir) {
+    params.reports_dir = "${params.outdir}/reports"
+}
+if (!params.multiqc_report_name && params.step_name) {
+    params.multiqc_report_name = params.step_name.replace('.', '_') + ".report.html"
+}
+if ((!params.multiqc_outdir || params.multiqc_outdir.contains('unknown_analysis')) && params.analysis_name) {
+    params.multiqc_outdir = "${projectRoot}/results/reports/${params.analysis_name}"
+}
+if (!params.reads_dir && params.analysis_name && params.input_step_name) {
+    params.reads_dir = "${projectRoot}/outs/${params.analysis_name}/${params.input_step_name}"
+}
 
 def requiredParams = [
     'bucket_tid',
-    'index_dir',
+    'bowtie_index_dir',
     'outdir',
     'reports_dir',
     'ref_fasta',
@@ -52,13 +70,13 @@ def checkPath(String path, String label, boolean mustBeDir = false) {
 checkPath(params.ref_fasta as String, 'Reference fasta')
 checkPath(params.scripts_dir as String, 'Scripts directory', true)
 
-def indexMarker = new File("${params.index_dir}/${params.index_prefix}.1.bt2")
+def indexMarker = new File("${params.bowtie_index_dir}/${params.index_prefix}.1.bt2")
 
 def indexReady = indexMarker.exists() ? Channel.value(true) : null
 
 process CREATE_INDEX {
     tag "${params.index_prefix}"
-    publishDir "${params.index_dir}", mode: 'copy', pattern: "${params.index_prefix}*"
+    publishDir "${params.bowtie_index_dir}", mode: 'copy', pattern: "${params.index_prefix}*"
 
     output:
     path "${params.index_prefix}.1.bt2", emit: marker
@@ -84,7 +102,7 @@ process MAP_SAMPLE {
     set -euo pipefail
     prefix="${sample_id}"
 
-    bowtie2 --all -x "${params.index_dir}/${params.index_prefix}" \
+    bowtie2 --all -x "${params.bowtie_index_dir}/${params.index_prefix}" \
       -1 "${read1}" -2 "${read2}" -S "\${prefix}.sam" -p ${task.cpus}
     samtools view -S -b "\${prefix}.sam" > "\${prefix}.u.bam"
     samtools sort "\${prefix}.u.bam" -o "\${prefix}.bam" -@ ${task.cpus}

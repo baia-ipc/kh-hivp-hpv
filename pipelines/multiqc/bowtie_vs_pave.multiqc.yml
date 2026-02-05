@@ -26,7 +26,7 @@ custom_data:
       <ul>
         <li><code>&lt;outdir&gt;/&lt;run_id&gt;/</code> for BAMs, idxstats, depth files, plots, and per-sample outputs</li>
         <li><code>&lt;reports_dir&gt;/</code> for aggregate tables and this MultiQC report</li>
-        <li><code>&lt;index_dir&gt;/</code> for the Bowtie2 index</li>
+        <li><code>&lt;bowtie_index_dir&gt;/</code> for the Bowtie2 index</li>
       </ul>
   reports_tables:
     plot_type: "html"

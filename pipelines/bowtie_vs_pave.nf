@@ -21,6 +21,24 @@ params.scripts_dir = params.scripts_dir ?: "${projectRoot}/scripts"
 params.multiqc_config = params.multiqc_config ?: "${projectRoot}/pipelines/multiqc/bowtie_vs_pave.multiqc.yml"
 params.patients_metadata = params.patients_metadata ?: "${projectRoot}/metadata/patients_metadata.txt"
 params.genexpert_results = params.genexpert_results ?: "${projectRoot}/metadata/genexpert_results.txt"
+params.analysis_name = params.analysis_name ?: null
+params.step_name = params.step_name ?: null
+params.input_step_name = params.input_step_name ?: null
+if (!params.outdir && params.analysis_name && params.step_name) {
+    params.outdir = "${projectRoot}/outs/${params.analysis_name}/${params.step_name}"
+}
+if (!params.reports_dir && params.outdir) {
+    params.reports_dir = "${params.outdir}/reports"
+}
+if (!params.multiqc_report_name && params.step_name) {
+    params.multiqc_report_name = params.step_name.replace('.', '_') + ".report.html"
+}
+if ((!params.multiqc_outdir || params.multiqc_outdir.contains('unknown_analysis')) && params.analysis_name) {
+    params.multiqc_outdir = "${projectRoot}/results/reports/${params.analysis_name}"
+}
+if (!params.reads_dir && params.analysis_name && params.input_step_name) {
+    params.reads_dir = "${projectRoot}/outs/${params.analysis_name}/${params.input_step_name}"
+}
 // Avoid "Access to undefined parameter" warnings; these are optional filters/inputs.
 if (!params.containsKey('reads_dir'))  params.reads_dir = null
 if (!params.containsKey('read1'))      params.read1 = null
@@ -35,7 +53,7 @@ if (!bucketTid) {
 params.bucket_tid = bucketTid
 
 def requiredParams = [
-    'index_dir',
+    'bowtie_index_dir',
     'outdir',
     'reports_dir',
     'bucket_tid',
@@ -72,7 +90,7 @@ checkPath(params.scripts_dir as String, 'Scripts directory', true)
 checkPath(params.patients_metadata as String, 'Patients metadata')
 checkPath(params.genexpert_results as String, 'GeneXpert results')
 
-def indexMarker = new File("${params.index_dir}/pave_hsa.1.bt2")
+def indexMarker = new File("${params.bowtie_index_dir}/pave_hsa.1.bt2")
 def indexReady = indexMarker.exists() ? Channel.value(true) : null
 
 def featuresDir = new File(params.features_tsv_dir as String)
@@ -102,7 +120,7 @@ process GENERATE_FEATURES_TSV {
 
 process CREATE_INDEX {
     tag "pave_hsa"
-    publishDir "${params.index_dir}", mode: 'copy', pattern: 'pave_hsa*'
+    publishDir "${params.bowtie_index_dir}", mode: 'copy', pattern: 'pave_hsa*'
 
     output:
     path "index/pave_hsa.1.bt2", emit: marker
@@ -131,7 +149,7 @@ process MAP_SAMPLE {
     set -euo pipefail
     prefix="${sample_id}"
 
-    bowtie2 --all -x "${params.index_dir}/pave_hsa" -1 "${read1}" -2 "${read2}" -S "\${prefix}.sam" -p ${task.cpus}
+    bowtie2 --all -x "${params.bowtie_index_dir}/pave_hsa" -1 "${read1}" -2 "${read2}" -S "\${prefix}.sam" -p ${task.cpus}
     samtools view -S -b "\${prefix}.sam" > "\${prefix}.u.bam"
     samtools sort "\${prefix}.u.bam" -o "\${prefix}.bam" -@ ${task.cpus}
     samtools index "\${prefix}.bam"
@@ -142,8 +160,8 @@ process MAP_SAMPLE {
     samtools depth -aa "\${prefix}.bam" > "\${prefix}.depth"
     "${params.scripts_dir}/coverage/covstats.py" "\${prefix}.depth" "\${prefix}.depth.stats" "${params.features_tsv_dir}"
 
-    samtools faidx "${params.index_dir}/pave_hsa.fas"
-    bcftools mpileup -Ou -f "${params.index_dir}/pave_hsa.fas" "\${prefix}.bam" -d 500 | \\
+    samtools faidx "${params.bowtie_index_dir}/pave_hsa.fas"
+    bcftools mpileup -Ou -f "${params.bowtie_index_dir}/pave_hsa.fas" "\${prefix}.bam" -d 500 | \\
       bcftools call -mv -Ob -o "\${prefix}.bcf.gz" --ploidy 1
     bcftools index "\${prefix}.bcf.gz"
     bcftools stats "\${prefix}.bcf.gz" > "\${prefix}.bcf.vchk"

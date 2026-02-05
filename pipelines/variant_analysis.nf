@@ -13,6 +13,24 @@ params.conda_env = params.conda_env ?: "${projectRoot}/pipelines/conda_env/pipel
 params.multiqc_config = params.multiqc_config ?: "${projectRoot}/pipelines/multiqc/variant_analysis.multiqc.yml"
 params.multiqc_outdir = params.multiqc_outdir ?: params.reports_dir
 params.multiqc_report_name = params.multiqc_report_name ?: "multiqc_report.html"
+params.analysis_name = params.analysis_name ?: null
+params.step_name = params.step_name ?: null
+params.input_step_name = params.input_step_name ?: null
+if (!params.outdir && params.analysis_name && params.step_name) {
+    params.outdir = "${projectRoot}/outs/${params.analysis_name}/${params.step_name}"
+}
+if (!params.reports_dir && params.outdir) {
+    params.reports_dir = "${params.outdir}/reports"
+}
+if (!params.multiqc_report_name && params.step_name) {
+    params.multiqc_report_name = params.step_name.replace('.', '_') + ".report.html"
+}
+if ((!params.multiqc_outdir || params.multiqc_outdir.contains('unknown_analysis')) && params.analysis_name) {
+    params.multiqc_outdir = "${projectRoot}/results/reports/${params.analysis_name}"
+}
+if (!params.mapping_outdir && params.analysis_name && params.input_step_name) {
+    params.mapping_outdir = "${projectRoot}/outs/${params.analysis_name}/${params.input_step_name}"
+}
 params.include_database = params.containsKey('include_database') ? params.include_database : false
 params.pave_bed_dir = params.pave_bed_dir ?: "${projectRoot}/derived_data/refdata/pave/bed"
 params.pave_gff3_dir = params.pave_gff3_dir ?: "${projectRoot}/refdata/pave/gff3"
@@ -34,7 +52,7 @@ if (!params.containsKey('samples_tsv')) params.samples_tsv = null
 if (!params.containsKey('database_outdir')) params.database_outdir = null
 
 [ 'mapping_outdir', 'reports_dir', 'scripts_dir', 'pave_bed_dir', 'pave_gff3_dir',
-  'index_dir', 'pave_ref_fasta'
+    'bowtie_index_dir', 'pave_ref_fasta'
 ].each { key ->
     if (!params[key]) {
         error "params.${key} is required"
@@ -56,8 +74,7 @@ if (params.include_database) {
 }
 
 if (params.include_database && !params.database_outdir) {
-    def reportsPath = Paths.get(params.reports_dir.toString())
-    params.database_outdir = reportsPath.getParent().resolve("output/database_snps").normalize().toString()
+    params.database_outdir = "${params.outdir}/database_snps"
 }
 
 if (params.include_lineage) {
@@ -475,7 +492,7 @@ process AGGREGATE_VARIANT_EFFECTS {
 
     script:
     """
-    "${params.scripts_dir}/variants/report_E6_E7_variant_effects.sh" "${params.mapping_outdir}" "${params.pave_bed_dir}" "${params.pave_gff3_dir}" "${params.index_dir}/pave_hsa.fas" > "E6_E7_variant_effects.tsv"
+    "${params.scripts_dir}/variants/report_E6_E7_variant_effects.sh" "${params.mapping_outdir}" "${params.pave_bed_dir}" "${params.pave_gff3_dir}" "${params.bowtie_index_dir}/pave_hsa.fas" > "E6_E7_variant_effects.tsv"
     """
 }
 

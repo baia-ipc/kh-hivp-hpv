@@ -20,10 +20,28 @@ def projectRoot = (workflow.projectDir instanceof java.nio.file.Path \
 params.scripts_dir = params.scripts_dir ?: "${projectRoot}/scripts"
 params.multiqc_config = params.multiqc_config ?: "${projectRoot}/pipelines/multiqc/virstrain.multiqc.yml"
 params.run_virstrain = params.run_virstrain ?: false
+params.analysis_name = params.analysis_name ?: null
+params.step_name = params.step_name ?: null
+params.input_step_name = params.input_step_name ?: null
+if (!params.outdir && params.analysis_name && params.step_name) {
+    params.outdir = "${projectRoot}/outs/${params.analysis_name}/${params.step_name}"
+}
+if (!params.reports_dir && params.outdir) {
+    params.reports_dir = "${params.outdir}/reports"
+}
+if (!params.multiqc_report_name && params.step_name) {
+    params.multiqc_report_name = params.step_name.replace('.', '_') + ".report.html"
+}
+if ((!params.multiqc_outdir || params.multiqc_outdir.contains('unknown_analysis')) && params.analysis_name) {
+    params.multiqc_outdir = "${projectRoot}/results/reports/${params.analysis_name}"
+}
+if (!params.reads_dir && params.analysis_name && params.input_step_name) {
+    params.reads_dir = "${projectRoot}/outs/${params.analysis_name}/${params.input_step_name}"
+}
 
 def requiredParams = [
     'bucket_tid',
-    'index_dir',
+    'virstrain_index_dir',
     'outdir',
     'reports_dir',
     'ref_fasta',
@@ -54,13 +72,13 @@ if (params.run_virstrain) {
     checkPath(params.scripts_dir as String, 'Scripts directory', true)
 }
 
-def indexMarker = new File("${params.index_dir}/virstrain")
+def indexMarker = new File("${params.virstrain_index_dir}/virstrain")
 
 def indexReady = indexMarker.isDirectory() ? Channel.value(true) : null
 
 process CREATE_INDEX {
     tag "virstrain"
-    publishDir "${params.index_dir}", mode: 'copy'
+    publishDir "${params.virstrain_index_dir}", mode: 'copy'
 
     output:
     path "virstrain", emit: marker
@@ -94,7 +112,7 @@ process RUN_VIRSTRAIN {
     virstrain \
       -i "${read1}" \
       -p "${read2}" \
-      -d "${params.index_dir}/virstrain" \
+      -d "${params.virstrain_index_dir}/virstrain" \
       -o "${sample_id}"
     """
 }

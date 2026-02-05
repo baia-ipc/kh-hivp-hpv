@@ -18,6 +18,21 @@ def projectRoot = (workflow.projectDir instanceof java.nio.file.Path \
     : Paths.get(workflow.projectDir.toString())) \
     .resolve('..').normalize().toString()
 
+params.analysis_name = params.analysis_name ?: null
+params.step_name = params.step_name ?: null
+if (!params.outdir && params.analysis_name && params.step_name) {
+    params.outdir = "${projectRoot}/outs/${params.analysis_name}/${params.step_name}"
+}
+if (!params.reports_dir && params.outdir) {
+    params.reports_dir = "${params.outdir}/reports"
+}
+if (!params.multiqc_report_name && params.step_name) {
+    params.multiqc_report_name = params.step_name.replace('.', '_') + ".report.html"
+}
+if ((!params.multiqc_outdir || params.multiqc_outdir.contains('unknown_analysis')) && params.analysis_name) {
+    params.multiqc_outdir = "${projectRoot}/results/reports/${params.analysis_name}"
+}
+
 def requiredParams = [
     'samples_tsv',
     'reports_dir',
