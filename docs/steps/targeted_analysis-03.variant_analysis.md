@@ -40,7 +40,7 @@ Wrapper:
   - `derived_data/refdata/hpv16_tree/HPV16-NCBIVirus.selected.tsv`
   - `derived_data/refdata/hpv18_tree/HPV18-NCBIVirus.acc_country.selected.tsv`
 - Sample metadata for the HPV16 E6/E7 summary:
-  - `metadata/samples-input2.tsv`
+  - `metadata/samples_targeted_analysis.tsv`
 - Target-country selection (user config):
   - `config/user.config` (`params.target_country`)
 
