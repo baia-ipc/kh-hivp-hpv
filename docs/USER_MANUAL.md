@@ -1,20 +1,30 @@
 # User Manual
 
-## 1) Prerequisites
+## Prerequisites
 
-- Nextflow available in `PATH` (Java 17+ is required by Nextflow).
-- Conda available in `PATH` (pipelines use per‑process Conda environments).
-- Basic UNIX tools (`bash`, `coreutils`).
+The following software should be installed and available in `PATH`:
 
-## 2) Copy or link input reads (`input_reads/`)
+- Nextflow (and Java 17+, required by Nextflow)
+- Conda (used by Nextflow for environment management)
 
-Copy or link each sequencing run folder under `input_reads/`.
-Two possible layouts are supported:
+## Input reads
 
-- If your runs are organized as `.../RUN_ID/Fastq/`, put the run under `input_reads/RUN_ID/`.
-- If FASTQs are directly under the run directory, put them under `input_reads/RUN_ID/`.
+### Copy or link input reads
 
-These paths are referenced in the sample sheets (next section).
+The sequencing reads are not included in the repository, due
+to their large size.
+
+Copy or link each sequencing run folder under `input_reads/prelim_analysis` and
+`input_reads/targeted_analysis`. Two layouts are supported, which are used,
+respectively in prelim and targeted analyses:
+
+1. `*_analysis/RUN_ID/Fastq/SAMPLE_R1.fastq.gz` (Reads in a Fastq layout)
+2. `*_analysis/RUN_ID/SAMPLE_R1.fastq.gz` (no Fastq subdirectory)
+
+### Sample sheets
+
+The sequencings are defined in sample sheets under `metadata/` (see below).
+The sample sheets point
 
 ## 3) Prepare sample sheets (`metadata/`)
 
@@ -59,6 +69,8 @@ MultiQC configs are under `pipelines/multiqc/`.
 Place the PAVE reference FASTA (and gene FASTAs if used) under `refdata/pave/`.
 If you use variant effect annotation, place the PAVE GFF3 files under
 `refdata/pave/gff3/` (one GFF3 per reference sequence).
+HPV16/HPV18 reference FASTAs are derived from `pave_hsa.fas` by the pipelines
+and should not be stored separately under `refdata/pave/`.
 
 BED files used for E6/E7 SNP extraction are derived from the GFF3 inputs and
 stored under `derived_data/refdata/pave/bed/` (see below).
