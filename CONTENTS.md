@@ -41,6 +41,8 @@
 
 - `results/`: curated copies of key outputs (selected reports and reference results)
 
-- `docs/`: technical documentation for the analysis steps (human-readable)
+- `docs/`: documentation (user manual, developer docs, and notes)
+  - `developers/`: developer manual, scripts reference, and step docs
+  - `notes/`: analysis notes and methods writeups
 
 - `.agents/`: agent-oriented docs and instructions (OPERATIONS, WORKFLOWS, etc.)

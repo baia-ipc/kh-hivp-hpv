@@ -25,19 +25,19 @@ Outgroup accessions live in `metadata/hpv16_tree/hpv16_tree_outgroups.txt` and
 
 ## Script reference
 
-- Repository script reference: `docs/SCRIPTS.md`
+- Repository script reference: `docs/developers/SCRIPTS.md`
 
 ## prelim_analysis
 
-- Step 01 (Bucketing): `docs/steps/prelim_analysis-01.bucketing.md`
-- Step 02 (Mapping vs PAVE): `docs/steps/prelim_analysis-02.mapping_vs_pave.md`
-- Step 03 (Variant analysis): `docs/steps/prelim_analysis-03.variant_analysis.md`
-- Step 04 (VirStrain, optional): `docs/steps/prelim_analysis-04.virstrain.md`
+- Step 01 (Bucketing): `docs/developers/steps/prelim_analysis-01.bucketing.md`
+- Step 02 (Mapping vs PAVE): `docs/developers/steps/prelim_analysis-02.mapping_vs_pave.md`
+- Step 03 (Variant analysis): `docs/developers/steps/prelim_analysis-03.variant_analysis.md`
+- Step 04 (VirStrain, optional): `docs/developers/steps/prelim_analysis-04.virstrain.md`
 
 ## targeted_analysis
 
-- Step 01 (Bucketing): `docs/steps/targeted_analysis-01.bucketing.md`
-- Step 02 (Mapping vs PAVE): `docs/steps/targeted_analysis-02.mapping_vs_pave.md`
-- Step 03 (Variant analysis): `docs/steps/targeted_analysis-03.variant_analysis.md`
-- Step 04 (HPV16 tree): `docs/steps/targeted_analysis-04.hpv16_tree.md`
-- Step 05 (HPV18 tree): `docs/steps/targeted_analysis-05.hpv18_tree.md`
+- Step 01 (Bucketing): `docs/developers/steps/targeted_analysis-01.bucketing.md`
+- Step 02 (Mapping vs PAVE): `docs/developers/steps/targeted_analysis-02.mapping_vs_pave.md`
+- Step 03 (Variant analysis): `docs/developers/steps/targeted_analysis-03.variant_analysis.md`
+- Step 04 (HPV16 tree): `docs/developers/steps/targeted_analysis-04.hpv16_tree.md`
+- Step 05 (HPV18 tree): `docs/developers/steps/targeted_analysis-05.hpv18_tree.md`
