@@ -34,6 +34,7 @@ Rules:
 - Outputs:
   - prelim_analysis: `outs/prelim_analysis/01.bucketing`, `outs/prelim_analysis/01.bucketing/reports`
   - targeted_analysis: `outs/targeted_analysis/01.bucketing`, `outs/targeted_analysis/01.bucketing/reports`
+- MultiQC table prep helper: `scripts/taxonomy_assignment/prepare_centrifuge_multiqc_inputs.py`.
 
 ## Skill: mapping vs PAVE (Bowtie2)
 
@@ -45,6 +46,7 @@ Rules:
 - Inputs: bucketed FASTQs from the corresponding step 01 output; bucket selection via `params.bucket_tid` in `config/pipelines/bowtie_vs_pave.config`.
 - Reference assets: PAVE FASTA/GFF3 under `refdata/pave/`, plus derived BEDs and feature tables under `derived_data/refdata/pave/`.
 - Outputs: per-step outputs and `reports/` under the locations above (including strain assignment + coverage table in step 02 reports).
+- MultiQC table prep helper: `scripts/coverage/prepare_bowtie_multiqc_inputs.py`.
 
 ## Skill: variant analysis
 
@@ -55,6 +57,7 @@ Rules:
   - targeted_analysis: `outs/targeted_analysis/03.variant_analysis`
 - Inputs: mapping outputs from step 02 (`outs/*/02.mapping_vs_pave/`) plus PAVE reference assets under `refdata/pave/` and `derived_data/refdata/pave/`.
 - Outputs: `reports/` under the locations above (E6/E7 variants, variant effects, lineage SNP comparison, database comparison tables when enabled, MultiQC).
+- MultiQC table prep helpers: `scripts/variants/prepare_variant_multiqc_inputs.py` and `scripts/variants/prepare_database_multiqc_tables.py`.
 
 ## Skill: VirStrain reports (optional)
 
@@ -63,6 +66,7 @@ Rules:
 - Where: `outs/prelim_analysis/04.virstrain`.
 - Inputs: bucketed FASTQs from `outs/prelim_analysis/01.bucketing/`; bucket selection via `params.bucket_tid` in `config/pipelines/virstrain.config`.
 - Outputs: `outs/prelim_analysis/04.virstrain`, `outs/prelim_analysis/04.virstrain/reports`.
+- MultiQC table prep helper: `scripts/virstrain/prepare_virstrain_multiqc_inputs.py`.
 
 ## Skill: phylogenetic trees (HPV16/HPV18)
 

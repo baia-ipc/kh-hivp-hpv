@@ -279,3 +279,9 @@ Format:
   - Decision: move curated selection lists into `refdata/`, generate all derived tree inputs in `pipelines/phylo_tree.nf`, and ignore `derived_data/` in git.
   - Rationale: eliminate manual steps and keep derived assets out of version control.
   - Consequences: update phylo tree configs, scripts, and documentation; remove tracked `derived_data/` contents.
+
+- 2026-02-05: Move embedded pipeline Python into scripts
+  - Context: Nextflow pipelines embedded large Python here-docs for MultiQC table preparation, which made the pipelines hard to read.
+  - Decision: extract Python logic into dedicated scripts under `scripts/` and call them from the pipelines.
+  - Rationale: keep pipeline definitions readable and centralize reusable logic.
+  - Consequences: add new helper scripts for MultiQC table preparation and update the affected pipelines to call them.
