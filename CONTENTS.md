@@ -19,7 +19,12 @@
 
 - `input_reads/`: symlinks to external raw data locations (not stored in-repo)
 
-- `metadata/`: taxonomy bucket definitions and sample lists
+- `metadata/`: curated metadata inputs
+  - `bucketing/`
+  - `cohort/`
+  - `hpv16_tree/`
+  - `hpv18_tree/`
+  - `seq_samples/`
 
 - `config/`: user-editable configuration files
   - `analyses/`: step path config profiles used by wrappers

@@ -3,7 +3,7 @@
 ## Analysis steps and scripts
 
 - `bin/`: analysis-level runners (`prelim_analysis.run.sh`, `targeted_analysis.run.sh`), a generic step runner (`bin/run_step.py`), plus step runners under `bin/prelim_analysis.steps/` and `bin/targeted_analysis.steps/` with single-sample wrappers under their `single_sample/` subdirectories
-- `metadata/`: bucket_taxonomy_ids.tsv, hpv16_lineage_refs.tsv, hpv16_tree_db_selection.txt, hpv16_tree_outgroups.txt, hpv18_lineage_refs.tsv, hpv18_tree_db_selection.txt, hpv18_tree_outgroups.txt, samples_prelim_analysis.tsv, samples_targeted_analysis.tsv
+- `metadata/`: bucketing/, cohort/, hpv16_tree/, hpv18_tree/, seq_samples/
 - `config/`: user.config
 - `config/analyses/`: prelim_analysis.config, targeted_analysis.config
 - `config/steps/`: JSON configs for per-step wrapper parameters (pipeline, configs, profile, flags)

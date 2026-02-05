@@ -19,8 +19,8 @@ def projectRoot = (workflow.projectDir instanceof java.nio.file.Path \
 
 params.scripts_dir = params.scripts_dir ?: "${projectRoot}/scripts"
 params.multiqc_config = params.multiqc_config ?: "${projectRoot}/pipelines/multiqc/bowtie_vs_pave.multiqc.yml"
-params.patients_metadata = params.patients_metadata ?: "${projectRoot}/metadata/patients_metadata.txt"
-params.genexpert_results = params.genexpert_results ?: "${projectRoot}/metadata/genexpert_results.txt"
+params.patients_metadata = params.patients_metadata ?: "${projectRoot}/metadata/cohort/patients_metadata.tsv"
+params.genexpert_results = params.genexpert_results ?: "${projectRoot}/metadata/cohort/genexpert_results.tsv"
 params.analysis_name = params.analysis_name ?: null
 params.step_name = params.step_name ?: null
 params.input_step_name = params.input_step_name ?: null

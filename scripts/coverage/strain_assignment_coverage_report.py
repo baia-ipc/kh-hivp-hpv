@@ -130,7 +130,7 @@ def build_report(strains_path: Path, cov_path: Path, patients_path: Path, genexp
 def main():
     if len(sys.argv) != 6:
         print(
-            "usage: strain_assignment_coverage_report.py <strains.tsv> <cov_stats.tsv> <patients_metadata.txt> <genexpert_results.txt> <output.tsv>",
+            "usage: strain_assignment_coverage_report.py <strains.tsv> <cov_stats.tsv> <patients_metadata.tsv> <genexpert_results.tsv> <output.tsv>",
             file=sys.stderr,
         )
         sys.exit(1)

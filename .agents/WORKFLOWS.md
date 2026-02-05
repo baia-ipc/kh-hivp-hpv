@@ -10,7 +10,7 @@ Rules:
 
 1) Bucketing (Nextflow)
    - Purpose: classify reads and create per-sample bucket FASTQs.
-   - Inputs: `metadata/samples_prelim_analysis.tsv`
+   - Inputs: `metadata/seq_samples/samples_prelim_analysis.tsv`
    - Outputs: `outs/prelim_analysis/01.bucketing`, `outs/prelim_analysis/01.bucketing/reports`
 
 2) Mapping vs PAVE
@@ -29,7 +29,7 @@ Rules:
 
 1) Bucketing
    - Purpose: classify reads and create per-sample bucket FASTQs.
-   - Inputs: `metadata/samples_targeted_analysis.tsv`
+   - Inputs: `metadata/seq_samples/samples_targeted_analysis.tsv`
    - Outputs: `outs/targeted_analysis/01.bucketing`, `outs/targeted_analysis/01.bucketing/reports`
 
 2) Mapping vs PAVE
@@ -55,6 +55,6 @@ Rules:
 - If the mapping output contains multiple run IDs, set `bcf_run_id` in
   `config/analyses/targeted_analysis.config` for the tree profiles.
 - Outputs include alignment/tree artifacts under `outs/targeted_analysis/05.hpv18_tree` and a MultiQC report with an offline tree preview (under `results/reports/targeted_analysis/`).
-- Optional: lineage annotations can be generated for tree tips using the lineage reference lists in `metadata/`.
+- Optional: lineage annotations can be generated for tree tips using the lineage reference lists in `metadata/hpv16_tree/` and `metadata/hpv18_tree/`.
 
 Curated outputs (selected reports/sequences) can be copied under `results/`.

@@ -13,7 +13,7 @@ and auto-generated derived inputs (outgroups, selected references, samples).
 - Technical config: `config/pipelines/common.config` + `config/pipelines/phylo_tree.config` + `config/pipelines/phylo_tree.hpv16.config`
 - Inputs directory: `derived_data/refdata/hpv16_tree` (derived, wired via technical config)
 - Raw inputs directory: `refdata/hpv16_tree`
-- Outgroup list: `metadata/hpv16_tree_outgroups.txt`
+- Outgroup list: `metadata/hpv16_tree/hpv16_tree_outgroups.txt`
 
 Wrappers:
 
@@ -24,7 +24,7 @@ Wrappers:
 Raw inputs are expected under `refdata/hpv16_tree/`. The pipeline derives
 `derived_data/refdata/hpv16_tree/` automatically if files are missing or older
 than the raw inputs (no manual preparation commands required).
-The selected NCBI accessions are listed in `metadata/hpv16_tree_db_selection.txt`.
+The selected NCBI accessions are listed in `metadata/hpv16_tree/hpv16_tree_db_selection.txt`.
 
 ## Outputs
 

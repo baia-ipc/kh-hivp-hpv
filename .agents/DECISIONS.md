@@ -10,6 +10,12 @@ Format:
 
 ## Decisions
 
+- 2026-02-05: Organize metadata into subdirectories
+  - Context: metadata files lived flat under `metadata/`, making it harder to locate related assets.
+  - Decision: group bucketing, cohort, tree inputs, and sample sheets into subdirectories under `metadata/`.
+  - Rationale: improve discoverability and keep related metadata together.
+  - Consequences: update configs, pipelines, scripts, and documentation to use new paths.
+
 - 2026-02-05: Consolidate step wrappers with a generic runner
   - Context: per-step `bin/*.steps/*.run.sh` scripts duplicated Nextflow invocation logic.
   - Decision: add a generic runner (`bin/run_step.py`) and JSON step configs under `config/steps/`, keeping the per-step wrappers as thin shims.
@@ -30,7 +36,7 @@ Format:
 
 - 2026-02-05: Align lineage reference handling across HPV16 and HPV18 trees
   - Context: HPV18 lineage assignment had a reference-tip list and helper script, but HPV16 lacked the equivalent assets.
-  - Decision: add `metadata/hpv16_lineage_refs.tsv` and a generic `scripts/phylo_tree/assign_lineages.py` helper for lineage assignment.
+  - Decision: add `metadata/hpv16_tree/hpv16_lineage_refs.tsv` and a generic `scripts/phylo_tree/assign_lineages.py` helper for lineage assignment.
   - Rationale: keep lineage annotation workflows consistent across HPV16 and HPV18.
   - Consequences: update inventories and documentation to mention the new HPV16 lineage refs and helper.
 
@@ -42,7 +48,7 @@ Format:
 
 - 2026-02-04: Derive NCBI selection TSVs from metadata accession lists
   - Context: tree selection lists moved out of `refdata/`, and selection TSVs should be derived consistently for HPV16/HPV18.
-  - Decision: store accession lists in `metadata/hpv16_tree_db_selection.txt` and `metadata/hpv18_tree_db_selection.txt`, and derive the selection TSVs in the phylo tree pipeline.
+  - Decision: store accession lists in `metadata/hpv16_tree/hpv16_tree_db_selection.txt` and `metadata/hpv18_tree/hpv18_tree_db_selection.txt`, and derive the selection TSVs in the phylo tree pipeline.
   - Rationale: keep user-editable selections in metadata and generate consistent derived inputs.
   - Consequences: add a selection-build script, update phylo tree configs/pipeline, and update documentation references.
 
@@ -152,13 +158,13 @@ Format:
   - Context: step 03 relied on multiple per-step scripts for alignment and tree building.
   - Decision: centralize the tree build as `pipelines/phylo_tree.nf` with step config.
   - Rationale: standardize tree workflows and reduce step-local scripts.
-  - Consequences: use `config/user.config` and `metadata/hpv16_tree_outgroups.txt`.
+  - Consequences: use `config/user.config` and `metadata/hpv16_tree/hpv16_tree_outgroups.txt`.
 
 - 2026-01-24: Migrate HPV18 tree build to Nextflow
   - Context: step 04 mirrored the HPV16 tree workflow with separate scripts.
   - Decision: use the shared `pipelines/phylo_tree.nf` pipeline with an HPV18 config.
   - Rationale: keep HPV16/HPV18 tree generation consistent and centralized.
-  - Consequences: use `config/user.config` and `metadata/hpv18_tree_outgroups.txt`.
+  - Consequences: use `config/user.config` and `metadata/hpv18_tree/hpv18_tree_outgroups.txt`.
 
 - 2026-01-24: Add reference snapshot directory
   - Context: need to compare old results vs updated pipelines.

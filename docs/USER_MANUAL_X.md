@@ -23,13 +23,14 @@ respectively in prelim and targeted analyses:
 
 ### Sample sheets
 
-The sequencing samples are described in sample sheets under `metadata/seq_samples/` (see below).
+The sequencings samples are described in sample sheets under `metadata/` (see below).
 For replicating the analyses of the manuscript, no editing is necessary,
 as long as the expected directory structure of the input reads is maintained (see above).
 For more information about the sample sheets, see below.
 
+## Reference data
 
-## 4) Configure pipelines (`config/`)
+## Configuration
 
 User-editable pipeline parameters live in `config/`. Edit these files to point
 to your local reference data paths and to set resource limits:
