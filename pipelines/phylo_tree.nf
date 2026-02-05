@@ -44,8 +44,8 @@ params.lineages_tsv = params.lineages_tsv ?: null
 params.ncbi_tsv = params.ncbi_tsv ?: null
 params.ncbi_fasta = params.ncbi_fasta ?: null
 params.selected_tsv = params.selected_tsv ?: null
-params.selection_kind = params.selection_kind ?: null
 params.acc_country_tsv = params.acc_country_tsv ?: null
+params.acc_country_cols = params.acc_country_cols ?: null
 params.outgroups_list = params.outgroups_list ?: null
 params.selection_list = params.selection_list ?: null
 params.selection_columns = params.selection_columns ?: null
@@ -54,6 +54,14 @@ params.mapping_outdir = params.mapping_outdir ?: null
 params.strains_tsv = params.strains_tsv ?: null
 params.sample_prep_script = params.sample_prep_script ?: null
 params.lineage_extract_script = params.lineage_extract_script ?: null
+params.selection_script = params.selection_script ?: null
+params.rename_tsv = params.rename_tsv ?: null
+params.rename_acc_col = params.rename_acc_col ?: null
+params.rename_prefix_col = params.rename_prefix_col ?: null
+params.hpv_type = params.hpv_type ?: null
+params.ref_name = params.ref_name ?: null
+params.ref_pattern = params.ref_pattern ?: null
+params.strains_match = params.strains_match ?: null
 params.tree_render_script = params.tree_render_script ?: "${params.scripts_dir}/phylo_tree/render_tree_svg.py"
 params.tree_stats_script = params.tree_stats_script ?: "${params.scripts_dir}/phylo_tree/compute_tree_stats.py"
 params.selection_build_script = params.selection_build_script ?: "${params.scripts_dir}/phylo_tree/build_tree_selection_tsv.py"
@@ -117,13 +125,6 @@ def needsUpdate(File output, List<File> inputs) {
     return false
 }
 
-if (!params.selection_kind) {
-    error "params.selection_kind is required (hpv16 or hpv18)"
-}
-if (!(params.selection_kind in ['hpv16', 'hpv18'])) {
-    error "params.selection_kind must be 'hpv16' or 'hpv18'"
-}
-
 if (!params.lineages_tsv) error "params.lineages_tsv is required"
 if (!params.ncbi_tsv) error "params.ncbi_tsv is required"
 if (!params.ncbi_fasta) error "params.ncbi_fasta is required"
@@ -135,10 +136,8 @@ if (!params.samples_tsv) error "params.samples_tsv is required"
 if (!params.mapping_outdir) error "params.mapping_outdir is required"
 if (!params.sample_prep_script) error "params.sample_prep_script is required"
 if (!params.lineage_extract_script) error "params.lineage_extract_script is required"
-
-if (params.selection_kind == 'hpv18' && !params.acc_country_tsv) {
-    error "params.acc_country_tsv is required when selection_kind=hpv18"
-}
+if (!params.selection_script) error "params.selection_script is required"
+if (!params.hpv_type) error "params.hpv_type is required"
 
 checkPath(params.lineages_tsv as String, 'Lineages TSV')
 checkPath(params.ncbi_tsv as String, 'NCBI TSV')
@@ -149,6 +148,7 @@ checkPath(params.samples_tsv as String, 'Samples TSV')
 checkDir(params.mapping_outdir as String, 'Mapping output')
 checkPath(params.sample_prep_script as String, 'Sample prep script')
 checkPath(params.lineage_extract_script as String, 'Lineage extract script')
+checkPath(params.selection_script as String, 'Selection script')
 checkPath(params.tree_render_script as String, 'Tree render script')
 checkPath(params.tree_stats_script as String, 'Tree stats script')
 checkPath(params.selection_build_script as String, 'Selection build script')
@@ -216,38 +216,35 @@ process PREP_SELECTED {
     tag "prepare_selected"
     publishDir "${params.derived_dir}", mode: 'copy'
     conda params.conda_env
+    def accCountryOut = params.acc_country_tsv ? new File(params.acc_country_tsv.toString()).getName() : "acc_country.tsv"
 
     input:
     path(ncbi_tsv)
     path(ncbi_fasta)
     path(selected_tsv)
-    val(selection_kind)
 
     output:
     path "selected.fasta", emit: selected
     path "selected_renamed.fasta", emit: renamed
-    path "acc_country.tsv", emit: acc_country, optional: true
+    path accCountryOut, emit: acc_country, optional: true
 
     script:
-    def accCountryOut = params.acc_country_tsv ? new File(params.acc_country_tsv.toString()).getName() : ""
-    def cmd = selection_kind == 'hpv18' ? """
-    "${params.scripts_dir}/phylo_tree/hpv18_select_ncbi_genomes.sh" \\
+    def envLines = []
+    if (params.acc_country_tsv) { envLines << "ACC_COUNTRY_TSV=\"${accCountryOut}\"" }
+    if (params.acc_country_cols) { envLines << "ACC_COUNTRY_COLS=\"${params.acc_country_cols}\"" }
+    if (params.selection_columns) { envLines << "SELECTION_COLS=\"${params.selection_columns}\"" }
+    if (params.rename_tsv) { envLines << "RENAME_TSV=\"${params.rename_tsv}\"" }
+    if (params.rename_acc_col) { envLines << "RENAME_ACC_COL=\"${params.rename_acc_col}\"" }
+    if (params.rename_prefix_col) { envLines << "RENAME_PREFIX_COL=\"${params.rename_prefix_col}\"" }
+    if (params.skip_id) { envLines << "SKIP_ID=\"${params.skip_id}\"" }
+    def envBlock = envLines ? envLines.join(" \\\\\n    ") + " \\\\\n" : ""
+    """
+    ${envBlock}"${params.selection_script}" \\
       "${ncbi_tsv}" \\
       "${ncbi_fasta}" \\
-      "${accCountryOut}" \\
       "${selected_tsv}" \\
       selected.fasta \\
       selected_renamed.fasta
-    """ : """
-    "${params.scripts_dir}/phylo_tree/hpv16_select_ncbi_genomes.sh" \\
-      "${ncbi_tsv}" \\
-      "${ncbi_fasta}" \\
-      "${selected_tsv}" \\
-      selected.fasta \\
-      selected_renamed.fasta
-    """
-    """
-    ${cmd}
     """
 }
 
@@ -306,6 +303,10 @@ process PREP_SAMPLES {
 
     script:
     """
+    HPV_TYPE="${params.hpv_type}" \\
+    REF_NAME="${params.ref_name ?: ''}" \\
+    REF_PATTERN="${params.ref_pattern ?: ''}" \\
+    STRAINS_MATCH="${params.strains_match ?: ''}" \\
     OUT_DIR="${params.derived_dir}" \\
     MAPPING_OUTDIR="${params.mapping_outdir}" \\
     SAMPLES_TSV="${params.samples_tsv}" \\
@@ -500,7 +501,7 @@ workflow {
 
     def selectedReady
     if (needsUpdate(selectedRenamedPath, [selectedTsvPath, ncbiTsv, ncbiFasta])) {
-        selectedReady = PREP_SELECTED(ncbiTsv, ncbiFasta, selectedTsvReady, params.selection_kind).renamed
+        selectedReady = PREP_SELECTED(ncbiTsv, ncbiFasta, selectedTsvReady).renamed
     } else {
         selectedReady = Channel.value(file(selectedRenamedPath.toString()))
     }

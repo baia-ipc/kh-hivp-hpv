@@ -10,9 +10,15 @@ Format:
 
 ## Decisions
 
+- 2026-02-05: Make phylo tree helper scripts generic
+  - Context: separate HPV16/HPV18 scripts duplicated logic and drifted over time.
+  - Decision: replace HPV16/HPV18-specific selection, lineage extraction, sample prep, and lineage assignment scripts with generic versions parameterized by config/env.
+  - Rationale: reduce duplication and keep HPV16/HPV18 tree workflows consistent.
+  - Consequences: update phylo_tree pipeline/configs and script documentation; remove the old HPV16/HPV18-specific scripts.
+
 - 2026-02-05: Align lineage reference handling across HPV16 and HPV18 trees
   - Context: HPV18 lineage assignment had a reference-tip list and helper script, but HPV16 lacked the equivalent assets.
-  - Decision: add `metadata/hpv16_lineage_refs.tsv` and `scripts/phylo_tree/assign_hpv16_lineages.py` mirroring the HPV18 workflow.
+  - Decision: add `metadata/hpv16_lineage_refs.tsv` and a generic `scripts/phylo_tree/assign_lineages.py` helper for lineage assignment.
   - Rationale: keep lineage annotation workflows consistent across HPV16 and HPV18.
   - Consequences: update inventories and documentation to mention the new HPV16 lineage refs and helper.
 
