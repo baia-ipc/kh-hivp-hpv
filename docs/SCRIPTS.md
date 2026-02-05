@@ -283,6 +283,14 @@ Key parameters:
 - `--refs-file`: TSV of lineage -> reference tip ID (default from metadata).
 - `--outgroups-file`: list of outgroup tips (default from metadata).
 
+### `scripts/phylo_tree/assign_hpv16_lineages.py`
+Purpose: Assign HPV16 lineage labels to tree tips based on distance to
+reference tips in a tree. Used to annotate tree outputs.
+Key parameters:
+- `treefile`: input Newick tree.
+- `--refs-file`: TSV of lineage -> reference tip ID (default from metadata).
+- `--outgroups-file`: list of outgroup tips (default from metadata).
+
 ### `scripts/phylo_tree/hpv16_prepare_samples.sh`
 Purpose: Build HPV16 consensus sequences for samples (for tree inputs) using
 BCF outputs from the mapping step and the PAVE reference FASTA.
