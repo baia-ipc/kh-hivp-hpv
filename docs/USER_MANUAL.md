@@ -23,28 +23,11 @@ respectively in prelim and targeted analyses:
 
 ### Sample sheets
 
-The sequencings are defined in sample sheets under `metadata/` (see below).
-The sample sheets point
+The sequencing samples are described in sample sheets under `metadata/seq_samples/` (see below).
+For replicating the analyses of the manuscript, no editing is necessary,
+as long as the expected directory structure of the input reads is maintained (see above).
+For more information about the sample sheets, see below.
 
-## 3) Prepare sample sheets (`metadata/`)
-
-Sample sheets define which runs and samples to process:
-
-- `metadata/samples_prelim_analysis.tsv`
-- `metadata/samples_targeted_analysis.tsv`
-
-Each row should include the run ID, sample ID, FASTQ directory (relative to the
-repo root), and the `fastq_sample_id` (the exact prefix used in FASTQ filenames).
-If a run uses a flat FASTQ layout, point to the run folder directly. If it has a
-`Fastq/` subdirectory, point to that.
-
-### What are the IDs?
-
-- `sample_id` is the normalized identifier used in outputs (e.g., `KHCA-064`,
-`HPV-019`)
-- `fastq_sample_id` preserves the original naming found in the FASTQ
-files (e.g., `KHCA064`, `HPV019`, `HVP-110`) so the pipelines can locate reads
-even when the raw file prefix differs from the normalized ID
 
 ## 4) Configure pipelines (`config/`)
 
@@ -69,8 +52,6 @@ MultiQC configs are under `pipelines/multiqc/`.
 Place the PAVE reference FASTA (and gene FASTAs if used) under `refdata/pave/`.
 If you use variant effect annotation, place the PAVE GFF3 files under
 `refdata/pave/gff3/` (one GFF3 per reference sequence).
-HPV16/HPV18 reference FASTAs are derived from `pave_hsa.fas` by the pipelines
-and should not be stored separately under `refdata/pave/`.
 
 BED files used for E6/E7 SNP extraction are derived from the GFF3 inputs and
 stored under `derived_data/refdata/pave/bed/` (see below).
@@ -130,12 +111,12 @@ Place these files under `refdata/hpv16_tree/`:
 - `HPV16-NCBIVirus.tsv`
 
 Outgroup accessions are provided in:
-- `metadata/hpv16_tree_outgroups.txt`
+- `metadata/hpv16_tree/hpv16_tree_outgroups.txt`
 If you want different outgroups, edit the list and ensure those accessions are
 present in the PAVE FASTA (`refdata/pave/pave_hsa.fas`).
 
 Lineage reference tips for optional lineage assignment live in:
-- `metadata/hpv16_lineage_refs.tsv`
+- `metadata/hpv16_tree/hpv16_lineage_refs.tsv`
 If you update the lineages table, regenerate the references accordingly.
 
 How to obtain the HPV16 inputs:
@@ -158,7 +139,7 @@ How to obtain the HPV16 inputs:
   - Save as `refdata/hpv16_tree/HPV16-NCBIVirus.tsv`.
 - Selection list:
   - List the accessions to include (one per line) in:
-    - `metadata/hpv16_tree_db_selection.txt`
+    - `metadata/hpv16_tree/hpv16_tree_db_selection.txt`
   - The pipeline derives `derived_data/refdata/hpv16_tree/HPV16-NCBIVirus.selected.tsv`
     from the NCBI TSV plus this accession list.
 
@@ -170,12 +151,12 @@ Place these files under `refdata/hpv18_tree/`:
 - `HPV18-NCBIVirus.tsv`
 
 Outgroup accessions are provided in:
-- `metadata/hpv18_tree_outgroups.txt`
+- `metadata/hpv18_tree/hpv18_tree_outgroups.txt`
 If you want different outgroups, edit the list and ensure those accessions are
 present in the PAVE FASTA (`refdata/pave/pave_hsa.fas`).
 
 Lineage reference tips for optional lineage assignment live in:
-- `metadata/hpv18_lineage_refs.tsv`
+- `metadata/hpv18_tree/hpv18_lineage_refs.tsv`
 If you update the lineages table, regenerate the references accordingly.
 
 How to obtain the HPV18 inputs:
@@ -198,7 +179,7 @@ How to obtain the HPV18 inputs:
   - Save as `refdata/hpv18_tree/HPV18-NCBIVirus.tsv`.
 - Selection list:
   - List the accessions to include (one per line) in:
-    - `metadata/hpv18_tree_db_selection.txt`
+    - `metadata/hpv18_tree/hpv18_tree_db_selection.txt`
   - The pipeline derives `derived_data/refdata/hpv18_tree/HPV18-NCBIVirus.acc_country.selected.tsv`
     from the NCBI TSV plus this accession list.
 
@@ -317,3 +298,22 @@ Re-run the same command with `-resume`:
 ```
 bin/prelim_analysis.steps/02.mapping_vs_pave.run.sh -resume
 ```
+
+## More information
+
+### Sample sheets
+
+The sample sheets for the preliminary and targeted analysis are provided in the
+repository and should be edited, only if the `input_reads` organization is not
+matched (directory names):
+- `metadata/seq_samples/samples_prelim_analysis.tsv`
+- `metadata/seq_samples/samples_targeted_analysis.tsv`
+
+Each row contains:
+- `run ID`
+- `sample_id`, i.e. the normalized identifier used in outputs (e.g., `KHCA-064`,
+`HPV-019`)
+- FASTQ directory (relative to the repo root),
+- `fastq_sample_id`, i.e. the original naming found in the FASTQ
+files (e.g., `KHCA064`, `HPV019`, `HVP-110`) so the pipelines can locate reads
+even when the raw file prefix differs from the normalized ID
