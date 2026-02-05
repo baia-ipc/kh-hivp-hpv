@@ -11,7 +11,7 @@ Rules:
 - User-editable configuration is in `config/`; step path configs are under `config/analyses/`; per-step runner JSON configs are under `config/steps/`; technical Nextflow config is in `config/pipelines/`. Sample lists live under `metadata/seq_samples/`.
 - Raw reference inputs live in `refdata/`; derived reference assets live in `derived_data/refdata/`.
 - Outputs are written under `outs/<analysis>/<step>/` with non‑MultiQC reports under `outs/<analysis>/<step>/reports/`.
-- When changing directory layout, update `CONTENTS.md` and `.agents/INVENTORY.md`.
+- When changing directory layout, update `docs/CONTENTS.md` and `.agents/INVENTORY.md`.
 - Avoid user-specific absolute paths in scripts; require tools via PATH or
   configurable env vars (e.g., `CONDA_EXE`).
 - Default parallelism is tied to `params.threads` (from `config/user.config`) via wrapper-provided `-process.maxForks` and `-executor.queueSize`.

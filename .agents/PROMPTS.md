@@ -5,7 +5,7 @@ Replace bracketed placeholders before use.
 
 ## Repo orientation
 """
-Read AGENTS.md, .agents/INVENTORY.md, CONTENTS.md, and .agents/SKILLS.md. Summarize the repo's current structure, active workflows, and any constraints that matter for edits.
+Read AGENTS.md, .agents/INVENTORY.md, docs/CONTENTS.md, and .agents/SKILLS.md. Summarize the repo's current structure, active workflows, and any constraints that matter for edits.
 """
 
 ## Add or modify a pipeline step
@@ -13,7 +13,7 @@ Read AGENTS.md, .agents/INVENTORY.md, CONTENTS.md, and .agents/SKILLS.md. Summar
 Update step [STEP_ID] in [prelim_analysis|targeted_analysis].
 - Keep configuration in config/ and hardcoded data in metadata/.
 - Do not hardcode user-specific absolute paths; rely on PATH/env/config.
-- Update CONTENTS.md and .agents/INVENTORY.md if the directory layout changes.
+- Update docs/CONTENTS.md and .agents/INVENTORY.md if the directory layout changes.
 - Ensure outputs go under `outs/<analysis>/<step>/` and MultiQC reports under `results/reports/<analysis>/`.
 - If the step is phylo_tree, update the MultiQC tree preview and summary stats outputs as needed.
 - Provide a commit, do not push.
@@ -47,7 +47,7 @@ Compare outputs between [ANALYSIS_A] and [ANALYSIS_B].
 ## Move or rename analysis directories
 """
 Rename or move analysis directories to [NEW_LAYOUT].
-- Update CONTENTS.md and .agents/INVENTORY.md.
+- Update docs/CONTENTS.md and .agents/INVENTORY.md.
 - Fix references in scripts, configs, and docs.
 - Commit changes without pushing.
 """
