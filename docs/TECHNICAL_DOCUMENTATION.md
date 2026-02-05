@@ -20,6 +20,8 @@ selected TSVs under `derived_data/refdata/hpv16_tree/` and
 `derived_data/refdata/hpv18_tree/`.
 Lineage reference tip lists live in `metadata/hpv16_lineage_refs.tsv` and
 `metadata/hpv18_lineage_refs.tsv` and are used by lineage assignment helpers.
+Outgroup accessions live in `metadata/hpv16_tree_outgroups.txt` and
+`metadata/hpv18_tree_outgroups.txt`, and are extracted from the PAVE FASTA.
 
 ## Script reference
 

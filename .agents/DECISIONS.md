@@ -16,6 +16,12 @@ Format:
   - Rationale: reduce duplication and centralize runner logic while preserving existing entry points.
   - Consequences: update docs and inventories to reference the generic runner and JSON configs.
 
+- 2026-02-05: Extract phylo tree outgroups from PAVE references
+  - Context: outgroup accessions were not present in the HPV16/HPV18 NCBI FASTA downloads, resulting in empty outgroups FASTA files.
+  - Decision: extract outgroups from the PAVE FASTA and update outgroup lists to use PAVE reference IDs; allow `bcf_run_id` overrides for tree sample prep when mapping has multiple runs.
+  - Rationale: ensure outgroup sequences are available for tree builds and keep sample consensus generation deterministic.
+  - Consequences: update tree pipeline parameters/configs and documentation.
+
 - 2026-02-05: Make phylo tree helper scripts generic
   - Context: separate HPV16/HPV18 scripts duplicated logic and drifted over time.
   - Decision: replace HPV16/HPV18-specific selection, lineage extraction, sample prep, and lineage assignment scripts with generic versions parameterized by config/env.

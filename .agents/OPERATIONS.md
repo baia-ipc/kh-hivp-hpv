@@ -48,6 +48,10 @@ bin/targeted_analysis.steps/02.mapping_vs_pave.run.sh
 Per-step wrappers call the generic runner `bin/run_step.py`, which reads JSON
 configs from `config/steps/` to select the pipeline, configs, and flags.
 
+For the phylogenetic tree steps, if `outs/targeted_analysis/02.mapping_vs_pave`
+contains multiple run IDs, set `bcf_run_id` in the matching profiles inside
+`config/analyses/targeted_analysis.config` so sample consensus can be built.
+
 Run a single sample (for steps that support it):
 
 ```
