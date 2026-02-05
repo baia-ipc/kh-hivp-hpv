@@ -170,37 +170,10 @@ process MULTIQC {
     cp "${params.reports_dir}/depth_stats.unfiltered.tsv" .
     cp "${params.reports_dir}/depth_stats.filtered.tsv" .
 
-    python - <<'PY'
-import csv
-import os
-
-def rewrite_with_header(src, dest, use_strain=False):
-    if not os.path.exists(src):
-        return
-    with open(src, newline='') as inp, open(dest, 'w', newline='') as out:
-        reader = csv.reader(inp, delimiter='\\t')
-        writer = csv.writer(out, delimiter='\\t')
-        header = next(reader, None)
-        if not header:
-            return
-        writer.writerow(['Sample'] + header)
-        for row in reader:
-            if not row:
-                continue
-            sample = row[0] if row else ''
-            run = row[0] if len(row) > 0 else ''
-            sid = row[1] if len(row) > 1 else ''
-            strain = row[2] if len(row) > 2 else ''
-            if use_strain:
-                sample = f\"{run}:{sid}:{strain}\"
-            else:
-                sample = f\"{run}:{sid}\" if len(row) > 1 else row[0]
-            writer.writerow([sample] + row)
-
-rewrite_with_header('strains.tsv', 'strains.multiqc.tsv')
-rewrite_with_header('depth_stats.unfiltered.tsv', 'depth_stats.unfiltered.multiqc.tsv', use_strain=True)
-rewrite_with_header('depth_stats.filtered.tsv', 'depth_stats.filtered.multiqc.tsv', use_strain=True)
-PY
+    python "${params.scripts_dir}/coverage/prepare_pave_multiqc_inputs.py" \\
+      --strains "strains.tsv" --strains-out "strains.multiqc.tsv" \\
+      --depth-unfiltered "depth_stats.unfiltered.tsv" --depth-unfiltered-out "depth_stats.unfiltered.multiqc.tsv" \\
+      --depth-filtered "depth_stats.filtered.tsv" --depth-filtered-out "depth_stats.filtered.multiqc.tsv"
 
     multiqc --force \\
       --filename "${params.multiqc_report_name}" \\

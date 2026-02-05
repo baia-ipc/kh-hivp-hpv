@@ -244,51 +244,11 @@ process MULTIQC {
     cp "${params.reports_dir}/cov_stats.filtered.tsv" .
     cp "${params.reports_dir}/strain_assignment_coverage.tsv" .
 
-    python - <<'PY'
-import csv
-import os
-
-def is_undetermined(row):
-    if not row or len(row) < 2:
-        return False
-    sample = row[1]
-    return sample.startswith("Undetermined")
-
-def build_covstats_id(row, header):
-    run = row[0] if len(row) > 0 else ""
-    sample = row[1] if len(row) > 1 else ""
-    strain = row[2] if len(row) > 2 else ""
-    return f"{run}:{sample}:{strain}"
-
-def rewrite_with_header(src, dest, id_builder=None, decode_cols=None):
-    if not os.path.exists(src):
-        return
-    with open(src, newline='') as inp, open(dest, 'w', newline='') as out:
-        reader = csv.reader(inp, delimiter='\\t')
-        writer = csv.writer(out, delimiter='\\t')
-        header = next(reader, None)
-        if not header:
-            return
-        writer.writerow(['Sample'] + header)
-        for row in reader:
-            if not row:
-                continue
-            if id_builder == build_covstats_id and is_undetermined(row):
-                continue
-            if id_builder:
-                sample = id_builder(row, header)
-            else:
-                sample = f\"{row[0]}:{row[1]}\" if len(row) > 1 else row[0]
-            writer.writerow([sample] + row)
-
-rewrite_with_header('strains.tsv', 'strains.multiqc.tsv')
-rewrite_with_header('cov_stats.tsv', 'cov_stats.multiqc.tsv', id_builder=build_covstats_id)
-rewrite_with_header('cov_stats.filtered.tsv', 'cov_stats.filtered.multiqc.tsv', id_builder=build_covstats_id)
-rewrite_with_header(
-    'strain_assignment_coverage.tsv',
-    'strain_assignment_coverage.multiqc.tsv',
-)
-PY
+    python "${params.scripts_dir}/coverage/prepare_bowtie_multiqc_inputs.py" \\
+      --strains "strains.tsv" --strains-out "strains.multiqc.tsv" \\
+      --cov-stats "cov_stats.tsv" --cov-stats-out "cov_stats.multiqc.tsv" \\
+      --cov-stats-filtered "cov_stats.filtered.tsv" --cov-stats-filtered-out "cov_stats.filtered.multiqc.tsv" \\
+      --coverage "strain_assignment_coverage.tsv" --coverage-out "strain_assignment_coverage.multiqc.tsv"
 
     multiqc --force \\
       --filename "${params.multiqc_report_name}" \\
