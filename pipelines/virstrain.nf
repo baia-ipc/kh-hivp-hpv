@@ -56,6 +56,8 @@ requiredParams.each { key ->
 params.multiqc_outdir = params.multiqc_outdir ?: params.reports_dir
 params.multiqc_report_name = params.multiqc_report_name ?: "multiqc_report.html"
 
+def bucketTid = params.bucket_tid
+
 def checkPath(String path, String label, boolean mustBeDir = false) {
     def target = new File(path)
     if (mustBeDir) {
@@ -78,6 +80,7 @@ def indexReady = indexMarker.isDirectory() ? Channel.value(true) : null
 
 process CREATE_INDEX {
     tag "virstrain"
+    conda params.conda_env
     publishDir "${params.virstrain_index_dir}", mode: 'copy'
 
     output:
@@ -97,6 +100,7 @@ process CREATE_INDEX {
 
 process RUN_VIRSTRAIN {
     tag "${run_id}:${sample_id}"
+    conda params.conda_env
     publishDir { "${params.outdir}/${run_id}" }, mode: 'copy'
 
     input:
@@ -119,6 +123,7 @@ process RUN_VIRSTRAIN {
 
 process AGGREGATE_RESULTS {
     tag "aggregate_virstrain"
+    conda params.conda_env
     publishDir "${params.reports_dir}", mode: 'copy'
 
     input:
