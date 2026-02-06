@@ -285,3 +285,9 @@ Format:
   - Decision: extract Python logic into dedicated scripts under `scripts/` and call them from the pipelines.
   - Rationale: keep pipeline definitions readable and centralize reusable logic.
   - Consequences: add new helper scripts for MultiQC table preparation and update the affected pipelines to call them.
+
+- 2026-02-06: Use VirStrain-specific conda env for the virstrain pipeline
+  - Context: `pipelines/virstrain.nf` ran without a conda directive and defaulted to the general pipeline env config.
+  - Decision: configure VirStrain steps to use `pipelines/conda_env/virstrain.env.yml` and run MultiQC with the prebuilt pipeline env.
+  - Rationale: keep VirStrain dependencies isolated while avoiding offline conda downloads for MultiQC.
+  - Consequences: update `config/pipelines/virstrain.config` and add conda directives to virstrain processes.
