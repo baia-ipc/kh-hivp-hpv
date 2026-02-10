@@ -74,6 +74,9 @@ if (!params.containsKey('skip_align') || params.skip_align == null) {
 if (!params.containsKey('precomputed_root') || !params.precomputed_root) {
     params.precomputed_root = params.outdir
 }
+if (!params.containsKey('precomputed_run_id')) {
+    params.precomputed_run_id = null
+}
 
 def aggregateSkipList = params.aggregate_skip.toString()
     .split(',')
@@ -143,13 +146,28 @@ process AGGREGATE_COUNTS {
     tag "aggregate"
 
     input:
-    val(done)
+    val(done_entries)
 
     output:
     path("aggregate.done")
 
     script:
     """
+    expected_count=`grep -Ev '^[[:space:]]*#' "${params.samples_tsv}" | grep -c .`
+    actual_count=0
+    for _ in {1..180}; do
+      actual_count=`find "${params.outdir}" -mindepth 3 -maxdepth 3 -type f -path "*/bucket_sizes/*.bsz.tsv" | wc -l`
+      if [ "\$actual_count" -ge "\$expected_count" ]; then
+        break
+      fi
+      sleep 2
+    done
+
+    if [ "\$actual_count" -lt "\$expected_count" ]; then
+      echo "ERROR: expected at least \$expected_count bucket size files under ${params.outdir}, found \$actual_count" >&2
+      exit 1
+    fi
+
     "${params.scripts_dir}/taxonomy_assignment/aggregate_bucket_counts.py" --skip "${params.aggregate_skip_wo_human}" \\
       --no-abs --rel-fname relative_counts.wo_human.tsv \\
       "${params.buckets}" "${params.outdir}" "${params.reports_dir}"
@@ -211,13 +229,17 @@ workflow {
             def resolvedDir = resolveFastqDir(fastq_path)
             def (r1File, r2File) = findReadPair(resolvedDir, fastq_prefix)
             def sample_id = sample_prefix
-            def run_id = resolvedDir.getName().equalsIgnoreCase('fastq') \
+            def inferred_run_id = resolvedDir.getName().equalsIgnoreCase('fastq') \
                 ? resolvedDir.getParentFile().getName() \
                 : resolvedDir.getName()
+            def run_id = (params.skip_align && params.precomputed_run_id) \
+                ? params.precomputed_run_id.toString() \
+                : inferred_run_id
             tuple(run_id, sample_id, file(r1File.absolutePath), file(r2File.absolutePath))
         }
 
-    bucketized = CENTRIFUGE_BUCKETING(reads_ch)
+    def centrifuge = CENTRIFUGE_BUCKETING(reads_ch)
+    def bucketized = centrifuge.bucketized
     aggregate_done = AGGREGATE_COUNTS(bucketized.collect())
     def multiqc_config_file = file(params.multiqc_config)
     MULTIQC(multiqc_config_file, aggregate_done)

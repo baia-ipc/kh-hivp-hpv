@@ -74,6 +74,10 @@ workflow CENTRIFUGE_BUCKETING {
     lca_out = COMPUTE_LCA(align_out)
     buckets_out = ASSIGN_BUCKETS(lca_out)
 
+    bucket_sizes = buckets_out.map { run_id, sample_id, bkt, bsz ->
+        tuple(run_id, sample_id, bsz)
+    }
+
     bucketize_in = buckets_out
         .join(reads_ch, by: [0, 1])
         .map { run_id, sample_id, bkt, bsz, r1, r2 ->
@@ -84,6 +88,7 @@ workflow CENTRIFUGE_BUCKETING {
 
     emit:
     bucketized
+    bucket_sizes
 }
 
 workflow {

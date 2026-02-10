@@ -66,12 +66,23 @@ fi
 
 if [[ -z "$BCF_RUN_ID" && -z "$BCF_DIR" && -f "$SAMPLES_TSV" ]]; then
   mapfile -t run_ids < <(
-    awk -F'\t' 'NR==1 && $1 ~ /^#/ {next} {
-      n=split($2, parts, "/");
-      last=parts[n];
-      run=(tolower(last)=="fastq" && n>1) ? parts[n-1] : last;
-      if (run != "") print run;
-    }' "$SAMPLES_TSV" | sort -u
+    awk -F'\t' '
+      NR==1 && $1 ~ /^#/ {
+        sub(/^#[[:space:]]*/, "", $1)
+      }
+      $1 ~ /^#/ { next }
+      {
+        run=$1
+        gsub(/^[[:space:]]+|[[:space:]]+$/, "", run)
+        if (tolower(run) == "run_id") next
+        if (run == "" || tolower(run) == "null") {
+          n=split($2, parts, "/")
+          last=parts[n]
+          run=(tolower(last)=="fastq" && n>1) ? parts[n-1] : last
+        }
+        if (run != "") print run
+      }
+    ' "$SAMPLES_TSV" | sort -u
   )
   if [[ ${#run_ids[@]} -eq 1 ]]; then
     BCF_RUN_ID="${run_ids[0]}"
@@ -94,7 +105,7 @@ if [[ -z "$BCF_RUN_ID" && -n "$BCF_DIR" ]]; then
 fi
 
 if [[ -z "$BCF_DIR" && -d "$MAPPING_OUTDIR" ]]; then
-  mapfile -t run_dirs < <(find "$MAPPING_OUTDIR" -mindepth 1 -maxdepth 1 -type d | sort)
+  mapfile -t run_dirs < <(find "$MAPPING_OUTDIR" -mindepth 1 -maxdepth 1 -type d ! -name reports | sort)
   if [[ ${#run_dirs[@]} -eq 1 ]]; then
     BCF_DIR="${run_dirs[0]}"
     BCF_RUN_ID=$(basename "$BCF_DIR")
