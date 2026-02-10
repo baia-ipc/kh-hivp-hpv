@@ -19,19 +19,33 @@ def projectRoot = (workflow.projectDir instanceof java.nio.file.Path \
     .resolve('..').normalize().toString()
 
 params.analysis_name = params.analysis_name ?: null
-params.step_name = params.step_name ?: null
-if (!params.outdir && params.analysis_name && params.step_name) {
-    params.outdir = "${projectRoot}/outs/${params.analysis_name}/${params.step_name}"
+params.step_name = params.step_name ?: "01.bucketing"
+def outdirParam = params.containsKey('outdir') ? params.outdir : null
+def reportsDirParam = params.containsKey('reports_dir') ? params.reports_dir : null
+def multiqcOutdirParam = params.containsKey('multiqc_outdir') ? params.multiqc_outdir : null
+def multiqcReportNameParam = params.containsKey('multiqc_report_name') ? params.multiqc_report_name : null
+
+if (!outdirParam && params.analysis_name && params.step_name) {
+    outdirParam = "${projectRoot}/outs/${params.analysis_name}/${params.step_name}"
 }
-if (!params.reports_dir && params.outdir) {
-    params.reports_dir = "${params.outdir}/reports"
+if (!reportsDirParam && outdirParam) {
+    reportsDirParam = "${outdirParam}/reports"
 }
-if (!params.multiqc_report_name && params.step_name) {
-    params.multiqc_report_name = params.step_name.replace('.', '_') + ".report.html"
+if (!multiqcReportNameParam) {
+    multiqcReportNameParam = params.step_name \
+        ? params.step_name.replace('.', '_') + ".report.html" \
+        : "multiqc_report.html"
 }
-if ((!params.multiqc_outdir || params.multiqc_outdir.contains('unknown_analysis')) && params.analysis_name) {
-    params.multiqc_outdir = "${projectRoot}/results/reports/${params.analysis_name}"
+if ((!multiqcOutdirParam || multiqcOutdirParam.contains('unknown_analysis')) && params.analysis_name) {
+    multiqcOutdirParam = "${projectRoot}/results/reports/${params.analysis_name}"
+} else if (!multiqcOutdirParam) {
+    multiqcOutdirParam = reportsDirParam
 }
+
+params.outdir = outdirParam
+params.reports_dir = reportsDirParam
+params.multiqc_outdir = multiqcOutdirParam
+params.multiqc_report_name = multiqcReportNameParam
 
 def requiredParams = [
     'samples_tsv',
@@ -59,12 +73,6 @@ if (!params.containsKey('skip_align') || params.skip_align == null) {
 }
 if (!params.containsKey('precomputed_root') || !params.precomputed_root) {
     params.precomputed_root = params.outdir
-}
-if (!params.containsKey('multiqc_outdir') || !params.multiqc_outdir) {
-    params.multiqc_outdir = params.reports_dir
-}
-if (!params.containsKey('multiqc_report_name') || !params.multiqc_report_name) {
-    params.multiqc_report_name = "multiqc_report.html"
 }
 
 def aggregateSkipList = params.aggregate_skip.toString()
@@ -156,7 +164,7 @@ process AGGREGATE_COUNTS {
 process MULTIQC {
     tag "multiqc"
     conda params.conda_env
-    publishDir "${params.multiqc_outdir}", mode: 'copy'
+    publishDir { "${params.multiqc_outdir}" }, mode: 'copy'
 
     input:
     path(multiqc_config)

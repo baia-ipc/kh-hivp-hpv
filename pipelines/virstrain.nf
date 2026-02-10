@@ -21,23 +21,43 @@ params.scripts_dir = params.scripts_dir ?: "${projectRoot}/scripts"
 params.multiqc_config = params.multiqc_config ?: "${projectRoot}/pipelines/multiqc/virstrain.multiqc.yml"
 params.run_virstrain = params.run_virstrain ?: false
 params.analysis_name = params.analysis_name ?: null
-params.step_name = params.step_name ?: null
-params.input_step_name = params.input_step_name ?: null
-if (!params.outdir && params.analysis_name && params.step_name) {
-    params.outdir = "${projectRoot}/outs/${params.analysis_name}/${params.step_name}"
+params.step_name = params.step_name ?: "04.virstrain"
+params.input_step_name = params.input_step_name ?: "01.bucketing"
+def outdirParam = params.containsKey('outdir') ? params.outdir : null
+def reportsDirParam = params.containsKey('reports_dir') ? params.reports_dir : null
+def multiqcOutdirParam = params.containsKey('multiqc_outdir') ? params.multiqc_outdir : null
+def multiqcReportNameParam = params.containsKey('multiqc_report_name') ? params.multiqc_report_name : null
+def readsDirParam = params.containsKey('reads_dir') ? params.reads_dir : null
+
+if (!outdirParam && params.analysis_name && params.step_name) {
+    outdirParam = "${projectRoot}/outs/${params.analysis_name}/${params.step_name}"
 }
-if (!params.reports_dir && params.outdir) {
-    params.reports_dir = "${params.outdir}/reports"
+if (!reportsDirParam && outdirParam) {
+    reportsDirParam = "${outdirParam}/reports"
 }
-if (!params.multiqc_report_name && params.step_name) {
-    params.multiqc_report_name = params.step_name.replace('.', '_') + ".report.html"
+if (!multiqcReportNameParam) {
+    multiqcReportNameParam = params.step_name \
+        ? params.step_name.replace('.', '_') + ".report.html" \
+        : "multiqc_report.html"
 }
-if ((!params.multiqc_outdir || params.multiqc_outdir.contains('unknown_analysis')) && params.analysis_name) {
-    params.multiqc_outdir = "${projectRoot}/results/reports/${params.analysis_name}"
+if ((!multiqcOutdirParam || multiqcOutdirParam.contains('unknown_analysis')) && params.analysis_name) {
+    multiqcOutdirParam = "${projectRoot}/results/reports/${params.analysis_name}"
+} else if (!multiqcOutdirParam) {
+    multiqcOutdirParam = reportsDirParam
 }
-if (!params.reads_dir && params.analysis_name && params.input_step_name) {
-    params.reads_dir = "${projectRoot}/outs/${params.analysis_name}/${params.input_step_name}"
+if (!readsDirParam && params.analysis_name && params.input_step_name) {
+    readsDirParam = "${projectRoot}/outs/${params.analysis_name}/${params.input_step_name}"
 }
+
+params.outdir = outdirParam
+params.reports_dir = reportsDirParam
+params.multiqc_outdir = multiqcOutdirParam
+params.multiqc_report_name = multiqcReportNameParam
+params.reads_dir = readsDirParam
+if (!params.containsKey('read1')) params.read1 = null
+if (!params.containsKey('read2')) params.read2 = null
+if (!params.containsKey('run_id')) params.run_id = null
+if (!params.containsKey('sample_id')) params.sample_id = null
 
 def requiredParams = [
     'bucket_tid',
@@ -53,8 +73,6 @@ requiredParams.each { key ->
         error "params.${key} is required"
     }
 }
-params.multiqc_outdir = params.multiqc_outdir ?: params.reports_dir
-params.multiqc_report_name = params.multiqc_report_name ?: "multiqc_report.html"
 
 def bucketTid = params.bucket_tid
 
@@ -81,7 +99,7 @@ def indexReady = indexMarker.isDirectory() ? Channel.value(true) : null
 process CREATE_INDEX {
     tag "virstrain"
     conda params.conda_env
-    publishDir "${params.virstrain_index_dir}", mode: 'copy'
+    publishDir { "${params.virstrain_index_dir}" }, mode: 'copy'
 
     output:
     path "virstrain", emit: marker
@@ -124,7 +142,7 @@ process RUN_VIRSTRAIN {
 process AGGREGATE_RESULTS {
     tag "aggregate_virstrain"
     conda params.conda_env
-    publishDir "${params.reports_dir}", mode: 'copy'
+    publishDir { "${params.reports_dir}" }, mode: 'copy'
 
     input:
     val(done)
@@ -141,7 +159,7 @@ process AGGREGATE_RESULTS {
 process MULTIQC {
     tag "multiqc"
     conda params.multiqc_env
-    publishDir "${params.multiqc_outdir}", mode: 'copy'
+    publishDir { "${params.multiqc_outdir}" }, mode: 'copy'
 
     input:
     path(multiqc_config)

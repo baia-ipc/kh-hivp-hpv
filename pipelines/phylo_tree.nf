@@ -8,90 +8,99 @@ def projectRoot = (workflow.projectDir instanceof java.nio.file.Path \
     : Paths.get(workflow.projectDir.toString())) \
     .resolve('..').normalize().toString()
 
-params.scripts_dir = params.scripts_dir ?: "${projectRoot}/scripts"
-params.conda_env = params.conda_env ?: "${projectRoot}/pipelines/conda_env/pipeline.env.yml"
-params.multiqc_config = params.multiqc_config ?: "${projectRoot}/pipelines/multiqc/phylo_tree.multiqc.yml"
-params.multiqc_outdir = params.multiqc_outdir ?: params.reports_dir
-params.multiqc_report_name = params.multiqc_report_name ?: "multiqc_report.html"
-params.analysis_name = params.analysis_name ?: null
-params.step_name = params.step_name ?: null
-params.input_step_name = params.input_step_name ?: null
-if (!params.outdir && params.analysis_name && params.step_name) {
-    params.outdir = "${projectRoot}/outs/${params.analysis_name}/${params.step_name}"
+params.scripts_dir = (params.containsKey('scripts_dir') && params.scripts_dir) ? params.scripts_dir : "${projectRoot}/scripts"
+params.conda_env = (params.containsKey('conda_env') && params.conda_env) ? params.conda_env : "${projectRoot}/pipelines/conda_env/pipeline.env.yml"
+params.multiqc_config = (params.containsKey('multiqc_config') && params.multiqc_config) ? params.multiqc_config : "${projectRoot}/pipelines/multiqc/phylo_tree.multiqc.yml"
+params.analysis_name = params.containsKey('analysis_name') ? params.analysis_name : null
+params.step_name = (params.containsKey('step_name') && params.step_name) ? params.step_name : "04.phylo_tree"
+params.input_step_name = (params.containsKey('input_step_name') && params.input_step_name) ? params.input_step_name : "02.mapping_vs_pave"
+def outdirParam = params.containsKey('outdir') ? params.outdir : null
+def reportsDirParam = params.containsKey('reports_dir') ? params.reports_dir : null
+def multiqcOutdirParam = params.containsKey('multiqc_outdir') ? params.multiqc_outdir : null
+def multiqcReportNameParam = params.containsKey('multiqc_report_name') ? params.multiqc_report_name : null
+def mappingOutdirParam = params.containsKey('mapping_outdir') ? params.mapping_outdir : null
+
+if (!outdirParam && params.analysis_name && params.step_name) {
+    outdirParam = "${projectRoot}/outs/${params.analysis_name}/${params.step_name}"
 }
-if (!params.reports_dir && params.outdir) {
-    params.reports_dir = "${params.outdir}/reports"
+if (!reportsDirParam && outdirParam) {
+    reportsDirParam = "${outdirParam}/reports"
 }
-if (!params.multiqc_report_name && params.step_name) {
-    params.multiqc_report_name = params.step_name.replace('.', '_') + ".report.html"
+if (!multiqcReportNameParam) {
+    multiqcReportNameParam = params.step_name \
+        ? params.step_name.replace('.', '_') + ".report.html" \
+        : "multiqc_report.html"
 }
-if ((!params.multiqc_outdir || params.multiqc_outdir.contains('unknown_analysis')) && params.analysis_name) {
-    params.multiqc_outdir = "${projectRoot}/results/reports/${params.analysis_name}"
+if ((!multiqcOutdirParam || multiqcOutdirParam.contains('unknown_analysis')) && params.analysis_name) {
+    multiqcOutdirParam = "${projectRoot}/results/reports/${params.analysis_name}"
+} else if (!multiqcOutdirParam) {
+    multiqcOutdirParam = reportsDirParam
 }
-if (!params.mapping_outdir && params.analysis_name && params.input_step_name) {
-    params.mapping_outdir = "${projectRoot}/outs/${params.analysis_name}/${params.input_step_name}"
+if (!mappingOutdirParam && params.analysis_name && params.input_step_name) {
+    mappingOutdirParam = "${projectRoot}/outs/${params.analysis_name}/${params.input_step_name}"
 }
-params.refdata_dir = params.refdata_dir ?: null
-params.derived_dir = params.derived_dir ?: null
-params.input_dir = params.input_dir ?: params.derived_dir
-params.lineages_tsv = params.lineages_tsv ?: null
-params.ncbi_tsv = params.ncbi_tsv ?: null
-params.ncbi_fasta = params.ncbi_fasta ?: null
-params.outgroups_fasta = params.outgroups_fasta ?: null
-params.selected_tsv = params.selected_tsv ?: null
-params.acc_country_tsv = params.acc_country_tsv ?: null
-params.acc_country_cols = params.acc_country_cols ?: null
-params.outgroups_list = params.outgroups_list ?: null
-params.selection_list = params.selection_list ?: null
-params.selection_columns = params.selection_columns ?: null
-params.samples_tsv = params.samples_tsv ?: null
-params.mapping_outdir = params.mapping_outdir ?: null
-params.strains_tsv = params.strains_tsv ?: null
-params.bcf_dir = params.bcf_dir ?: null
-params.bcf_run_id = params.bcf_run_id ?: null
-params.sample_prep_script = params.sample_prep_script ?: null
-params.lineage_extract_script = params.lineage_extract_script ?: null
-params.selection_script = params.selection_script ?: null
-params.rename_tsv = params.rename_tsv ?: null
-params.rename_acc_col = params.rename_acc_col ?: null
-params.rename_prefix_col = params.rename_prefix_col ?: null
-params.skip_id = params.skip_id ?: null
-params.hpv_type = params.hpv_type ?: null
-params.ref_name = params.ref_name ?: null
-params.ref_pattern = params.ref_pattern ?: null
-params.strains_match = params.strains_match ?: null
-params.tree_render_script = params.tree_render_script ?: "${params.scripts_dir}/phylo_tree/render_tree_svg.py"
-params.tree_stats_script = params.tree_stats_script ?: "${params.scripts_dir}/phylo_tree/compute_tree_stats.py"
-params.selection_build_script = params.selection_build_script ?: "${params.scripts_dir}/phylo_tree/build_tree_selection_tsv.py"
+
+params.multiqc_outdir = multiqcOutdirParam
+params.multiqc_report_name = multiqcReportNameParam
+params.mapping_outdir = mappingOutdirParam
+params.refdata_dir = params.containsKey('refdata_dir') ? params.refdata_dir : null
+params.derived_dir = params.containsKey('derived_dir') ? params.derived_dir : null
+params.input_dir = params.containsKey('input_dir') ? params.input_dir : params.derived_dir
+params.lineages_tsv = params.containsKey('lineages_tsv') ? params.lineages_tsv : null
+params.ncbi_tsv = params.containsKey('ncbi_tsv') ? params.ncbi_tsv : null
+params.ncbi_fasta = params.containsKey('ncbi_fasta') ? params.ncbi_fasta : null
+params.outgroups_fasta = params.containsKey('outgroups_fasta') ? params.outgroups_fasta : null
+params.selected_tsv = params.containsKey('selected_tsv') ? params.selected_tsv : null
+params.acc_country_tsv = params.containsKey('acc_country_tsv') ? params.acc_country_tsv : null
+params.acc_country_cols = params.containsKey('acc_country_cols') ? params.acc_country_cols : null
+params.outgroups_list = params.containsKey('outgroups_list') ? params.outgroups_list : null
+params.selection_list = params.containsKey('selection_list') ? params.selection_list : null
+params.selection_columns = params.containsKey('selection_columns') ? params.selection_columns : null
+params.samples_tsv = params.containsKey('samples_tsv') ? params.samples_tsv : null
+params.strains_tsv = params.containsKey('strains_tsv') ? params.strains_tsv : null
+params.bcf_dir = params.containsKey('bcf_dir') ? params.bcf_dir : null
+params.bcf_run_id = params.containsKey('bcf_run_id') ? params.bcf_run_id : null
+params.sample_prep_script = params.containsKey('sample_prep_script') ? params.sample_prep_script : null
+params.lineage_extract_script = params.containsKey('lineage_extract_script') ? params.lineage_extract_script : null
+params.selection_script = params.containsKey('selection_script') ? params.selection_script : null
+params.rename_tsv = params.containsKey('rename_tsv') ? params.rename_tsv : null
+params.rename_acc_col = params.containsKey('rename_acc_col') ? params.rename_acc_col : null
+params.rename_prefix_col = params.containsKey('rename_prefix_col') ? params.rename_prefix_col : null
+params.skip_id = params.containsKey('skip_id') ? params.skip_id : null
+params.hpv_type = params.containsKey('hpv_type') ? params.hpv_type : null
+params.ref_name = params.containsKey('ref_name') ? params.ref_name : null
+params.ref_pattern = params.containsKey('ref_pattern') ? params.ref_pattern : null
+params.strains_match = params.containsKey('strains_match') ? params.strains_match : null
+params.tree_render_script = (params.containsKey('tree_render_script') && params.tree_render_script) ? params.tree_render_script : "${params.scripts_dir}/phylo_tree/render_tree_svg.py"
+params.tree_stats_script = (params.containsKey('tree_stats_script') && params.tree_stats_script) ? params.tree_stats_script : "${params.scripts_dir}/phylo_tree/compute_tree_stats.py"
+params.selection_build_script = (params.containsKey('selection_build_script') && params.selection_build_script) ? params.selection_build_script : "${params.scripts_dir}/phylo_tree/build_tree_selection_tsv.py"
 
 def inputDirParam = params.input_dir
-def outdirParam = params.outdir
-def reportsDirParam = params.reports_dir
-def outgroupsFileParam = params.outgroups_file
-def iqtreeOutgroupsParam = params.iqtree_outgroups
+def outdirRuntimeParam = params.containsKey('outdir') ? params.outdir : null
+def reportsDirRuntimeParam = params.containsKey('reports_dir') ? params.reports_dir : null
+def outgroupsFileParam = params.containsKey('outgroups_file') ? params.outgroups_file : null
+def iqtreeOutgroupsParam = params.containsKey('iqtree_outgroups') ? params.iqtree_outgroups : null
 
 if (!inputDirParam) {
     error "params.input_dir is required"
 }
-if (!outdirParam && params.analysis_name && params.step_name) {
-    outdirParam = "${projectRoot}/outs/${params.analysis_name}/${params.step_name}"
+if (!outdirRuntimeParam && params.analysis_name && params.step_name) {
+    outdirRuntimeParam = "${projectRoot}/outs/${params.analysis_name}/${params.step_name}"
 }
-if (!outdirParam) {
+if (!outdirRuntimeParam) {
     error "params.outdir is required"
 }
-if (!reportsDirParam) {
-    reportsDirParam = "${outdirParam}/reports"
+if (!reportsDirRuntimeParam) {
+    reportsDirRuntimeParam = "${outdirRuntimeParam}/reports"
 }
 
-params.input_dir = inputDirParam
-params.outdir = outdirParam
-params.reports_dir = reportsDirParam
+params.outdir = outdirRuntimeParam
+params.reports_dir = reportsDirRuntimeParam
+
+if (!outgroupsFileParam && params.outgroups_list) {
+    outgroupsFileParam = params.outgroups_list
+}
 params.outgroups_file = outgroupsFileParam
-params.iqtree_outgroups = iqtreeOutgroupsParam
-
-if (!params.outgroups_file && params.outgroups_list) {
-    params.outgroups_file = params.outgroups_list
-}
 
 def inputDir = new File(params.input_dir as String)
 if (!inputDir.isDirectory()) {
@@ -153,7 +162,7 @@ checkPath(params.tree_render_script as String, 'Tree render script')
 checkPath(params.tree_stats_script as String, 'Tree stats script')
 checkPath(params.selection_build_script as String, 'Selection build script')
 
-if (!params.iqtree_outgroups && params.outgroups_file) {
+if (!iqtreeOutgroupsParam && outgroupsFileParam) {
     def outgroupsFile = new File(params.outgroups_file as String)
     if (!outgroupsFile.exists()) {
         error "outgroups_file not found: ${params.outgroups_file}"
@@ -162,9 +171,10 @@ if (!params.iqtree_outgroups && params.outgroups_file) {
         .collect { it.trim() }
         .findAll { it && !it.startsWith('#') }
     if (!outgroups.isEmpty()) {
-        params.iqtree_outgroups = outgroups.join(',')
+        iqtreeOutgroupsParam = outgroups.join(',')
     }
 }
+params.iqtree_outgroups = iqtreeOutgroupsParam
 
 def mafftArgs = params.mafft_args ?: ""
 
@@ -187,7 +197,7 @@ if (!multiqc_config_file.exists()) {
 
 process PREP_LINEAGES {
     tag "prepare_lineages"
-    publishDir "${params.derived_dir}", mode: 'copy'
+    publishDir { "${params.derived_dir}" }, mode: 'copy'
     conda params.conda_env
 
     input:
@@ -214,7 +224,7 @@ process PREP_LINEAGES {
 
 process PREP_SELECTED {
     tag "prepare_selected"
-    publishDir "${params.derived_dir}", mode: 'copy'
+    publishDir { "${params.derived_dir}" }, mode: 'copy'
     conda params.conda_env
     def accCountryOut = params.acc_country_tsv ? new File(params.acc_country_tsv.toString()).getName() : "acc_country.tsv"
 
@@ -250,7 +260,7 @@ process PREP_SELECTED {
 
 process PREP_SELECTION_TSV {
     tag "prepare_selection_tsv"
-    publishDir "${params.derived_dir}", mode: 'copy'
+    publishDir { "${params.derived_dir}" }, mode: 'copy'
     conda params.conda_env
     def selectedName = new File(params.selected_tsv.toString()).getName()
 
@@ -274,7 +284,7 @@ process PREP_SELECTION_TSV {
 
 process PREP_OUTGROUPS {
     tag "prepare_outgroups"
-    publishDir "${params.derived_dir}", mode: 'copy'
+    publishDir { "${params.derived_dir}" }, mode: 'copy'
     conda params.conda_env
 
     input:
@@ -292,7 +302,7 @@ process PREP_OUTGROUPS {
 
 process PREP_SAMPLES {
     tag "prepare_samples"
-    publishDir "${params.derived_dir}", mode: 'copy'
+    publishDir { "${params.derived_dir}" }, mode: 'copy'
     conda params.conda_env
 
     input:
@@ -320,7 +330,7 @@ process PREP_SAMPLES {
 
 process CAT_ALL {
     tag "cat_all"
-    publishDir "${params.outdir}", mode: 'copy'
+    publishDir { "${params.outdir}" }, mode: 'copy'
 
     input:
     path selected
@@ -344,7 +354,7 @@ process CAT_ALL {
 
 process MAFFT_ALIGN {
     tag "mafft"
-    publishDir "${params.outdir}", mode: 'copy'
+    publishDir { "${params.outdir}" }, mode: 'copy'
 
     input:
     path all_fasta
@@ -360,7 +370,7 @@ process MAFFT_ALIGN {
 
 process TRIMAL {
     tag "trimal"
-    publishDir "${params.outdir}", mode: 'copy'
+    publishDir { "${params.outdir}" }, mode: 'copy'
 
     input:
     path aligned
@@ -378,7 +388,7 @@ process TRIMAL {
 
 process IQTREE {
     tag "iqtree"
-    publishDir "${params.outdir}", mode: 'copy'
+    publishDir { "${params.outdir}" }, mode: 'copy'
 
     input:
     path trimal_fasta
@@ -397,7 +407,7 @@ process IQTREE {
 
 process RENDER_TREE {
     tag "render_tree"
-    publishDir "${params.reports_dir}", mode: 'copy'
+    publishDir { "${params.reports_dir}" }, mode: 'copy'
     conda params.conda_env
 
     input:
@@ -418,7 +428,7 @@ process RENDER_TREE {
 
 process TREE_STATS {
     tag "tree_stats"
-    publishDir "${params.reports_dir}", mode: 'copy'
+    publishDir { "${params.reports_dir}" }, mode: 'copy'
     conda params.conda_env
 
     input:
@@ -452,7 +462,7 @@ process TREE_STATS {
 process MULTIQC {
     tag "multiqc"
     conda params.conda_env
-    publishDir "${params.multiqc_outdir}", mode: 'copy'
+    publishDir { "${params.multiqc_outdir}" }, mode: 'copy'
 
     input:
     path(multiqc_config)

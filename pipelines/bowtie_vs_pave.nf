@@ -22,25 +22,40 @@ params.multiqc_config = params.multiqc_config ?: "${projectRoot}/pipelines/multi
 params.patients_metadata = params.patients_metadata ?: "${projectRoot}/metadata/cohort/patients_metadata.tsv"
 params.genexpert_results = params.genexpert_results ?: "${projectRoot}/metadata/cohort/genexpert_results.tsv"
 params.analysis_name = params.analysis_name ?: null
-params.step_name = params.step_name ?: null
-params.input_step_name = params.input_step_name ?: null
-if (!params.outdir && params.analysis_name && params.step_name) {
-    params.outdir = "${projectRoot}/outs/${params.analysis_name}/${params.step_name}"
+params.step_name = params.step_name ?: "02.mapping_vs_pave"
+params.input_step_name = params.input_step_name ?: "01.bucketing"
+def outdirParam = params.containsKey('outdir') ? params.outdir : null
+def reportsDirParam = params.containsKey('reports_dir') ? params.reports_dir : null
+def multiqcOutdirParam = params.containsKey('multiqc_outdir') ? params.multiqc_outdir : null
+def multiqcReportNameParam = params.containsKey('multiqc_report_name') ? params.multiqc_report_name : null
+def readsDirParam = params.containsKey('reads_dir') ? params.reads_dir : null
+
+if (!outdirParam && params.analysis_name && params.step_name) {
+    outdirParam = "${projectRoot}/outs/${params.analysis_name}/${params.step_name}"
 }
-if (!params.reports_dir && params.outdir) {
-    params.reports_dir = "${params.outdir}/reports"
+if (!reportsDirParam && outdirParam) {
+    reportsDirParam = "${outdirParam}/reports"
 }
-if (!params.multiqc_report_name && params.step_name) {
-    params.multiqc_report_name = params.step_name.replace('.', '_') + ".report.html"
+if (!multiqcReportNameParam) {
+    multiqcReportNameParam = params.step_name \
+        ? params.step_name.replace('.', '_') + ".report.html" \
+        : "multiqc_report.html"
 }
-if ((!params.multiqc_outdir || params.multiqc_outdir.contains('unknown_analysis')) && params.analysis_name) {
-    params.multiqc_outdir = "${projectRoot}/results/reports/${params.analysis_name}"
+if ((!multiqcOutdirParam || multiqcOutdirParam.contains('unknown_analysis')) && params.analysis_name) {
+    multiqcOutdirParam = "${projectRoot}/results/reports/${params.analysis_name}"
+} else if (!multiqcOutdirParam) {
+    multiqcOutdirParam = reportsDirParam
 }
-if (!params.reads_dir && params.analysis_name && params.input_step_name) {
-    params.reads_dir = "${projectRoot}/outs/${params.analysis_name}/${params.input_step_name}"
+if (!readsDirParam && params.analysis_name && params.input_step_name) {
+    readsDirParam = "${projectRoot}/outs/${params.analysis_name}/${params.input_step_name}"
 }
+
+params.outdir = outdirParam
+params.reports_dir = reportsDirParam
+params.multiqc_outdir = multiqcOutdirParam
+params.multiqc_report_name = multiqcReportNameParam
+params.reads_dir = readsDirParam
 // Avoid "Access to undefined parameter" warnings; these are optional filters/inputs.
-if (!params.containsKey('reads_dir'))  params.reads_dir = null
 if (!params.containsKey('read1'))      params.read1 = null
 if (!params.containsKey('read2'))      params.read2 = null
 if (!params.containsKey('run_id'))     params.run_id = null
@@ -70,8 +85,6 @@ requiredParams.each { key ->
         error "params.${key} is required"
     }
 }
-params.multiqc_outdir = params.multiqc_outdir ?: params.reports_dir
-params.multiqc_report_name = params.multiqc_report_name ?: "multiqc_report.html"
 
 def checkPath(String path, String label, boolean mustBeDir = false) {
     def target = new File(path)
@@ -103,7 +116,7 @@ def featuresReady = (featuresDir.isDirectory() && featuresDir.listFiles()?.any {
 
 process GENERATE_FEATURES_TSV {
     tag "features_tsv"
-    publishDir "${params.features_tsv_dir}", mode: 'copy'
+    publishDir { "${params.features_tsv_dir}" }, mode: 'copy'
 
     input:
     val(dummy)
@@ -120,7 +133,7 @@ process GENERATE_FEATURES_TSV {
 
 process CREATE_INDEX {
     tag "pave_hsa"
-    publishDir "${params.bowtie_index_dir}", mode: 'copy', pattern: 'pave_hsa*'
+    publishDir { "${params.bowtie_index_dir}" }, mode: 'copy', pattern: 'pave_hsa*'
 
     output:
     path "index/pave_hsa.1.bt2", emit: marker
@@ -171,7 +184,7 @@ process MAP_SAMPLE {
 
 process AGGREGATE_STRAINS {
     tag "aggregate_strains"
-    publishDir "${params.reports_dir}", mode: 'copy'
+    publishDir { "${params.reports_dir}" }, mode: 'copy'
 
     input:
     val(done)
@@ -187,7 +200,7 @@ process AGGREGATE_STRAINS {
 
 process AGGREGATE_COVSTATS {
     tag "aggregate_covstats"
-    publishDir "${params.reports_dir}", mode: 'copy'
+    publishDir { "${params.reports_dir}" }, mode: 'copy'
 
     input:
     val(done)
@@ -205,7 +218,7 @@ process AGGREGATE_COVSTATS {
 
 process AGGREGATE_STRAIN_COVERAGE_REPORT {
     tag "strain_coverage_report"
-    publishDir "${params.reports_dir}", mode: 'copy'
+    publishDir { "${params.reports_dir}" }, mode: 'copy'
 
     input:
     path strains
@@ -228,7 +241,7 @@ process AGGREGATE_STRAIN_COVERAGE_REPORT {
 process MULTIQC {
     tag "multiqc"
     conda params.conda_env
-    publishDir "${params.multiqc_outdir}", mode: 'copy'
+    publishDir { "${params.multiqc_outdir}" }, mode: 'copy'
 
     input:
     path(multiqc_config)
