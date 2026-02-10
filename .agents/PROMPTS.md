@@ -27,6 +27,7 @@ Investigate the failing Nextflow process [PROCESS_NAME].
 - Identify the root cause and propose a minimal fix.
 - Update tests or add validation where appropriate.
 - Before rerunning, apply `.agents/skills/nextflow/SKILL.md` so the run uses the standard sandbox/offline environment variables.
+- Ensure no runtime cache/env is created under `pipelines/.conda`; wrapper-driven runs must use repo-root `.conda`.
 """
 
 ## Add a new metadata list

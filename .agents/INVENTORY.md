@@ -2,7 +2,7 @@
 
 ## Analysis steps and scripts
 
-- `bin/`: analysis-level runners (`prelim_analysis.run.sh`, `targeted_analysis.run.sh`), a generic step runner (`bin/run_step.py`), plus step runners under `bin/prelim_analysis.steps/` and `bin/targeted_analysis.steps/` with single-sample wrappers under their `single_sample/` subdirectories
+- `bin/`: analysis-level runners (`prelim_analysis.run.sh`, `targeted_analysis.run.sh`), a generic step runner (`bin/run_step.py`, which normalizes Nextflow/Conda cache env vars to repo-root paths), plus step runners under `bin/prelim_analysis.steps/` and `bin/targeted_analysis.steps/` with single-sample wrappers under their `single_sample/` subdirectories
 - `.agents/skills/`: local reusable agent skills
   - `nextflow/SKILL.md`: sandbox/offline Nextflow environment contract for direct and wrapper-based runs
 - `metadata/`: bucketing/, cohort/, hpv16_tree/, hpv18_tree/, seq_samples/

@@ -10,6 +10,9 @@ Use this skill whenever a command may invoke Nextflow:
 - shell wrappers under `bin/*.run.sh`
 - Python wrappers like `bin/run_step.py`
 
+Note: `bin/run_step.py` now enforces repo-root cache paths and overrides any
+`CONDA_*`/`NXF_HOME` values pointing under `pipelines/.conda`.
+
 ## Environment preset
 
 Export this block before launching the command:

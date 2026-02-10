@@ -10,6 +10,12 @@ Format:
 
 ## Decisions
 
+- 2026-02-10: Force wrapper-based Nextflow runs to use repo-root Conda caches
+  - Context: a stray `pipelines/.conda/` appeared, indicating some runs resolved Conda cache paths under the pipeline directory instead of repo root.
+  - Decision: make `bin/run_step.py` normalize `NXF_HOME`, `CONDA_ENVS_PATH`, and `CONDA_PKGS_DIRS` to repo-root paths and override any values pointing under `pipelines/.conda`.
+  - Rationale: prevent environment/cache creation under `pipelines/` and keep all runtime caches in one predictable location.
+  - Consequences: wrapper-driven runs now self-heal misconfigured env vars and avoid recreating `pipelines/.conda`.
+
 - 2026-02-10: Render phylogenetic tree previews without branch-length scaling by default
   - Context: distant outgroups caused circular tree previews to be skewed and compressed the ingroup structure.
   - Decision: change `scripts/phylo_tree/render_tree_svg.py` to ignore branch lengths by default (topology depth rendering), with an explicit opt-in flag to use real branch lengths.

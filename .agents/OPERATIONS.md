@@ -18,6 +18,7 @@ Rules:
   configurable env vars (e.g., `CONDA_EXE`).
 - Default parallelism is tied to `params.threads` (from `config/user.config`) via wrapper-provided `-process.maxForks` and `-executor.queueSize`.
 - Step wrappers read `params.threads` from `config/user.config` and pass it as `-process.maxForks`, `-executor.queueSize`, and `-process.cpus` to Nextflow.
+- `bin/run_step.py` normalizes `NXF_HOME`, `CONDA_ENVS_PATH`, and `CONDA_PKGS_DIRS` to repo-root paths and overrides values that point under `pipelines/.conda`.
 - MultiQC reports are written under `results/reports/<analysis>/`. Ensure the MultiQC process outputs files at the process root and publish to the `results/reports` target to avoid duplicated `multiqc/multiqc_report.html` paths.
 - For any Nextflow launch (direct or through wrappers), apply the environment contract in `.agents/skills/nextflow/SKILL.md` to keep runs reproducible in sandbox/offline sessions.
 - MultiQC method summaries should cite the primary tool papers; update the relevant `pipelines/multiqc/*.multiqc.yml` when pipeline steps change.
