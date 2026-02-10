@@ -12,6 +12,7 @@ Rules:
 - Step/analysis wrapper scripts live under `bin/` (wrappers around Nextflow pipelines), with per-step parameters stored in `config/steps/*.json`.
 - Raw FASTQ inputs live under `input_reads/` (symlinks or folders to external data).
 - Script utilities live under `scripts/` and are grouped by concern in subdirectories (taxonomy_assignment, top_strains, coverage, variants, pave, virstrain, phylo_tree).
+- Reusable local agent skill specs live under `.agents/skills/`.
 - Sample lists and other hardcoded data live under `metadata/` subdirectories.
 - Reference inputs live in `refdata/`; derived reference assets live in `derived_data/refdata/` (do not place reference inputs under analysis step directories).
 - Curated output copies live under `results/` (selected outputs tracked for sharing/review).
@@ -22,6 +23,12 @@ Rules:
 - MultiQC methods sections include primary literature references for the tools used in each step (see the step-specific `pipelines/multiqc/*.multiqc.yml`).
 - Custom MultiQC sections and tables are defined in `pipelines/multiqc/*.multiqc.yml` under `custom_data` with explicit `plot_type`, and TSV tables are wired via `sp:` search patterns.
 - Nextflow execution can be sensitive to the caller environment; when documenting run commands, assume Java 17+ and avoid relying on an activated Conda env unless explicitly required (see .agents/OPERATIONS.md for the concrete invocation pattern).
+
+## Skill: Nextflow sandbox execution contract
+
+- Scope: stable environment setup for running Nextflow in sandboxed/offline contexts, including wrapper scripts that invoke Nextflow indirectly.
+- Where: `.agents/skills/nextflow/SKILL.md`.
+- Coverage: Java runtime pinning, Nextflow cache location, offline mode, and shared Conda cache/env paths for rerun reuse.
 
 ## Skill: centrifuge bucketing (Nextflow)
 

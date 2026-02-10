@@ -26,6 +26,7 @@ Investigate the failing Nextflow process [PROCESS_NAME].
 - Compare the .nf implementation to any prior shell script if relevant.
 - Identify the root cause and propose a minimal fix.
 - Update tests or add validation where appropriate.
+- Before rerunning, apply `.agents/skills/nextflow/SKILL.md` so the run uses the standard sandbox/offline environment variables.
 """
 
 ## Add a new metadata list

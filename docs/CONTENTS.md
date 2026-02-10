@@ -47,3 +47,5 @@
   - `notes/`: analysis notes and methods writeups
 
 - `.agents/`: agent-oriented docs and instructions (OPERATIONS, WORKFLOWS, etc.)
+  - `skills/`: local reusable skill specifications for recurring agent tasks
+    - `nextflow/`: Nextflow sandbox/offline execution contract

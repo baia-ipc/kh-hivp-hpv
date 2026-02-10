@@ -5,6 +5,7 @@ Ordered view of steps and dependencies across analyses (happy path).
 Rules:
 - Do not add command lines here (put them in `.agents/OPERATIONS.md`).
 - Do not describe tools/config locations here beyond what is needed for dependencies (put full catalog info in `.agents/SKILLS.md`).
+- For sandbox/offline execution context, use the environment contract skill at `.agents/skills/nextflow/SKILL.md`.
 
 ## Workflow: prelim_analysis
 

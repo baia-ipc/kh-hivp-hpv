@@ -10,6 +10,12 @@ Format:
 
 ## Decisions
 
+- 2026-02-10: Add a local skill contract for sandboxed/offline Nextflow execution
+  - Context: repeated run issues were caused by inconsistent environment variables when launching Nextflow directly vs via shell/Python wrappers.
+  - Decision: add `.agents/skills/nextflow/SKILL.md` with a single required environment preset (`JAVA_*`, `NXF_*`, `CONDA_*`) and rationale.
+  - Rationale: standardizing the launcher environment prevents accidental output to wrong paths, avoids Java mismatches, and reuses cached Conda envs.
+  - Consequences: agent docs reference the new skill so reruns use the same execution contract.
+
 - 2026-02-10: Publish phylogenetic tree images under step outdir and embed previews in MultiQC
   - Context: tree SVG/PNG were being written under `outs/<analysis>/<step>/reports/`, and the MultiQC HTML preview referenced `phylo_tree.svg` without a reliable step-specific asset path.
   - Decision: publish tree images to `outs/<analysis>/<step>/` (step root), embed the step SVG directly in each MultiQC report after generation, and switch rendering to circular layout by default.
