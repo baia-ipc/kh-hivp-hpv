@@ -12,12 +12,22 @@ import matplotlib.pyplot as plt  # noqa: E402
 from Bio import Phylo  # noqa: E402
 
 
-def _tree_depths(tree):
-    depths = tree.depths()
-    max_depth = max(depths.values()) if depths else 0.0
-    if max_depth == 0:
-        depths = tree.depths(unit_branch_lengths=True)
-    return depths
+def _tree_depths(tree, use_branch_lengths=False):
+    if use_branch_lengths:
+        depths = tree.depths()
+        max_depth = max(depths.values()) if depths else 0.0
+        if max_depth == 0:
+            return tree.depths(unit_branch_lengths=True)
+        return depths
+    return tree.depths(unit_branch_lengths=True)
+
+
+def _set_unit_branch_lengths(tree):
+    for clade in tree.find_clades(order="preorder"):
+        if clade is tree.root:
+            clade.branch_length = 0.0
+        else:
+            clade.branch_length = 1.0
 
 
 def _assign_angles(tree):
@@ -52,8 +62,8 @@ def _draw_arc(ax, radius, angle_a, angle_b, linewidth=0.8):
     ax.plot(theta, radial, color="black", linewidth=linewidth)
 
 
-def render_tree_circular(tree, svg_path, png_path=None, width=12.0, height=None):
-    depths = _tree_depths(tree)
+def render_tree_circular(tree, svg_path, png_path=None, width=12.0, height=None, use_branch_lengths=False):
+    depths = _tree_depths(tree, use_branch_lengths=use_branch_lengths)
     angles = _assign_angles(tree)
     tips = tree.get_terminals()
     tip_count = len(tips)
@@ -111,7 +121,18 @@ def render_tree_circular(tree, svg_path, png_path=None, width=12.0, height=None)
     plt.close(fig)
 
 
-def render_tree_rectangular(tree, svg_path, png_path=None, width=12.0, height=None, ladderize=True):
+def render_tree_rectangular(
+    tree,
+    svg_path,
+    png_path=None,
+    width=12.0,
+    height=None,
+    ladderize=True,
+    use_branch_lengths=False,
+):
+    if not use_branch_lengths:
+        _set_unit_branch_lengths(tree)
+
     if ladderize:
         tree.ladderize()
 
@@ -131,7 +152,16 @@ def render_tree_rectangular(tree, svg_path, png_path=None, width=12.0, height=No
     plt.close(fig)
 
 
-def render_tree(treefile, svg_path, png_path=None, width=12.0, height=None, ladderize=True, layout="circular"):
+def render_tree(
+    treefile,
+    svg_path,
+    png_path=None,
+    width=12.0,
+    height=None,
+    ladderize=True,
+    layout="circular",
+    use_branch_lengths=False,
+):
     tree = Phylo.read(treefile, "newick")
     if layout == "rectangular":
         render_tree_rectangular(
@@ -141,6 +171,7 @@ def render_tree(treefile, svg_path, png_path=None, width=12.0, height=None, ladd
             width=width,
             height=height,
             ladderize=ladderize,
+            use_branch_lengths=use_branch_lengths,
         )
     else:
         if ladderize:
@@ -151,6 +182,7 @@ def render_tree(treefile, svg_path, png_path=None, width=12.0, height=None, ladd
             png_path=png_path,
             width=width,
             height=height,
+            use_branch_lengths=use_branch_lengths,
         )
 
 
@@ -163,6 +195,11 @@ def main():
     parser.add_argument("--height", type=float, help="Figure height in inches")
     parser.add_argument("--layout", choices=["circular", "rectangular"], default="circular", help="Tree layout style")
     parser.add_argument("--no-ladderize", action="store_true", help="Do not ladderize the tree")
+    parser.add_argument(
+        "--use-branch-lengths",
+        action="store_true",
+        help="Use branch lengths for rendering (default: ignore lengths and use topology depth)",
+    )
     args = parser.parse_args()
 
     treefile = Path(args.treefile)
@@ -177,6 +214,7 @@ def main():
         height=args.height,
         ladderize=not args.no_ladderize,
         layout=args.layout,
+        use_branch_lengths=args.use_branch_lengths,
     )
 
 

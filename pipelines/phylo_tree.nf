@@ -75,6 +75,7 @@ params.tree_render_script = (params.containsKey('tree_render_script') && params.
 params.tree_stats_script = (params.containsKey('tree_stats_script') && params.tree_stats_script) ? params.tree_stats_script : "${params.scripts_dir}/phylo_tree/compute_tree_stats.py"
 params.selection_build_script = (params.containsKey('selection_build_script') && params.selection_build_script) ? params.selection_build_script : "${params.scripts_dir}/phylo_tree/build_tree_selection_tsv.py"
 params.tree_layout = (params.containsKey('tree_layout') && params.tree_layout) ? params.tree_layout : "circular"
+params.tree_use_branch_lengths = (params.containsKey('tree_use_branch_lengths') && params.tree_use_branch_lengths) ? params.tree_use_branch_lengths : false
 
 def inputDirParam = params.input_dir
 def outdirRuntimeParam = params.containsKey('outdir') ? params.outdir : null
@@ -419,11 +420,12 @@ process RENDER_TREE {
     path "phylo_tree.png", emit: png
 
     script:
+    def branchLengthsArg = params.tree_use_branch_lengths ? "--use-branch-lengths \\\n      " : ""
     """
     python3 "${params.tree_render_script}" \\
       --treefile "${treefile}" \\
       --layout "${params.tree_layout}" \\
-      --svg phylo_tree.svg \\
+      ${branchLengthsArg}--svg phylo_tree.svg \\
       --png phylo_tree.png
     """
 }
