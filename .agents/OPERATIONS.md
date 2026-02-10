@@ -12,6 +12,7 @@ Rules:
 - Raw reference inputs live in `refdata/`; derived reference assets live in `derived_data/refdata/`.
 - Outputs are written under `outs/<analysis>/<step>/` with non‑MultiQC reports under `outs/<analysis>/<step>/reports/`.
 - Phylogenetic tree SVG/PNG visualizations are written at step root (`outs/<analysis>/<step>/phylo_tree.svg` and `.png`), while the summary table remains under `outs/<analysis>/<step>/reports/`.
+- Tree visualization rendering uses topology depth by default (branch lengths ignored) to avoid skew from distant outgroups; set `params.tree_use_branch_lengths=true` only when length-scaled rendering is explicitly needed.
 - When changing directory layout, update `docs/CONTENTS.md` and `.agents/INVENTORY.md`.
 - Avoid user-specific absolute paths in scripts; require tools via PATH or
   configurable env vars (e.g., `CONDA_EXE`).

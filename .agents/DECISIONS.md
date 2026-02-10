@@ -10,6 +10,12 @@ Format:
 
 ## Decisions
 
+- 2026-02-10: Render phylogenetic tree previews without branch-length scaling by default
+  - Context: distant outgroups caused circular tree previews to be skewed and compressed the ingroup structure.
+  - Decision: change `scripts/phylo_tree/render_tree_svg.py` to ignore branch lengths by default (topology depth rendering), with an explicit opt-in flag to use real branch lengths.
+  - Rationale: improves readability of offline tree previews in MultiQC when outgroups are much more divergent than target sequences.
+  - Consequences: `pipelines/phylo_tree.nf` exposes `params.tree_use_branch_lengths` (default `false`) and phylo-tree docs now describe topology-based rendering.
+
 - 2026-02-10: Add a local skill contract for sandboxed/offline Nextflow execution
   - Context: repeated run issues were caused by inconsistent environment variables when launching Nextflow directly vs via shell/Python wrappers.
   - Decision: add `.agents/skills/nextflow/SKILL.md` with a single required environment preset (`JAVA_*`, `NXF_*`, `CONDA_*`) and rationale.

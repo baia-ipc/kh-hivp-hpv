@@ -34,7 +34,7 @@ custom_data:
     data: |
       <figure>
         <img src="phylo_tree.svg" alt="Phylogenetic tree" style="max-width: 100%; height: auto;">
-        <figcaption>Circular layout rendered from the IQ-TREE Newick output. Original files are saved under <code>&lt;outdir&gt;/</code>; the SVG is embedded in this report for offline viewing.</figcaption>
+        <figcaption>Circular topology rendered from the IQ-TREE Newick output (branch lengths ignored by default). Original files are saved under <code>&lt;outdir&gt;/</code>; the SVG is embedded in this report for offline viewing.</figcaption>
       </figure>
   tree_summary_table:
     file_format: "tsv"

@@ -376,8 +376,10 @@ Key parameters:
 - `--treefile`: Newick tree file.
 - `--svg`: output SVG path.
 - `--png`: optional output PNG path.
+- `--layout`: `circular` (default) or `rectangular`.
 - `--width` / `--height`: figure size controls.
 - `--no-ladderize`: disable ladderization.
+- `--use-branch-lengths`: render using branch lengths (default is topology-only depth to avoid skew from distant outgroups).
 
 ### `scripts/phylo_tree/compute_tree_stats.py`
 Purpose: Summarize alignment and IQ-TREE statistics for MultiQC.
