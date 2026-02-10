@@ -23,6 +23,44 @@ def resolve_path(root: Path, value: str | None):
     return p if p.is_absolute() else root / p
 
 
+def _is_under(path_str: str, root: Path):
+    try:
+        resolved = Path(path_str).expanduser().resolve()
+    except OSError:
+        return False
+    return resolved == root or root in resolved.parents
+
+
+def _path_list_contains_under(value: str, root: Path):
+    for part in value.split(os.pathsep):
+        candidate = part.strip()
+        if candidate and _is_under(candidate, root):
+            return True
+    return False
+
+
+def configure_runtime_env(repo_root: Path):
+    """Keep Nextflow/Conda runtime paths pinned to repo-root caches."""
+    bad_conda_root = repo_root / "pipelines" / ".conda"
+    defaults = {
+        "NXF_HOME": str(repo_root / ".nextflow"),
+        "CONDA_ENVS_PATH": str(repo_root / ".conda" / "envs"),
+        "CONDA_PKGS_DIRS": str(repo_root / ".conda" / "pkgs"),
+    }
+
+    for key, default_value in defaults.items():
+        current = os.environ.get(key, "").strip()
+        if not current:
+            os.environ[key] = default_value
+            continue
+        if _path_list_contains_under(current, bad_conda_root):
+            print(
+                f"Warning: overriding {key}={current} (must not use pipelines/.conda)",
+                file=sys.stderr,
+            )
+            os.environ[key] = default_value
+
+
 def read_threads(user_config: Path):
     if not user_config.exists():
         return None
@@ -124,6 +162,7 @@ def main():
     opts = parser.parse_args()
 
     repo_root = Path(__file__).resolve().parents[1]
+    configure_runtime_env(repo_root)
     cfg_path = resolve_path(repo_root, opts.config_json)
     if not cfg_path or not cfg_path.exists():
         raise SystemExit(f"Config JSON not found: {opts.config_json}")
