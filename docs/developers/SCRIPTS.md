@@ -213,6 +213,16 @@ Key parameters:
 - `--samples-vs-lineage-sets` / `--samples-vs-lineage-sets-out`: lineage SNP set comparison input/output TSVs.
 - `--hpv16-e6e7-summary` / `--hpv16-e6e7-summary-out`: HPV16 E6/E7 summary input/output TSVs.
 
+### `scripts/variants/reorder_multiqc_sections.py`
+Purpose: Reorder selected sections in a generated MultiQC HTML report so
+specified modules/nav entries are moved to the bottom (used to place General
+Stats, Bcftools, and Samtools at the end of variant-analysis reports).
+Key parameters:
+- `--report`: MultiQC HTML report path to rewrite in place.
+- `--section-id`: repeatable section `div` IDs to move (e.g. `general_stats`).
+- `--nav-anchor`: repeatable navigation anchors (without `#`) to move to the
+  bottom of the sidebar navigation.
+
 ## PaVE reference feature derivation
 
 ### `scripts/pave/gff3_to_features_tsv.py`

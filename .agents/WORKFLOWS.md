@@ -16,10 +16,12 @@ Rules:
 2) Mapping vs PAVE
    - Depends on: step 01 `outs/prelim_analysis/01.bucketing`
    - Outputs: `outs/prelim_analysis/02.mapping_vs_pave`, `outs/prelim_analysis/02.mapping_vs_pave/reports`
+   - MultiQC content focus: mapping/coverage summary tables (not General Statistics/SAMtools/Bcftools sections).
 
 3) Variant analysis
    - Depends on: step 02 `outs/prelim_analysis/02.mapping_vs_pave`
    - Outputs: `outs/prelim_analysis/03.variant_analysis/reports`
+   - MultiQC also includes step-02 `idxstats` and `bcftools stats` sections at the bottom.
 
 4) VirStrain reports (optional)
    - Depends on: step 01 `outs/prelim_analysis/01.bucketing`
@@ -35,11 +37,13 @@ Rules:
 2) Mapping vs PAVE
    - Depends on: step 01 `outs/targeted_analysis/01.bucketing`
    - Outputs: `outs/targeted_analysis/02.mapping_vs_pave`, `outs/targeted_analysis/02.mapping_vs_pave/reports`
+   - MultiQC content focus: mapping/coverage summary tables (not General Statistics/SAMtools/Bcftools sections).
 
 3) Variant analysis (includes optional database comparison)
    - Depends on: step 02 outputs (`outs/targeted_analysis/02.mapping_vs_pave`)
    - Outputs: `outs/targeted_analysis/03.variant_analysis/reports`
    - Database comparison outputs: `outs/targeted_analysis/03.variant_analysis/database_snps` and tables in `outs/targeted_analysis/03.variant_analysis/reports`
+   - MultiQC also includes step-02 `idxstats` and `bcftools stats` sections at the bottom.
 
 ## Workflow: phylogenetic trees
 

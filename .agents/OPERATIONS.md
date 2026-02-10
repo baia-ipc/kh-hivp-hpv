@@ -20,6 +20,7 @@ Rules:
 - MultiQC reports are written under `results/reports/<analysis>/`. Ensure the MultiQC process outputs files at the process root and publish to the `results/reports` target to avoid duplicated `multiqc/multiqc_report.html` paths.
 - MultiQC method summaries should cite the primary tool papers; update the relevant `pipelines/multiqc/*.multiqc.yml` when pipeline steps change.
 - MultiQC custom sections should be configured under `custom_data` with explicit `plot_type` and any table inputs connected via `sp:` search patterns in the same config.
+- Mapping-vs-PAVE MultiQC intentionally hides `General Statistics`, `Samtools`, and `Bcftools`; these sections are shown at the bottom of step 03 variant-analysis reports instead.
 - Curated outputs can be copied under `results/` for sharing or downstream review (tracked in git).
 
 ## Running pipelines
@@ -180,7 +181,7 @@ nextflow run pipelines/phylo_tree.nf \
 ```
 
 This pipeline derives any missing/out-of-date inputs under `derived_data/refdata/hpv16_tree` from `refdata/hpv16_tree` and mapping outputs.
-Tree reports include `reports/phylo_tree.svg` (PNG fallback) and `reports/phylo_tree_summary.multiqc.tsv`.
+Tree outputs include `phylo_tree.svg` / `phylo_tree.png` at step root and `reports/phylo_tree_summary.multiqc.tsv`.
 
 ### HPV18 phylogenetic tree (Nextflow)
 
@@ -197,7 +198,7 @@ nextflow run pipelines/phylo_tree.nf \
 ```
 
 This pipeline derives any missing/out-of-date inputs under `derived_data/refdata/hpv18_tree` from `refdata/hpv18_tree` and mapping outputs.
-Tree reports include `reports/phylo_tree.svg` (PNG fallback) and `reports/phylo_tree_summary.multiqc.tsv`.
+Tree outputs include `phylo_tree.svg` / `phylo_tree.png` at step root and `reports/phylo_tree_summary.multiqc.tsv`.
 
 ### Generate PAVE feature tables (derived)
 

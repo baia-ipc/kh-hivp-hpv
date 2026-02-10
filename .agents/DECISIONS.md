@@ -297,3 +297,9 @@ Format:
   - Decision: configure VirStrain steps to use `pipelines/conda_env/virstrain.env.yml` and run MultiQC with the prebuilt pipeline env.
   - Rationale: keep VirStrain dependencies isolated while avoiding offline conda downloads for MultiQC.
   - Consequences: update `config/pipelines/virstrain.config` and add conda directives to virstrain processes.
+
+- 2026-02-10: Move SAMtools/Bcftools sections from mapping MultiQC to variant MultiQC
+  - Context: mapping-vs-PAVE reports included `General Statistics`, `Samtools`, and `Bcftools` sections, while variant reports lacked those low-level QC views.
+  - Decision: disable `General Statistics`, `Samtools`, and `Bcftools` in `pipelines/multiqc/bowtie_vs_pave.multiqc.yml`, and include mapping `*.idxstats`/`*.bcf.vchk` files in variant MultiQC inputs (`pipelines/variant_analysis.nf`), ordering these sections at the bottom in variant MultiQC configs.
+  - Rationale: keep mapping reports focused on strain/coverage summaries and centralize alignment/variant-call QC sections in variant analysis.
+  - Consequences: update `pipelines/multiqc/bowtie_vs_pave.multiqc.yml`, `pipelines/multiqc/variant_analysis.multiqc.yml`, `pipelines/multiqc/variant_analysis_db.multiqc.yml`, and `pipelines/variant_analysis.nf`.

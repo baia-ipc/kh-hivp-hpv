@@ -514,6 +514,15 @@ process MULTIQC {
       --config "${multiqc_config}" \\
       --outdir . \\
       . "${params.reports_dir}"
+
+    python "${params.scripts_dir}/variants/reorder_multiqc_sections.py" \\
+      --report "${params.multiqc_report_name}" \\
+      --section-id "general_stats" \\
+      --section-id "mqc-module-section-bcftools" \\
+      --section-id "mqc-module-section-Samtools" \\
+      --nav-anchor "general_stats" \\
+      --nav-anchor "bcftools" \\
+      --nav-anchor "Samtools"
     """
 }
 
@@ -565,6 +574,11 @@ workflow {
         def multiqc_tables = PREPARE_DATABASE_MULTIQC(database_snps, database_lineages, database_samples, samples_vs_database, samples_vs_database_sets, samples_vs_lineage_sets, hpv16_summary)
         reports_done = reports_done.mix(database_snps, database_lineages, database_samples, samples_vs_database, samples_vs_database_sets, samples_vs_lineage_sets, hpv16_summary, multiqc_tables)
     }
+
+    // Re-include mapping QC outputs so samtools/bcftools modules are reported in this step's MultiQC.
+    def mapping_idxstats = Channel.fromPath("${params.mapping_outdir}/*/*.idxstats", checkIfExists: false)
+    def mapping_bcftools = Channel.fromPath("${params.mapping_outdir}/*/*.bcf.vchk", checkIfExists: false)
+    reports_done = reports_done.mix(mapping_idxstats, mapping_bcftools)
 
     reports_done = reports_done.collect()
 
