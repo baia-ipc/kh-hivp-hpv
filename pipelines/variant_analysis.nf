@@ -11,26 +11,46 @@ def projectRoot = (workflow.projectDir instanceof java.nio.file.Path \
 params.scripts_dir = params.scripts_dir ?: "${projectRoot}/scripts"
 params.conda_env = params.conda_env ?: "${projectRoot}/pipelines/conda_env/pipeline.env.yml"
 params.multiqc_config = params.multiqc_config ?: "${projectRoot}/pipelines/multiqc/variant_analysis.multiqc.yml"
-params.multiqc_outdir = params.multiqc_outdir ?: params.reports_dir
-params.multiqc_report_name = params.multiqc_report_name ?: "multiqc_report.html"
 params.analysis_name = params.analysis_name ?: null
-params.step_name = params.step_name ?: null
-params.input_step_name = params.input_step_name ?: null
-if (!params.outdir && params.analysis_name && params.step_name) {
-    params.outdir = "${projectRoot}/outs/${params.analysis_name}/${params.step_name}"
+params.step_name = params.step_name ?: "03.variant_analysis"
+params.input_step_name = params.input_step_name ?: "02.mapping_vs_pave"
+def outdirParam = params.containsKey('outdir') ? params.outdir : null
+def reportsDirParam = params.containsKey('reports_dir') ? params.reports_dir : null
+def multiqcOutdirParam = params.containsKey('multiqc_outdir') ? params.multiqc_outdir : null
+def multiqcReportNameParam = params.containsKey('multiqc_report_name') ? params.multiqc_report_name : null
+def mappingOutdirParam = params.containsKey('mapping_outdir') ? params.mapping_outdir : null
+def databaseOutdirParam = params.containsKey('database_outdir') ? params.database_outdir : null
+
+if (!outdirParam && params.analysis_name && params.step_name) {
+    outdirParam = "${projectRoot}/outs/${params.analysis_name}/${params.step_name}"
 }
-if (!params.reports_dir && params.outdir) {
-    params.reports_dir = "${params.outdir}/reports"
+if (!reportsDirParam && outdirParam) {
+    reportsDirParam = "${outdirParam}/reports"
 }
-if (!params.multiqc_report_name && params.step_name) {
-    params.multiqc_report_name = params.step_name.replace('.', '_') + ".report.html"
+if (!multiqcReportNameParam) {
+    multiqcReportNameParam = params.step_name \
+        ? params.step_name.replace('.', '_') + ".report.html" \
+        : "multiqc_report.html"
 }
-if ((!params.multiqc_outdir || params.multiqc_outdir.contains('unknown_analysis')) && params.analysis_name) {
-    params.multiqc_outdir = "${projectRoot}/results/reports/${params.analysis_name}"
+if ((!multiqcOutdirParam || multiqcOutdirParam.contains('unknown_analysis')) && params.analysis_name) {
+    multiqcOutdirParam = "${projectRoot}/results/reports/${params.analysis_name}"
+} else if (!multiqcOutdirParam) {
+    multiqcOutdirParam = reportsDirParam
 }
-if (!params.mapping_outdir && params.analysis_name && params.input_step_name) {
-    params.mapping_outdir = "${projectRoot}/outs/${params.analysis_name}/${params.input_step_name}"
+if (!mappingOutdirParam && params.analysis_name && params.input_step_name) {
+    mappingOutdirParam = "${projectRoot}/outs/${params.analysis_name}/${params.input_step_name}"
 }
+
+if (!databaseOutdirParam && outdirParam) {
+    databaseOutdirParam = "${outdirParam}/database_snps"
+}
+
+params.outdir = outdirParam
+params.reports_dir = reportsDirParam
+params.multiqc_outdir = multiqcOutdirParam
+params.multiqc_report_name = multiqcReportNameParam
+params.mapping_outdir = mappingOutdirParam
+params.database_outdir = databaseOutdirParam
 params.include_database = params.containsKey('include_database') ? params.include_database : false
 params.pave_bed_dir = params.pave_bed_dir ?: "${projectRoot}/derived_data/refdata/pave/bed"
 params.pave_gff3_dir = params.pave_gff3_dir ?: "${projectRoot}/refdata/pave/gff3"
@@ -46,10 +66,7 @@ params.selected_hpv16_tsv = params.selected_hpv16_tsv ?: "${projectRoot}/derived
 params.selected_hpv18_fasta = params.selected_hpv18_fasta ?: "${projectRoot}/derived_data/refdata/hpv18_tree/selected.fasta"
 params.selected_hpv18_tsv = params.selected_hpv18_tsv ?: "${projectRoot}/derived_data/refdata/hpv18_tree/HPV18-NCBIVirus.acc_country.selected.tsv"
 
-if (!params.containsKey('mapping_outdir')) params.mapping_outdir = null
-if (!params.containsKey('reports_dir')) params.reports_dir = null
 if (!params.containsKey('samples_tsv')) params.samples_tsv = null
-if (!params.containsKey('database_outdir')) params.database_outdir = null
 
 [ 'mapping_outdir', 'reports_dir', 'scripts_dir', 'pave_bed_dir', 'pave_gff3_dir',
     'bowtie_index_dir', 'pave_ref_fasta'
@@ -71,10 +88,6 @@ if (params.include_database) {
             error "params.${key} is required when include_database=true"
         }
     }
-}
-
-if (params.include_database && !params.database_outdir) {
-    params.database_outdir = "${params.outdir}/database_snps"
 }
 
 if (params.include_lineage) {
@@ -126,7 +139,7 @@ def bedReady = (bedDir.isDirectory() && bedDir.listFiles()?.any { it.name.endsWi
 
 process GENERATE_BED {
     tag "bed"
-    publishDir "${params.pave_bed_dir}", mode: 'copy'
+    publishDir { "${params.pave_bed_dir}" }, mode: 'copy'
 
     input:
     val(dummy)
@@ -142,7 +155,7 @@ process GENERATE_BED {
 
 process EXTRACT_DATABASE {
     tag "extract"
-    publishDir "${params.database_outdir}", mode: 'copy'
+    publishDir { "${params.database_outdir}" }, mode: 'copy'
     conda params.conda_env
 
     input:
@@ -174,7 +187,7 @@ process EXTRACT_DATABASE {
 
 process DATABASE_SNPS {
     tag "database_snps"
-    publishDir "${params.reports_dir}", mode: 'copy'
+    publishDir { "${params.reports_dir}" }, mode: 'copy'
     conda params.conda_env
 
     input:
@@ -204,7 +217,7 @@ process DATABASE_SNPS {
 
 process COMPARE_DATABASE_LINEAGES {
     tag "database_vs_lineages"
-    publishDir "${params.reports_dir}", mode: 'copy'
+    publishDir { "${params.reports_dir}" }, mode: 'copy'
     conda params.conda_env
 
     input:
@@ -225,7 +238,7 @@ process COMPARE_DATABASE_LINEAGES {
 
 process COMPARE_DATABASE_SAMPLES {
     tag "database_vs_samples"
-    publishDir "${params.reports_dir}", mode: 'copy'
+    publishDir { "${params.reports_dir}" }, mode: 'copy'
     conda params.conda_env
 
     input:
@@ -246,7 +259,7 @@ process COMPARE_DATABASE_SAMPLES {
 
 process COMPARE_SAMPLES_DATABASE {
     tag "samples_vs_database"
-    publishDir "${params.reports_dir}", mode: 'copy'
+    publishDir { "${params.reports_dir}" }, mode: 'copy'
     conda params.conda_env
 
     input:
@@ -268,7 +281,7 @@ process COMPARE_SAMPLES_DATABASE {
 
 process COMPARE_SNP_SETS_DATABASE {
     tag "samples_vs_database_sets"
-    publishDir "${params.reports_dir}", mode: 'copy'
+    publishDir { "${params.reports_dir}" }, mode: 'copy'
     conda params.conda_env
 
     input:
@@ -291,7 +304,7 @@ process COMPARE_SNP_SETS_DATABASE {
 
 process COMPARE_SNP_SETS_LINEAGES {
     tag "samples_vs_lineage_sets"
-    publishDir "${params.reports_dir}", mode: 'copy'
+    publishDir { "${params.reports_dir}" }, mode: 'copy'
     conda params.conda_env
 
     input:
@@ -314,7 +327,7 @@ process COMPARE_SNP_SETS_LINEAGES {
 
 process HPV16_E6E7_SUMMARY {
     tag "hpv16_e6e7_summary"
-    publishDir "${params.reports_dir}", mode: 'copy'
+    publishDir { "${params.reports_dir}" }, mode: 'copy'
     conda params.conda_env
 
     input:
@@ -345,7 +358,7 @@ process HPV16_E6E7_SUMMARY {
 
 process PREPARE_DATABASE_MULTIQC {
     tag "multiqc_tables"
-    publishDir "${params.reports_dir}", mode: 'copy'
+    publishDir { "${params.reports_dir}" }, mode: 'copy'
     conda params.conda_env
 
     input:
@@ -381,7 +394,7 @@ process PREPARE_DATABASE_MULTIQC {
 
 process AGGREGATE_VARIANTS {
     tag "aggregate_variants"
-    publishDir "${params.reports_dir}", mode: 'copy'
+    publishDir { "${params.reports_dir}" }, mode: 'copy'
 
     input:
     val(bed_ready)
@@ -397,7 +410,7 @@ process AGGREGATE_VARIANTS {
 
 process AGGREGATE_VARIANT_EFFECTS {
     tag "aggregate_variant_effects"
-    publishDir "${params.reports_dir}", mode: 'copy'
+    publishDir { "${params.reports_dir}" }, mode: 'copy'
 
     input:
     val(bed_ready)
@@ -413,7 +426,7 @@ process AGGREGATE_VARIANT_EFFECTS {
 
 process LINEAGE_SNPS {
     tag "lineage_snps"
-    publishDir "${params.reports_dir}", mode: 'copy'
+    publishDir { "${params.reports_dir}" }, mode: 'copy'
 
     input:
     val(bed_ready)
@@ -444,7 +457,7 @@ process LINEAGE_SNPS {
 
 process COMPARE_LINEAGE_SNPS {
     tag "compare_lineage_snps"
-    publishDir "${params.reports_dir}", mode: 'copy'
+    publishDir { "${params.reports_dir}" }, mode: 'copy'
 
     input:
     path variants
@@ -468,7 +481,7 @@ process COMPARE_LINEAGE_SNPS {
 process MULTIQC {
     tag "multiqc"
     conda params.conda_env
-    publishDir "${params.multiqc_outdir}", mode: 'copy'
+    publishDir { "${params.multiqc_outdir}" }, mode: 'copy'
 
     input:
     path(multiqc_config)

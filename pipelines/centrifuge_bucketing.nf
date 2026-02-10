@@ -1,6 +1,8 @@
 #!/usr/bin/env nextflow
 nextflow.enable.dsl=2
 
+import java.nio.file.Paths
+
 def normalizeSampleId(String filename) {
     def base = filename
     base = base.replaceFirst(/\.fastq(\.gz)?$/, '')
@@ -9,11 +11,30 @@ def normalizeSampleId(String filename) {
     return base
 }
 
+def projectRoot = (workflow.projectDir instanceof java.nio.file.Path \
+    ? workflow.projectDir \
+    : Paths.get(workflow.projectDir.toString())) \
+    .resolve('..').normalize().toString()
+
+def analysisNameParam = params.containsKey('analysis_name') ? params.analysis_name : null
+def stepNameParam = params.containsKey('step_name') ? params.step_name : "01.bucketing"
+def resolvedOutdir = params.containsKey('outdir') ? params.outdir : null
+if (!resolvedOutdir && analysisNameParam && stepNameParam) {
+    resolvedOutdir = "${projectRoot}/outs/${analysisNameParam}/${stepNameParam}"
+}
+def resolvedReportsDir = params.containsKey('reports_dir') ? params.reports_dir : null
+if (!resolvedReportsDir && resolvedOutdir) {
+    resolvedReportsDir = "${resolvedOutdir}/reports"
+}
+
 workflow CENTRIFUGE_BUCKETING {
     take:
     reads_ch
 
     main:
+    if (!resolvedOutdir) {
+        error "params.outdir is required (or set params.analysis_name + params.step_name)"
+    }
     krona_ready = KRONA_UPDATE()
     /*
      * Optional: skip the expensive Centrifuge alignment step if the alignment/report files
@@ -25,7 +46,7 @@ workflow CENTRIFUGE_BUCKETING {
      */
     def align_out
     if (params.skip_align) {
-        def precomputed_root = params.precomputed_root ?: params.outdir
+        def precomputed_root = params.precomputed_root ?: resolvedOutdir
         if (!precomputed_root) {
             error "params.precomputed_root is required when params.skip_align is set (or set params.outdir)"
         }
@@ -69,7 +90,7 @@ workflow {
     if (!params.reads) {
         error "params.reads is required. Set it in the config file."
     }
-    if (!params.outdir) {
+    if (!resolvedOutdir) {
         error "params.outdir is required. Set it in the config file or on the command line."
     }
     if (!params.buckets) {
@@ -114,8 +135,8 @@ workflow {
 process CENTRIFUGE_ALIGN {
     tag "${run_id}:${sample_id}"
     conda params.conda_env
-    publishDir "${params.outdir}/${run_id}/alignments", mode: 'copy', pattern: "*.aln.tsv"
-    publishDir "${params.outdir}/${run_id}/reports", mode: 'copy', pattern: "*.report.tsv"
+    publishDir { "${resolvedOutdir}/${run_id}/alignments" }, mode: 'copy', pattern: "*.aln.tsv"
+    publishDir { "${resolvedOutdir}/${run_id}/reports" }, mode: 'copy', pattern: "*.report.tsv"
 
     input:
     tuple val(run_id), val(sample_id), path(r1), path(r2)
@@ -152,7 +173,7 @@ process KRONA_UPDATE {
 process CENTRIFUGE_KREPORT {
     tag "${run_id}:${sample_id}"
     conda params.conda_env
-    publishDir "${params.outdir}/${run_id}/kreports", mode: 'copy', pattern: "*.kreport.tsv"
+    publishDir { "${resolvedOutdir}/${run_id}/kreports" }, mode: 'copy', pattern: "*.kreport.tsv"
 
     input:
     tuple val(run_id), val(sample_id), path(aln), path(report)
@@ -181,8 +202,8 @@ process CENTRIFUGE_KREPORT {
 process KRONA_PLOTS {
     tag "${run_id}:${sample_id}"
     conda params.conda_env
-    publishDir "${params.outdir}/${run_id}/krona", mode: 'copy', pattern: "*.krona.html"
-    publishDir "${params.outdir}/${run_id}/krona_wo_human", mode: 'copy', pattern: "*.krona_wo_human.html"
+    publishDir { "${resolvedOutdir}/${run_id}/krona" }, mode: 'copy', pattern: "*.krona.html"
+    publishDir { "${resolvedOutdir}/${run_id}/krona_wo_human" }, mode: 'copy', pattern: "*.krona_wo_human.html"
 
     input:
     tuple val(run_id), val(sample_id), path(aln), path(report), path(krona_ready)
@@ -213,7 +234,7 @@ EOF
 process COMPUTE_LCA {
     tag "${run_id}:${sample_id}"
     conda params.conda_env
-    publishDir "${params.outdir}/${run_id}/lca", mode: 'copy', pattern: "*.lca.tsv"
+    publishDir { "${resolvedOutdir}/${run_id}/lca" }, mode: 'copy', pattern: "*.lca.tsv"
 
     input:
     tuple val(run_id), val(sample_id), path(aln), path(report)
@@ -236,8 +257,8 @@ process COMPUTE_LCA {
 process ASSIGN_BUCKETS {
     tag "${run_id}:${sample_id}"
     conda params.conda_env
-    publishDir "${params.outdir}/${run_id}/bucket_assignments", mode: 'copy', pattern: "*.bkt.tsv"
-    publishDir "${params.outdir}/${run_id}/bucket_sizes", mode: 'copy', pattern: "*.bsz.tsv"
+    publishDir { "${resolvedOutdir}/${run_id}/bucket_assignments" }, mode: 'copy', pattern: "*.bkt.tsv"
+    publishDir { "${resolvedOutdir}/${run_id}/bucket_sizes" }, mode: 'copy', pattern: "*.bsz.tsv"
 
     input:
     tuple val(run_id), val(sample_id), path(lca)
@@ -256,8 +277,8 @@ process ASSIGN_BUCKETS {
 process BUCKETIZE_READS {
     tag "${run_id}:${sample_id}"
     conda params.conda_env
-    publishDir "${params.outdir}/${run_id}/buckets", mode: 'copy', pattern: "*.fastq.gz"
-    publishDir "${params.outdir}/${run_id}/buckets", mode: 'copy', pattern: "*.log"
+    publishDir { "${resolvedOutdir}/${run_id}/buckets" }, mode: 'copy', pattern: "*.fastq.gz"
+    publishDir { "${resolvedOutdir}/${run_id}/buckets" }, mode: 'copy', pattern: "*.log"
 
     input:
     tuple val(run_id), val(sample_id), path(bkt), path(r1), path(r2)
