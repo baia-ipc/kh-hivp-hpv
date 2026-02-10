@@ -49,12 +49,14 @@ Rules:
 - If the mapping output contains multiple run IDs, set `bcf_run_id` in
   `config/analyses/targeted_analysis.config` for the tree profiles.
 - Outputs include alignment/tree artifacts under `outs/targeted_analysis/04.hpv16_tree` and a MultiQC report with an offline tree preview (under `results/reports/targeted_analysis/`).
+  - Tree visualization files are written at step root (`outs/targeted_analysis/04.hpv16_tree/phylo_tree.svg` and `.png`).
 - HPV18 depends on:
   - prepared inputs under `derived_data/refdata/hpv18_tree` (from raw inputs in `refdata/hpv18_tree`)
   - (for sample consensus) mapping outputs under `outs/targeted_analysis/02.mapping_vs_pave`
 - If the mapping output contains multiple run IDs, set `bcf_run_id` in
   `config/analyses/targeted_analysis.config` for the tree profiles.
 - Outputs include alignment/tree artifacts under `outs/targeted_analysis/05.hpv18_tree` and a MultiQC report with an offline tree preview (under `results/reports/targeted_analysis/`).
+  - Tree visualization files are written at step root (`outs/targeted_analysis/05.hpv18_tree/phylo_tree.svg` and `.png`).
 - Optional: lineage annotations can be generated for tree tips using the lineage reference lists in `metadata/hpv16_tree/` and `metadata/hpv18_tree/`.
 
 Curated outputs (selected reports/sequences) can be copied under `results/`.

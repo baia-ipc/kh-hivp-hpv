@@ -24,6 +24,7 @@
 - `derived_data/refdata/`: derived reference assets (auto-generated; not tracked in git)
 - `derived_data/indices/`: shared Bowtie/VirStrain indices (auto-generated; not tracked in git)
 - `outs/`: analysis outputs and non‑MultiQC reports (not tracked in git)
+  - phylo tree steps write `phylo_tree.svg` / `phylo_tree.png` at step root (`outs/<analysis>/<step>/`) and tree summary tables under `reports/`
 - `results/`: curated copies of key outputs for sharing or review (tracked in git)
 - `reference-results/`: snapshot of outputs, reports, and indexes for regression checks (not tracked in git)
 

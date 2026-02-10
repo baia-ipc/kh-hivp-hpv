@@ -10,6 +10,12 @@ Format:
 
 ## Decisions
 
+- 2026-02-10: Publish phylogenetic tree images under step outdir and embed previews in MultiQC
+  - Context: tree SVG/PNG were being written under `outs/<analysis>/<step>/reports/`, and the MultiQC HTML preview referenced `phylo_tree.svg` without a reliable step-specific asset path.
+  - Decision: publish tree images to `outs/<analysis>/<step>/` (step root), embed the step SVG directly in each MultiQC report after generation, and switch rendering to circular layout by default.
+  - Rationale: keep tree artifacts in the step output root and ensure offline tree previews render reliably in `results/reports/<analysis>/` without cross-step filename collisions.
+  - Consequences: updated `pipelines/phylo_tree.nf`, `pipelines/multiqc/phylo_tree.multiqc.yml`, and `scripts/phylo_tree/render_tree_svg.py`.
+
 - 2026-02-05: Organize metadata into subdirectories
   - Context: metadata files lived flat under `metadata/`, making it harder to locate related assets.
   - Decision: group bucketing, cohort, tree inputs, and sample sheets into subdirectories under `metadata/`.

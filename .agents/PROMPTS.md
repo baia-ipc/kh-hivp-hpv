@@ -15,7 +15,7 @@ Update step [STEP_ID] in [prelim_analysis|targeted_analysis].
 - Do not hardcode user-specific absolute paths; rely on PATH/env/config.
 - Update docs/CONTENTS.md and .agents/INVENTORY.md if the directory layout changes.
 - Ensure outputs go under `outs/<analysis>/<step>/` and MultiQC reports under `results/reports/<analysis>/`.
-- If the step is phylo_tree, update the MultiQC tree preview and summary stats outputs as needed.
+- If the step is phylo_tree, keep tree images under `outs/<analysis>/<step>/` (not `reports/`) and ensure the MultiQC tree preview is embedded or otherwise resolvable offline.
 - Provide a commit, do not push.
 """
 

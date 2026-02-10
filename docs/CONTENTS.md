@@ -38,6 +38,7 @@
   - `indices/`: shared indices (Bowtie/PAVE + VirStrain)
 
 - `outs/`: analysis outputs and non‑MultiQC reports (ignored in git)
+  - phylogenetic tree SVG/PNG visualizations are written at step root (e.g. `outs/targeted_analysis/04.hpv16_tree/phylo_tree.svg`)
 
 - `results/`: curated copies of key outputs (selected reports and reference results)
 
