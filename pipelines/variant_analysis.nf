@@ -481,7 +481,7 @@ process COMPARE_LINEAGE_SNPS {
 process MULTIQC {
     tag "multiqc"
     conda params.conda_env
-    publishDir { "${params.multiqc_outdir}" }, mode: 'copy'
+    publishDir { "${params.multiqc_outdir}" }, mode: 'copy', pattern: "${params.multiqc_report_name}"
 
     input:
     path(multiqc_config)
@@ -489,9 +489,6 @@ process MULTIQC {
 
     output:
     path("${params.multiqc_report_name}")
-    path("E6_E7_variants.multiqc.tsv")
-    path("E6_E7_variant_effects.multiqc.tsv")
-    path("lineage_snp_comparison.multiqc.tsv"), optional: true
 
     script:
     """
@@ -505,6 +502,12 @@ process MULTIQC {
       --variants "E6_E7_variants.tsv" --variants-out "E6_E7_variants.multiqc.tsv" \
       --variant-effects "E6_E7_variant_effects.tsv" --variant-effects-out "E6_E7_variant_effects.multiqc.tsv" \
       --lineage-compare "lineage_snp_comparison.tsv" --lineage-compare-out "lineage_snp_comparison.multiqc.tsv"
+
+    cp "E6_E7_variants.multiqc.tsv" "${params.reports_dir}/"
+    cp "E6_E7_variant_effects.multiqc.tsv" "${params.reports_dir}/"
+    if [ -f "lineage_snp_comparison.multiqc.tsv" ]; then
+      cp "lineage_snp_comparison.multiqc.tsv" "${params.reports_dir}/"
+    fi
 
     multiqc --force \\
       --filename "${params.multiqc_report_name}" \\
