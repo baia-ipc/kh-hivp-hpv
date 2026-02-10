@@ -1,6 +1,8 @@
 title: "Bowtie vs PAVE - Mapping Report"
-disable_modules:
+skip_generalstats: true
+exclude_modules:
   - bcftools
+  - samtools
 
 custom_data:
   methods_summary:

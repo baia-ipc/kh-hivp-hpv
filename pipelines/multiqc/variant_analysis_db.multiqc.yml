@@ -1,4 +1,30 @@
 title: "Variant Analysis - E6/E7 and Database Comparison"
+module_order:
+  - methods_summary
+  - output_locations
+  - reports_tables
+  - variants_table
+  - variant_effects_table
+  - lineage_snp_comparison_table
+  - database_snps_table
+  - database_lineage_table
+  - database_sample_table
+  - samples_vs_database_table
+  - samples_vs_database_sets_table
+  - samples_vs_lineage_sets_table
+  - hpv16_e6e7_summary_table
+  - general_stats
+  - bcftools
+  - Samtools
+report_section_order:
+  general_stats:
+    order: 9970
+  Samtools:
+    order: 9980
+  samtools:
+    order: 9980
+  bcftools:
+    order: 9990
 rename_regex: true
 sample_names_rename:
   - ["^3__",""]
