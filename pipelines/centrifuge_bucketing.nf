@@ -51,18 +51,20 @@ workflow CENTRIFUGE_BUCKETING {
             error "params.precomputed_root is required when params.skip_align is set (or set params.outdir)"
         }
 
-        align_out = reads_ch.map { run_id, sample_id, r1, r2 ->
+        align_out = reads_ch.flatMap { run_id, sample_id, r1, r2 ->
             def aln_path = "${precomputed_root}/${run_id}/alignments/${sample_id}.aln.tsv"
             def report_path = "${precomputed_root}/${run_id}/reports/${sample_id}.report.tsv"
             def aln_file = file(aln_path)
             def report_file = file(report_path)
             if (!aln_file.exists()) {
-                error "Missing precomputed alignment file: ${aln_path} (run_id=${run_id} sample_id=${sample_id})"
+                log.warn "Skipping sample with missing precomputed alignment file: ${aln_path} (run_id=${run_id} sample_id=${sample_id})"
+                return []
             }
             if (!report_file.exists()) {
-                error "Missing precomputed report file: ${report_path} (run_id=${run_id} sample_id=${sample_id})"
+                log.warn "Skipping sample with missing precomputed report file: ${report_path} (run_id=${run_id} sample_id=${sample_id})"
+                return []
             }
-            tuple(run_id, sample_id, aln_file, report_file)
+            [tuple(run_id, sample_id, aln_file, report_file)]
         }
     } else {
         align_out = CENTRIFUGE_ALIGN(reads_ch)

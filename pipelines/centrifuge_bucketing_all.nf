@@ -86,6 +86,43 @@ def homoTid = params.homo_sapiens_tid.toString().trim()
 def skipNoHuman = ([homoTid] + aggregateSkipList.findAll { it != homoTid }).unique()
 params.aggregate_skip_wo_human = skipNoHuman.join(',')
 
+def precomputedRunDirs = []
+if (params.skip_align) {
+    def precomputedRootDir = new File(params.precomputed_root as String)
+    if (precomputedRootDir.isDirectory()) {
+        precomputedRunDirs = precomputedRootDir.listFiles()
+            ?.findAll { it.isDirectory() && it.name != 'reports' }
+            ?.collect { it.name }
+            ?: []
+    }
+}
+
+def resolveRunIdForSample = { String inferredRunId, String tsvRunId ->
+    if (params.skip_align && params.precomputed_run_id) {
+        return params.precomputed_run_id.toString()
+    }
+    if (!params.skip_align || precomputedRunDirs.isEmpty()) {
+        return inferredRunId
+    }
+    if (precomputedRunDirs.size() == 1) {
+        return precomputedRunDirs[0]
+    }
+    if (precomputedRunDirs.contains(inferredRunId)) {
+        return inferredRunId
+    }
+    def cleanTsvRunId = tsvRunId?.trim()
+    if (cleanTsvRunId) {
+        def escaped = java.util.regex.Pattern.quote(cleanTsvRunId)
+        def matches = precomputedRunDirs.findAll { dirName ->
+            dirName == cleanTsvRunId || dirName ==~ /.*(?:run)?0*${escaped}$/
+        }
+        if (matches.size() == 1) {
+            return matches[0]
+        }
+    }
+    return inferredRunId
+}
+
 def loadSamples(String samplesPath) {
     def samplesFile = new File(samplesPath)
     if (!samplesFile.exists()) {
@@ -153,18 +190,26 @@ process AGGREGATE_COUNTS {
 
     script:
     """
-    expected_count=`grep -Ev '^[[:space:]]*#' "${params.samples_tsv}" | grep -c .`
+    prev_count=-1
+    stable_rounds=0
     actual_count=0
     for _ in {1..180}; do
       actual_count=`find "${params.outdir}" -mindepth 3 -maxdepth 3 -type f -path "*/bucket_sizes/*.bsz.tsv" | wc -l`
-      if [ "\$actual_count" -ge "\$expected_count" ]; then
+      if [ "\$actual_count" -eq "\$prev_count" ]; then
+        stable_rounds=\$((stable_rounds + 1))
+      else
+        stable_rounds=0
+      fi
+      prev_count="\$actual_count"
+
+      if [ "\$actual_count" -gt 0 ] && [ "\$stable_rounds" -ge 3 ]; then
         break
       fi
       sleep 2
     done
 
-    if [ "\$actual_count" -lt "\$expected_count" ]; then
-      echo "ERROR: expected at least \$expected_count bucket size files under ${params.outdir}, found \$actual_count" >&2
+    if [ "\$actual_count" -eq 0 ]; then
+      echo "ERROR: no bucket size files found under ${params.outdir}" >&2
       exit 1
     fi
 
@@ -222,6 +267,7 @@ workflow {
 
     reads_ch = Channel.from(rows)
         .map { cols ->
+            def tsv_run_id = cols[0]
             def fastq_dir = cols[1]
             def sample_prefix = cols[2]
             def fastq_prefix = (cols.size() > 3 && cols[3]) ? cols[3] : sample_prefix
@@ -232,9 +278,7 @@ workflow {
             def inferred_run_id = resolvedDir.getName().equalsIgnoreCase('fastq') \
                 ? resolvedDir.getParentFile().getName() \
                 : resolvedDir.getName()
-            def run_id = (params.skip_align && params.precomputed_run_id) \
-                ? params.precomputed_run_id.toString() \
-                : inferred_run_id
+            def run_id = resolveRunIdForSample(inferred_run_id, tsv_run_id)
             tuple(run_id, sample_id, file(r1File.absolutePath), file(r2File.absolutePath))
         }
 
