@@ -74,6 +74,7 @@ params.strains_match = params.containsKey('strains_match') ? params.strains_matc
 params.tree_render_script = (params.containsKey('tree_render_script') && params.tree_render_script) ? params.tree_render_script : "${params.scripts_dir}/phylo_tree/render_tree_svg.py"
 params.tree_stats_script = (params.containsKey('tree_stats_script') && params.tree_stats_script) ? params.tree_stats_script : "${params.scripts_dir}/phylo_tree/compute_tree_stats.py"
 params.selection_build_script = (params.containsKey('selection_build_script') && params.selection_build_script) ? params.selection_build_script : "${params.scripts_dir}/phylo_tree/build_tree_selection_tsv.py"
+params.tree_layout = (params.containsKey('tree_layout') && params.tree_layout) ? params.tree_layout : "circular"
 
 def inputDirParam = params.input_dir
 def outdirRuntimeParam = params.containsKey('outdir') ? params.outdir : null
@@ -407,7 +408,7 @@ process IQTREE {
 
 process RENDER_TREE {
     tag "render_tree"
-    publishDir { "${params.reports_dir}" }, mode: 'copy'
+    publishDir { "${params.outdir}" }, mode: 'copy'
     conda params.conda_env
 
     input:
@@ -421,6 +422,7 @@ process RENDER_TREE {
     """
     python3 "${params.tree_render_script}" \\
       --treefile "${treefile}" \\
+      --layout "${params.tree_layout}" \\
       --svg phylo_tree.svg \\
       --png phylo_tree.png
     """
@@ -479,6 +481,21 @@ process MULTIQC {
       --config "${multiqc_config}" \\
       --outdir . \\
       "${params.outdir}" "${params.reports_dir}"
+
+    python3 - "${params.multiqc_report_name}" "${params.outdir}/phylo_tree.svg" <<'PY'
+import base64
+from pathlib import Path
+import sys
+
+report_path = Path(sys.argv[1])
+svg_path = Path(sys.argv[2])
+
+if report_path.exists() and svg_path.exists():
+    html = report_path.read_text(encoding="utf-8")
+    svg_b64 = base64.b64encode(svg_path.read_bytes()).decode("ascii")
+    html = html.replace('src="phylo_tree.svg"', f'src="data:image/svg+xml;base64,{svg_b64}"', 1)
+    report_path.write_text(html, encoding="utf-8")
+PY
     """
 }
 

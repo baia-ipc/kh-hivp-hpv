@@ -24,7 +24,7 @@ custom_data:
     description: "Default output paths (can be overridden with Nextflow params)"
     data: |
       <ul>
-        <li><code>&lt;outdir&gt;/</code> for alignment and tree outputs</li>
+        <li><code>&lt;outdir&gt;/</code> for alignment and tree outputs (including <code>phylo_tree.svg</code> and <code>phylo_tree.png</code>)</li>
         <li><code>&lt;reports_dir&gt;/</code> for this MultiQC report</li>
       </ul>
   tree_preview:
@@ -34,7 +34,7 @@ custom_data:
     data: |
       <figure>
         <img src="phylo_tree.svg" alt="Phylogenetic tree" style="max-width: 100%; height: auto;">
-        <figcaption>Rendered from the IQ-TREE Newick output. Download as <code>phylo_tree.svg</code> or <code>phylo_tree.png</code> in the reports directory.</figcaption>
+        <figcaption>Circular layout rendered from the IQ-TREE Newick output. Original files are saved under <code>&lt;outdir&gt;/</code>; the SVG is embedded in this report for offline viewing.</figcaption>
       </figure>
   tree_summary_table:
     file_format: "tsv"
