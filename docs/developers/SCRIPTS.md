@@ -378,6 +378,8 @@ Key parameters:
 - `--png`: optional output PNG path.
 - `--layout`: `circular` (default) or `rectangular`.
 - `--width` / `--height`: figure size controls.
+- `--label-fontsize`: optional fixed font size (otherwise auto-scaled).
+- `--max-label-chars`: truncate tip labels for readability (default `14`; `0` disables truncation).
 - `--no-ladderize`: disable ladderization.
 - `--use-branch-lengths`: render using branch lengths (default is topology-only depth to avoid skew from distant outgroups).
 

@@ -10,6 +10,12 @@ Format:
 
 ## Decisions
 
+- 2026-02-10: Use adaptive multi-ring labels for circular phylogenetic previews
+  - Context: single-ring circular labels became unreadable and overlapped for dense HPV16/HPV18 trees.
+  - Decision: update `scripts/phylo_tree/render_tree_svg.py` to use deterministic circular tip spacing, topology-scaled radii, adaptive multi-ring label placement, and default label truncation.
+  - Rationale: improve offline readability of tree labels while keeping a circular layout suitable for MultiQC embedding.
+  - Consequences: tree previews are easier to read in dense trees; users can still override label behavior with `--label-fontsize` and `--max-label-chars`.
+
 - 2026-02-10: Force wrapper-based Nextflow runs to use repo-root Conda caches
   - Context: a stray `pipelines/.conda/` appeared, indicating some runs resolved Conda cache paths under the pipeline directory instead of repo root.
   - Decision: make `bin/run_step.py` normalize `NXF_HOME`, `CONDA_ENVS_PATH`, and `CONDA_PKGS_DIRS` to repo-root paths and override any values pointing under `pipelines/.conda`.
