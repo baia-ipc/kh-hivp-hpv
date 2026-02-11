@@ -56,3 +56,7 @@
     - `analysis-execution/`: wrapper/Nextflow execution and troubleshooting workflow
     - `phylo-tree-operations/`: HPV16/HPV18 tree generation and reporting guardrails
     - `results-summary/`: METHODS_AND_RESULTS authoring conventions
+    - `pipeline-step-reference/`: quick map of each analysis step (inputs/outputs/helpers)
+    - `reference-data-prep/`: build and validate derived/shared reference assets
+    - `repo-change-hygiene/`: metadata/path/doc synchronization checks
+    - `output-comparison/`: regression comparison workflow for reports/tables
