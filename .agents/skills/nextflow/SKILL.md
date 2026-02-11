@@ -34,6 +34,8 @@ export CONDA_ENVS_PATH="$PWD/.conda/envs"
 - `NXF_HOME="$PWD/.nextflow"`: keeps Nextflow state/cache inside the workspace and avoids user-specific absolute paths.
 - `NXF_OFFLINE=true`: prevents network access attempts when the run should use already cached assets.
 - `CONDA_PKGS_DIRS` and `CONDA_ENVS_PATH`: keeps package/env caches in-repo so reruns reuse environments instead of rebuilding them.
+- The cache/env roots must stay at repo root (`$PWD/.nextflow`, `$PWD/.conda`);
+  do not allow runtime state under `pipelines/.conda`.
 
 ## Execution pattern
 

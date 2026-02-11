@@ -24,6 +24,8 @@ Use this skill when adding or editing any `.nf` pipeline, step wrapper config in
 - MultiQC filename: `<step_name with dot replaced by underscore>.report.html`
 - Phylo tree images (`phylo_tree.svg`, `phylo_tree.png`) belong at step root,
   not under `reports/`.
+- Tree workflows must preserve `bcf_run_id` configurability for multi-run
+  mapping outputs.
 
 ## Parameter Contract (avoid null/unknown path bugs)
 

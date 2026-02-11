@@ -19,6 +19,24 @@ Compact project facts and current state for agent work.
 - `results/`: curated/selected tracked outputs; MultiQC HTML under
   `results/reports/<analysis>/`.
 
+## Artifact Placement (operational)
+
+- Step outputs and non-MultiQC reports are under `outs/<analysis>/<step>/`.
+- MultiQC HTML reports are under `results/reports/<analysis>/`.
+- Phylogenetic preview images are at step root (`phylo_tree.svg/.png`), not
+  in `reports/`.
+
+## Analysis Dependency Map (compact)
+
+- `prelim_analysis`:
+  - `01.bucketing` -> `02.mapping_vs_pave` -> `03.variant_analysis`
+  - `04.virstrain` is optional and depends on `01.bucketing`.
+- `targeted_analysis`:
+  - `01.bucketing` -> `02.mapping_vs_pave` -> `03.variant_analysis` ->
+    `04.hpv16_tree` and `05.hpv18_tree`.
+- If mapping outputs contain multiple run IDs, tree steps may require explicit
+  `bcf_run_id` in `config/analyses/targeted_analysis.config`.
+
 ## Current State Notes
 
 - MultiQC configuration files are under `pipelines/multiqc/`.
@@ -31,6 +49,9 @@ Compact project facts and current state for agent work.
   `Undetermined*` inputs.
 - In report policy, mapping-vs-PAVE omits `General Statistics`, `Samtools`,
   and `Bcftools`; these are shown in variant-analysis reports.
+- Metadata is organized in subdirectories:
+  `metadata/bucketing`, `metadata/cohort`, `metadata/hpv16_tree`,
+  `metadata/hpv18_tree`, and `metadata/seq_samples`.
 - Reference snapshot directory: `reference-results/` (not tracked).
 
 ## Skills (technology procedures)
@@ -40,6 +61,10 @@ Compact project facts and current state for agent work.
 - MultiQC config authoring: `.agents/skills/multiqc-config/SKILL.md`
 - Analysis execution + troubleshooting:
   `.agents/skills/analysis-execution/SKILL.md`
+- Phylogenetic tree operations:
+  `.agents/skills/phylo-tree-operations/SKILL.md`
+- Results summary authoring:
+  `.agents/skills/results-summary/SKILL.md`
 
 ## References (human docs)
 

@@ -37,6 +37,8 @@ Use this skill when asked to run or validate analysis steps.
 2. Expected MultiQC HTML exists under `results/reports/<analysis>/`.
 3. No outputs appear under `null/` or `results/reports/unknown_analysis/`.
 4. For downstream variant/VirStrain reports, check `Undetermined*` handling.
+5. For tree steps, confirm `phylo_tree.svg` and `phylo_tree.png` are at step
+   root and not under `reports/`.
 
 ## Troubleshooting
 
