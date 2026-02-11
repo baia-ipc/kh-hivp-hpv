@@ -13,9 +13,9 @@ Arguments:
 
 Options:
     -d, --depth D     Mean coverage depth threshold [default: 5.0]
-                      (mean depth value must be higher than this threshold)
+                      (mean depth value must be greater than or equal to this threshold)
     -b, --breadth B   Coverage breadth threshold [default: 0.50]
-                      (breadth value must be higher than this threshold)
+                      (breadth value must be greater than or equal to this threshold)
     -V, --version     Show version.
     -h, --help        Show this screen.
 
@@ -35,7 +35,7 @@ named as "<FEATURE>_avg_cov_depth" and "<FEATURE>_cov_breadth"
 the names can be obtained from the header of the file
 
 this scripts collects the info for each strain for which the values
-of mean coverage and coverage breadth are above the given thresholds
+of mean coverage and coverage breadth are at or above the given thresholds
 
 the output file has the following structure
 
@@ -77,13 +77,13 @@ def main(input_dir, output_file, depth_threshold, breadth_threshold):
                     strain = strain.replace('REF', '')
                     avg_cov_depth = float(elems[1])
                     cov_breadth = float(elems[2])
-                    if avg_cov_depth > depth_threshold:
+                    if avg_cov_depth >= depth_threshold:
                         key = "\t".join((run_id, sample, strain))
                         features_results[key] = {}
                         for i, featname in enumerate(features_order):
                             features_results[key][featname] = (elems[3 + (i * 2)], elems[4 + (i * 2)])
-                        if cov_breadth > breadth_threshold or \
-                                any(v[1] != "NA" and float(v[1]) > breadth_threshold for v in features_results[key].values()):
+                        if cov_breadth >= breadth_threshold or \
+                                any(v[1] != "NA" and float(v[1]) >= breadth_threshold for v in features_results[key].values()):
                             genome_results[key] = (avg_cov_depth, cov_breadth)
     # write the output file
     with open(output_file, 'w') as out:
@@ -92,7 +92,7 @@ def main(input_dir, output_file, depth_threshold, breadth_threshold):
             out.write(f'\t{featname}_avg_cov_depth\t{featname}_cov_breadth')
         out.write('\n')
         for key, (avg_cov_depth, cov_breadth) in genome_results.items():
-            if avg_cov_depth > depth_threshold and cov_breadth > breadth_threshold:
+            if avg_cov_depth >= depth_threshold and cov_breadth >= breadth_threshold:
                 out.write(f'{key}\t{avg_cov_depth}\t{cov_breadth}')
                 for featname in features:
                     f_avg_cov_depth, f_cov_breadth = features_results[key][featname]
