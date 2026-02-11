@@ -11,6 +11,7 @@ Use this skill when creating or updating `METHODS_AND_RESULTS.md` files.
 
 - Prose-first narrative; tables support the narrative, not vice versa.
 - Cite exact source tables/files used for key values.
+- State whether values are cohort-wide or computed from a filtered subset.
 
 ## Inclusion and exclusion rules
 

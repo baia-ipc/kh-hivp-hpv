@@ -20,12 +20,21 @@ Use this skill when asked to run or validate analysis steps.
 - Optional prelim VirStrain:
   - `bin/prelim_analysis.run.sh --run-virstrain`
 - Step wrappers:
-  - `bin/prelim_analysis.steps/*.run.sh`
-  - `bin/targeted_analysis.steps/*.run.sh`
+  - `bin/prelim_analysis.steps/01.bucketing.run.sh`
+  - `bin/prelim_analysis.steps/02.mapping_vs_pave.run.sh`
+  - `bin/prelim_analysis.steps/03.variant_analysis.run.sh`
+  - `bin/prelim_analysis.steps/04.virstrain.run.sh`
+  - `bin/targeted_analysis.steps/01.bucketing.run.sh`
+  - `bin/targeted_analysis.steps/02.mapping_vs_pave.run.sh`
+  - `bin/targeted_analysis.steps/03.variant_analysis.run.sh`
+  - `bin/targeted_analysis.steps/04.hpv16_tree.run.sh`
+  - `bin/targeted_analysis.steps/05.hpv18_tree.run.sh`
 
 ## Rerun Strategy
 
 - Default: use resume-capable wrapper runs.
+- For Nextflow task reuse, keep `-resume` enabled unless intentionally forcing
+  recomputation.
 - Force a step recompute by removing only that step output dir under `outs/`.
 - Keep generated reports policy intact:
   - non-MultiQC in `outs/<analysis>/<step>/reports/`

@@ -107,15 +107,22 @@ done < <(find "${params.mapping_outdir}" -mindepth 2 -maxdepth 2 -type f)
     `--run-virstrain` to `--run_virstrain`)
 - Rely on `bin/run_step.py` runtime normalization to keep caches under repo-root
   `.nextflow/` and `.conda/`, never `pipelines/.conda/`.
+- Preserve wrapper-driven concurrency mapping from `params.threads` to Nextflow
+  flags (`-process.maxForks`, `-executor.queueSize`, `-process.cpus`) unless a
+  task explicitly changes that contract.
 
 ## Validation Checklist (before commit)
 
-1. `nextflow config` or step wrapper invocation resolves expected `outdir`,
+1. For migrations from legacy shell logic, compare behavior against the prior
+   script path before finalizing the Nextflow change.
+2. `nextflow config` or step wrapper invocation resolves expected `outdir`,
    `reports_dir`, and `multiqc_outdir`.
-2. No output appears under `null/` or `results/reports/unknown_analysis/`.
-3. Step outputs land in `outs/...`; only MultiQC HTML lands in
+3. No output appears under `null/` or `results/reports/unknown_analysis/`.
+4. Step outputs land in `outs/...`; only MultiQC HTML lands in
    `results/reports/...`.
-4. MultiQC renders required sections and does not fail from file collisions.
-5. `Undetermined*` handling is consistent with downstream policy.
-6. Update `.agents` docs and `docs/CONTENTS.md` when introducing new conventions
+5. MultiQC renders required sections and does not fail from file collisions.
+6. `Undetermined*` handling is consistent with downstream policy.
+7. Update `.agents` docs and `docs/CONTENTS.md` when introducing new conventions
    or directories.
+8. Add/adjust validation checks or test commands when behavior changes, instead
+   of relying only on static review.

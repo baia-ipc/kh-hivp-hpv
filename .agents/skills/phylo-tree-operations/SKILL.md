@@ -28,6 +28,9 @@ for `04.hpv16_tree` / `05.hpv18_tree`, or related report assets.
   - `phylo_tree.png`
 - MultiQC helper tables stay under `<step>/reports/`.
 - MultiQC HTML report path is `results/reports/targeted_analysis/`.
+- MultiQC should embed an offline-resolvable preview of the tree image.
+- Optional lineage annotation uses lineage reference tables in
+  `metadata/hpv16_tree/` and `metadata/hpv18_tree/`.
 
 ## Rendering policy
 
