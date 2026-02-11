@@ -54,3 +54,5 @@
     - `nextflow-coding/`: Nextflow pipeline authoring guardrails (params, escaping, output/report contracts)
     - `multiqc-config/`: MultiQC YAML authoring guardrails (custom sections, `sp` wiring, compound IDs, ordering)
     - `analysis-execution/`: wrapper/Nextflow execution and troubleshooting workflow
+    - `phylo-tree-operations/`: HPV16/HPV18 tree generation and reporting guardrails
+    - `results-summary/`: METHODS_AND_RESULTS authoring conventions
