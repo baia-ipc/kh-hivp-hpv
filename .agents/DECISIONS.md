@@ -10,6 +10,12 @@ Format:
 
 ## Decisions
 
+- 2026-02-11: Add a dedicated skill for MultiQC configuration authoring
+  - Context: recurring report issues involved `custom_data`/`sp` mismatches, unstable section ordering, non-unique table IDs, and staged filename collisions.
+  - Decision: add `.agents/skills/multiqc-config/SKILL.md` and register it in `.agents` and docs indexes.
+  - Rationale: centralize MultiQC-specific rules so config edits consistently preserve report behavior and output contracts.
+  - Consequences: MultiQC edits now follow a single checklist for custom sections, compound IDs, ordering policy, and collision-safe staging.
+
 - 2026-02-11: Add a dedicated skill for Nextflow code authoring guardrails
   - Context: repeated pipeline regressions came from Groovy/shell escaping mistakes, inconsistent param default wiring, and path contract drift.
   - Decision: add `.agents/skills/nextflow-coding/SKILL.md` and register it in agent/docs indexes.

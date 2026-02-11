@@ -21,6 +21,17 @@ Update step [STEP_ID] in [prelim_analysis|targeted_analysis].
 - Provide a commit, do not push.
 """
 
+## Update MultiQC config
+"""
+Update `pipelines/multiqc/[CONFIG].multiqc.yml`.
+- Apply `.agents/skills/multiqc-config/SKILL.md`.
+- Keep `custom_data` and `sp` keys aligned and deterministic.
+- Use compound IDs in `*.multiqc.tsv` inputs when run/sample collisions are possible.
+- Keep MultiQC HTML in `results/reports/<analysis>/` and step tables under `outs/<analysis>/<step>/reports/`.
+- Preserve report policy: mapping-vs-PAVE hides General Stats/SAMtools/Bcftools; variant-analysis shows them at the bottom.
+- Provide a commit, do not push.
+"""
+
 ## Fix a Nextflow pipeline error
 """
 Investigate the failing Nextflow process [PROCESS_NAME].

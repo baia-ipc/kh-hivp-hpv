@@ -7,6 +7,7 @@ Rules:
 - Do not describe tools/config locations here beyond what is needed for dependencies (put full catalog info in `.agents/SKILLS.md`).
 - For sandbox/offline execution context, use the environment contract skill at `.agents/skills/nextflow/SKILL.md`.
 - For Nextflow code modifications, use `.agents/skills/nextflow-coding/SKILL.md` to keep params/escaping/output conventions consistent.
+- For MultiQC config/table updates, use `.agents/skills/multiqc-config/SKILL.md` to keep section wiring and ordering consistent.
 - Wrapper-driven runs normalize Nextflow/Conda runtime caches to repo-root `.nextflow/` and `.conda/`.
 
 ## Workflow: prelim_analysis

@@ -6,6 +6,7 @@
 - `.agents/skills/`: local reusable agent skills
   - `nextflow/SKILL.md`: sandbox/offline Nextflow environment contract for direct and wrapper-based runs
   - `nextflow-coding/SKILL.md`: repo-specific Nextflow authoring rules (params, escaping, output contracts, and MultiQC-safe staging)
+  - `multiqc-config/SKILL.md`: repo-specific MultiQC YAML authoring rules (custom sections, table wiring, compound IDs, and ordering)
 - `metadata/`: bucketing/, cohort/, hpv16_tree/, hpv18_tree/, seq_samples/
 - `config/`: user.config
 - `config/analyses/`: prelim_analysis.config, targeted_analysis.config

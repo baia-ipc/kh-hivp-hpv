@@ -37,6 +37,12 @@ Rules:
 - Where: `.agents/skills/nextflow-coding/SKILL.md`.
 - Coverage: parameter default/validation patterns, Groovy-to-shell escaping rules, output/report path contracts, collision-safe MultiQC staging, and downstream `Undetermined*` filtering expectations.
 
+## Skill: MultiQC config authoring
+
+- Scope: repository-specific guardrails for writing and updating MultiQC YAML configs and related table-prep inputs.
+- Where: `.agents/skills/multiqc-config/SKILL.md`.
+- Coverage: `custom_data`/`sp` wiring patterns, compound ID strategy for unique table rows, section/module ordering policy, and collision-safe staging/troubleshooting.
+
 ## Skill: centrifuge bucketing (Nextflow)
 
 - Scope: read classification, bucketing, and summary tables.
