@@ -12,6 +12,13 @@ def normalizeSampleId(String filename) {
     return base
 }
 
+def isUndeterminedSample(String sampleId) {
+    if (!sampleId) {
+        return false
+    }
+    return sampleId.toLowerCase().startsWith('undetermined')
+}
+
 def projectRoot = (workflow.projectDir instanceof java.nio.file.Path \
     ? workflow.projectDir \
     : Paths.get(workflow.projectDir.toString())) \
@@ -231,10 +238,14 @@ workflow {
         if (params.sample_id) {
             samples = samples.filter { runId, sampleId, r1, r2 -> sampleId == params.sample_id }
         }
+        samples = samples.filter { runId, sampleId, r1, r2 -> !isUndeterminedSample(sampleId) }
         samples = samples.ifEmpty { error "no matching reads found under ${params.reads_dir}" }
     } else {
         error "set either params.read1/read2 or params.reads_dir"
     }
+
+    samples = samples.filter { runId, sampleId, r1, r2 -> !isUndeterminedSample(sampleId) }
+    samples = samples.ifEmpty { error "no non-Undetermined samples found for VirStrain inputs" }
 
     def samplesWithIndex = samples.combine(indexReady)
     def mapped = RUN_VIRSTRAIN(samplesWithIndex)

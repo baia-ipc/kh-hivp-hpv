@@ -7,15 +7,12 @@
     "config/analyses/prelim_analysis.config"
   ],
   "profile": "preliminary_virstrain",
+  "arg_transforms": {
+    "--run-virstrain": "--run_virstrain"
+  },
   "require_flag": {
     "names": ["--run-virstrain", "--run_virstrain"],
     "truthy_values": ["true", "1"],
     "message": "VirStrain disabled (pass --run-virstrain to run)."
-  },
-  "flag_behaviors": [
-    {
-      "flags": ["--run-virstrain", "--run_virstrain"],
-      "drop": true
-    }
-  ]
+  }
 }

@@ -404,7 +404,7 @@ process AGGREGATE_VARIANTS {
 
     script:
     """
-    "${params.scripts_dir}/variants/report_E6_E7_variants.sh" "${params.mapping_outdir}" "${params.pave_bed_dir}" > "E6_E7_variants.tsv"
+    "${params.scripts_dir}/variants/report_E6_E7_variants.sh" "${params.mapping_outdir}" "${params.pave_bed_dir}" --skip-undetermined > "E6_E7_variants.tsv"
     """
 }
 
@@ -420,7 +420,7 @@ process AGGREGATE_VARIANT_EFFECTS {
 
     script:
     """
-    "${params.scripts_dir}/variants/report_E6_E7_variant_effects.sh" "${params.mapping_outdir}" "${params.pave_bed_dir}" "${params.pave_gff3_dir}" "${params.bowtie_index_dir}/pave_hsa.fas" > "E6_E7_variant_effects.tsv"
+    "${params.scripts_dir}/variants/report_E6_E7_variant_effects.sh" "${params.mapping_outdir}" "${params.pave_bed_dir}" "${params.pave_gff3_dir}" "${params.bowtie_index_dir}/pave_hsa.fas" --skip-undetermined > "E6_E7_variant_effects.tsv"
     """
 }
 
@@ -498,6 +498,19 @@ process MULTIQC {
       cp "${params.reports_dir}/lineage_snp_comparison.tsv" .
     fi
 
+    # Keep mapping QC modules in this report, but skip Undetermined and avoid filename collisions.
+    mkdir -p mapping_qc
+    while IFS= read -r f; do
+      base=\$(basename "\$f")
+      sample="\${base%%.*}"
+      if [[ "\${sample,,}" == undetermined* ]]; then
+        continue
+      fi
+      run_id=\$(basename "\$(dirname "\$f")")
+      mkdir -p "mapping_qc/\$run_id"
+      ln -sf "\$f" "mapping_qc/\$run_id/\$base"
+    done < <(find "${params.mapping_outdir}" -mindepth 2 -maxdepth 2 -type f \\( -name "*.idxstats" -o -name "*.bcf.vchk" \\))
+
     python "${params.scripts_dir}/variants/prepare_variant_multiqc_inputs.py" \
       --variants "E6_E7_variants.tsv" --variants-out "E6_E7_variants.multiqc.tsv" \
       --variant-effects "E6_E7_variant_effects.tsv" --variant-effects-out "E6_E7_variant_effects.multiqc.tsv" \
@@ -513,7 +526,7 @@ process MULTIQC {
       --filename "${params.multiqc_report_name}" \\
       --config "${multiqc_config}" \\
       --outdir . \\
-      . "${params.reports_dir}"
+      . "${params.reports_dir}" mapping_qc
 
     python "${params.scripts_dir}/variants/reorder_multiqc_sections.py" \\
       --report "${params.multiqc_report_name}" \\
@@ -574,11 +587,6 @@ workflow {
         def multiqc_tables = PREPARE_DATABASE_MULTIQC(database_snps, database_lineages, database_samples, samples_vs_database, samples_vs_database_sets, samples_vs_lineage_sets, hpv16_summary)
         reports_done = reports_done.mix(database_snps, database_lineages, database_samples, samples_vs_database, samples_vs_database_sets, samples_vs_lineage_sets, hpv16_summary, multiqc_tables)
     }
-
-    // Re-include mapping QC outputs so samtools/bcftools modules are reported in this step's MultiQC.
-    def mapping_idxstats = Channel.fromPath("${params.mapping_outdir}/*/*.idxstats", checkIfExists: false)
-    def mapping_bcftools = Channel.fromPath("${params.mapping_outdir}/*/*.bcf.vchk", checkIfExists: false)
-    reports_done = reports_done.mix(mapping_idxstats, mapping_bcftools)
 
     reports_done = reports_done.collect()
 
