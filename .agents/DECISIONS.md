@@ -10,6 +10,12 @@ Format:
 
 ## Decisions
 
+- 2026-02-11: Add a dedicated skill for Nextflow code authoring guardrails
+  - Context: repeated pipeline regressions came from Groovy/shell escaping mistakes, inconsistent param default wiring, and path contract drift.
+  - Decision: add `.agents/skills/nextflow-coding/SKILL.md` and register it in agent/docs indexes.
+  - Rationale: centralizing authoring guardrails reduces recurring null/unknown path bugs and interpolation errors.
+  - Consequences: Nextflow code edits should now follow the skill for params, escaping, output/report placement, and MultiQC-safe staging patterns.
+
 - 2026-02-11: Exclude Undetermined samples from variant-analysis and downstream VirStrain reporting
   - Context: prelim step 03 MultiQC failed due staged input filename collisions from multiple `Undetermined.*` mapping QC files across run directories.
   - Decision: stop staging mapping QC files through channels in `pipelines/variant_analysis.nf`; instead build a local `mapping_qc/` view at MultiQC time that skips `Undetermined*` samples. Also filter `Undetermined*` samples in `pipelines/virstrain.nf` sample selection.

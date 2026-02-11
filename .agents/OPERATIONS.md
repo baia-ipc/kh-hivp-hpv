@@ -21,6 +21,7 @@ Rules:
 - `bin/run_step.py` normalizes `NXF_HOME`, `CONDA_ENVS_PATH`, and `CONDA_PKGS_DIRS` to repo-root paths and overrides values that point under `pipelines/.conda`.
 - MultiQC reports are written under `results/reports/<analysis>/`. Ensure the MultiQC process outputs files at the process root and publish to the `results/reports` target to avoid duplicated `multiqc/multiqc_report.html` paths.
 - For any Nextflow launch (direct or through wrappers), apply the environment contract in `.agents/skills/nextflow/SKILL.md` to keep runs reproducible in sandbox/offline sessions.
+- For pipeline code edits, apply `.agents/skills/nextflow-coding/SKILL.md` to avoid Groovy interpolation/escaping and parameter-wiring regressions.
 - MultiQC method summaries should cite the primary tool papers; update the relevant `pipelines/multiqc/*.multiqc.yml` when pipeline steps change.
 - MultiQC custom sections should be configured under `custom_data` with explicit `plot_type` and any table inputs connected via `sp:` search patterns in the same config.
 - Mapping-vs-PAVE MultiQC intentionally hides `General Statistics`, `Samtools`, and `Bcftools`; these sections are shown at the bottom of step 03 variant-analysis reports instead.

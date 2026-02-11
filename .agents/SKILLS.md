@@ -31,6 +31,12 @@ Rules:
 - Where: `.agents/skills/nextflow/SKILL.md`.
 - Coverage: Java runtime pinning, Nextflow cache location, offline mode, and shared Conda cache/env paths for rerun reuse.
 
+## Skill: Nextflow code authoring
+
+- Scope: repository-specific guardrails for writing and modifying `.nf` pipelines and related step JSON flag wiring.
+- Where: `.agents/skills/nextflow-coding/SKILL.md`.
+- Coverage: parameter default/validation patterns, Groovy-to-shell escaping rules, output/report path contracts, collision-safe MultiQC staging, and downstream `Undetermined*` filtering expectations.
+
 ## Skill: centrifuge bucketing (Nextflow)
 
 - Scope: read classification, bucketing, and summary tables.
