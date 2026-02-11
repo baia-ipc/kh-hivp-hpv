@@ -66,7 +66,7 @@ Rules:
   - targeted_analysis: `outs/targeted_analysis/03.variant_analysis`
 - Inputs: mapping outputs from step 02 (`outs/*/02.mapping_vs_pave/`) plus PAVE reference assets under `refdata/pave/` and `derived_data/refdata/pave/`.
 - Outputs: `reports/` under the locations above (E6/E7 variants, variant effects, lineage SNP comparison, database comparison tables when enabled, MultiQC).
-- Variant-analysis MultiQC includes mapping `idxstats` and `bcftools stats` inputs so `General Statistics`, `Samtools`, and `Bcftools` sections are available there (at the bottom of the report).
+- Variant-analysis MultiQC includes mapping `idxstats` and `bcftools stats` inputs so `General Statistics`, `Samtools`, and `Bcftools` sections are available there (at the bottom of the report), while excluding `Undetermined*` samples.
 - MultiQC helpers: `scripts/variants/prepare_variant_multiqc_inputs.py`, `scripts/variants/prepare_database_multiqc_tables.py`, and `scripts/variants/reorder_multiqc_sections.py`.
 
 ## Skill: VirStrain reports (optional)
@@ -75,6 +75,7 @@ Rules:
 - Entry points: `pipelines/virstrain.nf` (config: `config/user.config`).
 - Where: `outs/prelim_analysis/04.virstrain`.
 - Inputs: bucketed FASTQs from `outs/prelim_analysis/01.bucketing/`; bucket selection via `params.bucket_tid` in `config/pipelines/virstrain.config`.
+- Input filtering: `Undetermined*` samples are excluded before VirStrain execution.
 - Outputs: `outs/prelim_analysis/04.virstrain`, `outs/prelim_analysis/04.virstrain/reports`.
 - MultiQC table prep helper: `scripts/virstrain/prepare_virstrain_multiqc_inputs.py`.
 

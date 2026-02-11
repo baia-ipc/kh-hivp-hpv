@@ -24,6 +24,7 @@ Rules:
 - MultiQC method summaries should cite the primary tool papers; update the relevant `pipelines/multiqc/*.multiqc.yml` when pipeline steps change.
 - MultiQC custom sections should be configured under `custom_data` with explicit `plot_type` and any table inputs connected via `sp:` search patterns in the same config.
 - Mapping-vs-PAVE MultiQC intentionally hides `General Statistics`, `Samtools`, and `Bcftools`; these sections are shown at the bottom of step 03 variant-analysis reports instead.
+- Variant-analysis and VirStrain downstream reporting exclude `Undetermined*` samples by default; step 03 MultiQC stages mapping QC inputs from a filtered local view to avoid filename collisions.
 - Curated outputs can be copied under `results/` for sharing or downstream review (tracked in git).
 
 ## Running pipelines

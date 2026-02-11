@@ -12,6 +12,7 @@
 - `config/pipelines/`: bowtie_vs_pave.config, centrifuge_bucketing.config, common.config, pave_gene_mapping.config, phylo_tree.config, phylo_tree.hpv16.config, phylo_tree.hpv18.config, variant_analysis.config, virstrain.config
 - `pipelines/multiqc/`: bowtie_vs_pave.multiqc.yml, centrifuge_bucketing.multiqc.yml, pave_gene_mapping.multiqc.yml, phylo_tree.multiqc.yml, variant_analysis.multiqc.yml, variant_analysis_db.multiqc.yml, virstrain.multiqc.yml
   - `bowtie_vs_pave.multiqc.yml` omits General Statistics/SAMtools/Bcftools sections; these appear in variant-analysis MultiQC configs.
+  - `variant_analysis.nf` gathers mapping QC inputs for MultiQC from a local filtered view that excludes `Undetermined*` samples to avoid staged filename collisions.
 - `pipelines/conda_env/`: nextflow_java.env.yml, pipeline.env.yml, virstrain.env.yml
 - `input_reads/`: symlinks or folders pointing to raw FASTQ data (not tracked in git)
 - `scripts/`: grouped by concern in subdirectories
@@ -23,6 +24,7 @@
   - `scripts/virstrain/`: aggregate_virstrain_results.py, prepare_virstrain_multiqc_inputs.py
   - `scripts/phylo_tree/`: select_ncbi_genomes.sh, extract_lineages_fasta.sh, prepare_samples.sh, rename_lineages.py, fix_msa_formatting.py, assign_lineages.py, extract_country_sequences.py, build_tree_selection_tsv.py, render_tree_svg.py, compute_tree_stats.py
 - `pipelines/`: bowtie_vs_pave.nf, centrifuge_bucketing.nf, centrifuge_bucketing_all.nf, pave_gene_mapping.nf, phylo_tree.nf, variant_analysis.nf, virstrain.nf
+  - `virstrain.nf` excludes `Undetermined*` samples when selecting bucket FASTQ pairs.
 - `refdata/`: external reference inputs used by pipelines (PAVE reference, NCBI downloads)
 - `derived_data/refdata/`: derived reference assets (auto-generated; not tracked in git)
 - `derived_data/indices/`: shared Bowtie/VirStrain indices (auto-generated; not tracked in git)

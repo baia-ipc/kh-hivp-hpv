@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [ $# -ne 4 ]; then
-  echo "Usage: $0 <outputdir> <bed_dir> <gff3_dir> <ref_fasta>" >&2
+if [ $# -lt 4 ] || [ $# -gt 5 ]; then
+  echo "Usage: $0 <outputdir> <bed_dir> <gff3_dir> <ref_fasta> [--skip-undetermined]" >&2
   exit 1
 fi
 
@@ -10,6 +10,15 @@ OUTDIR=$1
 BEDDIR=$2
 GFFDIR=$3
 REFFA=$4
+SKIP_UNDETERMINED=false
+if [ $# -eq 5 ]; then
+  if [ "$5" = "--skip-undetermined" ]; then
+    SKIP_UNDETERMINED=true
+  else
+    echo "Error: unknown option '$5'" >&2
+    exit 1
+  fi
+fi
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SCRIPT_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 
@@ -42,6 +51,10 @@ for subdir in "$OUTDIR"/*; do
   for bcfgz in "$subdir"/*.bcf.gz; do
     [ -f "$bcfgz" ] || continue
     sample=$(basename "$bcfgz" .bcf.gz)
+    sample_lc=$(printf '%s' "$sample" | tr '[:upper:]' '[:lower:]')
+    if [ "$SKIP_UNDETERMINED" = true ] && [[ "$sample_lc" == undetermined* ]]; then
+      continue
+    fi
     for gene in E6 E7; do
       bed="$BEDDIR/pave_hsa.$gene.bed"
       [ -f "$bed" ] || continue

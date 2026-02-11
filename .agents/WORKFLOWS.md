@@ -23,10 +23,11 @@ Rules:
 3) Variant analysis
    - Depends on: step 02 `outs/prelim_analysis/02.mapping_vs_pave`
    - Outputs: `outs/prelim_analysis/03.variant_analysis/reports`
-   - MultiQC also includes step-02 `idxstats` and `bcftools stats` sections at the bottom.
+   - MultiQC also includes step-02 `idxstats` and `bcftools stats` sections at the bottom, excluding `Undetermined*` samples.
 
 4) VirStrain reports (optional)
    - Depends on: step 01 `outs/prelim_analysis/01.bucketing`
+   - Excludes: `Undetermined*` samples from bucket inputs.
    - Outputs: `outs/prelim_analysis/04.virstrain`, `outs/prelim_analysis/04.virstrain/reports`
 
 ## Workflow: targeted_analysis (mapping)

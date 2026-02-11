@@ -1,12 +1,21 @@
 #!/bin/bash
 
-if [ $# -ne 2 ]; then
-    echo "Usage: $0 <outputdir> <bed_dir>"
+if [ $# -lt 2 ] || [ $# -gt 3 ]; then
+    echo "Usage: $0 <outputdir> <bed_dir> [--skip-undetermined]"
     exit 1
 fi
 
 OUTDIR=$1
 BEDDIR=$2
+SKIP_UNDETERMINED=false
+if [ $# -eq 3 ]; then
+    if [ "$3" = "--skip-undetermined" ]; then
+        SKIP_UNDETERMINED=true
+    else
+        echo "Error: unknown option '$3'" >&2
+        exit 1
+    fi
+fi
 
 if [ ! -d "$BEDDIR" ]; then
     echo "Error: bed directory not found: $BEDDIR" >&2
@@ -23,6 +32,10 @@ for subdir in "$OUTDIR"/*; do
     runid=$(basename $subdir)
     for bcfgz in $subdir/*.bcf.gz; do
         sample=$(basename $bcfgz .bcf.gz)
+        sample_lc=$(printf '%s' "$sample" | tr '[:upper:]' '[:lower:]')
+        if [ "$SKIP_UNDETERMINED" = true ] && [[ "$sample_lc" == undetermined* ]]; then
+            continue
+        fi
         for gene in E6 E7; do
             cmd="bcftools view -R $BEDDIR/pave_hsa.$gene.bed $bcfgz -H"
             cmdout=$(eval $cmd)
