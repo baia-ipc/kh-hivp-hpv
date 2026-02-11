@@ -212,7 +212,7 @@ process AGGREGATE_COVSTATS {
     script:
     """
     "${params.scripts_dir}/coverage/aggregate_covstats.py" "${params.outdir}" "cov_stats.tsv" -b 0 -d 0
-    "${params.scripts_dir}/coverage/aggregate_covstats.py" "${params.outdir}" "cov_stats.filtered.tsv"
+    "${params.scripts_dir}/coverage/aggregate_covstats.py" "${params.outdir}" "cov_stats.filtered.tsv" -b 0.30 -d 0
     """
 }
 
