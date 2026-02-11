@@ -52,17 +52,37 @@ workflow CENTRIFUGE_BUCKETING {
         }
 
         align_out = reads_ch.flatMap { run_id, sample_id, r1, r2 ->
-            def aln_path = "${precomputed_root}/${run_id}/alignments/${sample_id}.aln.tsv"
-            def report_path = "${precomputed_root}/${run_id}/reports/${sample_id}.report.tsv"
-            def aln_file = file(aln_path)
-            def report_file = file(report_path)
-            if (!aln_file.exists()) {
-                log.warn "Skipping sample with missing precomputed alignment file: ${aln_path} (run_id=${run_id} sample_id=${sample_id})"
+            def inferred_sample_id = normalizeSampleId(r1.name)
+            def candidate_sample_ids = [sample_id, inferred_sample_id].findAll { it }.unique()
+
+            def chosen_sample_id = null
+            def aln_file = null
+            candidate_sample_ids.each { candidate ->
+                def candidate_aln = file("${precomputed_root}/${run_id}/alignments/${candidate}.aln.tsv")
+                if (candidate_aln.exists() && chosen_sample_id == null) {
+                    chosen_sample_id = candidate
+                    aln_file = candidate_aln
+                }
+            }
+            if (!aln_file) {
+                log.warn "Skipping sample with missing precomputed alignment file for candidates ${candidate_sample_ids} (run_id=${run_id} sample_id=${sample_id})"
                 return []
             }
+
+            def report_file = file("${precomputed_root}/${run_id}/reports/${chosen_sample_id}.report.tsv")
             if (!report_file.exists()) {
-                log.warn "Skipping sample with missing precomputed report file: ${report_path} (run_id=${run_id} sample_id=${sample_id})"
-                return []
+                /*
+                 * Keep skip-align usable when only alignments are available:
+                 * write an empty Centrifuge-like report as placeholder.
+                 */
+                def report_dir = new File("${precomputed_root}/${run_id}/reports")
+                report_dir.mkdirs()
+                def report_path = new File(report_dir, "${chosen_sample_id}.report.tsv")
+                if (!report_path.exists()) {
+                    report_path.text = "name\ttaxID\ttaxRank\tnumReads\tnumUniqueReads\tabundance\n"
+                }
+                report_file = file(report_path.toString())
+                log.warn "Precomputed report missing; created empty placeholder: ${report_path} (run_id=${run_id} sample_id=${sample_id})"
             }
             [tuple(run_id, sample_id, aln_file, report_file)]
         }
