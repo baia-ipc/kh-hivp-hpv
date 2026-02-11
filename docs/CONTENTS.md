@@ -46,8 +46,11 @@
   - `developers/`: developer manual, scripts reference, and step docs
   - `notes/`: analysis notes and methods writeups
 
-- `.agents/`: agent-oriented docs and instructions (OPERATIONS, WORKFLOWS, etc.)
+- `.agents/`: agent-oriented runtime/reference docs
+  - `PROJECT.md`: compact project facts/current state for agents
+  - `WORKFLOW.md`: stable analysis step order/dependencies
   - `skills/`: local reusable skill specifications for recurring agent tasks
     - `nextflow/`: Nextflow sandbox/offline execution contract
     - `nextflow-coding/`: Nextflow pipeline authoring guardrails (params, escaping, output/report contracts)
     - `multiqc-config/`: MultiQC YAML authoring guardrails (custom sections, `sp` wiring, compound IDs, ordering)
+    - `analysis-execution/`: wrapper/Nextflow execution and troubleshooting workflow
