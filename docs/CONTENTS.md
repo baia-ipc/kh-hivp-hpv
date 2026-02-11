@@ -50,3 +50,4 @@
   - `skills/`: local reusable skill specifications for recurring agent tasks
     - `nextflow/`: Nextflow sandbox/offline execution contract
     - `nextflow-coding/`: Nextflow pipeline authoring guardrails (params, escaping, output/report contracts)
+    - `multiqc-config/`: MultiQC YAML authoring guardrails (custom sections, `sp` wiring, compound IDs, ordering)
