@@ -75,8 +75,41 @@ INDEX_BASE="${OUTDIR}/${INDEX_NAME}"
 
 mkdir -p "${OUTDIR}" "${LIBDIR}"
 
-echo "[centrifuge] Downloading taxonomy to ${TAXDIR}"
-centrifuge-download -o "${TAXDIR}" taxonomy
+download_taxonomy() {
+  local attempts="${1:-3}"
+  local tmpdir="${TAXDIR}.tmp"
+  local attempt
+
+  # Reuse an existing valid taxonomy directory.
+  if [[ -s "${TAXDIR}/nodes.dmp" && -s "${TAXDIR}/names.dmp" ]]; then
+    echo "[centrifuge] Reusing existing taxonomy at ${TAXDIR}"
+    return 0
+  fi
+
+  for attempt in $(seq 1 "${attempts}"); do
+    echo "[centrifuge] Downloading taxonomy to ${TAXDIR} (attempt ${attempt}/${attempts})"
+    rm -rf "${tmpdir}" "${TAXDIR}"
+    mkdir -p "${tmpdir}"
+
+    if centrifuge-download -o "${tmpdir}" taxonomy; then
+      if [[ -s "${tmpdir}/nodes.dmp" && -s "${tmpdir}/names.dmp" ]]; then
+        mv "${tmpdir}" "${TAXDIR}"
+        return 0
+      fi
+      echo "[centrifuge] Taxonomy download produced incomplete files; retrying" >&2
+    else
+      echo "[centrifuge] Taxonomy download failed; retrying" >&2
+    fi
+
+    rm -rf "${tmpdir}" "${TAXDIR}"
+    sleep $((attempt * 2))
+  done
+
+  echo "[centrifuge] Failed to download a valid taxonomy after ${attempts} attempts" >&2
+  return 1
+}
+
+download_taxonomy 3
 
 echo "[centrifuge] Downloading human (taxid 9606, RefSeq) sequences"
 : > "${MAP}"
