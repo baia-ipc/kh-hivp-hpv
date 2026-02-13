@@ -1,62 +1,65 @@
+# Terminology:
+
+- an "analysis" is a collection of single analysis steps
+- each step is a numbered wrapper script, which calls a generic Nextflow
+  pipeline with an analysis-specific step configuration
+- the pipelines are written for a given concern (e.g. variant calling)
+  to be used in different analyses
+
 # High level summary of the contents of the repository
 
-- analyses:
-  - outputs live under `outs/` by analysis/step (not tracked in git)
-  - curated, tracked outputs live under `results/`
-  - most of the code is in `scripts/` and `pipelines/`; step runners live in `bin/`
+## Code
 
 - `pipelines/`: Nextflow workflows and wrapper assets
   - `conda_env/`: Conda environment definitions
   - `multiqc/`: MultiQC configuration files used by pipelines
 
-- `scripts/`: reusable utilities grouped by concern
-  (taxonomy_assignment, top_strains, coverage, variants, pave, virstrain, phylo_tree)
+- `scripts/`: helper Python and shell scripts, grouped in subdirectories
+   by concern (taxonomy\_assignment, top\_strains, coverage, variants,
+   pave, virstrain, phylo\_tree, steps)
 
-- `bin/`: step and analysis runner scripts (wrappers around Nextflow pipelines)
-  - `prelim_analysis.steps/`: per-step wrappers (plus `single_sample/`)
-  - `targeted_analysis.steps/`: per-step wrappers (plus `single_sample/`)
-  - `run_step.py`: generic step runner used by per-step wrappers
+- `bin/`: analysis runner scripts (wrappers around Nextflow pipelines)
+  - `prelim_analysis.run.sh`: preliminary analysis wrapper
+  - `prelim_analysis.steps/*.sh`: per-step wrappers
+  - `targeted_analysis.run.sh`: targeted analysis wrapper
+  - `targeted_analysis.steps/*.sh`: per-step wrappers
 
-- `input_reads/`: symlinks to external raw data locations (not stored in-repo)
+## Input and configuration
 
-- `metadata/`: curated metadata inputs
-  - `bucketing/`
-  - `cohort/`
-  - `hpv16_tree/`
-  - `hpv18_tree/`
-  - `seq_samples/`
+- `input_reads/`: put here the symlinks to external raw data locations
+                  (not stored in-repo)
 
-- `config/`: user-editable configuration files
-  - `analyses/`: step path config profiles used by wrappers
-  - `pipelines/`: technical Nextflow config shared by pipelines
-  - `steps/`: JSON configs for the generic step runner
+- `config/`: configuration files
+  - `user.config`: user configuration file for paths and parameters
+  - `analyses/`: configuration for the analysis wrappers
+  - `steps/`: configuration of the single steps of the analyses
+  - `pipelines/`: configuration of the Nextflow workflows
 
-- `refdata/`: external reference inputs (PAVE FASTA/GFF3, NCBI downloads)
+- `metadata/`: curated metadata files, divided by concern
+               (bucketing, cohort, phylogenetic tree inputs, sample lists)
+
+- `refdata/`: external reference inputs (PAVE FASTA/GFF3, NCBI sequences and metadata)
+
+## Output
+
+(not stored in git repo; organization explained here for clarity)
 
 - `derived_data/`: generated intermediate assets
-  - `refdata/`: processed reference assets (feature tables, BED intervals, curated tree inputs)
-  - `indices/`: shared indices (Bowtie/PAVE + VirStrain)
+  - `refdata/`: processed reference assets
+  - `indices/`: shared indices (e.g. Bowtie indices)
 
-- `outs/`: analysis outputs and non‑MultiQC reports (ignored in git)
-  - phylogenetic tree SVG/PNG visualizations are written at step root (e.g. `outs/targeted_analysis/04.hpv16_tree/phylo_tree.svg`)
+- `outs/`: all analysis outputs, divided by step
 
 - `results/`: curated copies of key outputs (selected reports and reference results)
 
-- `docs/`: documentation (user manual, developer docs, and notes)
-  - `developers/`: developer manual, scripts reference, and step docs
-  - `notes/`: analysis notes and methods writeups
+## Documentation
 
-- `.agents/`: agent-oriented runtime/reference docs
+- `docs/`: user and developer documentation
+  - `CONTENTS.md`: this file
+  - `USER_MANUAL.md`: user manual and step-by-step instructions
+  - `developers/`: developer manual, scripts reference, and step docs
+
+- `.agents/`: coding agents-oriented documentation and skills
   - `PROJECT.md`: compact project facts/current state for agents
   - `WORKFLOW.md`: stable analysis step order/dependencies
   - `skills/`: local reusable skill specifications for recurring agent tasks
-    - `nextflow/`: Nextflow sandbox/offline execution contract
-    - `nextflow-coding/`: Nextflow pipeline authoring guardrails (params, escaping, output/report contracts)
-    - `multiqc-config/`: MultiQC YAML authoring guardrails (custom sections, `sp` wiring, compound IDs, ordering)
-    - `analysis-execution/`: wrapper/Nextflow execution and troubleshooting workflow
-    - `phylo-tree-operations/`: HPV16/HPV18 tree generation and reporting guardrails
-    - `results-summary/`: METHODS_AND_RESULTS authoring conventions
-    - `pipeline-step-reference/`: quick map of each analysis step (inputs/outputs/helpers)
-    - `reference-data-prep/`: build and validate derived/shared reference assets
-    - `repo-change-hygiene/`: metadata/path/doc synchronization checks
-    - `output-comparison/`: regression comparison workflow for reports/tables
