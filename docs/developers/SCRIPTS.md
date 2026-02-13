@@ -318,6 +318,17 @@ Key parameters:
 - `<output_fasta>`: extracted FASTA.
 - `[accession_col]`: accession column in the TSV (default 6).
 
+### `scripts/phylo_tree/build_lineage_refs_tsv.py`
+Purpose: Build lineage reference tip TSV used by lineage assignment helpers.
+This script is called by `pipelines/phylo_tree.nf` and writes the derived
+`hpv16_lineage_refs.tsv` / `hpv18_lineage_refs.tsv` into
+`derived_data/refdata/<hpv_tree>/`.
+Key parameters:
+- `--lineages-tsv`: input lineage table.
+- `--output`: output lineage refs TSV.
+- `--lineage-col`: 1-based lineage column in the lineage TSV (default 4).
+- `--accession-col`: 1-based accession column in the lineage TSV (default 6).
+
 ### `scripts/phylo_tree/rename_lineages.py`
 Purpose: Rename FASTA headers using metadata TSV columns (e.g., prefix with
 country or lineage). Used by the HPV16/18 selection scripts.
