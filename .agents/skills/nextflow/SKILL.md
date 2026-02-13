@@ -8,9 +8,9 @@ description: Standard environment contract for running Nextflow directly or via 
 Use this skill whenever a command may invoke Nextflow:
 - direct `nextflow run ...`
 - shell wrappers under `bin/*.run.sh`
-- Python wrappers like `bin/run_step.py`
+- Python wrappers like `scripts/steps/run_step.py`
 
-Note: `bin/run_step.py` now enforces repo-root cache paths and overrides any
+Note: `scripts/steps/run_step.py` now enforces repo-root cache paths and overrides any
 `CONDA_*`/`NXF_HOME` values pointing under `pipelines/.conda`.
 
 ## Environment preset
@@ -44,7 +44,7 @@ Examples:
 
 ```bash
 nextflow run pipelines/variant_analysis.nf ... -resume
-python3 bin/run_step.py config/steps/targeted_analysis.03.variant_analysis.json
+python3 scripts/steps/run_step.py config/steps/targeted_analysis.03.variant_analysis.json
 bin/targeted_analysis.steps/02.mapping_vs_pave.run.sh
 ```
 

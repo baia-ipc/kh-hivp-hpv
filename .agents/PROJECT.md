@@ -4,12 +4,12 @@ Compact project facts and current state for agent work.
 
 ## Repository Layout (canonical)
 
-- `bin/`: analysis and step wrappers; includes generic runner `bin/run_step.py`.
+- `bin/`: analysis and step wrappers; includes generic runner `scripts/steps/run_step.py`.
 - `config/`:
   - `config/user.config`: user-editable defaults.
   - `config/analyses/`: analysis/step path profiles.
   - `config/pipelines/`: technical Nextflow configuration.
-  - `config/steps/`: JSON configs used by `bin/run_step.py`.
+  - `config/steps/`: JSON configs used by `scripts/steps/run_step.py`.
 - `metadata/`: curated run/sample/tree metadata.
 - `pipelines/`: Nextflow workflows; `pipelines/multiqc/` stores MultiQC YAML.
 - `scripts/`: helper scripts grouped by domain.
@@ -25,7 +25,7 @@ Compact project facts and current state for agent work.
   `seq_samples/`.
 - `config/`:
   - `config/analyses/`: analysis path/profile configs.
-  - `config/steps/`: JSON args for `bin/run_step.py`.
+  - `config/steps/`: JSON args for `scripts/steps/run_step.py`.
   - `config/pipelines/`: technical Nextflow configs.
 - `pipelines/conda_env/`: `nextflow_java.env.yml`, `pipeline.env.yml`,
   `virstrain.env.yml`.

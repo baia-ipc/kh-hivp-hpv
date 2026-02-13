@@ -99,13 +99,13 @@ done < <(find "${params.mapping_outdir}" -mindepth 2 -maxdepth 2 -type f)
 
 ## Wrapper and Step JSON Rules
 
-- Keep per-step wrappers as thin shims that call `bin/run_step.py`.
+- Keep per-step wrappers as thin shims that call `scripts/steps/run_step.py`.
 - `config/steps/*.json`:
   - use `require_flag` for optional steps (for example VirStrain)
   - do not drop a required flag before pipeline evaluation
   - if needed, map aliases via `arg_transforms` (for example
     `--run-virstrain` to `--run_virstrain`)
-- Rely on `bin/run_step.py` runtime normalization to keep caches under repo-root
+- Rely on `scripts/steps/run_step.py` runtime normalization to keep caches under repo-root
   `.nextflow/` and `.conda/`, never `pipelines/.conda/`.
 - Preserve wrapper-driven concurrency mapping from `params.threads` to Nextflow
   flags (`-process.maxForks`, `-executor.queueSize`, `-process.cpus`) unless a
