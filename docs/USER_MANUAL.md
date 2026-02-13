@@ -7,132 +7,67 @@ The following software should be installed and available in `PATH`:
 - Nextflow (and Java 17+, required by Nextflow)
 - Conda (used by Nextflow for environment management)
 
-## Input reads
+## Input and reference data
 
-### Copy or link input reads
+### Input reads
 
-The sequencing reads are not included in the repository, due
-to their large size.
+The sequencing reads are not included in the repository, due to their large
+size.
 
-Copy or link each sequencing run folder under `input_reads/prelim_analysis` and
-`input_reads/targeted_analysis`. Two layouts are supported, which are used,
-respectively in prelim and targeted analyses:
+Download the sequencing reads from SRA and copy or link them in folders under
+`input_reads/prelim_analysis` or `input_reads/targeted_analysis`.
 
-1. `*_analysis/RUN_ID/Fastq/SAMPLE_R1.fastq.gz` (Reads in a Fastq layout)
-2. `*_analysis/RUN_ID/SAMPLE_R1.fastq.gz` (no Fastq subdirectory)
+The paths to the fastq files must be specified in sample sheets stored under
+`metadata` (described on the bottom of this document).
 
-### Sample sheets
+However, for replicating the analyses of the manuscript, no editing to configuration
+files is needed if the following structure and file/directory names are used:
+```
+input_reads/prelim_analysis: directory containing 3 folders:
+  HPV_150123_run01
+  HPV_250523_run02
+  HPV_160823_run03
 
-The sequencings samples are described in sample sheets under `metadata/` (see below).
-For replicating the analyses of the manuscript, no editing is necessary,
-as long as the expected directory structure of the input reads is maintained (see above).
-For more information about the sample sheets, see below.
+each of these three folders contains the FASTQ files in a `Fastq/` subfolder, e.g.:
+  HPV_150123_run01:
+    Fastq:
+      *.fastq.gz
+
+input_reads/targeted_analysis: directory containing the fastq files directly
+```
 
 ## Reference data
 
 ### PAVE
 
-Place the PAVE reference FASTA (and gene FASTAs if used) under `refdata/pave/`.
-Place the PAVE GFF3 files under `refdata/pave/gff3/` (one GFF3 per reference sequence).
+The reference sequences (Fasta) and annotations (gff3) for all human HPV
+can be downloaded from PAVE using the web interface.
 
-## Configuration
+- Open the PAVE website: https://pave.niaid.nih.gov/
+- Click on "Search" and select "Search Databases"
+- From the left pane, select "Database: Genomes" and
+  "Select Filters: Host Species: Homo sapiens"
+- Click on "Select All", then click on "Download" and select "Download Fasta"; this donwloads a Fasta
+  file which must renamed to `pave_hsa.fas` and placed under `refdata/pave`
+- Click on "Download" again and select "Download gff3";
+  this downloads a zip file, containing one GFF3 file for each HPV strain,
+  which must be unzipped before placing its contents under `refdata/pave/gff/`
+- On the left pane, click on "Database: Genes and regions" and
+  "Select Filters: Host Species: Homo sapiens", as well as "PV Genes and Regions: E6"
+- Click on "Select All", then click on "Download" and select "Download Fasta"; this donwloads a Fasta
+  file which must renamed to `pave_hsa.E6.fas` and placed under `refdata/pave`
+- On the left pane, change the "PV Genes and Regions" filter to "E7"
+- Click on "Select All", then click on "Download" and select "Download Fasta"; this donwloads a Fasta
+  file which must renamed to `pave_hsa.E7.fas` and placed under `refdata/pave`
 
-Some parameters of the program used in the analyses can be set in
-`config/user.config`:
-- number of threads to use
-- location of the Centrifuge index/taxdump
-- target country for db comparisons (Cambodia)
-- tree parameters defaults
+Other filenames are allowed instead of the ones specified above,
+but it would require editing the configuration files.
 
-The config directory contains many more configuration
-files, which are normally not edited by users (see below).
+## Centrifuge database
 
-### HPV16 phylogenetic tree
-
-Place these files under `refdata/hpv16_tree/`:
-- `HPV16_lineages.tsv`
-- `HPV16-NCBIVirus.fasta`
-- `HPV16-NCBIVirus.tsv`
-
-Outgroup accessions are provided in:
-- `metadata/hpv16_tree_outgroups.txt`
-If you want different outgroups, edit the list and ensure those accessions are
-present in the PAVE FASTA (`refdata/pave/pave_hsa.fas`).
-
-Lineage reference tips for optional lineage assignment live in:
-- `metadata/hpv16_lineage_refs.tsv`
-If you update the lineages table, regenerate the references accordingly.
-
-How to obtain the HPV16 inputs:
-
-- PAVE lineages table:
-  - Visit the PAVE variant genomes page.
-  - Search for HPV16.
-  - Copy the lineage table and save it as `refdata/hpv16_tree/HPV16_lineages.tsv`.
-
-- NCBI Virus downloads (complete genomes):
-  - Search NCBI Virus for “Human papillomavirus 16”.
-  - Filter to “Sequence Quality: Nucleotide Completeness: complete”.
-  - Download sequence data as FASTA (Nucleotide) using a custom definition line:
-    - `Accession Country Length Species GenBank/RefSeq GenBank Title Collection Date`
-  - Save as `refdata/hpv16_tree/HPV16-NCBIVirus.fasta`.
-  - Download the results table as TSV with columns:
-    - `Accession`, `GenBank_RefSeq`, `Organism_Name`, `Species`, `Genotype`,
-      `Isolate`, `GenBank_Title`, `Length`, `Nuc_Completeness`, `Geo_Location`,
-      `Country`, `Host`, `Tissue_Specimen_Source`, `Submitters`, `Publications`,
-      `Collection_Date`, `Release_Date`, `Molecule_type`
-  - Save as `refdata/hpv16_tree/HPV16-NCBIVirus.tsv`.
-
-- Selection list:
-  - List the accessions to include (one per line) in:
-    - `metadata/hpv16_tree_db_selection.txt`
-  - The pipeline derives `derived_data/refdata/hpv16_tree/HPV16-NCBIVirus.selected.tsv`
-    from the NCBI TSV plus this accession list.
-
-### HPV18 phylogenetic tree
-
-Place these files under `refdata/hpv18_tree/`:
-- `HPV18_lineages.tsv`
-- `HPV18-NCBIVirus.fasta`
-- `HPV18-NCBIVirus.tsv`
-
-Outgroup accessions are provided in:
-- `metadata/hpv18_tree_outgroups.txt`
-If you want different outgroups, edit the list and ensure those accessions are
-present in the PAVE FASTA (`refdata/pave/pave_hsa.fas`).
-
-Lineage reference tips for optional lineage assignment live in:
-- `metadata/hpv18_lineage_refs.tsv`
-If you update the lineages table, regenerate the references accordingly.
-
-How to obtain the HPV18 inputs:
-
-- PAVE lineages table:
-  - Visit the PAVE variant genomes page.
-  - Search for HPV18.
-  - Copy the lineage table and save it as `refdata/hpv18_tree/HPV18_lineages.tsv`.
-- NCBI Virus downloads (complete genomes):
-  - Search NCBI Virus for “Human papillomavirus 18”.
-  - Filter to “Sequence Quality: Nucleotide Completeness: complete”.
-  - Download sequence data as FASTA (Nucleotide) using a custom definition line:
-    - `Accession Country Length Species GenBank/RefSeq GenBank Title Collection Date`
-  - Save as `refdata/hpv18_tree/HPV18-NCBIVirus.fasta`.
-  - Download the results table as TSV with columns:
-    - `Accession`, `GenBank_RefSeq`, `Organism_Name`, `Species`, `Genotype`,
-      `Isolate`, `GenBank_Title`, `Length`, `Nuc_Completeness`, `Geo_Location`,
-      `Country`, `Host`, `Tissue_Specimen_Source`, `Submitters`, `Publications`,
-      `Collection_Date`, `Release_Date`, `Molecule_type`
-  - Save as `refdata/hpv18_tree/HPV18-NCBIVirus.tsv`.
-- Selection list:
-  - List the accessions to include (one per line) in:
-    - `metadata/hpv18_tree_db_selection.txt`
-  - The pipeline derives `derived_data/refdata/hpv18_tree/HPV18-NCBIVirus.acc_country.selected.tsv`
-    from the NCBI TSV plus this accession list.
-
-## Prepare Centrifuge database
-
-Build or provide a Centrifuge database and taxonomy dump. A helper script is
-included:
+A helper script to download and build the necessary Centrifuge database,
+containing human, viral, microbial sequences, and the corresponding taxonomy,
+is provided in the repository.
 
 ```
 scripts/taxonomy_assignment/build_centrifuge_db.sh \
@@ -141,14 +76,57 @@ scripts/taxonomy_assignment/build_centrifuge_db.sh \
   --threads 24
 ```
 
-Then update `config/user.config`, for example:
+This, executed from the pipeline root directory, dowloads the necessary data
+under `refdata/centrifuge`. If another path is used, update the
+user configuration (see below).
 
-- `index = "refdata/centrifuge/human_abv"`
-- `taxdump = "refdata/centrifuge/taxonomy-YYYY-MM-DD"`
+### HPV16 and HPV18 lineage reference sequences
 
-By default the script builds an index that includes human plus RefSeq
-archaea/bacteria/viral. If you need a different composition, pass
-`--refseq-domains` (e.g., `--refseq-domains viral`).
+The lineage reference sequences for HPV16 and HPV18 must be downloaded from
+PAVE and can be obtained as followed:
+- Visit the PAVE variant genomes page.
+- Search for HPV16 or HPV18.
+- Copy the lineage table and save it as
+  `refdata/hpv16_tree/HPV16_lineages.tsv` or, respectively,
+  `refdata/hpv18_tree/HPV18_lineages.tsv`.
+
+### HPV16 and HPV18 NCBI Virus data
+
+How to obtain the HPV16 and HPV18 data from NCBI virus:
+
+- NCBI Virus downloads (complete genomes):
+  - Search NCBI Virus for “Human papillomavirus 16”. (or 18)
+  - Filter to “Sequence Quality: Nucleotide Completeness: complete”.
+  - Download sequence data as FASTA (Nucleotide) using a custom definition line:
+    - `Accession Country Length Species GenBank/RefSeq GenBank Title Collection Date`
+  - Save as `refdata/hpv16_tree/HPV16-NCBIVirus.fasta`
+    or `refdata/hpv18_tree/HPV18-NCBIVirus.tsv`.
+  - Download the results table as TSV with columns:
+    - `Accession`, `GenBank_RefSeq`, `Organism_Name`, `Species`, `Genotype`,
+      `Isolate`, `GenBank_Title`, `Length`, `Nuc_Completeness`, `Geo_Location`,
+      `Country`, `Host`, `Tissue_Specimen_Source`, `Submitters`, `Publications`,
+      `Collection_Date`, `Release_Date`, `Molecule_type`
+  - Save as `refdata/hpv16_tree/HPV16-NCBIVirus.tsv`.
+
+### HPV16 and HPV18 selections for the phylogenetic tree
+
+- Selection list:
+  - List the accessions to include (one per line) in:
+    - `metadata/hpv16_tree_db_selection.txt`
+    - `metadata/hpv18_tree_db_selection.txt`
+
+### HPV16 and HPV18 outgroup accessions
+
+Outgroup accessions are provided in:
+- `metadata/hpv16_tree_outgroups.txt`
+If you want different outgroups, edit the list and ensure those accessions are
+present in the PAVE FASTA (`refdata/pave/pave_hsa.fas`).
+
+## User configuration file
+
+The user pipeline configuration file is `config/user.config`.
+The only values which the user might want to change are the number of threads
+to use and the phylogenetic trees step parameters.
 
 ## Run the analyses
 
