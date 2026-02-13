@@ -47,6 +47,7 @@ params.refdata_dir = params.containsKey('refdata_dir') ? params.refdata_dir : nu
 params.derived_dir = params.containsKey('derived_dir') ? params.derived_dir : null
 params.input_dir = params.containsKey('input_dir') ? params.input_dir : params.derived_dir
 params.lineages_tsv = params.containsKey('lineages_tsv') ? params.lineages_tsv : null
+params.lineage_refs_tsv = params.containsKey('lineage_refs_tsv') ? params.lineage_refs_tsv : null
 params.ncbi_tsv = params.containsKey('ncbi_tsv') ? params.ncbi_tsv : null
 params.ncbi_fasta = params.containsKey('ncbi_fasta') ? params.ncbi_fasta : null
 params.outgroups_fasta = params.containsKey('outgroups_fasta') ? params.outgroups_fasta : null
@@ -62,6 +63,9 @@ params.bcf_dir = params.containsKey('bcf_dir') ? params.bcf_dir : null
 params.bcf_run_id = params.containsKey('bcf_run_id') ? params.bcf_run_id : null
 params.sample_prep_script = params.containsKey('sample_prep_script') ? params.sample_prep_script : null
 params.lineage_extract_script = params.containsKey('lineage_extract_script') ? params.lineage_extract_script : null
+params.lineage_refs_build_script = (params.containsKey('lineage_refs_build_script') && params.lineage_refs_build_script) ? params.lineage_refs_build_script : "${params.scripts_dir}/phylo_tree/build_lineage_refs_tsv.py"
+params.lineage_refs_lineage_col = params.containsKey('lineage_refs_lineage_col') ? params.lineage_refs_lineage_col : 4
+params.lineage_refs_accession_col = params.containsKey('lineage_refs_accession_col') ? params.lineage_refs_accession_col : 6
 params.selection_script = params.containsKey('selection_script') ? params.selection_script : null
 params.rename_tsv = params.containsKey('rename_tsv') ? params.rename_tsv : null
 params.rename_acc_col = params.containsKey('rename_acc_col') ? params.rename_acc_col : null
@@ -117,6 +121,10 @@ if (refdataDir && !refdataDir.isDirectory()) {
 if (!derivedDir.isDirectory()) {
     derivedDir.mkdirs()
 }
+params.derived_dir = derivedDir.toString()
+if (!params.lineage_refs_tsv && params.hpv_type) {
+    params.lineage_refs_tsv = "${params.derived_dir}/${params.hpv_type.toString().toLowerCase()}_lineage_refs.tsv"
+}
 
 def checkPath(String path, String label) {
     def target = new File(path)
@@ -143,6 +151,7 @@ if (!params.samples_tsv) error "params.samples_tsv is required"
 if (!params.mapping_outdir) error "params.mapping_outdir is required"
 if (!params.sample_prep_script) error "params.sample_prep_script is required"
 if (!params.lineage_extract_script) error "params.lineage_extract_script is required"
+if (!params.lineage_refs_tsv) error "params.lineage_refs_tsv is required"
 if (!params.selection_script) error "params.selection_script is required"
 if (!params.hpv_type) error "params.hpv_type is required"
 
@@ -159,6 +168,7 @@ checkPath(params.samples_tsv as String, 'Samples TSV')
 checkDir(params.mapping_outdir as String, 'Mapping output')
 checkPath(params.sample_prep_script as String, 'Sample prep script')
 checkPath(params.lineage_extract_script as String, 'Lineage extract script')
+checkPath(params.lineage_refs_build_script as String, 'Lineage refs build script')
 checkPath(params.selection_script as String, 'Selection script')
 checkPath(params.tree_render_script as String, 'Tree render script')
 checkPath(params.tree_stats_script as String, 'Tree stats script')
@@ -221,6 +231,28 @@ process PREP_LINEAGES {
       "${lineages_tsv}" 6 4 \\
       lineages_ref.fasta \\
       lineages_ref_renamed.fasta
+    """
+}
+
+process PREP_LINEAGE_REFS {
+    tag "prepare_lineage_refs"
+    publishDir { "${params.derived_dir}" }, mode: 'copy'
+    conda params.conda_env
+    def refsOut = new File(params.lineage_refs_tsv.toString()).getName()
+
+    input:
+    path(lineages_tsv)
+
+    output:
+    path refsOut, emit: refs
+
+    script:
+    """
+    python3 "${params.lineage_refs_build_script}" \\
+      --lineages-tsv "${lineages_tsv}" \\
+      --lineage-col "${params.lineage_refs_lineage_col}" \\
+      --accession-col "${params.lineage_refs_accession_col}" \\
+      --output "${refsOut}"
     """
 }
 
@@ -508,6 +540,7 @@ workflow {
     def outgroupsList = file(params.outgroups_list)
 
     def lineagesReady = PREP_LINEAGES(lineagesTsv, ncbiFasta).renamed
+    def lineageRefsReady = PREP_LINEAGE_REFS(lineagesTsv).refs
 
     def selectedTsvReady = PREP_SELECTION_TSV(
         ncbiTsv,
@@ -528,6 +561,6 @@ workflow {
     def tree = IQTREE(trimmed.trimal)
     def tree_rendered = RENDER_TREE(tree.treefile)
     def stats = TREE_STATS(selectedReady, outgroupsReady, lineagesReady, samplesReady, aligned, trimmed.trimal, tree.iqtree, tree.treefile)
-    def qc_inputs = tree_rendered.svg.mix(stats)
+    def qc_inputs = tree_rendered.svg.mix(stats).mix(lineageRefsReady)
     MULTIQC(multiqc_config_file, qc_inputs.collect())
 }
