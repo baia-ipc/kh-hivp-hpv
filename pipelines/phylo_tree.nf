@@ -244,7 +244,7 @@ process PREP_LINEAGE_REFS {
     path(lineages_tsv)
 
     output:
-    path refsOut, emit: refs
+    path "${refsOut}", emit: refs
 
     script:
     """
