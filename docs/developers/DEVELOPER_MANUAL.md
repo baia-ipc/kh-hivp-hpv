@@ -42,3 +42,4 @@ Outgroup accessions live in `metadata/hpv16_tree/hpv16_tree_outgroups.txt` and
 - Step 03 (Variant analysis): `docs/developers/steps/targeted_analysis-03.variant_analysis.md`
 - Step 04 (HPV16 tree): `docs/developers/steps/targeted_analysis-04.hpv16_tree.md`
 - Step 05 (HPV18 tree): `docs/developers/steps/targeted_analysis-05.hpv18_tree.md`
+- Step 06 (Recombination analysis): `docs/developers/steps/targeted_analysis-06.recombination_analysis.md`

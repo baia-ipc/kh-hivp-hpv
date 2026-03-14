@@ -122,11 +122,32 @@ Outgroup accessions are provided in:
 If you want different outgroups, edit the list and ensure those accessions are
 present in the PAVE FASTA (`refdata/pave/pave_hsa.fas`).
 
+### Recombination analysis metadata inputs
+
+The recombination step (`targeted_analysis` step 06) currently supports
+metadata-driven FASTA input (`metadata_fasta` mode).
+
+Fill this table with one row per sample FASTA:
+
+- `metadata/recombination_analysis/sequence_sets/targeted_analysis.recombination_sequences.tsv`
+  - required columns: `run_id`, `sample_id`, `hpv_type`, `fasta_path`
+
+Optional metadata:
+
+- `metadata/recombination_analysis/exclude_lists/default_controls.txt`
+  - explicit sample IDs to exclude
+- `metadata/recombination_analysis/hpv_type_groups/high_risk_hpv_types.txt`
+  - optional HPV type groups to help curate allowlists
+
+By default, summaries also exclude technical artifacts matching:
+`H2O`, `HPV-110`, `Ex`, `HPV-19`, and `Undetermined*`.
+
 ## User configuration file
 
 The user pipeline configuration file is `config/user.config`.
 The only values which the user might want to change are the number of threads
-to use and the phylogenetic trees step parameters.
+to use, phylogenetic tree parameters, and recombination parameters (MAFFT/GARD
+settings and filtering behavior).
 
 ## Run the analyses
 
@@ -168,6 +189,7 @@ bin/targeted_analysis.steps/02.mapping_vs_pave.run.sh
 bin/targeted_analysis.steps/03.variant_analysis.run.sh
 bin/targeted_analysis.steps/04.hpv16_tree.run.sh
 bin/targeted_analysis.steps/05.hpv18_tree.run.sh
+bin/targeted_analysis.steps/06.recombination_analysis.run.sh
 ```
 
 ## Troubleshooting
@@ -233,4 +255,3 @@ bin/prelim_analysis.steps/single_sample/02.mapping_vs_pave.run_sample.sh \
   /path/to/SAMPLE_R1.fastq.gz /path/to/SAMPLE_R2.fastq.gz \
   outs/prelim_analysis/02.mapping_vs_pave/RUN_ID/SAMPLE
 ```
-

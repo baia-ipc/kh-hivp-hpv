@@ -16,6 +16,7 @@ Stable happy-path execution order. No commands here.
 3. `03.variant_analysis` (depends on step 02; optional DB branch inside step)
 4. `04.hpv16_tree` (depends on tree inputs + mapping outputs)
 5. `05.hpv18_tree` (depends on tree inputs + mapping outputs)
+6. `06.recombination_analysis` (depends on metadata-provided consensus FASTA set)
 
 Notes:
 - Tree steps may need explicit `bcf_run_id` in

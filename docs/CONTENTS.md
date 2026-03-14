@@ -16,7 +16,7 @@
 
 - `scripts/`: helper Python and shell scripts, grouped in subdirectories
    by concern (taxonomy\_assignment, top\_strains, coverage, variants,
-   pave, virstrain, phylo\_tree, steps)
+   pave, virstrain, phylo\_tree, recombination, steps)
 
 - `bin/`: analysis runner scripts (wrappers around Nextflow pipelines)
   - `prelim_analysis.run.sh`: preliminary analysis wrapper
@@ -36,7 +36,8 @@
   - `pipelines/`: configuration of the Nextflow workflows
 
 - `metadata/`: curated metadata files, divided by concern
-               (bucketing, cohort, phylogenetic tree inputs, sample lists)
+               (bucketing, cohort, phylogenetic tree inputs, sample lists,
+               recombination input selections)
 
 - `refdata/`: external reference inputs (PAVE FASTA/GFF3, NCBI sequences and metadata)
 

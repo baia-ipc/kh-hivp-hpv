@@ -1,0 +1,10 @@
+{
+  "pipeline_nf": "pipelines/recombination_analysis.nf",
+  "configs": [
+    "config/pipelines/common.config",
+    "config/pipelines/recombination_analysis.config",
+    "config/user.config",
+    "config/analyses/targeted_analysis.config"
+  ],
+  "profile": "targeted_recombination_analysis"
+}

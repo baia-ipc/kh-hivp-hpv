@@ -27,3 +27,4 @@ done
 "$SCRIPTSDIR/targeted_analysis.steps/03.variant_analysis.run.sh" "${common_args[@]}"
 "$SCRIPTSDIR/targeted_analysis.steps/04.hpv16_tree.run.sh" "${common_args[@]}"
 "$SCRIPTSDIR/targeted_analysis.steps/05.hpv18_tree.run.sh" "${common_args[@]}"
+"$SCRIPTSDIR/targeted_analysis.steps/06.recombination_analysis.run.sh" "${common_args[@]}"

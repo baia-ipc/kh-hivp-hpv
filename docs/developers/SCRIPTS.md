@@ -477,3 +477,57 @@ Key parameters:
 - `--ref-fasta`: reference FASTA.
 - `--bed-dir`: directory with E6/E7 BED files.
 - `--output`: output TSV path.
+
+## Recombination analysis
+
+### `scripts/recombination/prepare_recombination_inputs.py`
+Purpose: Build a normalized recombination input FASTA from a metadata table,
+apply sample exclusions, and emit manifest/exclusion audit tables.
+Key parameters:
+- `--sequences-tsv`: metadata table containing FASTA paths.
+- `--output-fasta`: merged FASTA for downstream alignment.
+- `--output-manifest`: included records table.
+- `--output-excluded`: excluded rows table.
+- `--repo-root`: base path for resolving relative FASTA paths.
+- `--skip-controls` + `--exclude-pattern`: filter technical artifacts.
+- `--exclude-samples-tsv`: optional explicit sample exclusion list.
+- `--hpv-types`: optional HPV type allowlist.
+
+### `scripts/recombination/run_hyphy_gard.sh`
+Purpose: Execute HyPhy GARD with compatibility fallbacks for CLI variants and
+produce a deterministic JSON artifact used by downstream parsing.
+Key parameters:
+- `<alignment.fasta>`: aligned nucleotide FASTA.
+- `<gard.json>`: expected output JSON path.
+- `<gard.log>`: command log path.
+- `<model>`: GARD substitution model spec.
+- `<rate_classes>`: number of rate classes.
+- `<max_breakpoints>`: breakpoint search cap.
+
+### `scripts/recombination/parse_gard_json.py`
+Purpose: Parse raw GARD JSON output into normalized breakpoint tables and
+summary JSON/warnings.
+Key parameters:
+- `--input-json`: raw GARD JSON file.
+- `--output-breakpoints-tsv`: normalized breakpoint table.
+- `--output-summary-json`: high-level parse summary.
+- `--output-warnings-tsv`: warnings table.
+
+### `scripts/recombination/summarize_recombination.py`
+Purpose: Aggregate recombination artifacts into event tables (TSV/CSV/JSON), a
+markdown report, warning table, and MultiQC metrics table.
+Key parameters:
+- `--manifest-tsv`: included sequence manifest.
+- `--excluded-tsv`: excluded rows table.
+- `--gard-breakpoints-tsv`: parsed breakpoint positions.
+- `--gard-summary-json`: GARD parse summary.
+- `--output-*`: machine-readable, markdown, warning, and MultiQC outputs.
+
+### `scripts/recombination/plot_alignment_similarity.py`
+Purpose: Compute pairwise sequence identity from aligned FASTA and render a
+heatmap plot for exploratory interpretation support.
+Key parameters:
+- `--alignment`: aligned FASTA input.
+- `--output-tsv`: pairwise identity table.
+- `--output-png`: heatmap image output.
+- `--output-warnings`: warning table.

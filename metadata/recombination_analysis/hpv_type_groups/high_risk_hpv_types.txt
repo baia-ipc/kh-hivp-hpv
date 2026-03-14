@@ -1,0 +1,3 @@
+# Optional HPV type allowlist template (one per line)
+HPV16
+HPV18

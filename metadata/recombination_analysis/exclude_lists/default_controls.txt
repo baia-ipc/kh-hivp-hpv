@@ -1,0 +1,5 @@
+# Explicit control/artifact sample IDs (case-sensitive exact matches)
+H2O
+HPV-110
+Ex
+HPV-19
