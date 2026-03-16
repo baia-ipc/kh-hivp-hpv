@@ -161,7 +161,7 @@ def main():
     parser.add_argument("args", nargs=argparse.REMAINDER, help="Args to pass to Nextflow")
     opts = parser.parse_args()
 
-    repo_root = Path(__file__).resolve().parents[1]
+    repo_root = Path(__file__).resolve().parents[2]
     configure_runtime_env(repo_root)
     cfg_path = resolve_path(repo_root, opts.config_json)
     if not cfg_path or not cfg_path.exists():

@@ -1,0 +1,33 @@
+title: "Recombination Analysis - Report"
+
+custom_data:
+  methods_summary:
+    plot_type: "html"
+    section_name: "Methods summary"
+    description: "Automated recombination workflow used in this step"
+    data: |
+      <ul>
+        <li><strong>Input preparation:</strong> metadata-driven FASTA selection with control/artifact exclusion.</li>
+        <li><strong>Alignment:</strong> MAFFT multiple-sequence alignment.</li>
+        <li><strong>Breakpoint screening:</strong> HyPhy GARD inference of phylogenetic breakpoints.</li>
+        <li><strong>Summarization:</strong> machine-readable event tables (TSV/CSV/JSON) and markdown report.</li>
+      </ul>
+      <p><strong>Note:</strong> RDP is intentionally excluded from this automated step.</p>
+  interpretation_note:
+    plot_type: "html"
+    section_name: "Interpretation note"
+    description: "Scientific caveat for HPV recombination signals"
+    data: |
+      <p>HPV recombination signals are generally rare and should be interpreted cautiously.</p>
+      <p>Validate putative events against alignment artifacts, mixed infections, contamination, and consensus quality.</p>
+  recombination_summary_table:
+    file_format: "tsv"
+    section_name: "Recombination summary"
+    description: "Pipeline-level metrics for recombination screening"
+    plot_type: "table"
+    pconfig:
+      col1_header: "Metric"
+
+sp:
+  recombination_summary_table:
+    fn: "recombination_summary.multiqc.tsv"

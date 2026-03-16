@@ -5,7 +5,8 @@ This repository contains a reproducible workflow used for HPV sequencing analysi
 Two analyses are included:
 
 - `prelim_analysis`: analysis of the first three MiSeq runs (all patients + controls).
-- `targeted_analysis`: deeper sequencing for HPV16/HPV18‑positive samples.
+- `targeted_analysis`: deeper sequencing for HPV16/HPV18‑positive samples,
+  including phylogenetic trees and recombination analysis.
 
 To run the analyses:
 

@@ -18,8 +18,9 @@ Tree selection lists live in `metadata/hpv16_tree/hpv16_tree_db_selection.txt` a
 `metadata/hpv18_tree/hpv18_tree_db_selection.txt`; the phylo tree pipeline derives the
 selected TSVs under `derived_data/refdata/hpv16_tree/` and
 `derived_data/refdata/hpv18_tree/`.
-Lineage reference tip lists live in `metadata/hpv16_tree/hpv16_lineage_refs.tsv` and
-`metadata/hpv18_tree/hpv18_lineage_refs.tsv` and are used by lineage assignment helpers.
+Lineage reference tip lists are generated during tree construction and written to
+`derived_data/refdata/hpv16_tree/hpv16_lineage_refs.tsv` and
+`derived_data/refdata/hpv18_tree/hpv18_lineage_refs.tsv`.
 Outgroup accessions live in `metadata/hpv16_tree/hpv16_tree_outgroups.txt` and
 `metadata/hpv18_tree/hpv18_tree_outgroups.txt`, and are extracted from the PAVE FASTA.
 
@@ -41,3 +42,4 @@ Outgroup accessions live in `metadata/hpv16_tree/hpv16_tree_outgroups.txt` and
 - Step 03 (Variant analysis): `docs/developers/steps/targeted_analysis-03.variant_analysis.md`
 - Step 04 (HPV16 tree): `docs/developers/steps/targeted_analysis-04.hpv16_tree.md`
 - Step 05 (HPV18 tree): `docs/developers/steps/targeted_analysis-05.hpv18_tree.md`
+- Step 06 (Recombination analysis): `docs/developers/steps/targeted_analysis-06.recombination_analysis.md`
