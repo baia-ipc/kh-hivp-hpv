@@ -11,22 +11,28 @@ The following software should be installed and available in `PATH`:
 
 ### Copy or link input reads
 
-The sequencing reads are not included in the repository, due
-to their large size.
+The sequencing reads are not included in the repository, due to their large
+size.
 
-Copy or link each sequencing run folder under `input_reads/prelim_analysis` and
-`input_reads/targeted_analysis`. Two layouts are supported, which are used,
-respectively in prelim and targeted analyses:
+Download the sequencing reads from SRA and copy or link them in folders under
+`input_reads/prelim_analysis` or `input_reads/targeted_analysis`.
 
-1. `*_analysis/RUN_ID/Fastq/SAMPLE_R1.fastq.gz` (Reads in a Fastq layout)
-2. `*_analysis/RUN_ID/SAMPLE_R1.fastq.gz` (no Fastq subdirectory)
+Reads files (`*.fastq.gz`) can be directly under the `RUN_ID` folder or in a
+`Fastq/` subfolder, as long as the sample sheets (see below) point to the
+correct location.
+
+For replicating the analyses of the manuscript, no editing to configuration
+files is needed if the following structure is used:
+```
+```
 
 ### Sample sheets
 
-The sequencings samples are described in sample sheets under `metadata/` (see below).
-For replicating the analyses of the manuscript, no editing is necessary,
-as long as the expected directory structure of the input reads is maintained (see above).
-For more information about the sample sheets, see below.
+The sequencings samples are described in sample sheets under `metadata/`.
+
+For replicating the analyses of the manuscript, no editing is necessary, as
+long as the expected directory structure of the input reads is maintained (see
+above). For more information about the sample sheets, see below.
 
 ## Reference data
 
