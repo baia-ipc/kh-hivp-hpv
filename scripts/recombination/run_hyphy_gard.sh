@@ -38,11 +38,19 @@ fi
 success=0
 if run_try hyphy gard --alignment "$alignment" --output "$out_json" --model "$model" --rate-classes "$rate_classes" --max-breakpoints "$max_breakpoints"; then
   success=1
+elif run_try hyphy "ENV=TOLERATE_NUMERICAL_ERRORS=1" gard --alignment "$alignment" --output "$out_json" --model "$model" --rate-classes "$rate_classes" --max-breakpoints "$max_breakpoints"; then
+  success=1
 elif run_try hyphy gard --alignment "$alignment" --output "$out_json" --model "$model" --rate-classes "$rate_classes"; then
+  success=1
+elif run_try hyphy "ENV=TOLERATE_NUMERICAL_ERRORS=1" gard --alignment "$alignment" --output "$out_json" --model "$model" --rate-classes "$rate_classes"; then
   success=1
 elif run_try hyphy GARD --alignment "$alignment" --output "$out_json" --model "$model" --rate-classes "$rate_classes"; then
   success=1
+elif run_try hyphy "ENV=TOLERATE_NUMERICAL_ERRORS=1" GARD --alignment "$alignment" --output "$out_json" --model "$model" --rate-classes "$rate_classes"; then
+  success=1
 elif run_try hyphy GARD --alignment "$alignment" --output "$out_json"; then
+  success=1
+elif run_try hyphy "ENV=TOLERATE_NUMERICAL_ERRORS=1" GARD --alignment "$alignment" --output "$out_json"; then
   success=1
 fi
 
