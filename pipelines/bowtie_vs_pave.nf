@@ -116,18 +116,17 @@ def featuresReady = (featuresDir.isDirectory() && featuresDir.listFiles()?.any {
 
 process GENERATE_FEATURES_TSV {
     tag "features_tsv"
-    publishDir { "${params.features_tsv_dir}" }, mode: 'copy'
+    publishDir { "${params.features_tsv_dir}" }, mode: 'copy', pattern: '*.tsv'
 
     input:
     val(dummy)
 
     output:
-    path "features_tsv", emit: features
+    path "*.tsv", emit: files
 
     script:
     """
-    mkdir -p features_tsv
-    "${params.scripts_dir}/pave/gff3_to_features_tsv.run_all.sh" "${params.pave_gff3_dir}" features_tsv
+    "${params.scripts_dir}/pave/gff3_to_features_tsv.run_all.sh" "${params.pave_gff3_dir}" .
     """
 }
 
@@ -136,13 +135,12 @@ process CREATE_INDEX {
     publishDir { "${params.bowtie_index_dir}" }, mode: 'copy', pattern: 'pave_hsa*'
 
     output:
-    path "index/pave_hsa.1.bt2", emit: marker
+    path "pave_hsa*", emit: files
 
     script:
     """
-    mkdir -p index
-    ln -sf "${params.pave_ref_fasta}" index/pave_hsa.fas
-    bowtie2-build index/pave_hsa.fas index/pave_hsa
+    ln -sf "${params.pave_ref_fasta}" pave_hsa.fas
+    bowtie2-build pave_hsa.fas pave_hsa
     """
 }
 
@@ -278,10 +276,10 @@ workflow {
     }
 
     if (!indexReady) {
-        indexReady = CREATE_INDEX().marker.map { true }
+        indexReady = CREATE_INDEX().files.collect().map { true }
     }
     if (!featuresReady) {
-        featuresReady = GENERATE_FEATURES_TSV(Channel.value(true)).features.map { true }
+        featuresReady = GENERATE_FEATURES_TSV(Channel.value(true)).files.collect().map { true }
     }
 
     def samples
