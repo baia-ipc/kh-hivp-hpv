@@ -211,10 +211,13 @@ process RECOMBINATION_SUMMARY {
     publishDir { "${params.reports_dir}" }, mode: 'copy', pattern: "recombination_events.tsv"
     publishDir { "${params.reports_dir}" }, mode: 'copy', pattern: "recombination_summary.md"
     publishDir { "${params.reports_dir}" }, mode: 'copy', pattern: "recombination_summary.multiqc.tsv"
+    publishDir { "${params.reports_dir}" }, mode: 'copy', pattern: "recombination_breakpoint_evidence.multiqc.tsv"
+    publishDir { "${params.reports_dir}" }, mode: 'copy', pattern: "recombination_sample_evidence.multiqc.tsv"
 
     input:
     path(manifest)
     path(excluded)
+    path(gard_json)
     path(gard_breakpoints)
     path(gard_summary)
 
@@ -225,12 +228,15 @@ process RECOMBINATION_SUMMARY {
     path "recombination_summary.md", emit: summary_md
     path "recombination_warnings.tsv", emit: warnings_tsv
     path "recombination_summary.multiqc.tsv", emit: multiqc_tsv
+    path "recombination_breakpoint_evidence.multiqc.tsv", emit: breakpoint_tsv
+    path "recombination_sample_evidence.multiqc.tsv", emit: sample_tsv
 
     script:
     """
     python3 "${params.summary_script}" \\
       --manifest-tsv "${manifest}" \\
       --excluded-tsv "${excluded}" \\
+      --gard-json "${gard_json}" \\
       --gard-breakpoints-tsv "${gard_breakpoints}" \\
       --gard-summary-json "${gard_summary}" \\
       --output-events-tsv "recombination_events.tsv" \\
@@ -239,6 +245,8 @@ process RECOMBINATION_SUMMARY {
       --output-summary-md "recombination_summary.md" \\
       --output-warnings-tsv "recombination_warnings.tsv" \\
       --output-multiqc-tsv "recombination_summary.multiqc.tsv" \\
+      --output-breakpoint-multiqc-tsv "recombination_breakpoint_evidence.multiqc.tsv" \\
+      --output-sample-multiqc-tsv "recombination_sample_evidence.multiqc.tsv" \\
       --gard-support-confidence "${params.recombination_gard_confidence}"
     """
 }
@@ -275,6 +283,8 @@ process MULTIQC {
     path(multiqc_config)
     path(summary_multiqc)
     path(summary_md)
+    path(breakpoint_multiqc)
+    path(sample_multiqc)
 
     output:
     path("${params.multiqc_report_name}")
@@ -302,11 +312,11 @@ workflow {
         : ALIGN_MAFFT(prepared.fasta).alignment
 
     def gard = GARD_BREAKPOINTS(aligned)
-    def summary = RECOMBINATION_SUMMARY(prepared.manifest, prepared.excluded, gard.breakpoints, gard.summary)
+    def summary = RECOMBINATION_SUMMARY(prepared.manifest, prepared.excluded, gard.gard_json, gard.breakpoints, gard.summary)
 
     if (params.recombination_enable_similarity_plot) {
         SIMILARITY_PLOTS(aligned)
     }
 
-    MULTIQC(multiqcConfigFile, summary.multiqc_tsv, summary.summary_md)
+    MULTIQC(multiqcConfigFile, summary.multiqc_tsv, summary.summary_md, summary.breakpoint_tsv, summary.sample_tsv)
 }

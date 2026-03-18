@@ -20,6 +20,7 @@ custom_data:
     data: |
       <p>HPV recombination signals are generally rare and should be interpreted cautiously.</p>
       <p>Validate putative events against alignment artifacts, mixed infections, contamination, and consensus quality.</p>
+      <p><strong>Important:</strong> this automated GARD workflow provides alignment-level evidence only. It does not assign a specific sample as the recombinant strain, and it does not report per-sample p-values.</p>
   recombination_summary_table:
     file_format: "tsv"
     section_name: "Recombination summary"
@@ -27,7 +28,25 @@ custom_data:
     plot_type: "table"
     pconfig:
       col1_header: "Metric"
+  recombination_sample_evidence:
+    file_format: "tsv"
+    section_name: "Per-Sample Interpretation"
+    description: "One row per analyzed sample, showing whether the alignment had recombination evidence and whether a sample-specific assignment is possible."
+    plot_type: "table"
+    pconfig:
+      col1_header: "Sample"
+  recombination_breakpoint_evidence:
+    file_format: "tsv"
+    section_name: "Breakpoint Statistics"
+    description: "Breakpoint-level GARD statistics. GARD reports c-AIC and support metrics, not per-breakpoint p-values."
+    plot_type: "table"
+    pconfig:
+      col1_header: "Breakpoint"
 
 sp:
   recombination_summary_table:
     fn: "recombination_summary.multiqc.tsv"
+  recombination_sample_evidence:
+    fn: "recombination_sample_evidence.multiqc.tsv"
+  recombination_breakpoint_evidence:
+    fn: "recombination_breakpoint_evidence.multiqc.tsv"
