@@ -281,9 +281,6 @@ process MULTIQC {
 
     script:
     """
-    cp "${summary_multiqc}" .
-    cp "${summary_md}" .
-
     multiqc --force \\
       --filename "${params.multiqc_report_name}" \\
       --config "${multiqc_config}" \\
