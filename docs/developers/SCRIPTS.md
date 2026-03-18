@@ -481,17 +481,21 @@ Key parameters:
 ## Recombination analysis
 
 ### `scripts/recombination/prepare_recombination_inputs.py`
-Purpose: Build a normalized recombination input FASTA from a metadata table,
-apply sample exclusions, and emit manifest/exclusion audit tables.
+Purpose: Build per-HPV-type recombination input groups from the sample metadata
+table, add same-type tree-selected background references, collapse exact
+duplicates, and emit manifest/exclusion audit tables.
 Key parameters:
 - `--sequences-tsv`: metadata table containing FASTA paths.
-- `--output-fasta`: merged FASTA for downstream alignment.
+- `--output-groups-tsv`: per-type group manifest for Nextflow fan-out.
 - `--output-manifest`: included records table.
+- `--output-duplicate-map`: exact-duplicate collapse audit table.
 - `--output-excluded`: excluded rows table.
 - `--repo-root`: base path for resolving relative FASTA paths.
+- `--work-root`: task work directory used to materialize group FASTAs/manifests.
 - `--skip-controls` + `--exclude-pattern`: filter technical artifacts.
 - `--exclude-samples-tsv`: optional explicit sample exclusion list.
 - `--hpv-types`: optional HPV type allowlist.
+- `--hpv16-background-fasta` / `--hpv18-background-fasta`: same-type tree-selected references.
 
 ### `scripts/recombination/run_hyphy_gard.sh`
 Purpose: Execute HyPhy GARD with compatibility fallbacks for CLI variants and
@@ -509,19 +513,80 @@ Purpose: Parse raw GARD JSON output into normalized breakpoint tables and
 summary JSON/warnings.
 Key parameters:
 - `--input-json`: raw GARD JSON file.
+- `--analysis-group`: HPV type/group identifier.
+- `--hpv-type`: HPV type label carried into parsed outputs.
 - `--output-breakpoints-tsv`: normalized breakpoint table.
 - `--output-summary-json`: high-level parse summary.
 - `--output-warnings-tsv`: warnings table.
 
+### `scripts/recombination/bootstrap_3seq.sh`
+Purpose: Install or reuse the non-interactive 3SEQ binary and p-value table in
+`derived_data/tools/3seq`, with fallback local p-value-table generation.
+Key parameters:
+- `<install_root>`: cache directory for the 3SEQ source, binary, and p-value table.
+- `<requested_bin>` / `<requested_table>`: optional user-supplied 3SEQ assets.
+- `<table_size>`: fallback p-value-table size for local generation.
+- `<summary_json>`: machine-readable path summary.
+
+### `scripts/recombination/run_3seq.py`
+Purpose: Execute 3SEQ on an aligned FASTA and parse the resulting `.3s.rec`
+triplet table into candidate rows with corrected p-values and breakpoint fields.
+Key parameters:
+- `--alignment`: aligned FASTA input.
+- `--manifest-tsv`: sequence manifest with sample/background roles.
+- `--three-seq-bin`: compiled 3SEQ executable.
+- `--three-seq-table`: p-value table file.
+- `--pvalue-threshold`: corrected p-value threshold for retained candidates.
+- `--min-segment-length`: minimum recombinant segment length.
+
+### `scripts/recombination/confirm_breakpoint_trees.py`
+Purpose: Build breakpoint-window IQ-TREE phylogenies for 3SEQ candidates and
+test whether parent affinity switches across the inferred breakpoint.
+Key parameters:
+- `--alignment`: aligned FASTA input.
+- `--candidates-tsv`: 3SEQ candidate table.
+- `--gard-summary-json`: parsed GARD summary containing breakpoint intervals.
+- `--iqtree-bin`: IQ-TREE executable.
+- `--bootstrap-threshold`: minimum LCA support required on both sides.
+
+### `scripts/recombination/validate_recombination_reads.py`
+Purpose: Check candidate recombinant samples against mapped reads by querying
+informative parent-discriminating sites in the step-02 BAMs.
+Key parameters:
+- `--alignment`: aligned FASTA input.
+- `--manifest-tsv`: sequence manifest.
+- `--candidates-tsv`: 3SEQ candidate table.
+- `--mapping-outdir`: directory containing step-02 BAMs.
+- `--reference-fasta`: reference FASTA used by the BAMs.
+- `--reference-chrom`: chromosome name for the relevant HPV type.
+- `--min-depth`: minimum per-site depth.
+- `--min-major-af`: minimum major-allele fraction at informative sites.
+
 ### `scripts/recombination/summarize_recombination.py`
-Purpose: Aggregate recombination artifacts into event tables (TSV/CSV/JSON), a
-markdown report, warning table, and MultiQC metrics table.
+Purpose: Aggregate per-type GARD, 3SEQ, IQ-TREE, and read-validation artifacts
+into user-facing event tables, markdown summaries, warning tables, and the
+MultiQC-ready type/sample/breakpoint outputs.
 Key parameters:
 - `--manifest-tsv`: included sequence manifest.
-- `--excluded-tsv`: excluded rows table.
+- `--duplicate-map-tsv`: exact-duplicate audit table.
 - `--gard-breakpoints-tsv`: parsed breakpoint positions.
 - `--gard-summary-json`: GARD parse summary.
+- `--three-seq-candidates-tsv`: parsed 3SEQ candidate triplets.
+- `--tree-confirmation-tsv`: breakpoint-window IQ-TREE confirmations.
+- `--read-validation-tsv`: mapped-read validation table.
+- `--samples-vs-lineage-sets-tsv` / `--samples-vs-database-tsv`: upstream nearest-lineage/database context.
 - `--output-*`: machine-readable, markdown, warning, and MultiQC outputs.
+
+### `scripts/recombination/aggregate_recombination_reports.py`
+Purpose: Merge per-type recombination summaries into the final step-level tables
+and markdown report consumed by MultiQC and downstream reporting.
+Key parameters:
+- `--type-overview`: per-type overview tables.
+- `--candidate-samples`: per-type candidate sample tables.
+- `--breakpoint-support`: per-type breakpoint tables.
+- `--duplicate-map`: per-type duplicate-map tables.
+- `--summary-md`: per-type markdown summaries.
+- `--events-tsv` / `--warnings-tsv`: per-type event and warning tables.
 
 ### `scripts/recombination/plot_alignment_similarity.py`
 Purpose: Compute pairwise sequence identity from aligned FASTA and render a

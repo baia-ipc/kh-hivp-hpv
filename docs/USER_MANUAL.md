@@ -137,10 +137,11 @@ present in the PAVE FASTA (`refdata/pave/pave_hsa.fas`).
 
 ### Recombination analysis metadata inputs
 
-The recombination step (`targeted_analysis` step 06) currently supports
-metadata-driven FASTA input (`metadata_fasta` mode).
+The recombination step (`targeted_analysis` step 06) uses metadata-driven sample
+FASTA input (`metadata_fasta` mode), then automatically augments each HPV type
+with same-type tree-selected background references.
 
-Fill this table with one row per sample FASTA:
+Fill this table with one row per sample consensus FASTA:
 
 - `metadata/recombination_analysis/sequence_sets/targeted_analysis.recombination_sequences.tsv`
   - required columns: `run_id`, `sample_id`, `hpv_type`, `fasta_path`
@@ -154,6 +155,17 @@ Optional metadata:
 
 By default, summaries also exclude technical artifacts matching:
 `H2O`, `HPV-110`, `Ex`, `HPV-19`, and `Undetermined*`.
+
+The automated recombination confirmation workflow then:
+
+- splits HPV16 and HPV18 into separate analyses
+- adds same-type background references from the tree step outputs
+- screens each type-specific alignment with GARD
+- tests candidate mosaic triplets with 3SEQ
+- checks breakpoint-window topology switches with IQ-TREE
+- validates suspicious candidates against mapped reads from step 02
+
+This means GARD alone no longer produces a sample-level recombinant call.
 
 ## User configuration file
 

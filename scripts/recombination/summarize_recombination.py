@@ -1,433 +1,371 @@
 #!/usr/bin/env python3
-"""Build recombination summary tables and a human-readable markdown report."""
+"""Aggregate HPV-focused recombination outputs into report tables."""
 
 from __future__ import annotations
 
 import argparse
-import csv
-import json
 import sys
+from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Any
+
+ROOT = Path(__file__).resolve().parents[2]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from scripts.recombination.recombination_utils import (  # noqa: E402
+    classify_global_strength,
+    parse_float,
+    read_json,
+    read_tsv,
+    write_tsv,
+)
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--manifest-tsv", required=True)
-    parser.add_argument("--excluded-tsv", required=True)
+    parser.add_argument("--duplicate-map-tsv", required=True)
     parser.add_argument("--gard-json", required=True)
     parser.add_argument("--gard-breakpoints-tsv", required=True)
     parser.add_argument("--gard-summary-json", required=True)
+    parser.add_argument("--three-seq-candidates-tsv", required=True)
+    parser.add_argument("--three-seq-summary-json", required=True)
+    parser.add_argument("--tree-confirmation-tsv", required=True)
+    parser.add_argument("--read-validation-tsv", required=True)
+    parser.add_argument("--analysis-group", required=True)
+    parser.add_argument("--hpv-type", required=True)
+    parser.add_argument("--samples-vs-lineage-sets-tsv", required=True)
+    parser.add_argument("--samples-vs-database-tsv", required=True)
     parser.add_argument("--output-events-tsv", required=True)
     parser.add_argument("--output-events-csv", required=True)
     parser.add_argument("--output-events-json", required=True)
     parser.add_argument("--output-summary-md", required=True)
     parser.add_argument("--output-warnings-tsv", required=True)
-    parser.add_argument("--output-multiqc-tsv", required=True)
-    parser.add_argument("--output-breakpoint-multiqc-tsv", required=True)
-    parser.add_argument("--output-sample-multiqc-tsv", required=True)
+    parser.add_argument("--output-type-overview-tsv", required=True)
+    parser.add_argument("--output-candidate-samples-tsv", required=True)
+    parser.add_argument("--output-breakpoint-support-tsv", required=True)
+    parser.add_argument("--output-duplicate-map-tsv", required=True)
     parser.add_argument("--gard-support-confidence", default="low")
     return parser.parse_args()
 
 
-def read_tsv(path: Path) -> list[dict[str, str]]:
-    if not path.exists():
-        return []
-    with path.open("r", encoding="utf-8", newline="") as handle:
-        reader = csv.DictReader(handle, delimiter="\t")
-        return list(reader)
+def invert_duplicate_map(manifest_rows: list[dict[str, str]]) -> dict[str, list[dict[str, str]]]:
+    mapping: dict[str, list[dict[str, str]]] = defaultdict(list)
+    for row in manifest_rows:
+        mapping[row["collapsed_into"]].append(row)
+    return mapping
 
 
-def read_json(path: Path) -> dict[str, Any]:
-    if not path.exists():
-        return {}
-    try:
-        return json.loads(path.read_text(encoding="utf-8"))
-    except json.JSONDecodeError:
-        return {}
-
-
-def write_tsv(path: Path, rows: list[dict[str, Any]], fieldnames: list[str]) -> None:
-    with path.open("w", encoding="utf-8", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=fieldnames, delimiter="\t")
-        writer.writeheader()
-        for row in rows:
-            writer.writerow(row)
-
-
-def write_csv(path: Path, rows: list[dict[str, Any]], fieldnames: list[str]) -> None:
-    with path.open("w", encoding="utf-8", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=fieldnames)
-        writer.writeheader()
-        for row in rows:
-            writer.writerow(row)
-
-
-def format_number(value: float | None, digits: int = 3) -> str:
-    if value is None:
-        return "NA"
-    return f"{value:.{digits}f}"
-
-
-def parse_float(value: Any) -> float | None:
-    try:
-        return float(value)
-    except (TypeError, ValueError):
-        return None
-
-
-def classify_global_strength(delta_aicc: float | None) -> str:
-    if delta_aicc is None or delta_aicc <= 0:
-        return "none"
-    if delta_aicc >= 10:
-        return "strong"
-    if delta_aicc >= 4:
-        return "moderate"
-    return "weak"
-
-
-def classify_breakpoint_support(support: float | None) -> str:
-    if support is None or support <= 0:
-        return "not_reported"
-    if support >= 0.5:
-        return "high"
-    if support >= 0.2:
-        return "moderate"
-    return "low"
-
-
-def extract_best_model_breakpoints(gard_json: dict[str, Any]) -> list[int]:
-    breakpoint_data = gard_json.get("breakpointData", {})
-    segments: list[tuple[int, int]] = []
-    if not isinstance(breakpoint_data, dict):
-        return []
-
-    for value in breakpoint_data.values():
-        if not isinstance(value, dict):
+def load_nearest_lineages(path: Path, hpv_type: str) -> dict[str, dict[str, str]]:
+    best: dict[str, dict[str, str]] = {}
+    for row in read_tsv(path):
+        sample = row.get("sample")
+        lineage = row.get("lineage", "")
+        if not sample or not lineage:
             continue
-        for segment in value.get("bps", []):
-            if not isinstance(segment, list) or len(segment) < 2:
-                continue
-            try:
-                start = int(segment[0])
-                end = int(segment[1])
-            except (TypeError, ValueError):
-                continue
-            segments.append((start, end))
-
-    if not segments:
-        return []
-
-    segments = sorted(set(segments))
-    return [end for _, end in segments[:-1]]
+        if hpv_type == "HPV16" and not lineage.startswith(("A", "B", "C", "D")):
+            continue
+        score = parse_float(row.get("jaccard")) or 0.0
+        if sample not in best or score > (parse_float(best[sample].get("jaccard")) or -1.0):
+            best[sample] = {"lineage": lineage, "jaccard": row.get("jaccard", "")}
+    return best
 
 
-def build_events(
-    breakpoints: list[int],
-    confidence: str,
-    support_map: dict[int, float],
-    global_strength: str,
-) -> list[dict[str, Any]]:
-    if not breakpoints:
-        return []
+def load_nearest_database_ids(path: Path) -> dict[str, str]:
+    sample_hits: dict[str, Counter[str]] = defaultdict(Counter)
+    for row in read_tsv(path):
+        sample = row.get("sample")
+        db_ids = [token.strip() for token in (row.get("database_ids") or "").split(",") if token.strip()]
+        if not sample:
+            continue
+        for db_id in db_ids:
+            sample_hits[sample][db_id] += 1
+    best: dict[str, str] = {}
+    for sample, counts in sample_hits.items():
+        if not counts:
+            continue
+        ordered = counts.most_common(3)
+        best[sample] = ",".join(db_id for db_id, _ in ordered)
+    return best
 
-    unique_breakpoints = sorted(set(breakpoints))
-    events: list[dict[str, Any]] = []
-    for idx, bp in enumerate(unique_breakpoints, start=1):
-        left_boundary = 1 if idx == 1 else unique_breakpoints[idx - 2] + 1
-        right_boundary = unique_breakpoints[idx] if idx < len(unique_breakpoints) else "NA"
-        events.append(
-            {
-                "event_id": f"GARD_{idx}",
-                "breakpoint": bp,
-                "segment_left_start": left_boundary,
-                "segment_left_end": bp,
-                "segment_right_start": bp + 1,
-                "segment_right_end": right_boundary,
-                "supporting_methods": "GARD",
-                "confidence": confidence,
-                "interpretation": (
-                    "Alignment-level GARD signal detected; this pipeline does not identify which "
-                    "specific sample is recombinant."
-                ),
-                "site_support": format_number(support_map.get(bp)),
-                "support_strength": classify_breakpoint_support(support_map.get(bp)),
-                "global_evidence_strength": global_strength,
-            }
-        )
-    return events
+
+def determine_candidate_record(
+    sample_row: dict[str, str],
+    representative_candidates: dict[str, dict[str, str]],
+    duplicate_groups: dict[str, list[dict[str, str]]],
+) -> dict[str, str] | None:
+    collapsed_into = sample_row["collapsed_into"]
+    if collapsed_into in representative_candidates:
+        return representative_candidates[collapsed_into]
+    for member in duplicate_groups.get(collapsed_into, []):
+        if member["normalized_record_id"] in representative_candidates:
+            return representative_candidates[member["normalized_record_id"]]
+    return None
 
 
 def build_markdown(
-    manifest: list[dict[str, str]],
-    excluded: list[dict[str, str]],
-    events: list[dict[str, Any]],
-    gard_summary: dict[str, Any],
-    global_strength: str,
-    delta_aicc: float | None,
+    hpv_type: str,
+    overview_row: dict[str, Any],
+    candidate_rows: list[dict[str, Any]],
+    breakpoint_rows: list[dict[str, Any]],
 ) -> str:
-    sample_ids = sorted({row.get("sample_id", "") for row in manifest if row.get("sample_id")})
-    small_list = ", ".join(sample_ids[:10])
-    if len(sample_ids) > 10:
-        small_list += f", ... (+{len(sample_ids) - 10} more)"
-
+    candidate_calls = [row for row in candidate_rows if row["final_status"] == "candidate_recombinant"]
+    inconclusive = [row for row in candidate_rows if row["final_status"] == "inconclusive"]
     lines = [
-        "# Recombination Analysis Summary",
+        f"# Recombination Confirmation Summary: {hpv_type}",
         "",
-        "## Overview",
-        "This step performed recombination signal screening using MAFFT alignment and HyPhy GARD breakpoint inference.",
-        "RDP-based confirmation is not part of this automated workflow.",
+        "## Interpretation",
+        f"- Background mode: tree-selected same-type references",
+        f"- Sample sequences analyzed: {overview_row['sample_sequences']}",
+        f"- Background references analyzed: {overview_row['background_references']}",
+        f"- GARD breakpoints detected: {overview_row['gard_breakpoints']}",
+        f"- GARD delta c-AIC versus no-breakpoint: {overview_row['gard_delta_aicc']}",
+        f"- 3SEQ eligible sample candidates: {overview_row['three_seq_eligible_candidates']}",
+        f"- Final candidate recombinant samples: {len(candidate_calls)}",
         "",
-        "## Input selection",
-        f"- Included sequence records: {len(manifest)}",
-        f"- Included unique samples: {len(sample_ids)}",
-        f"- Excluded rows: {len(excluded)}",
+        "## Note",
+        "GARD remains an alignment-level screen in this workflow.",
+        "A sample is only reported as `candidate_recombinant` when GARD, 3SEQ, IQ-TREE window switching, and read validation all agree.",
+        "",
     ]
-    if sample_ids:
-        lines.append(f"- Sample IDs (truncated): {small_list}")
-
-    lines.extend(
-        [
-            "",
-            "## Breakpoint findings",
-            f"- GARD status: {gard_summary.get('status', 'unknown')}",
-            f"- Breakpoints detected: {gard_summary.get('n_breakpoints', 0)}",
-            f"- Candidate events reported: {len(events)}",
-            f"- Global evidence strength: {global_strength}",
-            f"- Delta c-AIC versus no-breakpoint model: {format_number(delta_aicc)}",
-            "- Per-strain p-values: not available from this GARD workflow",
-            "- Per-strain recombinant assignment: not available from GARD alone",
-            "",
-            "## Interpretation note",
-            "GARD provides alignment-level model-selection evidence, not a direct p-value for each sample.",
-            "If alignment-level signal is detected, every included strain appears in the same flagged alignment, but the automated",
-            "workflow cannot tell which specific strain is recombinant without additional follow-up analyses.",
-            "HPV recombination signals are generally rare. Putative breakpoints should be interpreted cautiously and validated",
-            "against alternative explanations such as alignment artifacts, mixed infections, contamination, or low-depth consensus errors.",
-            "",
-        ]
-    )
-
-    return "\n".join(lines)
-
-
-def build_breakpoint_rows(
-    breakpoints: list[int],
-    support_map: dict[int, float],
-    delta_aicc: float | None,
-    best_model_aicc: float | None,
-    global_strength: str,
-) -> list[dict[str, Any]]:
-    rows: list[dict[str, Any]] = []
-    for idx, bp in enumerate(breakpoints, start=1):
-        support = support_map.get(bp)
-        rows.append(
-            {
-                "breakpoint_id": f"BP_{idx}",
-                "breakpoint_site": bp,
-                "site_support": format_number(support),
-                "support_strength": classify_breakpoint_support(support),
-                "delta_aicc_vs_no_breakpoint": format_number(delta_aicc),
-                "best_model_aicc": format_number(best_model_aicc),
-                "p_value": "NA",
-                "evidence_source": "GARD",
-                "interpretation": (
-                    "Alignment-level breakpoint signal. GARD does not assign this breakpoint to a specific sample."
-                ),
-            }
-        )
-    return rows
-
-
-def build_sample_rows(
-    manifest: list[dict[str, str]],
-    breakpoints: list[int],
-    delta_aicc: float | None,
-    global_strength: str,
-    support_map: dict[int, float],
-) -> list[dict[str, Any]]:
-    strongest_support = max((support_map.get(bp, 0.0) for bp in breakpoints), default=0.0)
-    breakpoint_list = ",".join(str(bp) for bp in breakpoints) if breakpoints else "none"
-    signal_detected = "yes" if breakpoints and (delta_aicc or 0) > 0 else "no"
-    if signal_detected == "yes":
-        interpretation = (
-            "This sample was part of an alignment with recombination evidence, but the pipeline cannot "
-            "determine whether this specific sample is recombinant."
-        )
+    if candidate_calls:
+        lines.append("## Candidate recombinant samples")
+        for row in candidate_calls:
+            lines.append(
+                f"- {row['sample_id']}: corrected p={row['corrected_p']}, parents={row['candidate_major_parent']} / "
+                f"{row['candidate_minor_parent']}, breakpoint={row['candidate_breakpoint']}"
+            )
+        lines.append("")
+    elif inconclusive:
+        lines.append("## Inconclusive samples")
+        for row in inconclusive:
+            lines.append(
+                f"- {row['sample_id']}: 3SEQ signal present, but final call downgraded by "
+                f"tree/read confirmation ({row['evidence_summary']})"
+            )
+        lines.append("")
     else:
-        interpretation = "No alignment-level recombination signal was detected."
-
-    rows: list[dict[str, Any]] = []
-    for row in manifest:
-        run_id = row.get("run_id", "")
-        sample_id = row.get("sample_id", "")
-        rows.append(
-            {
-                "sample": f"{run_id}:{sample_id}" if run_id else sample_id,
-                "sample_id": sample_id,
-                "hpv_type": row.get("hpv_type", ""),
-                "alignment_recombination_signal": signal_detected,
-                "sample_specific_assignment": "not available from GARD",
-                "evidence_source": "GARD",
-                "evidence_strength": global_strength if signal_detected == "yes" else "none",
-                "delta_aicc_vs_no_breakpoint": format_number(delta_aicc),
-                "strongest_breakpoint_support": format_number(strongest_support if strongest_support > 0 else None),
-                "reported_breakpoints": breakpoint_list,
-                "p_value": "NA",
-                "interpretation": interpretation,
-            }
+        lines.append("## Result")
+        lines.append(
+            "No sample cleared the full high-specificity confirmation stack. Any GARD signal should be treated as alignment-level only."
         )
-    return rows
+        lines.append("")
+    if breakpoint_rows:
+        lines.append("## GARD breakpoints")
+        for row in breakpoint_rows:
+            lines.append(
+                f"- {row['breakpoint_site']} ({row['left_interval']} | {row['right_interval']}), "
+                f"support={row['site_support']}, strength={row['support_strength']}"
+            )
+    return "\n".join(lines) + "\n"
 
 
 def main() -> int:
     args = parse_args()
-    manifest = read_tsv(Path(args.manifest_tsv))
-    excluded = read_tsv(Path(args.excluded_tsv))
-    gard_json = read_json(Path(args.gard_json))
-    breakpoints_rows = read_tsv(Path(args.gard_breakpoints_tsv))
+    manifest_rows = [row for row in read_tsv(Path(args.manifest_tsv)) if row.get("hpv_type") == args.hpv_type]
+    duplicate_rows = read_tsv(Path(args.duplicate_map_tsv))
+    gard_breakpoints = read_tsv(Path(args.gard_breakpoints_tsv))
     gard_summary = read_json(Path(args.gard_summary_json))
+    three_seq_rows = read_tsv(Path(args.three_seq_candidates_tsv))
+    tree_rows = {row["candidate_id"]: row for row in read_tsv(Path(args.tree_confirmation_tsv))}
+    read_rows = {row["candidate_id"]: row for row in read_tsv(Path(args.read_validation_tsv))}
+    nearest_lineages = load_nearest_lineages(Path(args.samples_vs_lineage_sets_tsv), args.hpv_type)
+    nearest_database = load_nearest_database_ids(Path(args.samples_vs_database_tsv))
 
-    breakpoints = extract_best_model_breakpoints(gard_json)
-    fallback_breakpoints: list[int] = []
-    for row in breakpoints_rows:
-        raw = row.get("breakpoint", "")
-        try:
-            fallback_breakpoints.append(int(raw))
-        except (TypeError, ValueError):
-            continue
-    if not breakpoints:
-        breakpoints = sorted(set(fallback_breakpoints))
+    duplicate_groups = invert_duplicate_map(manifest_rows)
+    representative_candidates = {
+        row["candidate_record_id"]: row
+        for row in three_seq_rows
+        if row.get("eligible_sample_candidate") == "yes" and row.get("candidate_sequence_role") == "sample"
+    }
 
-    support_map: dict[int, float] = {}
-    raw_support = gard_json.get("siteBreakPointSupport", {})
-    if isinstance(raw_support, dict):
-        for key, value in raw_support.items():
-            try:
-                support_map[int(key)] = float(value)
-            except (TypeError, ValueError):
-                continue
-
-    baseline_score = parse_float(gard_json.get("baselineScore"))
-    best_model_aicc = parse_float(gard_json.get("bestModelAICc"))
-    delta_aicc = (
-        baseline_score - best_model_aicc
-        if baseline_score is not None and best_model_aicc is not None
-        else None
-    )
+    delta_aicc = parse_float(gard_summary.get("delta_aicc_vs_no_breakpoint"))
+    gard_positive = (gard_summary.get("n_breakpoints", 0) or 0) > 0 and (delta_aicc or 0) > 0
     global_strength = classify_global_strength(delta_aicc)
 
-    gard_summary["n_breakpoints"] = len(set(breakpoints))
-    gard_summary["breakpoints"] = sorted(set(breakpoints))
-    gard_summary["baseline_aicc"] = baseline_score
-    gard_summary["best_model_aicc"] = best_model_aicc
-    gard_summary["delta_aicc_vs_no_breakpoint"] = delta_aicc
-    gard_summary["global_evidence_strength"] = global_strength
+    breakpoint_support_rows: list[dict[str, Any]] = []
+    event_rows: list[dict[str, Any]] = []
+    for row in gard_breakpoints:
+        breakpoint_support_rows.append(
+            {
+                "analysis_group": args.analysis_group,
+                "type_compound_id": f"{args.analysis_group}:{row['breakpoint_id']}",
+                "hpv_type": args.hpv_type,
+                "breakpoint_id": row["breakpoint_id"],
+                "breakpoint_site": row["breakpoint_site"],
+                "left_interval": f"{row['left_segment_start']}-{row['left_segment_end']}",
+                "right_interval": f"{row['right_segment_start']}-{row['right_segment_end']}",
+                "site_support": row.get("site_support", ""),
+                "support_strength": row.get("support_strength", ""),
+                "delta_aicc_vs_no_breakpoint": row.get("delta_aicc_vs_no_breakpoint", ""),
+                "best_model_aicc": row.get("best_model_aicc", ""),
+                "evidence_source": "GARD",
+            }
+        )
+        event_rows.append(
+            {
+                "analysis_group": args.analysis_group,
+                "hpv_type": args.hpv_type,
+                "event_id": row["breakpoint_id"],
+                "event_type": "alignment_breakpoint",
+                "breakpoint_site": row["breakpoint_site"],
+                "supporting_methods": "GARD",
+                "strength": row.get("support_strength", ""),
+            }
+        )
 
-    events = build_events(breakpoints, args.gard_support_confidence, support_map, global_strength)
+    candidate_sample_rows: list[dict[str, Any]] = []
     warnings: list[dict[str, str]] = []
+    sample_rows = [row for row in manifest_rows if row["sequence_role"] == "sample"]
 
-    if not events:
-        warnings.append(
+    for sample_row in sample_rows:
+        sample_id = sample_row["sample_id"]
+        candidate = determine_candidate_record(sample_row, representative_candidates, duplicate_groups)
+        tree = tree_rows.get(candidate["candidate_id"]) if candidate else None
+        read = read_rows.get(candidate["candidate_id"]) if candidate else None
+        has_candidate_signal = candidate is not None
+        tree_confirmed = bool(tree and tree.get("tree_confirmation_status") == "confirmed" and tree.get("bootstrap_pass") == "yes")
+        read_passed = bool(read and read.get("read_validation_status") == "pass")
+        final_status = "candidate_recombinant"
+        if not has_candidate_signal:
+            final_status = "alignment_signal_only" if gard_positive else "no_evidence"
+        elif not (gard_positive and tree_confirmed and read_passed):
+            final_status = "inconclusive"
+
+        evidence_flags = []
+        if gard_positive:
+            evidence_flags.append("GARD")
+        if has_candidate_signal:
+            evidence_flags.append("3SEQ")
+        if tree_confirmed:
+            evidence_flags.append("IQ-TREE")
+        if read_passed:
+            evidence_flags.append("reads")
+
+        nearest_lineage = nearest_lineages.get(sample_id, {})
+        candidate_sample_rows.append(
             {
-                "warning_code": "no_recombination_events",
-                "message": "No candidate breakpoints were detected by the available GARD summaries.",
+                "sample_compound_id": f"{args.analysis_group}:{sample_id}",
+                "analysis_group": args.analysis_group,
+                "hpv_type": args.hpv_type,
+                "sample_id": sample_id,
+                "collapsed_into": sample_row["collapsed_into"],
+                "final_status": final_status,
+                "candidate_major_parent": "" if candidate is None else candidate["parent_major_record_id"],
+                "candidate_minor_parent": "" if candidate is None else candidate["parent_minor_record_id"],
+                "corrected_p": "" if candidate is None else candidate["corrected_p"],
+                "candidate_breakpoint": "" if candidate is None else candidate.get("candidate_breakpoint_site", ""),
+                "gard_delta_aicc": "" if delta_aicc is None else f"{delta_aicc:.6f}",
+                "gard_global_strength": global_strength,
+                "tree_confirmation_status": "" if tree is None else tree.get("tree_confirmation_status", ""),
+                "tree_support_left": "" if tree is None else tree.get("left_support", ""),
+                "tree_support_right": "" if tree is None else tree.get("right_support", ""),
+                "read_validation_status": "" if read is None else read.get("read_validation_status", ""),
+                "informative_sites": "" if read is None else read.get("informative_site_count", ""),
+                "nearest_lineage": nearest_lineage.get("lineage", ""),
+                "nearest_lineage_jaccard": nearest_lineage.get("jaccard", ""),
+                "nearest_database_ids": nearest_database.get(sample_id, ""),
+                "evidence_summary": ",".join(evidence_flags) if evidence_flags else "none",
+                "alignment_recombination_signal": "yes" if gard_positive else "no",
+                "sample_specific_p_value_available": "yes" if candidate is not None else "no",
             }
         )
-    if len(manifest) < 4:
+
+    if gard_positive and not any(row["final_status"] == "candidate_recombinant" for row in candidate_sample_rows):
         warnings.append(
             {
-                "warning_code": "low_sequence_count",
-                "message": "Fewer than 4 sequences were analyzed; breakpoint inference may be unstable.",
+                "warning_code": "alignment_signal_only",
+                "message": f"{args.hpv_type} has alignment-level recombination evidence, but no sample passed the full confirmation stack.",
             }
         )
 
-    event_fields = [
-        "event_id",
-        "breakpoint",
-        "segment_left_start",
-        "segment_left_end",
-        "segment_right_start",
-        "segment_right_end",
-        "supporting_methods",
-        "confidence",
-        "interpretation",
+    overview_row = {
+        "type_compound_id": args.analysis_group,
+        "analysis_group": args.analysis_group,
+        "hpv_type": args.hpv_type,
+        "sample_sequences": sum(1 for row in manifest_rows if row["sequence_role"] == "sample"),
+        "background_references": sum(1 for row in manifest_rows if row["sequence_role"] == "background"),
+        "collapsed_sequences": sum(1 for row in manifest_rows if row["included_in_collapsed"] == "yes"),
+        "duplicate_sequences": len(duplicate_rows),
+        "gard_breakpoints": gard_summary.get("n_breakpoints", 0),
+        "gard_delta_aicc": "" if delta_aicc is None else f"{delta_aicc:.6f}",
+        "gard_global_strength": global_strength,
+        "three_seq_candidates": len([row for row in three_seq_rows if row.get("candidate_sequence_role") == "sample"]),
+        "three_seq_eligible_candidates": len(representative_candidates),
+        "candidate_recombinant_samples": sum(1 for row in candidate_sample_rows if row["final_status"] == "candidate_recombinant"),
+        "inconclusive_samples": sum(1 for row in candidate_sample_rows if row["final_status"] == "inconclusive"),
+        "alignment_signal_only_samples": sum(1 for row in candidate_sample_rows if row["final_status"] == "alignment_signal_only"),
+    }
+
+    Path(args.output_summary_md).write_text(
+        build_markdown(args.hpv_type, overview_row, candidate_sample_rows, breakpoint_support_rows),
+        encoding="utf-8",
+    )
+    Path(args.output_events_json).write_text(__import__("json").dumps(event_rows, indent=2) + "\n", encoding="utf-8")
+    write_tsv(Path(args.output_events_tsv), event_rows, ["analysis_group", "hpv_type", "event_id", "event_type", "breakpoint_site", "supporting_methods", "strength"])
+    with Path(args.output_events_csv).open("w", encoding="utf-8", newline="") as handle:
+        import csv
+
+        writer = csv.DictWriter(
+            handle,
+            fieldnames=["analysis_group", "hpv_type", "event_id", "event_type", "breakpoint_site", "supporting_methods", "strength"],
+        )
+        writer.writeheader()
+        for row in event_rows:
+            writer.writerow(row)
+    write_tsv(Path(args.output_warnings_tsv), warnings, ["warning_code", "message"])
+    write_tsv(Path(args.output_type_overview_tsv), [overview_row], list(overview_row.keys()))
+    write_tsv(Path(args.output_candidate_samples_tsv), candidate_sample_rows, list(candidate_sample_rows[0].keys()) if candidate_sample_rows else [
+        "sample_compound_id",
+        "analysis_group",
+        "hpv_type",
+        "sample_id",
+        "collapsed_into",
+        "final_status",
+        "candidate_major_parent",
+        "candidate_minor_parent",
+        "corrected_p",
+        "candidate_breakpoint",
+        "gard_delta_aicc",
+        "gard_global_strength",
+        "tree_confirmation_status",
+        "tree_support_left",
+        "tree_support_right",
+        "read_validation_status",
+        "informative_sites",
+        "nearest_lineage",
+        "nearest_lineage_jaccard",
+        "nearest_database_ids",
+        "evidence_summary",
+        "alignment_recombination_signal",
+        "sample_specific_p_value_available",
+    ])
+    write_tsv(Path(args.output_breakpoint_support_tsv), breakpoint_support_rows, list(breakpoint_support_rows[0].keys()) if breakpoint_support_rows else [
+        "analysis_group",
+        "type_compound_id",
+        "hpv_type",
+        "breakpoint_id",
+        "breakpoint_site",
+        "left_interval",
+        "right_interval",
         "site_support",
         "support_strength",
-        "global_evidence_strength",
-    ]
-    write_tsv(Path(args.output_events_tsv), events, event_fields)
-    write_csv(Path(args.output_events_csv), events, event_fields)
-    Path(args.output_events_json).write_text(json.dumps(events, indent=2) + "\n", encoding="utf-8")
-    write_tsv(Path(args.output_warnings_tsv), warnings, ["warning_code", "message"])
-
-    summary_md = build_markdown(manifest, excluded, events, gard_summary, global_strength, delta_aicc)
-    Path(args.output_summary_md).write_text(summary_md + "\n", encoding="utf-8")
-
-    breakpoint_rows = build_breakpoint_rows(
-        sorted(set(breakpoints)),
-        support_map,
-        delta_aicc,
-        best_model_aicc,
-        global_strength,
-    )
-    write_tsv(
-        Path(args.output_breakpoint_multiqc_tsv),
-        breakpoint_rows,
-        [
-            "breakpoint_id",
-            "breakpoint_site",
-            "site_support",
-            "support_strength",
-            "delta_aicc_vs_no_breakpoint",
-            "best_model_aicc",
-            "p_value",
-            "evidence_source",
-            "interpretation",
-        ],
-    )
-
-    sample_rows = build_sample_rows(
-        manifest,
-        sorted(set(breakpoints)),
-        delta_aicc,
-        global_strength,
-        support_map,
-    )
-    write_tsv(
-        Path(args.output_sample_multiqc_tsv),
-        sample_rows,
-        [
-            "sample",
-            "sample_id",
-            "hpv_type",
-            "alignment_recombination_signal",
-            "sample_specific_assignment",
-            "evidence_source",
-            "evidence_strength",
-            "delta_aicc_vs_no_breakpoint",
-            "strongest_breakpoint_support",
-            "reported_breakpoints",
-            "p_value",
-            "interpretation",
-        ],
-    )
-
-    excluded_controls = sum(1 for row in excluded if row.get("reason") in {"control_pattern", "exclude_list"})
-    metrics = [
-        {"metric": "included_records", "value": len(manifest)},
-        {"metric": "excluded_rows", "value": len(excluded)},
-        {"metric": "excluded_controls", "value": excluded_controls},
-        {"metric": "gard_breakpoints", "value": len(set(breakpoints))},
-        {"metric": "candidate_events", "value": len(events)},
-        {"metric": "delta_aicc_vs_no_breakpoint", "value": format_number(delta_aicc)},
-        {"metric": "global_evidence_strength", "value": global_strength},
-        {"metric": "per_sample_p_values_available", "value": "false"},
-        {"metric": "warnings", "value": len(warnings)},
-        {"metric": "rdp_enabled", "value": "false"},
-    ]
-    write_tsv(Path(args.output_multiqc_tsv), metrics, ["metric", "value"])
-
+        "delta_aicc_vs_no_breakpoint",
+        "best_model_aicc",
+        "evidence_source",
+    ])
+    write_tsv(Path(args.output_duplicate_map_tsv), duplicate_rows, list(duplicate_rows[0].keys()) if duplicate_rows else [
+        "analysis_group",
+        "hpv_type",
+        "collapsed_into",
+        "duplicate_record_id",
+        "sequence_role",
+        "background_source",
+        "display_name",
+        "sequence_hash",
+        "reason",
+    ])
     return 0
 
 
