@@ -7,6 +7,13 @@ requested_table="${3:-}"
 table_size="${4:-700}"
 summary_json="${5:-3seq_bootstrap.json}"
 
+generate_table() {
+  local bin_path="$1"
+  local table_path="$2"
+  local table_size="$3"
+  printf 'Y\n' | "$bin_path" -g "$table_path" "$table_size"
+}
+
 mkdir -p "$install_root"
 
 if [[ -n "$requested_bin" && -n "$requested_table" ]]; then
@@ -54,7 +61,7 @@ fi
 if [[ ! -f "$table_path" ]]; then
   if [[ ! -f "$table_tgz" ]]; then
     if ! curl -LfsS "https://www.dropbox.com/s/zac4wotgdmm3mvb/pvaluetable.2017.700.tgz?dl=1" -o "$table_tgz"; then
-      "$bin_path" -g "$table_path" "$table_size"
+      generate_table "$bin_path" "$table_path" "$table_size"
     fi
   fi
   if [[ -f "$table_tgz" && ! -f "$table_path" ]]; then
@@ -63,7 +70,7 @@ if [[ ! -f "$table_path" ]]; then
     fi
   fi
   if [[ ! -f "$table_path" ]]; then
-    "$bin_path" -g "$table_path" "$table_size"
+    generate_table "$bin_path" "$table_path" "$table_size"
   fi
 fi
 
