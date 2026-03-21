@@ -7,18 +7,6 @@ subdirectories that mirror the section headers below.
 
 ## Centrifuge bucketing and taxonomy processing
 
-### `scripts/taxonomy_assignment/build_centrifuge_db.sh`
-Purpose: Build a Centrifuge index (human + RefSeq domains) plus taxonomy data
-used by the bucketing pipeline. This is a manual preparation step that
-produces the `params.index` and `params.taxdump` inputs consumed by the
-bucketing workflows.
-Key parameters:
-- `--outdir`: output root that will hold taxonomy, library, and index files.
-- `--taxonomy-date`: optional date suffix for taxonomy dir naming.
-- `--index-name`: index base name (final index path is `<outdir>/<index-name>`).
-- `--refseq-domains`: comma-separated RefSeq domains to download.
-- `--threads`: number of build threads (defaults to `$THREADS` or 24).
-
 ### `scripts/taxonomy_assignment/compute_lca.py`
 Purpose: Compute the lowest common ancestor (LCA) for each read in Centrifuge
 TSV output. This collapses multiple taxonomic hits to a single assignment that

@@ -78,20 +78,15 @@ but it would require editing the configuration files.
 
 ## Centrifuge database
 
-A helper script to download and build the necessary Centrifuge database,
-containing human, viral, microbial sequences, and the corresponding taxonomy,
-is provided in the repository.
+The repository expects a prebuilt HPVC Centrifuge index plus an NCBI taxonomy
+dump to be available externally. The default configuration points to:
 
-```
-scripts/taxonomy_assignment/build_centrifuge_db.sh \
-  --outdir refdata/centrifuge \
-  --index-name human_abv \
-  --threads 24
-```
+- index: `/srv/databases/centrifuge/hpvc/latest/hpvc`
+- taxdump: `/srv/databases/centrifuge/hpvc/latest/taxonomy-2023-10-30`
 
-This, executed from the pipeline root directory, dowloads the necessary data
-under `refdata/centrifuge`. If another path is used, update the
-user configuration (see below).
+The HPVC index itself is distributed as a prebuilt download. The retrieval
+recipe is documented in `/srv/databases/centrifuge/hpvc/README.md`. If another
+installation path is used, update the user configuration accordingly.
 
 ### HPV16 and HPV18 lineage reference sequences
 

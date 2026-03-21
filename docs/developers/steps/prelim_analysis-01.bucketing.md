@@ -27,7 +27,9 @@ Wrappers under `bin/` call the Nextflow pipelines:
 - Sample list: `metadata/seq_samples/samples_prelim_analysis.tsv` (normalized `sample_id` plus `fastq_sample_id` for raw filename prefixes)
 - Bucket definitions: `metadata/bucketing/bucket_taxonomy_ids.tsv`
 - Centrifuge index + taxonomy: configured in `config/user.config`
-- Optional: build a local index with `scripts/taxonomy_assignment/build_centrifuge_db.sh`
+- Default shared installation:
+  - index: `/srv/databases/centrifuge/hpvc/latest/hpvc`
+  - taxdump: `/srv/databases/centrifuge/hpvc/latest/taxonomy-2023-10-30`
 
 ## Outputs
 

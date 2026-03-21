@@ -58,7 +58,9 @@
 - `docs/`: user and developer documentation
   - `CONTENTS.md`: this file
   - `USER_MANUAL.md`: user manual and step-by-step instructions
-  - `developers/`: developer manual, scripts reference, and step docs
+  - `developers/`: developer manual, scripts reference, step docs, and
+    selected maintenance notes such as
+    `developers/CENTRIFUGE_HPVC_LEGACY_FACTORY.md`
 
 - `.agents/`: coding agents-oriented documentation and skills
   - `PROJECT.md`: compact project facts/current state for agents
