@@ -12,6 +12,7 @@ reference-results/
 .nextflow.log
 .nextflow.log.*
 .conda/
+__pycache__/
 *.fastq.gz
 work
 derived_data/
