@@ -29,8 +29,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--gard-json", required=True)
     parser.add_argument("--gard-breakpoints-tsv", required=True)
     parser.add_argument("--gard-summary-json", required=True)
-    parser.add_argument("--three-seq-candidates-tsv", required=True)
-    parser.add_argument("--three-seq-summary-json", required=True)
+    parser.add_argument("--openrdp-candidates-tsv", required=True)
+    parser.add_argument("--openrdp-summary-json", required=True)
     parser.add_argument("--tree-confirmation-tsv", required=True)
     parser.add_argument("--read-validation-tsv", required=True)
     parser.add_argument("--analysis-group", required=True)
@@ -90,6 +90,14 @@ def load_nearest_database_ids(path: Path) -> dict[str, str]:
     return best
 
 
+def better_candidate(left: dict[str, str], right: dict[str, str]) -> dict[str, str]:
+    def key(row: dict[str, str]) -> tuple[float, str]:
+        pvalue = parse_float(row.get("corrected_p"))
+        return (pvalue if pvalue is not None else float("inf"), row.get("evidence_method", ""))
+
+    return left if key(left) <= key(right) else right
+
+
 def determine_candidate_record(
     sample_row: dict[str, str],
     representative_candidates: dict[str, dict[str, str]],
@@ -121,12 +129,12 @@ def build_markdown(
         f"- Background references analyzed: {overview_row['background_references']}",
         f"- GARD breakpoints detected: {overview_row['gard_breakpoints']}",
         f"- GARD delta c-AIC versus no-breakpoint: {overview_row['gard_delta_aicc']}",
-        f"- 3SEQ eligible sample candidates: {overview_row['three_seq_eligible_candidates']}",
+        f"- OpenRDP eligible sample candidates: {overview_row['openrdp_eligible_candidates']}",
         f"- Final candidate recombinant samples: {len(candidate_calls)}",
         "",
         "## Note",
         "GARD remains an alignment-level screen in this workflow.",
-        "A sample is only reported as `candidate_recombinant` when GARD, 3SEQ, IQ-TREE window switching, and read validation all agree.",
+        "A sample is only reported as `candidate_recombinant` when GARD, OpenRDP, IQ-TREE window switching, and read validation all agree.",
         "",
     ]
     if candidate_calls:
@@ -141,7 +149,7 @@ def build_markdown(
         lines.append("## Inconclusive samples")
         for row in inconclusive:
             lines.append(
-                f"- {row['sample_id']}: 3SEQ signal present, but final call downgraded by "
+                f"- {row['sample_id']}: OpenRDP signal present, but final call downgraded by "
                 f"tree/read confirmation ({row['evidence_summary']})"
             )
         lines.append("")
@@ -167,18 +175,22 @@ def main() -> int:
     duplicate_rows = read_tsv(Path(args.duplicate_map_tsv))
     gard_breakpoints = read_tsv(Path(args.gard_breakpoints_tsv))
     gard_summary = read_json(Path(args.gard_summary_json))
-    three_seq_rows = read_tsv(Path(args.three_seq_candidates_tsv))
+    openrdp_rows = read_tsv(Path(args.openrdp_candidates_tsv))
     tree_rows = {row["candidate_id"]: row for row in read_tsv(Path(args.tree_confirmation_tsv))}
     read_rows = {row["candidate_id"]: row for row in read_tsv(Path(args.read_validation_tsv))}
     nearest_lineages = load_nearest_lineages(Path(args.samples_vs_lineage_sets_tsv), args.hpv_type)
     nearest_database = load_nearest_database_ids(Path(args.samples_vs_database_tsv))
 
     duplicate_groups = invert_duplicate_map(manifest_rows)
-    representative_candidates = {
-        row["candidate_record_id"]: row
-        for row in three_seq_rows
-        if row.get("eligible_sample_candidate") == "yes" and row.get("candidate_sequence_role") == "sample"
-    }
+    representative_candidates: dict[str, dict[str, str]] = {}
+    for row in openrdp_rows:
+        if row.get("eligible_sample_candidate") != "yes" or row.get("candidate_sequence_role") != "sample":
+            continue
+        record_id = row["candidate_record_id"]
+        if record_id not in representative_candidates:
+            representative_candidates[record_id] = row
+        else:
+            representative_candidates[record_id] = better_candidate(representative_candidates[record_id], row)
 
     delta_aicc = parse_float(gard_summary.get("delta_aicc_vs_no_breakpoint"))
     gard_positive = (gard_summary.get("n_breakpoints", 0) or 0) > 0 and (delta_aicc or 0) > 0
@@ -237,7 +249,7 @@ def main() -> int:
         if gard_positive:
             evidence_flags.append("GARD")
         if has_candidate_signal:
-            evidence_flags.append("3SEQ")
+            evidence_flags.append("OpenRDP")
         if tree_confirmed:
             evidence_flags.append("IQ-TREE")
         if read_passed:
@@ -291,8 +303,8 @@ def main() -> int:
         "gard_breakpoints": gard_summary.get("n_breakpoints", 0),
         "gard_delta_aicc": "" if delta_aicc is None else f"{delta_aicc:.6f}",
         "gard_global_strength": global_strength,
-        "three_seq_candidates": len([row for row in three_seq_rows if row.get("candidate_sequence_role") == "sample"]),
-        "three_seq_eligible_candidates": len(representative_candidates),
+        "openrdp_candidates": len([row for row in openrdp_rows if row.get("candidate_sequence_role") == "sample"]),
+        "openrdp_eligible_candidates": len(representative_candidates),
         "candidate_recombinant_samples": sum(1 for row in candidate_sample_rows if row["final_status"] == "candidate_recombinant"),
         "inconclusive_samples": sum(1 for row in candidate_sample_rows if row["final_status"] == "inconclusive"),
         "alignment_signal_only_samples": sum(1 for row in candidate_sample_rows if row["final_status"] == "alignment_signal_only"),

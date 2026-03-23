@@ -156,7 +156,7 @@ The automated recombination confirmation workflow then:
 - splits HPV16 and HPV18 into separate analyses
 - adds same-type background references from the tree step outputs
 - screens each type-specific alignment with GARD
-- tests candidate mosaic triplets with 3SEQ
+- scans candidate mosaic intervals with OpenRDP
 - checks breakpoint-window topology switches with IQ-TREE
 - validates suspicious candidates against mapped reads from step 02
 

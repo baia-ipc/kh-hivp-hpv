@@ -12,7 +12,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from scripts.recombination.prepare_recombination_inputs import collapse_duplicate_records
-from scripts.recombination.run_3seq import parse_rec_file
+from scripts.recombination.run_openrdp import build_candidates
 from scripts.recombination.recombination_utils import determine_final_status, read_tsv, write_tsv
 
 
@@ -57,31 +57,35 @@ class RecombinationWorkflowTests(unittest.TestCase):
         self.assertEqual(kept[0]["sequence_role"], "sample")
         self.assertEqual(duplicate_rows[0]["collapsed_into"], kept[0]["normalized_record_id"])
 
-    def test_parse_3seq_rec_extracts_corrected_pvalues_and_breakpoints(self) -> None:
-        with tempfile.TemporaryDirectory() as tmpdir:
-            rec_path = Path(tmpdir) / "sample.3s.rec"
-            rec_path.write_text(
-                "PARENT_A PARENT_B CHILD 10 12 5 1e-9 0 -9 0.0003 3e-4 600 1900 3163\n",
-                encoding="utf-8",
-            )
-            manifest_rows = {
-                "CHILD": {
-                    "sequence_role": "sample",
-                    "sample_id": "KHCA-001",
-                }
+    def test_build_openrdp_candidates_extracts_pvalues_and_breakpoints(self) -> None:
+        manifest_rows = {
+            "CHILD": {
+                "sequence_role": "sample",
+                "sample_id": "KHCA-001",
             }
-
-            class Args:
-                analysis_group = "HPV16"
-                hpv_type = "HPV16"
-                pvalue_threshold = 0.01
-                min_segment_length = 500
-
-            rows = parse_rec_file(rec_path, manifest_rows, Args())
-            self.assertEqual(len(rows), 1)
-            self.assertEqual(rows[0]["candidate_sequence_role"], "sample")
-            self.assertEqual(rows[0]["passes_pvalue_threshold"], "yes")
-            self.assertEqual(rows[0]["candidate_breakpoint_site"], 3163)
+        }
+        rows = build_candidates(
+            [
+                {
+                    "Method": "rdp",
+                    "Start": "1900",
+                    "End": "3163",
+                    "Recombinant": "CHILD",
+                    "Parent1": "PARENT_A",
+                    "Parent2": "PARENT_B",
+                    "Pvalue": "0.0003",
+                }
+            ],
+            manifest_rows,
+            analysis_group="HPV16",
+            hpv_type="HPV16",
+            pvalue_threshold=0.01,
+            min_segment_length=500,
+        )
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["candidate_sequence_role"], "sample")
+        self.assertEqual(rows[0]["passes_pvalue_threshold"], "yes")
+        self.assertEqual(rows[0]["candidate_breakpoint_site"], 2531)
 
     def test_determine_final_status(self) -> None:
         self.assertEqual(determine_final_status(True, True, True, True), "candidate_recombinant")
@@ -97,8 +101,8 @@ class RecombinationWorkflowTests(unittest.TestCase):
             gard_json = tmp / "gard.json"
             gard_breakpoints = tmp / "gard.breakpoints.tsv"
             gard_summary = tmp / "gard.summary.json"
-            three_seq = tmp / "3seq.tsv"
-            three_seq_summary = tmp / "3seq.summary.json"
+            openrdp = tmp / "openrdp.tsv"
+            openrdp_summary = tmp / "openrdp.summary.json"
             tree_confirmation = tmp / "tree.tsv"
             read_validation = tmp / "reads.tsv"
             lineage_sets = tmp / "lineages.tsv"
@@ -217,7 +221,7 @@ class RecombinationWorkflowTests(unittest.TestCase):
                 ],
             )
             write_tsv(
-                three_seq,
+                openrdp,
                 [
                     {
                         "analysis_group": "HPV16",
@@ -239,6 +243,7 @@ class RecombinationWorkflowTests(unittest.TestCase):
                         "passes_pvalue_threshold": "yes",
                         "passes_segment_length": "yes",
                         "eligible_sample_candidate": "yes",
+                        "evidence_method": "rdp",
                     },
                     {
                         "analysis_group": "HPV16",
@@ -260,6 +265,7 @@ class RecombinationWorkflowTests(unittest.TestCase):
                         "passes_pvalue_threshold": "yes",
                         "passes_segment_length": "yes",
                         "eligible_sample_candidate": "yes",
+                        "evidence_method": "bootscan",
                     },
                 ],
                 [
@@ -282,9 +288,10 @@ class RecombinationWorkflowTests(unittest.TestCase):
                     "passes_pvalue_threshold",
                     "passes_segment_length",
                     "eligible_sample_candidate",
+                    "evidence_method",
                 ],
             )
-            three_seq_summary.write_text(json.dumps({"eligible_sample_candidates": 2}) + "\n", encoding="utf-8")
+            openrdp_summary.write_text(json.dumps({"eligible_sample_candidates": 2}) + "\n", encoding="utf-8")
             write_tsv(
                 tree_confirmation,
                 [
@@ -409,10 +416,10 @@ class RecombinationWorkflowTests(unittest.TestCase):
                     str(gard_breakpoints),
                     "--gard-summary-json",
                     str(gard_summary),
-                    "--three-seq-candidates-tsv",
-                    str(three_seq),
-                    "--three-seq-summary-json",
-                    str(three_seq_summary),
+                    "--openrdp-candidates-tsv",
+                    str(openrdp),
+                    "--openrdp-summary-json",
+                    str(openrdp_summary),
                     "--tree-confirmation-tsv",
                     str(tree_confirmation),
                     "--read-validation-tsv",

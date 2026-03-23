@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run breakpoint-window IQ-TREE checks for 3SEQ sample candidates."""
+"""Run breakpoint-window IQ-TREE checks for OpenRDP sample candidates."""
 
 from __future__ import annotations
 
@@ -135,7 +135,7 @@ def main() -> int:
                     "tree_confirmation_status": "not_confirmed",
                     "topology_switch": "no",
                     "bootstrap_pass": "no",
-                    "notes": "No GARD or 3SEQ breakpoint available for tree confirmation.",
+                    "notes": "No GARD or OpenRDP breakpoint available for tree confirmation.",
                 }
             )
             continue

@@ -8,7 +8,7 @@ This step performs HPV-specific recombination confirmation using:
 - same-type tree-selected background references
 - MAFFT alignment
 - HyPhy GARD breakpoint screening
-- 3SEQ sample-level mosaic testing
+- OpenRDP sample-level mosaic testing
 - IQ-TREE breakpoint-window confirmation
 - mapped-read validation against step-02 BAMs
 - machine-readable and markdown summary generation
@@ -52,7 +52,7 @@ Subdirectories:
 
 - `alignment/`: per-type MAFFT alignments
 - `gard/`: per-type GARD raw output, parsed breakpoints, logs
-- `3seq/`: per-type 3SEQ candidate triplets and logs
+- `openrdp/`: per-type OpenRDP candidate events and logs
 - `trees/`: IQ-TREE breakpoint-window confirmation artifacts
 - `read_validation/`: per-candidate read-level validation summaries
 - `summary/`: per-type and aggregated event tables (`TSV/CSV/JSON`) + markdown summary
@@ -68,7 +68,7 @@ MultiQC report:
 - Default filtering excludes technical artifacts (`H2O`, `HPV-110`, `Ex`,
   `HPV-19`, `Undetermined*`) unless the user disables this behavior.
 - The workflow splits HPV16 and HPV18 into separate recombination analyses.
-- A sample is only labeled `candidate_recombinant` when GARD, 3SEQ, IQ-TREE,
+- A sample is only labeled `candidate_recombinant` when GARD, OpenRDP, IQ-TREE,
   and read validation agree.
 - Interpretation should remain cautious: HPV recombination signals are rare and
   can be confounded by alignment quality, mixed infections, contamination, and

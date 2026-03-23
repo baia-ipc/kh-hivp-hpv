@@ -10,6 +10,7 @@ def projectRoot = (workflow.projectDir instanceof java.nio.file.Path \
 
 params.scripts_dir = params.scripts_dir ?: "${projectRoot}/scripts"
 params.conda_env = params.conda_env ?: "${projectRoot}/pipelines/conda_env/recombination.env.yml"
+params.openrdp_conda_env = params.openrdp_conda_env ?: "${projectRoot}/pipelines/conda_env/recombination.openrdp.env.yml"
 params.multiqc_env = params.multiqc_env ?: "${projectRoot}/.conda/envs/pipeline"
 params.multiqc_config = params.multiqc_config ?: "${projectRoot}/pipelines/multiqc/recombination_analysis.multiqc.yml"
 
@@ -64,13 +65,18 @@ params.recombination_gard_rate_classes = params.containsKey('recombination_gard_
 params.recombination_gard_max_breakpoints = params.containsKey('recombination_gard_max_breakpoints') ? params.recombination_gard_max_breakpoints : 10
 params.recombination_gard_confidence = params.recombination_gard_confidence ?: "low"
 
-params.recombination_enable_3seq = params.containsKey('recombination_enable_3seq') ? params.recombination_enable_3seq : true
-params.recombination_3seq_bin = params.containsKey('recombination_3seq_bin') ? params.recombination_3seq_bin : null
-params.recombination_3seq_table = params.containsKey('recombination_3seq_table') ? params.recombination_3seq_table : null
-params.recombination_3seq_cache_dir = params.containsKey('recombination_3seq_cache_dir') ? params.recombination_3seq_cache_dir : "${projectRoot}/derived_data/tools/3seq"
-params.recombination_3seq_table_size = params.containsKey('recombination_3seq_table_size') ? params.recombination_3seq_table_size : 700
-params.recombination_3seq_pvalue_threshold = params.containsKey('recombination_3seq_pvalue_threshold') ? params.recombination_3seq_pvalue_threshold : 0.01
-params.recombination_3seq_min_segment_length = params.containsKey('recombination_3seq_min_segment_length') ? params.recombination_3seq_min_segment_length : 500
+params.recombination_enable_openrdp = params.containsKey('recombination_enable_openrdp')
+    ? params.recombination_enable_openrdp
+    : true
+params.recombination_openrdp_methods = params.containsKey('recombination_openrdp_methods')
+    ? params.recombination_openrdp_methods
+    : "geneconv bootscan maxchi siscan chimaera rdp"
+params.recombination_openrdp_pvalue_threshold = params.containsKey('recombination_openrdp_pvalue_threshold')
+    ? params.recombination_openrdp_pvalue_threshold
+    : 0.01
+params.recombination_openrdp_min_segment_length = params.containsKey('recombination_openrdp_min_segment_length')
+    ? params.recombination_openrdp_min_segment_length
+    : 500
 
 params.recombination_tree_min_bootstrap = params.containsKey('recombination_tree_min_bootstrap') ? params.recombination_tree_min_bootstrap : 95
 params.recombination_tree_bootstrap_replicates = params.containsKey('recombination_tree_bootstrap_replicates') ? params.recombination_tree_bootstrap_replicates : 1000
@@ -93,8 +99,7 @@ params.gard_parser_script = params.containsKey('gard_parser_script') ? params.ga
 params.summary_script = params.containsKey('summary_script') ? params.summary_script : "${params.scripts_dir}/recombination/summarize_recombination.py"
 params.aggregate_script = params.containsKey('aggregate_script') ? params.aggregate_script : "${params.scripts_dir}/recombination/aggregate_recombination_reports.py"
 params.plot_script = params.containsKey('plot_script') ? params.plot_script : "${params.scripts_dir}/recombination/plot_alignment_similarity.py"
-params.three_seq_bootstrap_script = params.containsKey('three_seq_bootstrap_script') ? params.three_seq_bootstrap_script : "${params.scripts_dir}/recombination/bootstrap_3seq.sh"
-params.three_seq_runner_script = params.containsKey('three_seq_runner_script') ? params.three_seq_runner_script : "${params.scripts_dir}/recombination/run_3seq.py"
+params.openrdp_runner_script = params.containsKey('openrdp_runner_script') ? params.openrdp_runner_script : "${params.scripts_dir}/recombination/run_openrdp.py"
 params.tree_confirmation_script = params.containsKey('tree_confirmation_script') ? params.tree_confirmation_script : "${params.scripts_dir}/recombination/confirm_breakpoint_trees.py"
 params.read_validation_script = params.containsKey('read_validation_script') ? params.read_validation_script : "${params.scripts_dir}/recombination/validate_recombination_reads.py"
 
@@ -122,6 +127,7 @@ checkPath(params.gard_parser_script as String, 'GARD parser script')
 checkPath(params.summary_script as String, 'Recombination summary script')
 checkPath(params.aggregate_script as String, 'Recombination aggregate script')
 checkPath(params.plot_script as String, 'Recombination plot script')
+checkPath(params.openrdp_runner_script as String, 'OpenRDP runner script')
 checkPath(params.recombination_hpv16_background_fasta as String, 'HPV16 background FASTA')
 checkPath(params.recombination_hpv18_background_fasta as String, 'HPV18 background FASTA')
 checkPath(params.variant_reports_dir as String, 'Variant reports directory')
@@ -239,100 +245,38 @@ process GARD_BREAKPOINTS {
     """
 }
 
-process BOOTSTRAP_3SEQ {
-    tag "3seq_bootstrap"
-    conda params.conda_env
-    publishDir { "${params.outdir}/summary" }, mode: 'copy', pattern: "3seq_bootstrap.json"
-
-    output:
-    path "3seq_bootstrap.json", emit: summary
-    path "3seq_bin.txt", emit: bin_txt
-    path "3seq_table.txt", emit: table_txt
-
-    script:
-    def binArg = params.recombination_3seq_bin ? "\"${params.recombination_3seq_bin}\"" : "\"\""
-    def tableArg = params.recombination_3seq_table ? "\"${params.recombination_3seq_table}\"" : "\"\""
-    """
-    bash "${params.three_seq_bootstrap_script}" \\
-      "${params.recombination_3seq_cache_dir}" \\
-      ${binArg} \\
-      ${tableArg} \\
-      "${params.recombination_3seq_table_size}" \\
-      "3seq_bootstrap.json"
-
-    python3 - <<'PY'
-    import json
-    payload = json.load(open("3seq_bootstrap.json", "r", encoding="utf-8"))
-    open("3seq_bin.txt", "w", encoding="utf-8").write(payload["three_seq_bin"] + "\\n")
-    open("3seq_table.txt", "w", encoding="utf-8").write(payload["three_seq_table"] + "\\n")
-    PY
-    """
-}
-
-process RUN_3SEQ {
+process RUN_OPENRDP {
     tag { group_id }
-    conda params.conda_env
-    publishDir { "${params.outdir}/3seq" }, mode: 'copy', pattern: "${group_id}.*"
+    conda params.openrdp_conda_env
+    publishDir { "${params.outdir}/openrdp" }, mode: 'copy', pattern: "${group_id}.*"
 
     input:
     tuple val(group_id), val(hpv_type), path(alignment), path(manifest_tsv), path(duplicate_map_tsv), path(representative_ids_tsv), path(group_summary_json), val(sample_count), val(reference_count), path(gard_json), path(gard_breakpoints), path(gard_summary), path(gard_warnings), path(gard_log)
-    path(three_seq_bin_txt)
-    path(three_seq_table_txt)
 
     output:
-    tuple val(group_id), val(hpv_type), path(alignment), path(manifest_tsv), path(duplicate_map_tsv), path(representative_ids_tsv), path(group_summary_json), val(sample_count), val(reference_count), path(gard_json), path(gard_breakpoints), path(gard_summary), path(gard_warnings), path(gard_log), path("${group_id}.3seq.candidates.tsv"), path("${group_id}.3seq.summary.json"), path("${group_id}.3seq.log"), path("${group_id}.3seq.rec")
+    tuple val(group_id), val(hpv_type), path(alignment), path(manifest_tsv), path(duplicate_map_tsv), path(representative_ids_tsv), path(group_summary_json), val(sample_count), val(reference_count), path(gard_json), path(gard_breakpoints), path(gard_summary), path(gard_warnings), path(gard_log), path("${group_id}.openrdp.candidates.tsv"), path("${group_id}.openrdp.summary.json"), path("${group_id}.openrdp.log"), path("${group_id}.openrdp.csv")
 
     script:
+    def methodsArg = params.recombination_openrdp_methods
+        .toString()
+        .trim()
+        .split(/\s+/)
+        .findAll { it }
+        .collect { "\"${it}\"" }
+        .join(' ')
     """
-    three_seq_bin=\$(cat "${three_seq_bin_txt}" | tr -d '\\n')
-    three_seq_table=\$(cat "${three_seq_table_txt}" | tr -d '\\n')
-
-    python3 "${params.three_seq_runner_script}" \\
+    python3 "${params.openrdp_runner_script}" \\
       --alignment "${alignment}" \\
       --manifest-tsv "${manifest_tsv}" \\
-      --three-seq-bin "\$three_seq_bin" \\
-      --three-seq-table "\$three_seq_table" \\
       --analysis-group "${group_id}" \\
       --hpv-type "${hpv_type}" \\
-      --pvalue-threshold "${params.recombination_3seq_pvalue_threshold}" \\
-      --min-segment-length "${params.recombination_3seq_min_segment_length}" \\
-      --output-candidates-tsv "${group_id}.3seq.candidates.tsv" \\
-      --output-summary-json "${group_id}.3seq.summary.json" \\
-      --output-log "${group_id}.3seq.log" \\
-      --output-rec "${group_id}.3seq.rec"
-    """
-}
-
-process SKIP_3SEQ {
-    tag { group_id }
-    conda params.conda_env
-    publishDir { "${params.outdir}/3seq" }, mode: 'copy', pattern: "${group_id}.*"
-
-    input:
-    tuple val(group_id), val(hpv_type), path(alignment), path(manifest_tsv), path(duplicate_map_tsv), path(representative_ids_tsv), path(group_summary_json), val(sample_count), val(reference_count), path(gard_json), path(gard_breakpoints), path(gard_summary), path(gard_warnings), path(gard_log)
-
-    output:
-    tuple val(group_id), val(hpv_type), path(alignment), path(manifest_tsv), path(duplicate_map_tsv), path(representative_ids_tsv), path(group_summary_json), val(sample_count), val(reference_count), path(gard_json), path(gard_breakpoints), path(gard_summary), path(gard_warnings), path(gard_log), path("${group_id}.3seq.candidates.tsv"), path("${group_id}.3seq.summary.json"), path("${group_id}.3seq.log"), path("${group_id}.3seq.rec")
-
-    script:
-    """
-    printf 'analysis_group\\thpv_type\\tcandidate_id\\tparent_major_record_id\\tparent_minor_record_id\\tcandidate_record_id\\tcandidate_sample_id\\tcandidate_sequence_role\\tuncorrected_p\\tused_hogan_siegmund\\tlog10_p\\tcorrected_p\\tcorrected_p_mantissa\\tmin_segment_length\\tcandidate_breakpoint_site\\tcandidate_breakpoints\\tpasses_pvalue_threshold\\tpasses_segment_length\\teligible_sample_candidate\\n' > "${group_id}.3seq.candidates.tsv"
-    python3 - <<'PY'
-    import json
-    payload = {
-        "analysis_group": "${group_id}",
-        "hpv_type": "${hpv_type}",
-        "exit_code": 0,
-        "candidate_triplets": 0,
-        "sample_candidate_triplets": 0,
-        "eligible_sample_candidates": 0,
-    }
-    with open("${group_id}.3seq.summary.json", "w", encoding="utf-8") as handle:
-        json.dump(payload, handle, indent=2)
-        handle.write("\\n")
-    PY
-    : > "${group_id}.3seq.log"
-    : > "${group_id}.3seq.rec"
+      --methods ${methodsArg} \\
+      --pvalue-threshold "${params.recombination_openrdp_pvalue_threshold}" \\
+      --min-segment-length "${params.recombination_openrdp_min_segment_length}" \\
+      --output-candidates-tsv "${group_id}.openrdp.candidates.tsv" \\
+      --output-summary-json "${group_id}.openrdp.summary.json" \\
+      --output-log "${group_id}.openrdp.log" \\
+      --output-csv "${group_id}.openrdp.csv"
     """
 }
 
@@ -342,16 +286,16 @@ process TREE_CONFIRMATION {
     publishDir { "${params.outdir}/trees" }, mode: 'copy', pattern: "${group_id}.*"
 
     input:
-    tuple val(group_id), val(hpv_type), path(alignment), path(manifest_tsv), path(duplicate_map_tsv), path(representative_ids_tsv), path(group_summary_json), val(sample_count), val(reference_count), path(gard_json), path(gard_breakpoints), path(gard_summary), path(gard_warnings), path(gard_log), path(three_seq_candidates), path(three_seq_summary), path(three_seq_log), path(three_seq_rec)
+    tuple val(group_id), val(hpv_type), path(alignment), path(manifest_tsv), path(duplicate_map_tsv), path(representative_ids_tsv), path(group_summary_json), val(sample_count), val(reference_count), path(gard_json), path(gard_breakpoints), path(gard_summary), path(gard_warnings), path(gard_log), path(openrdp_candidates), path(openrdp_summary), path(openrdp_log), path(openrdp_csv)
 
     output:
-    tuple val(group_id), val(hpv_type), path(alignment), path(manifest_tsv), path(duplicate_map_tsv), path(representative_ids_tsv), path(group_summary_json), val(sample_count), val(reference_count), path(gard_json), path(gard_breakpoints), path(gard_summary), path(gard_warnings), path(gard_log), path(three_seq_candidates), path(three_seq_summary), path(three_seq_log), path(three_seq_rec), path("${group_id}.tree_confirmation.tsv")
+    tuple val(group_id), val(hpv_type), path(alignment), path(manifest_tsv), path(duplicate_map_tsv), path(representative_ids_tsv), path(group_summary_json), val(sample_count), val(reference_count), path(gard_json), path(gard_breakpoints), path(gard_summary), path(gard_warnings), path(gard_log), path(openrdp_candidates), path(openrdp_summary), path(openrdp_log), path(openrdp_csv), path("${group_id}.tree_confirmation.tsv")
 
     script:
     """
     python3 "${params.tree_confirmation_script}" \\
       --alignment "${alignment}" \\
-      --candidates-tsv "${three_seq_candidates}" \\
+      --candidates-tsv "${openrdp_candidates}" \\
       --gard-summary-json "${gard_summary}" \\
       --analysis-group "${group_id}" \\
       --hpv-type "${hpv_type}" \\
@@ -369,10 +313,10 @@ process READ_VALIDATION {
     publishDir { "${params.outdir}/read_validation" }, mode: 'copy', pattern: "${group_id}.*"
 
     input:
-    tuple val(group_id), val(hpv_type), path(alignment), path(manifest_tsv), path(duplicate_map_tsv), path(representative_ids_tsv), path(group_summary_json), val(sample_count), val(reference_count), path(gard_json), path(gard_breakpoints), path(gard_summary), path(gard_warnings), path(gard_log), path(three_seq_candidates), path(three_seq_summary), path(three_seq_log), path(three_seq_rec), path(tree_confirmation)
+    tuple val(group_id), val(hpv_type), path(alignment), path(manifest_tsv), path(duplicate_map_tsv), path(representative_ids_tsv), path(group_summary_json), val(sample_count), val(reference_count), path(gard_json), path(gard_breakpoints), path(gard_summary), path(gard_warnings), path(gard_log), path(openrdp_candidates), path(openrdp_summary), path(openrdp_log), path(openrdp_csv), path(tree_confirmation)
 
     output:
-    tuple val(group_id), val(hpv_type), path(manifest_tsv), path(duplicate_map_tsv), path(gard_json), path(gard_breakpoints), path(gard_summary), path(three_seq_candidates), path(three_seq_summary), path(tree_confirmation), path("${group_id}.read_validation.tsv")
+    tuple val(group_id), val(hpv_type), path(manifest_tsv), path(duplicate_map_tsv), path(gard_json), path(gard_breakpoints), path(gard_summary), path(openrdp_candidates), path(openrdp_summary), path(tree_confirmation), path("${group_id}.read_validation.tsv")
 
     script:
     def chrom = hpv_type == 'HPV18' ? params.recombination_hpv18_reference_chrom : params.recombination_hpv16_reference_chrom
@@ -380,7 +324,7 @@ process READ_VALIDATION {
     python3 "${params.read_validation_script}" \\
       --alignment "${alignment}" \\
       --manifest-tsv "${manifest_tsv}" \\
-      --candidates-tsv "${three_seq_candidates}" \\
+      --candidates-tsv "${openrdp_candidates}" \\
       --gard-summary-json "${gard_summary}" \\
       --mapping-outdir "${params.mapping_outdir}" \\
       --reference-fasta "${params.recombination_reference_fasta}" \\
@@ -399,7 +343,7 @@ process GROUP_SUMMARY {
     publishDir { "${params.outdir}/summary" }, mode: 'copy', pattern: "${group_id}.*"
 
     input:
-    tuple val(group_id), val(hpv_type), path(manifest_tsv), path(duplicate_map_tsv), path(gard_json), path(gard_breakpoints), path(gard_summary), path(three_seq_candidates), path(three_seq_summary), path(tree_confirmation), path(read_validation)
+    tuple val(group_id), val(hpv_type), path(manifest_tsv), path(duplicate_map_tsv), path(gard_json), path(gard_breakpoints), path(gard_summary), path(openrdp_candidates), path(openrdp_summary), path(tree_confirmation), path(read_validation)
 
     output:
     path "${group_id}.recombination_events.tsv", emit: events_tsv
@@ -420,8 +364,8 @@ process GROUP_SUMMARY {
       --gard-json "${gard_json}" \\
       --gard-breakpoints-tsv "${gard_breakpoints}" \\
       --gard-summary-json "${gard_summary}" \\
-      --three-seq-candidates-tsv "${three_seq_candidates}" \\
-      --three-seq-summary-json "${three_seq_summary}" \\
+      --openrdp-candidates-tsv "${openrdp_candidates}" \\
+      --openrdp-summary-json "${openrdp_summary}" \\
       --tree-confirmation-tsv "${tree_confirmation}" \\
       --read-validation-tsv "${read_validation}" \\
       --analysis-group "${group_id}" \\
@@ -578,11 +522,11 @@ workflow {
     }
 
     def gard = GARD_BREAKPOINTS(aligned)
-    def threeSeqAssets = params.recombination_enable_3seq ? BOOTSTRAP_3SEQ() : null
-    def threeSeq = params.recombination_enable_3seq
-        ? RUN_3SEQ(gard, threeSeqAssets.bin_txt, threeSeqAssets.table_txt)
-        : SKIP_3SEQ(gard)
-    def treeConfirmation = TREE_CONFIRMATION(threeSeq)
+    def openrdp = params.recombination_enable_openrdp ? RUN_OPENRDP(gard) : null
+    if (!params.recombination_enable_openrdp) {
+        error "recombination_enable_openrdp=false is not supported after removal of the OpenRDP branch."
+    }
+    def treeConfirmation = TREE_CONFIRMATION(openrdp)
     def readValidation = READ_VALIDATION(treeConfirmation)
     def groupSummary = GROUP_SUMMARY(readValidation)
     def aggregate = AGGREGATE_SUMMARY(

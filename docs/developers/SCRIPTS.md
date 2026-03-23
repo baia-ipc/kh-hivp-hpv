@@ -507,32 +507,22 @@ Key parameters:
 - `--output-summary-json`: high-level parse summary.
 - `--output-warnings-tsv`: warnings table.
 
-### `scripts/recombination/bootstrap_3seq.sh`
-Purpose: Install or reuse the non-interactive 3SEQ binary and p-value table in
-`derived_data/tools/3seq`, with fallback local p-value-table generation.
-Key parameters:
-- `<install_root>`: cache directory for the 3SEQ source, binary, and p-value table.
-- `<requested_bin>` / `<requested_table>`: optional user-supplied 3SEQ assets.
-- `<table_size>`: fallback p-value-table size for local generation.
-- `<summary_json>`: machine-readable path summary.
-
-### `scripts/recombination/run_3seq.py`
-Purpose: Execute 3SEQ on an aligned FASTA and parse the resulting `.3s.rec`
-triplet table into candidate rows with corrected p-values and breakpoint fields.
+### `scripts/recombination/run_openrdp.py`
+Purpose: Execute OpenRDP on an aligned FASTA and parse the resulting CSV
+event table into candidate rows with p-values, methods, and breakpoint fields.
 Key parameters:
 - `--alignment`: aligned FASTA input.
 - `--manifest-tsv`: sequence manifest with sample/background roles.
-- `--three-seq-bin`: compiled 3SEQ executable.
-- `--three-seq-table`: p-value table file.
+- `--methods`: OpenRDP methods to execute.
 - `--pvalue-threshold`: corrected p-value threshold for retained candidates.
 - `--min-segment-length`: minimum recombinant segment length.
 
 ### `scripts/recombination/confirm_breakpoint_trees.py`
-Purpose: Build breakpoint-window IQ-TREE phylogenies for 3SEQ candidates and
+Purpose: Build breakpoint-window IQ-TREE phylogenies for OpenRDP candidates and
 test whether parent affinity switches across the inferred breakpoint.
 Key parameters:
 - `--alignment`: aligned FASTA input.
-- `--candidates-tsv`: 3SEQ candidate table.
+- `--candidates-tsv`: OpenRDP candidate table.
 - `--gard-summary-json`: parsed GARD summary containing breakpoint intervals.
 - `--iqtree-bin`: IQ-TREE executable.
 - `--bootstrap-threshold`: minimum LCA support required on both sides.
@@ -543,7 +533,7 @@ informative parent-discriminating sites in the step-02 BAMs.
 Key parameters:
 - `--alignment`: aligned FASTA input.
 - `--manifest-tsv`: sequence manifest.
-- `--candidates-tsv`: 3SEQ candidate table.
+- `--candidates-tsv`: OpenRDP candidate table.
 - `--mapping-outdir`: directory containing step-02 BAMs.
 - `--reference-fasta`: reference FASTA used by the BAMs.
 - `--reference-chrom`: chromosome name for the relevant HPV type.
@@ -551,7 +541,7 @@ Key parameters:
 - `--min-major-af`: minimum major-allele fraction at informative sites.
 
 ### `scripts/recombination/summarize_recombination.py`
-Purpose: Aggregate per-type GARD, 3SEQ, IQ-TREE, and read-validation artifacts
+Purpose: Aggregate per-type GARD, OpenRDP, IQ-TREE, and read-validation artifacts
 into user-facing event tables, markdown summaries, warning tables, and the
 MultiQC-ready type/sample/breakpoint outputs.
 Key parameters:
@@ -559,7 +549,7 @@ Key parameters:
 - `--duplicate-map-tsv`: exact-duplicate audit table.
 - `--gard-breakpoints-tsv`: parsed breakpoint positions.
 - `--gard-summary-json`: GARD parse summary.
-- `--three-seq-candidates-tsv`: parsed 3SEQ candidate triplets.
+- `--openrdp-candidates-tsv`: parsed OpenRDP candidate events.
 - `--tree-confirmation-tsv`: breakpoint-window IQ-TREE confirmations.
 - `--read-validation-tsv`: mapped-read validation table.
 - `--samples-vs-lineage-sets-tsv` / `--samples-vs-database-tsv`: upstream nearest-lineage/database context.
