@@ -273,6 +273,7 @@ process RUN_OPENRDP {
       --methods ${methodsArg} \\
       --pvalue-threshold "${params.recombination_openrdp_pvalue_threshold}" \\
       --min-segment-length "${params.recombination_openrdp_min_segment_length}" \\
+      --sanitize-ambiguity-bases \\
       --output-candidates-tsv "${group_id}.openrdp.candidates.tsv" \\
       --output-summary-json "${group_id}.openrdp.summary.json" \\
       --output-log "${group_id}.openrdp.log" \\

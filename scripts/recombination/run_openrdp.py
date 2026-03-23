@@ -9,6 +9,7 @@ import json
 import math
 import subprocess
 import sys
+from collections import Counter
 from pathlib import Path
 from typing import Any
 
@@ -26,6 +27,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--methods", nargs="+", required=True)
     parser.add_argument("--pvalue-threshold", type=float, default=0.01)
     parser.add_argument("--min-segment-length", type=int, default=500)
+    parser.add_argument("--sanitize-ambiguity-bases", action="store_true")
     parser.add_argument("--output-candidates-tsv", required=True)
     parser.add_argument("--output-summary-json", required=True)
     parser.add_argument("--output-log", required=True)
@@ -63,6 +65,31 @@ def format_pvalue(value: float | None) -> str:
     if value is None:
         return ""
     return f"{value:.12g}"
+
+
+def sanitize_alignment_for_openrdp(input_path: Path) -> tuple[Path, dict[str, int]]:
+    """Rewrite unsupported IUPAC symbols to N while preserving alignment length."""
+    allowed = set("ATGCN-")
+    replacements: Counter[str] = Counter()
+    output_path = input_path.with_suffix(input_path.suffix + ".openrdp.fa")
+
+    with input_path.open("r", encoding="utf-8") as src, output_path.open("w", encoding="utf-8") as dst:
+        for raw_line in src:
+            if raw_line.startswith(">"):
+                dst.write(raw_line)
+                continue
+            sequence = raw_line.rstrip("\n\r")
+            sanitized_chars: list[str] = []
+            for char in sequence:
+                upper = char.upper()
+                if upper in allowed:
+                    sanitized_chars.append(upper)
+                else:
+                    sanitized_chars.append("N")
+                    replacements[upper] += 1
+            dst.write("".join(sanitized_chars) + "\n")
+
+    return output_path, dict(sorted(replacements.items()))
 
 
 def build_candidates(
@@ -145,16 +172,31 @@ def build_candidates(
 def main() -> int:
     args = parse_args()
     methods = [token for token in args.methods if token]
+    replacements: dict[str, int] = {}
+    alignment_path = Path(args.alignment)
+    if args.sanitize_ambiguity_bases:
+        alignment_path, replacements = sanitize_alignment_for_openrdp(alignment_path)
     cmd = [
         "openrdp",
-        args.alignment,
+        str(alignment_path),
         "--outfile",
         args.output_csv,
         "--methods",
         *methods,
     ]
     completed = subprocess.run(cmd, capture_output=True, text=True, check=False)
-    log_text = completed.stdout + ("\n" + completed.stderr if completed.stderr else "")
+    replacement_summary = (
+        "Sanitized unsupported alignment characters to N: "
+        + ", ".join(f"{base}={count}" for base, count in replacements.items())
+        if replacements
+        else "Sanitized unsupported alignment characters to N: none"
+    )
+    log_parts = [replacement_summary]
+    if completed.stdout:
+        log_parts.append(completed.stdout.rstrip())
+    if completed.stderr:
+        log_parts.append(completed.stderr.rstrip())
+    log_text = "\n".join(log_parts) + "\n"
     Path(args.output_log).write_text(log_text, encoding="utf-8")
 
     manifest_rows = {row["normalized_record_id"]: row for row in read_tsv(Path(args.manifest_tsv))}
@@ -205,6 +247,9 @@ def main() -> int:
             "analysis_group": args.analysis_group,
             "hpv_type": args.hpv_type,
             "command": cmd,
+            "sanitized_alignment": str(alignment_path) if args.sanitize_ambiguity_bases else "",
+            "sanitized_ambiguity_bases": args.sanitize_ambiguity_bases,
+            "replaced_characters": replacements,
             "methods_requested": methods,
             "methods_with_eligible_candidates": eligible_methods,
             "exit_code": completed.returncode,
@@ -213,7 +258,7 @@ def main() -> int:
             "eligible_sample_candidates": len(eligible_candidates),
         },
     )
-    return 0
+    return completed.returncode
 
 
 if __name__ == "__main__":
