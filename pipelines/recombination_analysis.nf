@@ -70,7 +70,7 @@ params.recombination_enable_openrdp = params.containsKey('recombination_enable_o
     : true
 params.recombination_openrdp_methods = params.containsKey('recombination_openrdp_methods')
     ? params.recombination_openrdp_methods
-    : "geneconv bootscan maxchi siscan chimaera rdp"
+    : "geneconv bootscan siscan chimaera rdp"
 params.recombination_openrdp_pvalue_threshold = params.containsKey('recombination_openrdp_pvalue_threshold')
     ? params.recombination_openrdp_pvalue_threshold
     : 0.01
