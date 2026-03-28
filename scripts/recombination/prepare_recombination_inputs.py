@@ -34,7 +34,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--output-excluded", required=True)
     parser.add_argument("--output-summary-json", required=True)
     parser.add_argument("--repo-root", required=True)
-    parser.add_argument("--work-root", required=True)
+    parser.add_argument("--groups-root", required=True)
     parser.add_argument("--exclude-samples-tsv")
     parser.add_argument("--exclude-pattern", default=None)
     parser.add_argument("--skip-controls", action="store_true")
@@ -271,12 +271,12 @@ def build_background_rows(hpv_type: str, fasta_path: Path, background_mode: str)
 
 
 def write_group_files(
-    work_root: Path,
+    groups_root: Path,
     group_name: str,
     manifest_rows: list[dict[str, Any]],
     duplicate_rows: list[dict[str, Any]],
 ) -> dict[str, str]:
-    group_dir = work_root / "groups" / group_name
+    group_dir = groups_root / group_name
     group_dir.mkdir(parents=True, exist_ok=True)
 
     full_input = group_dir / "full_input.fasta"
@@ -371,7 +371,7 @@ def main() -> int:
     args = parse_args()
 
     repo_root = Path(args.repo_root).resolve()
-    work_root = Path(args.work_root).resolve()
+    groups_root = Path(args.groups_root).resolve()
     sequences_path = Path(args.sequences_tsv).resolve()
     exclude_list_path = Path(args.exclude_samples_tsv).resolve() if args.exclude_samples_tsv else None
 
@@ -411,7 +411,7 @@ def main() -> int:
                 f"Not enough representative sample sequences for {hpv_type}: "
                 f"{sample_rep_count} < {args.min_sequences}."
             )
-        group_rows.append(write_group_files(work_root, hpv_type, collapsed_manifest, duplicate_rows))
+        group_rows.append(write_group_files(groups_root, hpv_type, collapsed_manifest, duplicate_rows))
         manifest_rows_all.extend({k: v for k, v in row.items() if k != "sequence"} for row in collapsed_manifest)
         duplicate_rows_all.extend(duplicate_rows)
 

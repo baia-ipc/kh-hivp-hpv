@@ -479,7 +479,8 @@ Key parameters:
 - `--output-duplicate-map`: exact-duplicate collapse audit table.
 - `--output-excluded`: excluded rows table.
 - `--repo-root`: base path for resolving relative FASTA paths.
-- `--work-root`: task work directory used to materialize group FASTAs/manifests.
+- `--groups-root`: published stage-local directory used to materialize group
+  FASTAs/manifests.
 - `--skip-controls` + `--exclude-pattern`: filter technical artifacts.
 - `--exclude-samples-tsv`: optional explicit sample exclusion list.
 - `--hpv-types`: optional HPV type allowlist.
@@ -539,6 +540,28 @@ Key parameters:
 - `--reference-chrom`: chromosome name for the relevant HPV type.
 - `--min-depth`: minimum per-site depth.
 - `--min-major-af`: minimum major-allele fraction at informative sites.
+
+### `scripts/recombination/summarize_recombination_screen.py`
+Purpose: Merge preparation and GARD screening outputs into stage-06 overview
+tables, warnings, markdown summary, duplicate-map export, and the published
+`recombination_screen_groups.tsv` handoff for stage 07.
+Key parameters:
+- `--groups-tsv`: preparation manifest from `prepare_recombination_inputs.py`.
+- `--input-summary-json`: aggregate preparation summary.
+- `--duplicate-map-tsv`: aggregate duplicate-collapse audit table.
+- `--excluded-samples-tsv`: excluded-input audit table.
+- `--gard-breakpoints` / `--gard-summaries` / `--gard-warnings`: per-type GARD outputs.
+- `--step-outdir`: published stage-06 outdir used to construct stable handoff paths.
+- `--similarity-plot-enabled`: include expected similarity-plot outputs in the handoff.
+
+### `scripts/recombination/summarize_recombination_openrdp.py`
+Purpose: Merge per-type OpenRDP outputs into stage-07 overview tables, warning
+tables, markdown summary, and the published `recombination_openrdp_groups.tsv`
+handoff for stage 08.
+Key parameters:
+- `--screen-groups-tsv`: published stage-06 handoff manifest.
+- `--openrdp-candidates` / `--openrdp-summaries` / `--openrdp-logs` / `--openrdp-csvs`: per-type OpenRDP outputs.
+- `--step-outdir`: published stage-07 outdir used to construct stable handoff paths.
 
 ### `scripts/recombination/summarize_recombination.py`
 Purpose: Aggregate per-type GARD, OpenRDP, IQ-TREE, and read-validation artifacts

@@ -6,5 +6,5 @@
     "config/user.config",
     "config/analyses/targeted_analysis.config"
   ],
-  "profile": "targeted_recombination_analysis"
+  "profile": "targeted_recombination_confirmation"
 }

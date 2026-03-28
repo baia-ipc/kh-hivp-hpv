@@ -1,7 +1,9 @@
 # Recombination Analysis Metadata
 
-This directory stores metadata-driven input selections for
-`06.recombination_analysis`.
+This directory stores metadata-driven input selections for the targeted
+recombination workflow, with metadata input consumed by
+`06.recombination_screen` and downstream stage handoffs produced by steps
+`07.recombination_openrdp` and `08.recombination_confirmation`.
 
 ## Files
 

@@ -132,9 +132,15 @@ present in the PAVE FASTA (`refdata/pave/pave_hsa.fas`).
 
 ### Recombination analysis metadata inputs
 
-The recombination step (`targeted_analysis` step 06) uses metadata-driven sample
-FASTA input (`metadata_fasta` mode), then automatically augments each HPV type
-with same-type tree-selected background references.
+The recombination workflow now runs as three targeted-analysis steps:
+
+- step 06: `recombination_screen`
+- step 07: `recombination_openrdp`
+- step 08: `recombination_confirmation`
+
+Step 06 uses metadata-driven sample FASTA input (`metadata_fasta` mode), then
+automatically augments each HPV type with same-type tree-selected background
+references.
 
 Fill this table with one row per sample consensus FASTA:
 
@@ -151,16 +157,17 @@ Optional metadata:
 By default, summaries also exclude technical artifacts matching:
 `H2O`, `HPV-110`, `Ex`, `HPV-19`, and `Undetermined*`.
 
-The automated recombination confirmation workflow then:
+The automated recombination workflow then:
 
 - splits HPV16 and HPV18 into separate analyses
 - adds same-type background references from the tree step outputs
-- screens each type-specific alignment with GARD
-- scans candidate mosaic intervals with OpenRDP
-- checks breakpoint-window topology switches with IQ-TREE
-- validates suspicious candidates against mapped reads from step 02
+- screens each type-specific alignment with GARD in step 06
+- scans candidate mosaic intervals with OpenRDP in step 07
+- checks breakpoint-window topology switches with IQ-TREE in step 08
+- validates suspicious candidates against mapped reads from step 02 in step 08
 
-This means GARD alone no longer produces a sample-level recombinant call.
+Stage 06 is a screening step only. Final candidate recombinant calls are made
+only after the step-08 confirmation workflow.
 
 ## User configuration file
 
@@ -209,7 +216,9 @@ bin/targeted_analysis.steps/02.mapping_vs_pave.run.sh
 bin/targeted_analysis.steps/03.variant_analysis.run.sh
 bin/targeted_analysis.steps/04.hpv16_tree.run.sh
 bin/targeted_analysis.steps/05.hpv18_tree.run.sh
-bin/targeted_analysis.steps/06.recombination_analysis.run.sh
+bin/targeted_analysis.steps/06.recombination_screen.run.sh
+bin/targeted_analysis.steps/07.recombination_openrdp.run.sh
+bin/targeted_analysis.steps/08.recombination_confirmation.run.sh
 ```
 
 ## Troubleshooting
