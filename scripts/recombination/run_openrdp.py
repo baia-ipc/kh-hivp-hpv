@@ -7,6 +7,7 @@ import argparse
 import csv
 import json
 import math
+import shlex
 import subprocess
 import sys
 from collections import Counter
@@ -16,6 +17,8 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
+
+OPENRDP_CSV_FIELDS = ["Method", "Start", "End", "Recombinant", "Parent1", "Parent2", "Pvalue"]
 
 
 def parse_args() -> argparse.Namespace:
@@ -59,6 +62,14 @@ def write_tsv(path: Path, rows: list[dict[str, Any]], fieldnames: list[str]) -> 
 
 def write_json(path: Path, payload: dict[str, Any]) -> None:
     path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+
+
+def write_openrdp_csv(path: Path, rows: list[dict[str, str]]) -> None:
+    with path.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=OPENRDP_CSV_FIELDS)
+        writer.writeheader()
+        for row in rows:
+            writer.writerow({field: row.get(field, "") for field in OPENRDP_CSV_FIELDS})
 
 
 def format_pvalue(value: float | None) -> str:
@@ -169,22 +180,41 @@ def build_candidates(
     return candidates
 
 
+def build_openrdp_cmd(alignment_path: Path, output_csv: Path, methods: list[str]) -> list[str]:
+    return [
+        "openrdp",
+        str(alignment_path),
+        "--outfile",
+        str(output_csv),
+        "--methods",
+        *methods,
+    ]
+
+
+def run_openrdp_cmd(cmd: list[str]) -> subprocess.CompletedProcess[str]:
+    return subprocess.run(cmd, capture_output=True, text=True, check=False)
+
+
+def format_completed_run(label: str, cmd: list[str], completed: subprocess.CompletedProcess[str]) -> str:
+    parts = [
+        f"[{label}] command: {' '.join(shlex.quote(token) for token in cmd)}",
+        f"[{label}] exit_code: {completed.returncode}",
+    ]
+    if completed.stdout:
+        parts.append(f"[{label}] stdout:\n{completed.stdout.rstrip()}")
+    if completed.stderr:
+        parts.append(f"[{label}] stderr:\n{completed.stderr.rstrip()}")
+    return "\n".join(parts)
+
+
 def main() -> int:
     args = parse_args()
     methods = [token for token in args.methods if token]
     replacements: dict[str, int] = {}
     alignment_path = Path(args.alignment)
+    output_csv_path = Path(args.output_csv)
     if args.sanitize_ambiguity_bases:
         alignment_path, replacements = sanitize_alignment_for_openrdp(alignment_path)
-    cmd = [
-        "openrdp",
-        str(alignment_path),
-        "--outfile",
-        args.output_csv,
-        "--methods",
-        *methods,
-    ]
-    completed = subprocess.run(cmd, capture_output=True, text=True, check=False)
     replacement_summary = (
         "Sanitized unsupported alignment characters to N: "
         + ", ".join(f"{base}={count}" for base, count in replacements.items())
@@ -192,15 +222,46 @@ def main() -> int:
         else "Sanitized unsupported alignment characters to N: none"
     )
     log_parts = [replacement_summary]
-    if completed.stdout:
-        log_parts.append(completed.stdout.rstrip())
-    if completed.stderr:
-        log_parts.append(completed.stderr.rstrip())
-    log_text = "\n".join(log_parts) + "\n"
-    Path(args.output_log).write_text(log_text, encoding="utf-8")
+
+    cmd = build_openrdp_cmd(alignment_path, output_csv_path, methods)
+    try:
+        completed = run_openrdp_cmd(cmd)
+    except FileNotFoundError as exc:
+        log_parts.append(f"[combined] command failed before execution: {exc}")
+        Path(args.output_log).write_text("\n".join(log_parts) + "\n", encoding="utf-8")
+        raise
+
+    log_parts.append(format_completed_run("combined", cmd, completed))
+    fallback_used = completed.returncode != 0
+    method_exit_codes: dict[str, int] = {}
+    failed_methods: list[str] = []
+    successful_methods: list[str] = []
+
+    if fallback_used:
+        log_parts.append("Combined OpenRDP run failed; retrying methods individually.")
+        raw_rows: list[dict[str, str]] = []
+        for method in methods:
+            method_csv = output_csv_path.parent / f"openrdp_method_{method}.csv"
+            method_cmd = build_openrdp_cmd(alignment_path, method_csv, [method])
+            method_completed = run_openrdp_cmd(method_cmd)
+            method_exit_codes[method] = method_completed.returncode
+            log_parts.append(format_completed_run(f"method:{method}", method_cmd, method_completed))
+            if method_completed.returncode == 0:
+                successful_methods.append(method)
+                raw_rows.extend(parse_method_rows(method_csv))
+            else:
+                failed_methods.append(method)
+            method_csv.unlink(missing_ok=True)
+    else:
+        raw_rows = parse_method_rows(output_csv_path)
+        successful_methods = list(methods)
+        for method in methods:
+            method_exit_codes[method] = 0
+
+    write_openrdp_csv(output_csv_path, raw_rows)
+    Path(args.output_log).write_text("\n".join(log_parts) + "\n", encoding="utf-8")
 
     manifest_rows = {row["normalized_record_id"]: row for row in read_tsv(Path(args.manifest_tsv))}
-    raw_rows = parse_method_rows(Path(args.output_csv))
     candidates = build_candidates(
         raw_rows,
         manifest_rows,
@@ -251,14 +312,19 @@ def main() -> int:
             "sanitized_ambiguity_bases": args.sanitize_ambiguity_bases,
             "replaced_characters": replacements,
             "methods_requested": methods,
+            "fallback_to_per_method": fallback_used,
+            "successful_methods": successful_methods,
+            "failed_methods": failed_methods,
             "methods_with_eligible_candidates": eligible_methods,
-            "exit_code": completed.returncode,
+            "combined_exit_code": completed.returncode,
+            "per_method_exit_codes": method_exit_codes,
+            "exit_code": 0 if fallback_used else completed.returncode,
             "candidate_events": len(candidates),
             "sample_candidate_events": len(sample_candidates),
             "eligible_sample_candidates": len(eligible_candidates),
         },
     )
-    return completed.returncode
+    return 0 if fallback_used else completed.returncode
 
 
 if __name__ == "__main__":
