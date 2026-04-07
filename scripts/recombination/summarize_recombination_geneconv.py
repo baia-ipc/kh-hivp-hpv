@@ -54,23 +54,62 @@ def rows_by_group(paths: list[str], key_field: str) -> dict[str, list[dict[str, 
     return grouped
 
 
+def build_conclusion(summary: dict[str, Any]) -> str:
+    if summary.get("successful_methods") and not summary.get("eligible_sample_candidates", 0):
+        return "No eligible sample-level recombination candidates detected"
+    if summary.get("eligible_sample_candidates", 0):
+        return "Eligible sample-level recombination candidates detected"
+    return "GENECONV scan did not complete cleanly"
+
+
+def build_evidence(summary: dict[str, Any]) -> str:
+    candidate_events = summary.get("candidate_events", 0)
+    sample_events = summary.get("sample_candidate_events", 0)
+    eligible = summary.get("eligible_sample_candidates", 0)
+    exit_code = summary.get("scan_exit_code", summary.get("exit_code", "NA"))
+    timed_out = "yes" if summary.get("scan_timed_out") else "no"
+    if summary.get("successful_methods") and not eligible:
+        return (
+            f"GENECONV exited with code {exit_code}; timed_out={timed_out}; "
+            f"total fragment events={candidate_events}; sample fragment events={sample_events}; "
+            f"eligible sample candidates={eligible}."
+        )
+    if eligible:
+        return (
+            f"GENECONV exited with code {exit_code}; timed_out={timed_out}; "
+            f"sample fragment events={sample_events}; eligible sample candidates={eligible}."
+        )
+    return f"GENECONV did not complete cleanly; exit_code={exit_code}; timed_out={timed_out}."
+
+
 def build_markdown(screen_groups: list[dict[str, str]], summaries: dict[str, dict[str, Any]]) -> str:
+    clean_negative_groups = []
     lines = [
         "# Recombination GENECONV Summary",
         "",
         "## Interpretation",
         "This stage runs GENECONV candidate scanning only. It does not perform final recombinant confirmation.",
+        "A clean negative result means GENECONV finished successfully and no eligible sample-level recombination candidates were detected.",
         "",
-        "## Groups",
+        "## Overall conclusion",
     ]
     for row in sorted(screen_groups, key=lambda item: item["analysis_group"]):
         analysis_group = row["analysis_group"]
         summary = summaries.get(analysis_group, {})
-        status = "ok" if summary.get("successful_methods") else "failed"
-        lines.append(
-            f"- {row['hpv_type']}: status={status}, timed_out={'yes' if summary.get('scan_timed_out') else 'no'}, "
-            f"eligible_candidates={summary.get('eligible_sample_candidates', 0)}"
-        )
+        if summary.get("successful_methods") and not summary.get("eligible_sample_candidates", 0):
+            clean_negative_groups.append(row["hpv_type"])
+    if clean_negative_groups:
+        lines.append(f"- Clean negative result for: {', '.join(clean_negative_groups)}.")
+    else:
+        lines.append("- No stage-wide clean negative conclusion was available for every analyzed HPV group.")
+    lines.extend([
+        "",
+        "## Groups",
+    ])
+    for row in sorted(screen_groups, key=lambda item: item["analysis_group"]):
+        analysis_group = row["analysis_group"]
+        summary = summaries.get(analysis_group, {})
+        lines.append(f"- {row['hpv_type']}: {build_conclusion(summary)}. {build_evidence(summary)}")
     lines.append("")
     return "\n".join(lines)
 
@@ -101,6 +140,8 @@ def main() -> int:
             {
                 "type_compound_id": analysis_group,
                 "hpv_type": hpv_type,
+                "conclusion": build_conclusion(summary),
+                "evidence_summary": build_evidence(summary),
                 "methods_requested": "geneconv",
                 "successful_methods": ",".join(summary.get("successful_methods", [])),
                 "failed_methods": ",".join(summary.get("failed_methods", [])),
@@ -139,6 +180,8 @@ def main() -> int:
                 "exit_code": summary.get("scan_exit_code", ""),
                 "timed_out": "yes" if summary.get("scan_timed_out") else "no",
                 "produced_eligible_candidate": "yes" if summary.get("eligible_sample_candidates", 0) else "no",
+                "conclusion": build_conclusion(summary),
+                "evidence_summary": build_evidence(summary),
                 "scan_log": str(published_log),
             }
         )
@@ -170,6 +213,8 @@ def main() -> int:
         [
             "type_compound_id",
             "hpv_type",
+            "conclusion",
+            "evidence_summary",
             "methods_requested",
             "successful_methods",
             "failed_methods",
@@ -207,6 +252,8 @@ def main() -> int:
             "exit_code",
             "timed_out",
             "produced_eligible_candidate",
+            "conclusion",
+            "evidence_summary",
             "scan_log",
         ],
     )

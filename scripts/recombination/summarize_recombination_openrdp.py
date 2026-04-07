@@ -54,27 +54,73 @@ def rows_by_group(paths: list[str], key_field: str) -> dict[str, list[dict[str, 
     return grouped
 
 
+def build_conclusion(summary: dict[str, Any]) -> str:
+    if summary.get("successful_methods") and not summary.get("eligible_sample_candidates", 0):
+        return "No eligible sample-level recombination candidates detected"
+    if summary.get("eligible_sample_candidates", 0):
+        return "Eligible sample-level recombination candidates detected"
+    return "OpenRDP scan did not complete cleanly"
+
+
+def build_evidence(summary: dict[str, Any]) -> str:
+    requested = ",".join(summary.get("methods_requested", [])) or "NA"
+    successful = ",".join(summary.get("successful_methods", [])) or "none"
+    failed = ",".join(summary.get("failed_methods", [])) or "none"
+    combined_exit = summary.get("combined_exit_code", summary.get("exit_code", "NA"))
+    candidate_events = summary.get("candidate_events", 0)
+    sample_events = summary.get("sample_candidate_events", 0)
+    eligible = summary.get("eligible_sample_candidates", 0)
+    fallback = "yes" if summary.get("fallback_to_per_method") else "no"
+    if summary.get("successful_methods") and not eligible:
+        return (
+            f"requested_methods={requested}; successful_methods={successful}; failed_methods={failed}; "
+            f"fallback_to_per_method={fallback}; combined_exit_code={combined_exit}; "
+            f"total candidate events={candidate_events}; sample candidate events={sample_events}; "
+            f"eligible sample candidates={eligible}."
+        )
+    if eligible:
+        return (
+            f"requested_methods={requested}; successful_methods={successful}; failed_methods={failed}; "
+            f"fallback_to_per_method={fallback}; sample candidate events={sample_events}; "
+            f"eligible sample candidates={eligible}."
+        )
+    return (
+        f"requested_methods={requested}; successful_methods={successful}; failed_methods={failed}; "
+        f"fallback_to_per_method={fallback}; combined_exit_code={combined_exit}."
+    )
+
+
 def build_markdown(
     screen_groups: list[dict[str, str]],
     summaries: dict[str, dict[str, Any]],
 ) -> str:
+    clean_negative_groups = []
     lines = [
         "# Recombination OpenRDP Summary",
         "",
         "## Interpretation",
         "This stage runs OpenRDP candidate scanning only. It does not perform final recombinant confirmation.",
+        "A clean negative result means at least one OpenRDP method completed successfully and no eligible sample-level recombination candidates were detected.",
         "",
-        "## Groups",
+        "## Overall conclusion",
     ]
     for row in sorted(screen_groups, key=lambda item: item["analysis_group"]):
         analysis_group = row["analysis_group"]
         summary = summaries.get(analysis_group, {})
-        lines.append(
-            f"- {row['hpv_type']}: requested={','.join(summary.get('methods_requested', [])) or 'NA'}, "
-            f"successful={','.join(summary.get('successful_methods', [])) or 'none'}, "
-            f"failed={','.join(summary.get('failed_methods', [])) or 'none'}, "
-            f"eligible_candidates={summary.get('eligible_sample_candidates', 0)}"
-        )
+        if summary.get("successful_methods") and not summary.get("eligible_sample_candidates", 0):
+            clean_negative_groups.append(row["hpv_type"])
+    if clean_negative_groups:
+        lines.append(f"- Clean negative result for: {', '.join(clean_negative_groups)}.")
+    else:
+        lines.append("- No stage-wide clean negative conclusion was available for every analyzed HPV group.")
+    lines.extend([
+        "",
+        "## Groups",
+    ])
+    for row in sorted(screen_groups, key=lambda item: item["analysis_group"]):
+        analysis_group = row["analysis_group"]
+        summary = summaries.get(analysis_group, {})
+        lines.append(f"- {row['hpv_type']}: {build_conclusion(summary)}. {build_evidence(summary)}")
     lines.append("")
     return "\n".join(lines)
 
@@ -105,6 +151,8 @@ def main() -> int:
             {
                 "type_compound_id": analysis_group,
                 "hpv_type": hpv_type,
+                "conclusion": build_conclusion(summary),
+                "evidence_summary": build_evidence(summary),
                 "methods_requested": ",".join(summary.get("methods_requested", [])),
                 "successful_methods": ",".join(summary.get("successful_methods", [])),
                 "failed_methods": ",".join(summary.get("failed_methods", [])),
@@ -149,6 +197,8 @@ def main() -> int:
                     "status": status,
                     "exit_code": exit_codes.get(method, ""),
                     "produced_eligible_candidate": "yes" if method.lower() in eligible_methods else "no",
+                    "conclusion": build_conclusion(summary),
+                    "evidence_summary": build_evidence(summary),
                     "openrdp_log": str(published_log),
                 }
             )
@@ -180,6 +230,8 @@ def main() -> int:
         [
             "type_compound_id",
             "hpv_type",
+            "conclusion",
+            "evidence_summary",
             "methods_requested",
             "successful_methods",
             "failed_methods",
@@ -216,6 +268,8 @@ def main() -> int:
             "status",
             "exit_code",
             "produced_eligible_candidate",
+            "conclusion",
+            "evidence_summary",
             "openrdp_log",
         ],
     )
