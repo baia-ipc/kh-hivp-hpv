@@ -21,6 +21,10 @@ params.step_name = params.step_name ?: (
         ? "06.recombination_screen"
         : params.recombination_stage == "openrdp"
             ? "07.recombination_openrdp"
+            : params.recombination_stage == "3seq"
+                ? "07.recombination_3seq"
+                : params.recombination_stage == "geneconv"
+                    ? "07.recombination_geneconv"
             : "08.recombination_confirmation"
 )
 params.input_step_name = params.input_step_name ?: (
@@ -28,6 +32,10 @@ params.input_step_name = params.input_step_name ?: (
         ? "03.variant_analysis"
         : params.recombination_stage == "openrdp"
             ? "06.recombination_screen"
+            : params.recombination_stage == "3seq"
+                ? "06.recombination_screen"
+                : params.recombination_stage == "geneconv"
+                    ? "06.recombination_screen"
             : "07.recombination_openrdp"
 )
 
@@ -63,6 +71,12 @@ params.recombination_screen_groups_tsv = params.containsKey('recombination_scree
 params.recombination_openrdp_groups_tsv = params.containsKey('recombination_openrdp_groups_tsv')
     ? params.recombination_openrdp_groups_tsv
     : (params.analysis_name ? "${projectRoot}/outs/${params.analysis_name}/07.recombination_openrdp/summary/recombination_openrdp_groups.tsv" : null)
+params.recombination_3seq_groups_tsv = params.containsKey('recombination_3seq_groups_tsv')
+    ? params.recombination_3seq_groups_tsv
+    : (params.analysis_name ? "${projectRoot}/outs/${params.analysis_name}/07.recombination_3seq/summary/recombination_3seq_groups.tsv" : null)
+params.recombination_geneconv_groups_tsv = params.containsKey('recombination_geneconv_groups_tsv')
+    ? params.recombination_geneconv_groups_tsv
+    : (params.analysis_name ? "${projectRoot}/outs/${params.analysis_name}/07.recombination_geneconv/summary/recombination_geneconv_groups.tsv" : null)
 
 params.recombination_input_mode = params.recombination_input_mode ?: "metadata_fasta"
 params.recombination_sequences_tsv = params.containsKey('recombination_sequences_tsv') ? params.recombination_sequences_tsv : null
@@ -96,6 +110,18 @@ params.recombination_openrdp_pvalue_threshold = params.containsKey('recombinatio
 params.recombination_openrdp_min_segment_length = params.containsKey('recombination_openrdp_min_segment_length')
     ? params.recombination_openrdp_min_segment_length
     : 500
+params.recombination_openrdp_combined_timeout_seconds = params.containsKey('recombination_openrdp_combined_timeout_seconds')
+    ? params.recombination_openrdp_combined_timeout_seconds
+    : 28800
+params.recombination_openrdp_method_timeout_seconds = params.containsKey('recombination_openrdp_method_timeout_seconds')
+    ? params.recombination_openrdp_method_timeout_seconds
+    : 14400
+params.recombination_3seq_timeout_seconds = params.containsKey('recombination_3seq_timeout_seconds')
+    ? params.recombination_3seq_timeout_seconds
+    : 14400
+params.recombination_geneconv_timeout_seconds = params.containsKey('recombination_geneconv_timeout_seconds')
+    ? params.recombination_geneconv_timeout_seconds
+    : 14400
 
 params.recombination_tree_min_bootstrap = params.containsKey('recombination_tree_min_bootstrap') ? params.recombination_tree_min_bootstrap : 95
 params.recombination_tree_bootstrap_replicates = params.containsKey('recombination_tree_bootstrap_replicates') ? params.recombination_tree_bootstrap_replicates : 1000
@@ -119,21 +145,31 @@ params.summary_script = params.containsKey('summary_script') ? params.summary_sc
 params.aggregate_script = params.containsKey('aggregate_script') ? params.aggregate_script : "${params.scripts_dir}/recombination/aggregate_recombination_reports.py"
 params.plot_script = params.containsKey('plot_script') ? params.plot_script : "${params.scripts_dir}/recombination/plot_alignment_similarity.py"
 params.openrdp_runner_script = params.containsKey('openrdp_runner_script') ? params.openrdp_runner_script : "${params.scripts_dir}/recombination/run_openrdp.py"
+params.threeseq_runner_script = params.containsKey('threeseq_runner_script') ? params.threeseq_runner_script : "${params.scripts_dir}/recombination/run_3seq.py"
+params.geneconv_runner_script = params.containsKey('geneconv_runner_script') ? params.geneconv_runner_script : "${params.scripts_dir}/recombination/run_geneconv.py"
 params.tree_confirmation_script = params.containsKey('tree_confirmation_script') ? params.tree_confirmation_script : "${params.scripts_dir}/recombination/confirm_breakpoint_trees.py"
 params.read_validation_script = params.containsKey('read_validation_script') ? params.read_validation_script : "${params.scripts_dir}/recombination/validate_recombination_reads.py"
 params.screen_summary_script = params.containsKey('screen_summary_script') ? params.screen_summary_script : "${params.scripts_dir}/recombination/summarize_recombination_screen.py"
 params.openrdp_summary_script = params.containsKey('openrdp_summary_script') ? params.openrdp_summary_script : "${params.scripts_dir}/recombination/summarize_recombination_openrdp.py"
+params.threeseq_summary_script = params.containsKey('threeseq_summary_script') ? params.threeseq_summary_script : "${params.scripts_dir}/recombination/summarize_recombination_3seq.py"
+params.geneconv_summary_script = params.containsKey('geneconv_summary_script') ? params.geneconv_summary_script : "${params.scripts_dir}/recombination/summarize_recombination_geneconv.py"
 
 if (!params.outdir) error "params.outdir is required"
 if (!params.reports_dir) error "params.reports_dir is required"
-if (!(params.recombination_stage in ["screen", "openrdp", "confirmation"])) {
-    error "Unsupported recombination_stage='${params.recombination_stage}'. Choose one of: screen, openrdp, confirmation."
+if (!(params.recombination_stage in ["screen", "openrdp", "3seq", "geneconv", "confirmation"])) {
+    error "Unsupported recombination_stage='${params.recombination_stage}'. Choose one of: screen, openrdp, 3seq, geneconv, confirmation."
 }
 if (params.recombination_stage == "screen" && !params.recombination_sequences_tsv) {
     error "params.recombination_sequences_tsv is required for recombination_stage=screen"
 }
 if (params.recombination_stage == "openrdp" && !params.recombination_screen_groups_tsv) {
     error "params.recombination_screen_groups_tsv is required for recombination_stage=openrdp"
+}
+if (params.recombination_stage == "3seq" && !params.recombination_screen_groups_tsv) {
+    error "params.recombination_screen_groups_tsv is required for recombination_stage=3seq"
+}
+if (params.recombination_stage == "geneconv" && !params.recombination_screen_groups_tsv) {
+    error "params.recombination_screen_groups_tsv is required for recombination_stage=geneconv"
 }
 if (params.recombination_stage == "confirmation" && !params.recombination_openrdp_groups_tsv) {
     error "params.recombination_openrdp_groups_tsv is required for recombination_stage=confirmation"
@@ -169,6 +205,16 @@ if (params.recombination_stage == "openrdp") {
     checkPath(params.recombination_screen_groups_tsv as String, 'Recombination screen groups TSV')
     checkPath(params.openrdp_runner_script as String, 'OpenRDP runner script')
     checkPath(params.openrdp_summary_script as String, 'Recombination OpenRDP summary script')
+}
+if (params.recombination_stage == "3seq") {
+    checkPath(params.recombination_screen_groups_tsv as String, 'Recombination screen groups TSV')
+    checkPath(params.threeseq_runner_script as String, '3SEQ runner script')
+    checkPath(params.threeseq_summary_script as String, 'Recombination 3SEQ summary script')
+}
+if (params.recombination_stage == "geneconv") {
+    checkPath(params.recombination_screen_groups_tsv as String, 'Recombination screen groups TSV')
+    checkPath(params.geneconv_runner_script as String, 'GENECONV runner script')
+    checkPath(params.geneconv_summary_script as String, 'Recombination GENECONV summary script')
 }
 if (params.recombination_stage == "confirmation") {
     checkPath(params.recombination_openrdp_groups_tsv as String, 'Recombination OpenRDP groups TSV')
@@ -327,11 +373,77 @@ process RUN_OPENRDP {
       --methods ${methodsArg} \\
       --pvalue-threshold "${params.recombination_openrdp_pvalue_threshold}" \\
       --min-segment-length "${params.recombination_openrdp_min_segment_length}" \\
+      --combined-timeout-seconds "${params.recombination_openrdp_combined_timeout_seconds}" \\
+      --method-timeout-seconds "${params.recombination_openrdp_method_timeout_seconds}" \\
       --sanitize-ambiguity-bases \\
       --output-candidates-tsv "${group_id}.openrdp.candidates.tsv" \\
       --output-summary-json "${group_id}.openrdp.summary.json" \\
       --output-log "${group_id}.openrdp.log" \\
       --output-csv "${group_id}.openrdp.csv"
+    """
+}
+
+process RUN_3SEQ {
+    tag { group_id }
+    conda params.openrdp_conda_env
+    publishDir { "${params.outdir}/3seq" }, mode: 'copy', pattern: "${group_id}.3seq.candidates.tsv"
+    publishDir { "${params.outdir}/3seq" }, mode: 'copy', pattern: "${group_id}.3seq.summary.json"
+    publishDir { "${params.outdir}/3seq" }, mode: 'copy', pattern: "${group_id}.3seq.log"
+    publishDir { "${params.outdir}/3seq" }, mode: 'copy', pattern: "${group_id}.3seq.rec"
+
+    input:
+    tuple val(group_id), val(hpv_type), path(alignment), path(manifest_tsv), path(duplicate_map_tsv), path(representative_ids_tsv), path(group_summary_json), val(sample_count), val(reference_count), path(gard_json), path(gard_breakpoints), path(gard_summary), path(gard_warnings), path(gard_log)
+
+    output:
+    tuple val(group_id), val(hpv_type), path(alignment), path(manifest_tsv), path(duplicate_map_tsv), path(representative_ids_tsv), path(group_summary_json), val(sample_count), val(reference_count), path(gard_json), path(gard_breakpoints), path(gard_summary), path(gard_warnings), path(gard_log), path("${group_id}.3seq.candidates.tsv"), path("${group_id}.3seq.summary.json"), path("${group_id}.3seq.log"), path("${group_id}.3seq.rec")
+
+    script:
+    """
+    python3 "${params.threeseq_runner_script}" \\
+      --alignment "${alignment}" \\
+      --manifest-tsv "${manifest_tsv}" \\
+      --analysis-group "${group_id}" \\
+      --hpv-type "${hpv_type}" \\
+      --pvalue-threshold "${params.recombination_openrdp_pvalue_threshold}" \\
+      --min-segment-length "${params.recombination_openrdp_min_segment_length}" \\
+      --timeout-seconds "${params.recombination_3seq_timeout_seconds}" \\
+      --sanitize-ambiguity-bases \\
+      --output-candidates-tsv "${group_id}.3seq.candidates.tsv" \\
+      --output-summary-json "${group_id}.3seq.summary.json" \\
+      --output-log "${group_id}.3seq.log" \\
+      --output-rec "${group_id}.3seq.rec"
+    """
+}
+
+process RUN_GENECONV {
+    tag { group_id }
+    conda params.openrdp_conda_env
+    publishDir { "${params.outdir}/geneconv" }, mode: 'copy', pattern: "${group_id}.geneconv.candidates.tsv"
+    publishDir { "${params.outdir}/geneconv" }, mode: 'copy', pattern: "${group_id}.geneconv.summary.json"
+    publishDir { "${params.outdir}/geneconv" }, mode: 'copy', pattern: "${group_id}.geneconv.log"
+    publishDir { "${params.outdir}/geneconv" }, mode: 'copy', pattern: "${group_id}.geneconv.frags"
+
+    input:
+    tuple val(group_id), val(hpv_type), path(alignment), path(manifest_tsv), path(duplicate_map_tsv), path(representative_ids_tsv), path(group_summary_json), val(sample_count), val(reference_count), path(gard_json), path(gard_breakpoints), path(gard_summary), path(gard_warnings), path(gard_log)
+
+    output:
+    tuple val(group_id), val(hpv_type), path(alignment), path(manifest_tsv), path(duplicate_map_tsv), path(representative_ids_tsv), path(group_summary_json), val(sample_count), val(reference_count), path(gard_json), path(gard_breakpoints), path(gard_summary), path(gard_warnings), path(gard_log), path("${group_id}.geneconv.candidates.tsv"), path("${group_id}.geneconv.summary.json"), path("${group_id}.geneconv.log"), path("${group_id}.geneconv.frags")
+
+    script:
+    """
+    python3 "${params.geneconv_runner_script}" \\
+      --alignment "${alignment}" \\
+      --manifest-tsv "${manifest_tsv}" \\
+      --analysis-group "${group_id}" \\
+      --hpv-type "${hpv_type}" \\
+      --pvalue-threshold "${params.recombination_openrdp_pvalue_threshold}" \\
+      --min-segment-length "${params.recombination_openrdp_min_segment_length}" \\
+      --timeout-seconds "${params.recombination_geneconv_timeout_seconds}" \\
+      --sanitize-ambiguity-bases \\
+      --output-candidates-tsv "${group_id}.geneconv.candidates.tsv" \\
+      --output-summary-json "${group_id}.geneconv.summary.json" \\
+      --output-log "${group_id}.geneconv.log" \\
+      --output-frags "${group_id}.geneconv.frags"
     """
 }
 
@@ -561,6 +673,94 @@ process OPENRDP_SUMMARY {
     """
 }
 
+process THREESEQ_SUMMARY {
+    tag "3seq_summary"
+    conda params.conda_env
+    publishDir { "${params.outdir}/summary" }, mode: 'copy', pattern: "recombination_3seq*"
+    publishDir { "${params.reports_dir}" }, mode: 'copy', pattern: "*.multiqc.tsv"
+    publishDir { "${params.reports_dir}" }, mode: 'copy', pattern: "recombination_3seq_summary.md"
+
+    input:
+    path(screen_groups_tsv)
+    path(candidates)
+    path(summaries)
+    path(logs)
+    path(recs)
+
+    output:
+    path "recombination_3seq_type_overview.multiqc.tsv", emit: type_overview
+    path "recombination_3seq_candidate_samples.multiqc.tsv", emit: candidate_samples
+    path "recombination_3seq_method_failures.multiqc.tsv", emit: method_failures
+    path "recombination_3seq_summary.md", emit: summary_md
+    path "recombination_3seq_warnings.tsv", emit: warnings_tsv
+    path "recombination_3seq_groups.tsv", emit: groups_manifest
+
+    script:
+    def candidateArgs = candidates.collect { "\"${it}\"" }.join(' ')
+    def summaryArgs = summaries.collect { "\"${it}\"" }.join(' ')
+    def logArgs = logs.collect { "\"${it}\"" }.join(' ')
+    def recArgs = recs.collect { "\"${it}\"" }.join(' ')
+    """
+    python3 "${params.threeseq_summary_script}" \\
+      --screen-groups-tsv "${screen_groups_tsv}" \\
+      --candidates ${candidateArgs} \\
+      --summaries ${summaryArgs} \\
+      --logs ${logArgs} \\
+      --recs ${recArgs} \\
+      --step-outdir "${params.outdir}" \\
+      --output-type-overview-tsv "recombination_3seq_type_overview.multiqc.tsv" \\
+      --output-candidate-samples-tsv "recombination_3seq_candidate_samples.multiqc.tsv" \\
+      --output-method-failures-tsv "recombination_3seq_method_failures.multiqc.tsv" \\
+      --output-summary-md "recombination_3seq_summary.md" \\
+      --output-warnings-tsv "recombination_3seq_warnings.tsv" \\
+      --output-groups-tsv "recombination_3seq_groups.tsv"
+    """
+}
+
+process GENECONV_SUMMARY {
+    tag "geneconv_summary"
+    conda params.conda_env
+    publishDir { "${params.outdir}/summary" }, mode: 'copy', pattern: "recombination_geneconv*"
+    publishDir { "${params.reports_dir}" }, mode: 'copy', pattern: "*.multiqc.tsv"
+    publishDir { "${params.reports_dir}" }, mode: 'copy', pattern: "recombination_geneconv_summary.md"
+
+    input:
+    path(screen_groups_tsv)
+    path(candidates)
+    path(summaries)
+    path(logs)
+    path(frags)
+
+    output:
+    path "recombination_geneconv_type_overview.multiqc.tsv", emit: type_overview
+    path "recombination_geneconv_candidate_samples.multiqc.tsv", emit: candidate_samples
+    path "recombination_geneconv_method_failures.multiqc.tsv", emit: method_failures
+    path "recombination_geneconv_summary.md", emit: summary_md
+    path "recombination_geneconv_warnings.tsv", emit: warnings_tsv
+    path "recombination_geneconv_groups.tsv", emit: groups_manifest
+
+    script:
+    def candidateArgs = candidates.collect { "\"${it}\"" }.join(' ')
+    def summaryArgs = summaries.collect { "\"${it}\"" }.join(' ')
+    def logArgs = logs.collect { "\"${it}\"" }.join(' ')
+    def fragArgs = frags.collect { "\"${it}\"" }.join(' ')
+    """
+    python3 "${params.geneconv_summary_script}" \\
+      --screen-groups-tsv "${screen_groups_tsv}" \\
+      --candidates ${candidateArgs} \\
+      --summaries ${summaryArgs} \\
+      --logs ${logArgs} \\
+      --frags ${fragArgs} \\
+      --step-outdir "${params.outdir}" \\
+      --output-type-overview-tsv "recombination_geneconv_type_overview.multiqc.tsv" \\
+      --output-candidate-samples-tsv "recombination_geneconv_candidate_samples.multiqc.tsv" \\
+      --output-method-failures-tsv "recombination_geneconv_method_failures.multiqc.tsv" \\
+      --output-summary-md "recombination_geneconv_summary.md" \\
+      --output-warnings-tsv "recombination_geneconv_warnings.tsv" \\
+      --output-groups-tsv "recombination_geneconv_groups.tsv"
+    """
+}
+
 process AGGREGATE_SUMMARY {
     tag "aggregate"
     conda params.conda_env
@@ -724,6 +924,80 @@ workflow {
             .mix(openrdpSummary.summary_md)
             .collect()
         MULTIQC(multiqcConfigFile, openrdpReportInputs)
+    } else if (params.recombination_stage == "3seq") {
+        def screenGroupsPath = file(params.recombination_screen_groups_tsv as String)
+        def screenGroups = Channel.of(screenGroupsPath)
+            .splitCsv(header: true, sep: '\t')
+            .map { row ->
+                tuple(
+                    row.analysis_group as String,
+                    row.hpv_type as String,
+                    file(row.alignment_fasta),
+                    file(row.manifest_tsv),
+                    file(row.duplicate_map_tsv),
+                    file(row.representative_ids_tsv),
+                    file(row.group_summary_json),
+                    (row.sample_count as Integer),
+                    (row.reference_count as Integer),
+                    file(row.gard_json),
+                    file(row.gard_breakpoints_tsv),
+                    file(row.gard_summary_json),
+                    file(row.gard_warnings_tsv),
+                    file(row.gard_log)
+                )
+            }
+
+        def threeseq = RUN_3SEQ(screenGroups)
+        def threeseqSummary = THREESEQ_SUMMARY(
+            screenGroupsPath,
+            threeseq.map { it[14] }.collect(),
+            threeseq.map { it[15] }.collect(),
+            threeseq.map { it[16] }.collect(),
+            threeseq.map { it[17] }.collect()
+        )
+        def threeseqReportInputs = threeseqSummary.type_overview
+            .mix(threeseqSummary.candidate_samples)
+            .mix(threeseqSummary.method_failures)
+            .mix(threeseqSummary.summary_md)
+            .collect()
+        MULTIQC(multiqcConfigFile, threeseqReportInputs)
+    } else if (params.recombination_stage == "geneconv") {
+        def screenGroupsPath = file(params.recombination_screen_groups_tsv as String)
+        def screenGroups = Channel.of(screenGroupsPath)
+            .splitCsv(header: true, sep: '\t')
+            .map { row ->
+                tuple(
+                    row.analysis_group as String,
+                    row.hpv_type as String,
+                    file(row.alignment_fasta),
+                    file(row.manifest_tsv),
+                    file(row.duplicate_map_tsv),
+                    file(row.representative_ids_tsv),
+                    file(row.group_summary_json),
+                    (row.sample_count as Integer),
+                    (row.reference_count as Integer),
+                    file(row.gard_json),
+                    file(row.gard_breakpoints_tsv),
+                    file(row.gard_summary_json),
+                    file(row.gard_warnings_tsv),
+                    file(row.gard_log)
+                )
+            }
+
+        def geneconv = RUN_GENECONV(screenGroups)
+        def geneconvSummary = GENECONV_SUMMARY(
+            screenGroupsPath,
+            geneconv.map { it[14] }.collect(),
+            geneconv.map { it[15] }.collect(),
+            geneconv.map { it[16] }.collect(),
+            geneconv.map { it[17] }.collect()
+        )
+        def geneconvReportInputs = geneconvSummary.type_overview
+            .mix(geneconvSummary.candidate_samples)
+            .mix(geneconvSummary.method_failures)
+            .mix(geneconvSummary.summary_md)
+            .collect()
+        MULTIQC(multiqcConfigFile, geneconvReportInputs)
     } else {
         def openrdpGroupsPath = file(params.recombination_openrdp_groups_tsv as String)
         def openrdpGroups = Channel.of(openrdpGroupsPath)

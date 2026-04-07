@@ -117,6 +117,7 @@ def build_markdown(
     overview_row: dict[str, Any],
     candidate_rows: list[dict[str, Any]],
     breakpoint_rows: list[dict[str, Any]],
+    candidate_source_label: str,
 ) -> str:
     candidate_calls = [row for row in candidate_rows if row["final_status"] == "candidate_recombinant"]
     inconclusive = [row for row in candidate_rows if row["final_status"] == "inconclusive"]
@@ -129,12 +130,12 @@ def build_markdown(
         f"- Background references analyzed: {overview_row['background_references']}",
         f"- GARD breakpoints detected: {overview_row['gard_breakpoints']}",
         f"- GARD delta c-AIC versus no-breakpoint: {overview_row['gard_delta_aicc']}",
-        f"- OpenRDP eligible sample candidates: {overview_row['openrdp_eligible_candidates']}",
+        f"- {candidate_source_label} eligible sample candidates: {overview_row['openrdp_eligible_candidates']}",
         f"- Final candidate recombinant samples: {len(candidate_calls)}",
         "",
         "## Note",
         "GARD remains an alignment-level screen in this workflow.",
-        "A sample is only reported as `candidate_recombinant` when GARD, OpenRDP, IQ-TREE window switching, and read validation all agree.",
+        f"A sample is only reported as `candidate_recombinant` when GARD, {candidate_source_label}, IQ-TREE window switching, and read validation all agree.",
         "",
     ]
     if candidate_calls:
@@ -176,6 +177,7 @@ def main() -> int:
     gard_breakpoints = read_tsv(Path(args.gard_breakpoints_tsv))
     gard_summary = read_json(Path(args.gard_summary_json))
     openrdp_rows = read_tsv(Path(args.openrdp_candidates_tsv))
+    openrdp_summary = read_json(Path(args.openrdp_summary_json))
     tree_rows = {row["candidate_id"]: row for row in read_tsv(Path(args.tree_confirmation_tsv))}
     read_rows = {row["candidate_id"]: row for row in read_tsv(Path(args.read_validation_tsv))}
     nearest_lineages = load_nearest_lineages(Path(args.samples_vs_lineage_sets_tsv), args.hpv_type)
@@ -195,6 +197,7 @@ def main() -> int:
     delta_aicc = parse_float(gard_summary.get("delta_aicc_vs_no_breakpoint"))
     gard_positive = (gard_summary.get("n_breakpoints", 0) or 0) > 0 and (delta_aicc or 0) > 0
     global_strength = classify_global_strength(delta_aicc)
+    candidate_source_label = str(openrdp_summary.get("candidate_source") or "OpenRDP")
 
     breakpoint_support_rows: list[dict[str, Any]] = []
     event_rows: list[dict[str, Any]] = []
@@ -249,7 +252,7 @@ def main() -> int:
         if gard_positive:
             evidence_flags.append("GARD")
         if has_candidate_signal:
-            evidence_flags.append("OpenRDP")
+            evidence_flags.append(candidate_source_label)
         if tree_confirmed:
             evidence_flags.append("IQ-TREE")
         if read_passed:
@@ -311,7 +314,7 @@ def main() -> int:
     }
 
     Path(args.output_summary_md).write_text(
-        build_markdown(args.hpv_type, overview_row, candidate_sample_rows, breakpoint_support_rows),
+        build_markdown(args.hpv_type, overview_row, candidate_sample_rows, breakpoint_support_rows, candidate_source_label),
         encoding="utf-8",
     )
     Path(args.output_events_json).write_text(__import__("json").dumps(event_rows, indent=2) + "\n", encoding="utf-8")
