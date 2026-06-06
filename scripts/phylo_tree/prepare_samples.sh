@@ -19,6 +19,9 @@ SAMPLES_FILE=${SAMPLES_FILE:-}
 SAMPLES_TSV=${SAMPLES_TSV:-$REPO_ROOT/metadata/seq_samples/samples_targeted_analysis.tsv}
 STRAINS_TSV=${STRAINS_TSV:-$REPO_ROOT/outs/targeted_analysis/02.mapping_vs_pave/reports/strains.tsv}
 MAPPING_OUTDIR=${MAPPING_OUTDIR:-$REPO_ROOT/outs/targeted_analysis/02.mapping_vs_pave}
+COV_STATS_TSV=${COV_STATS_TSV:-$MAPPING_OUTDIR/reports/cov_stats.tsv}
+MIN_COV_BREADTH=${MIN_COV_BREADTH:-0.9}
+MIN_CONSENSUS_DEPTH=${MIN_CONSENSUS_DEPTH:-10}
 
 if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
   cat <<'EOFHELP'
@@ -30,6 +33,7 @@ Environment overrides:
   BCF_DIR, BCF_RUN_ID, OUT_DIR
   SAMPLES, SAMPLES_FILE, SAMPLES_TSV
   STRAINS_TSV, STRAINS_MATCH, MAPPING_OUTDIR
+  COV_STATS_TSV, MIN_COV_BREADTH, MIN_CONSENSUS_DEPTH
 EOFHELP
   exit 0
 fi
@@ -141,9 +145,39 @@ if [[ -z "$SAMPLES" && -n "$SAMPLES_FILE" ]]; then
 fi
 
 if [[ -z "$SAMPLES" && -f "$STRAINS_TSV" && -n "$BCF_RUN_ID" ]]; then
-  SAMPLES=$(awk -F'\t' -v run="$BCF_RUN_ID" -v hpv="$STRAINS_MATCH" \
+  # Candidate samples: assigned this HPV type among their top strains.
+  candidate_samples=$(awk -F'\t' -v run="$BCF_RUN_ID" -v hpv="$STRAINS_MATCH" \
     'NR>1 && $1==run && $2 ~ /^KHCA-/ && $4 ~ ("(^|,)"hpv"(,|$)") {print $2}' \
-    "$STRAINS_TSV" | sort -u | xargs)
+    "$STRAINS_TSV" | sort -u)
+
+  if [[ -n "$candidate_samples" && -n "$MIN_COV_BREADTH" && -f "$COV_STATS_TSV" ]]; then
+    # Keep only samples whose genome-wide breadth for this strain clears the
+    # threshold, so low-coverage hits (a handful of stray reads) are dropped.
+    SAMPLES=$(awk -F'\t' -v hpv="$HPV_TYPE" -v minb="$MIN_COV_BREADTH" '
+        FNR==NR { cand[$1]=1; next }
+        FNR==1 {
+          for (i=1; i<=NF; i++) {
+            if ($i=="sample") sc=i
+            else if ($i=="strain") tc=i
+            else if ($i=="avg_cov_breadth") bc=i
+          }
+          next
+        }
+        (sc && tc && bc && $tc==hpv && ($bc+0) >= (minb+0) && ($sc in cand)) { print $sc }
+      ' <(printf '%s\n' "$candidate_samples") "$COV_STATS_TSV" | sort -u | xargs)
+
+    dropped=$(comm -23 \
+      <(printf '%s\n' "$candidate_samples" | sort -u) \
+      <(printf '%s\n' $SAMPLES | tr ' ' '\n' | sort -u) | xargs)
+    if [[ -n "$dropped" ]]; then
+      echo "Info: excluded low-breadth ${HPV_TYPE} samples (avg_cov_breadth < ${MIN_COV_BREADTH}): $dropped" >&2
+    fi
+  else
+    if [[ -n "$candidate_samples" ]]; then
+      echo "Warning: coverage stats not found ($COV_STATS_TSV); skipping breadth filter." >&2
+    fi
+    SAMPLES=$(printf '%s\n' "$candidate_samples" | xargs)
+  fi
 fi
 
 if [[ -z "$SAMPLES" && -f "$OUT_DIR/samples.fasta" ]]; then
@@ -165,6 +199,10 @@ seqkit grep -r -p "$REF_PATTERN" "$PAVE_FASTA" > "$REF_FASTA"
 consensus_dir="$OUT_DIR/samples_consensus"
 mkdir -p "$consensus_dir"
 
+# Reference contig id (first whitespace-delimited token of the FASTA header),
+# used to pull this strain's per-base depth out of the genome-wide depth file.
+ref_contig=$(awk 'sub(/^>/, ""){print $1; exit}' "$REF_FASTA")
+
 read -r -a sample_list <<< "$SAMPLES"
 for sample in "${sample_list[@]}"; do
   sample_id="$sample"
@@ -178,7 +216,29 @@ for sample in "${sample_list[@]}"; do
     exit 1
   fi
 
-  bcftools consensus -f "$REF_FASTA" "$bcf_path" > "$out_path"
+  # Mask positions below the minimum depth with N so uncovered regions are not
+  # silently filled in with the reference base by `bcftools consensus`.
+  consensus_mask_arg=()
+  if [[ -n "$MIN_CONSENSUS_DEPTH" && "$MIN_CONSENSUS_DEPTH" != "0" ]]; then
+    depth_path="$BCF_DIR/${sample_id}.depth"
+    if [[ -f "$depth_path" && -n "$ref_contig" ]]; then
+      mask_bed="$consensus_dir/${sample_id}.${REF_NAME}.lowcov.bed"
+      awk -F'\t' -v c="$ref_contig" -v mind="$MIN_CONSENSUS_DEPTH" \
+        'BEGIN{OFS="\t"} $1==c && ($3+0) < (mind+0) {print $1, $2-1, $2}' \
+        "$depth_path" > "$mask_bed"
+      if [[ -s "$mask_bed" ]]; then
+        consensus_mask_arg=(--mask "$mask_bed" --mask-with N)
+      fi
+    else
+      echo "Warning: depth file not found ($depth_path); consensus for ${sample_id} not coverage-masked." >&2
+    fi
+  fi
+
+  if [[ ${#consensus_mask_arg[@]} -gt 0 ]]; then
+    bcftools consensus -f "$REF_FASTA" "${consensus_mask_arg[@]}" "$bcf_path" > "$out_path"
+  else
+    bcftools consensus -f "$REF_FASTA" "$bcf_path" > "$out_path"
+  fi
 
   tmp_out=$(mktemp)
   awk -v id="${sample_id}-${HPV_TYPE}" 'NR==1{print ">"id; next} {print}' "$out_path" > "$tmp_out"

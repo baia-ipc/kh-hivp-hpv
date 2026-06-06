@@ -87,7 +87,7 @@ awk 'BEGIN{OFS=""} /^>/{gsub(/ /,"");} {print}' "$SELECTED_RENAMED_FASTA" > "$tm
 
 if [[ -n "$SKIP_ID" ]]; then
   tmp_filtered=$(mktemp)
-  awk -v skip="$SKIP_ID" 'BEGIN{keep=1} /^>/{id=substr($0,2); keep=(id!=skip)} keep{print}' \
+  awk -v skip="$SKIP_ID" 'BEGIN{keep=1; skl=tolower(skip)} /^>/{id=substr($0,2); keep=(tolower(id)!=skl)} keep{print}' \
     "$tmp_headers" > "$tmp_filtered"
   mv "$tmp_filtered" "$SELECTED_RENAMED_FASTA"
   rm -f "$tmp_headers"

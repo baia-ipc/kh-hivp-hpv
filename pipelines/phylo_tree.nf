@@ -55,10 +55,14 @@ params.selected_tsv = params.containsKey('selected_tsv') ? params.selected_tsv :
 params.acc_country_tsv = params.containsKey('acc_country_tsv') ? params.acc_country_tsv : null
 params.acc_country_cols = params.containsKey('acc_country_cols') ? params.acc_country_cols : null
 params.outgroups_list = params.containsKey('outgroups_list') ? params.outgroups_list : null
+params.outgroups_rename_tsv = params.containsKey('outgroups_rename_tsv') ? params.outgroups_rename_tsv : null
 params.selection_list = params.containsKey('selection_list') ? params.selection_list : null
 params.selection_columns = params.containsKey('selection_columns') ? params.selection_columns : null
 params.samples_tsv = params.containsKey('samples_tsv') ? params.samples_tsv : null
 params.strains_tsv = params.containsKey('strains_tsv') ? params.strains_tsv : null
+params.cov_stats_tsv = params.containsKey('cov_stats_tsv') ? params.cov_stats_tsv : null
+params.min_cov_breadth = params.containsKey('min_cov_breadth') ? params.min_cov_breadth : 0.9
+params.min_consensus_depth = params.containsKey('min_consensus_depth') ? params.min_consensus_depth : 10
 params.bcf_dir = params.containsKey('bcf_dir') ? params.bcf_dir : null
 params.bcf_run_id = params.containsKey('bcf_run_id') ? params.bcf_run_id : null
 params.sample_prep_script = params.containsKey('sample_prep_script') ? params.sample_prep_script : null
@@ -78,6 +82,9 @@ params.strains_match = params.containsKey('strains_match') ? params.strains_matc
 params.tree_render_script = (params.containsKey('tree_render_script') && params.tree_render_script) ? params.tree_render_script : "${params.scripts_dir}/phylo_tree/render_tree_svg.py"
 params.tree_stats_script = (params.containsKey('tree_stats_script') && params.tree_stats_script) ? params.tree_stats_script : "${params.scripts_dir}/phylo_tree/compute_tree_stats.py"
 params.selection_build_script = (params.containsKey('selection_build_script') && params.selection_build_script) ? params.selection_build_script : "${params.scripts_dir}/phylo_tree/build_tree_selection_tsv.py"
+params.figtree_script = (params.containsKey('figtree_script') && params.figtree_script) ? params.figtree_script : "${params.scripts_dir}/phylo_tree/build_figtree_nexus.py"
+params.figtree_sample_prefix = (params.containsKey('figtree_sample_prefix') && params.figtree_sample_prefix) ? params.figtree_sample_prefix : "KHCA"
+params.figtree_sample_country = (params.containsKey('figtree_sample_country') && params.figtree_sample_country) ? params.figtree_sample_country : "Cambodia"
 params.tree_layout = (params.containsKey('tree_layout') && params.tree_layout) ? params.tree_layout : "circular"
 params.tree_use_branch_lengths = (params.containsKey('tree_use_branch_lengths') && params.tree_use_branch_lengths) ? params.tree_use_branch_lengths : false
 
@@ -173,7 +180,24 @@ checkPath(params.selection_script as String, 'Selection script')
 checkPath(params.tree_render_script as String, 'Tree render script')
 checkPath(params.tree_stats_script as String, 'Tree stats script')
 checkPath(params.selection_build_script as String, 'Selection build script')
+checkPath(params.figtree_script as String, 'FigTree build script')
 
+if (!iqtreeOutgroupsParam && params.outgroups_rename_tsv) {
+    // When outgroups are renamed (e.g. HPV39REF -> HPV39/M62849.1) the IQ-TREE
+    // -o labels must be the renamed tip names, otherwise rooting silently fails.
+    def renameFile = new File(params.outgroups_rename_tsv as String)
+    if (!renameFile.exists()) {
+        error "outgroups_rename_tsv not found: ${params.outgroups_rename_tsv}"
+    }
+    def labels = renameFile.readLines()
+        .collect { it.trim() }
+        .findAll { it && !it.startsWith('#') }
+        .collect { def f = it.split('\t'); (f.size() > 1 ? f[1] : f[0]).trim() }
+        .findAll { it }
+    if (!labels.isEmpty()) {
+        iqtreeOutgroupsParam = labels.join(',')
+    }
+}
 if (!iqtreeOutgroupsParam && outgroupsFileParam) {
     def outgroupsFile = new File(params.outgroups_file as String)
     if (!outgroupsFile.exists()) {
@@ -329,8 +353,31 @@ process PREP_OUTGROUPS {
     path "outgroups.fasta"
 
     script:
+    def renameTsv = params.outgroups_rename_tsv ?: ""
     """
-    seqkit grep -f "${outgroups_list}" -r "${outgroups_fasta}" > outgroups.fasta
+    seqkit grep -f "${outgroups_list}" -r "${outgroups_fasta}" > outgroups.raw.fasta
+
+    if [[ -n "${renameTsv}" && -f "${renameTsv}" ]]; then
+      awk -v mapfile="${renameTsv}" '
+        BEGIN {
+          while ((getline line < mapfile) > 0) {
+            if (line ~ /^#/ || line == "") continue
+            n = split(line, a, "\\t")
+            if (n >= 2 && a[1] != "") m[a[1]] = a[2]
+          }
+        }
+        /^>/ {
+          id = substr(\$0, 2)
+          split(id, p, "|")
+          key = p[1]
+          if (key in m) { print ">" m[key] } else { print }
+          next
+        }
+        { print }
+      ' outgroups.raw.fasta > outgroups.fasta
+    else
+      mv outgroups.raw.fasta outgroups.fasta
+    fi
     """
 }
 
@@ -357,6 +404,9 @@ process PREP_SAMPLES {
     BCF_RUN_ID="${params.bcf_run_id ?: ''}" \\
     SAMPLES_TSV="${params.samples_tsv}" \\
     STRAINS_TSV="${params.strains_tsv ?: ''}" \\
+    COV_STATS_TSV="${params.cov_stats_tsv ?: ''}" \\
+    MIN_COV_BREADTH="${params.min_cov_breadth}" \\
+    MIN_CONSENSUS_DEPTH="${params.min_consensus_depth}" \\
     "${params.sample_prep_script}"
     cp "${params.derived_dir}/samples.fasta" samples.fasta
     """
@@ -415,7 +465,7 @@ process TRIMAL {
 
     script:
     """
-    awk 'BEGIN{FS=""} /^>/{gsub(":", "_");} {print}' "${aligned}" | sed 's/[a-z]/\\U&/g' > all_mafft_aligned.UPPER.fasta
+    awk '/^>/{gsub(":", "_"); print; next} {print toupper(\$0)}' "${aligned}" > all_mafft_aligned.UPPER.fasta
     trimal -in all_mafft_aligned.UPPER.fasta -out all_trimal.fasta -gt ${trimalGt} -st ${trimalSt}
     """
 }
@@ -433,9 +483,37 @@ process IQTREE {
     path "all_trimal.fasta.*", emit: all_files
 
     script:
-    def outgroupsArg = params.iqtree_outgroups ? "-o ${params.iqtree_outgroups}" : ""
+    def outgroupsArg = iqtreeOutgroupsParam ? "-o ${iqtreeOutgroupsParam}" : ""
     """
     iqtree -s "${trimal_fasta}" ${outgroupsArg} -m ${iqtreeModel} -nt ${iqtreeThreads} -bb ${iqtreeBootstrap} -alrt ${iqtreeAlrt}
+    """
+}
+
+process FIGTREE {
+    tag "figtree"
+    publishDir { "${params.outdir}" }, mode: 'copy'
+    conda params.conda_env
+
+    input:
+    path treefile
+    path lineages_tsv
+
+    output:
+    path "phylo_tree.figtree.nexus", emit: nexus
+    path "phylo_tree.rooted.treefile", emit: rooted
+
+    script:
+    def og = iqtreeOutgroupsParam ?: ""
+    """
+    python3 "${params.figtree_script}" \\
+      --treefile "${treefile}" \\
+      --lineages-tsv "${lineages_tsv}" \\
+      --sublineage-col ${params.lineage_refs_lineage_col} \\
+      --outgroups "${og}" \\
+      --sample-prefix "${params.figtree_sample_prefix}" \\
+      --sample-country "${params.figtree_sample_country}" \\
+      --out-nexus phylo_tree.figtree.nexus \\
+      --rooted-treefile phylo_tree.rooted.treefile
     """
 }
 
@@ -559,8 +637,9 @@ workflow {
     def aligned = MAFFT_ALIGN(cat_all)
     def trimmed = TRIMAL(aligned)
     def tree = IQTREE(trimmed.trimal)
-    def tree_rendered = RENDER_TREE(tree.treefile)
+    def figtree = FIGTREE(tree.treefile, lineagesTsv)
+    def tree_rendered = RENDER_TREE(figtree.rooted)
     def stats = TREE_STATS(selectedReady, outgroupsReady, lineagesReady, samplesReady, aligned, trimmed.trimal, tree.iqtree, tree.treefile)
-    def qc_inputs = tree_rendered.svg.mix(stats).mix(lineageRefsReady)
+    def qc_inputs = tree_rendered.svg.mix(stats).mix(lineageRefsReady).mix(figtree.nexus)
     MULTIQC(multiqc_config_file, qc_inputs.collect())
 }
