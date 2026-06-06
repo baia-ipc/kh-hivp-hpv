@@ -177,6 +177,8 @@ def main():
     ap.add_argument("--sample-country", default="Cambodia")
     ap.add_argument("--out-nexus", required=True)
     ap.add_argument("--rooted-treefile", help="Optional output rooted Newick")
+    ap.add_argument("--out-metadata", help="Optional TSV (name/country/sublineage/colors) "
+                                           "for viewers that join metadata on tip names (e.g. PearTree, iTOL)")
     args = ap.parse_args()
 
     outgroups = [o.strip() for o in args.outgroups.split(",") if o.strip()]
@@ -231,6 +233,18 @@ def main():
 
     if args.rooted_treefile:
         Phylo.write(tree, args.rooted_treefile, "newick")
+
+    if args.out_metadata:
+        with open(args.out_metadata, "w", encoding="utf-8") as mh:
+            mh.write("name\tcountry\tsublineage\tcountry_color\tsublineage_color\n")
+            for t in tips:
+                name = t.name
+                sub = tip_sub[name]
+                ctry = tip_country[name]
+                mh.write("%s\t%s\t%s\t%s\t%s\n"
+                         % (name, ctry, sub,
+                            ctry_colors.get(ctry, "#000000"),
+                            sub_colors.get(sub, "#000000")))
 
     # console summary
     from collections import Counter

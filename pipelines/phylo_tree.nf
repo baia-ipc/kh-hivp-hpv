@@ -501,6 +501,7 @@ process FIGTREE {
     output:
     path "phylo_tree.figtree.nexus", emit: nexus
     path "phylo_tree.rooted.treefile", emit: rooted
+    path "phylo_tree.metadata.tsv", emit: metadata
 
     script:
     def og = iqtreeOutgroupsParam ?: ""
@@ -513,7 +514,8 @@ process FIGTREE {
       --sample-prefix "${params.figtree_sample_prefix}" \\
       --sample-country "${params.figtree_sample_country}" \\
       --out-nexus phylo_tree.figtree.nexus \\
-      --rooted-treefile phylo_tree.rooted.treefile
+      --rooted-treefile phylo_tree.rooted.treefile \\
+      --out-metadata phylo_tree.metadata.tsv
     """
 }
 
