@@ -25,7 +25,7 @@ from __future__ import annotations
 import argparse
 import csv
 import sys
-from io import StringIO
+from io import BytesIO, StringIO
 from pathlib import Path
 from typing import Dict, List, Optional
 
@@ -287,6 +287,17 @@ def draw_panel(ax, letter, title, treefile, metadata_tsv, merged, args) -> int:
     return draw_support(ax, tree, x, y, args, obstacles)
 
 
+def save_rgb_tiff(fig, path: str, dpi: int) -> None:
+    """Write an LZW-compressed RGB TIFF (white background, no alpha channel)."""
+    from PIL import Image
+
+    buffer = BytesIO()
+    fig.savefig(buffer, format="png", dpi=dpi, facecolor="white")
+    buffer.seek(0)
+    Image.MAX_IMAGE_PIXELS = None
+    Image.open(buffer).convert("RGB").save(path, compression="tiff_lzw", dpi=(dpi, dpi))
+
+
 def main() -> int:
     args = parse_args()
     if not (args.out_pdf or args.out_tiff):
@@ -312,7 +323,7 @@ def main() -> int:
     if args.out_pdf:
         fig.savefig(args.out_pdf, dpi=args.dpi)
     if args.out_tiff:
-        fig.savefig(args.out_tiff, dpi=args.dpi, pil_kwargs={"compression": "tiff_lzw"})
+        save_rgb_tiff(fig, args.out_tiff, args.dpi)
     return 0
 
 
