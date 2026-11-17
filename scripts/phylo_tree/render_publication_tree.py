@@ -83,7 +83,7 @@ def parse_args() -> argparse.Namespace:
                    help="SH-aLRT from which a clade counts as reliable (default: 80)")
     p.add_argument("--sample-prefix", default="KHCA", help="Tip name prefix of study genomes")
     p.add_argument("--highlight-country", default="Cambodia")
-    p.add_argument("--width-mm", type=float, default=190)
+    p.add_argument("--width-mm", type=float, default=180)
     p.add_argument("--row-mm", type=float, default=1.95, help="Height per tip")
     p.add_argument("--tip-font-size", type=float, default=4.6)
     p.add_argument("--dpi", type=int, default=600, help="TIFF resolution")
