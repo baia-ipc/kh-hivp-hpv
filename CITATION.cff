@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+message: If you use this software, please cite it using these metadata.
+title: "kh-hivp-hpv: a reproducible workflow for whole-genome HPV sequencing analysis"
+abstract: >-
+  Nextflow workflow for the analysis of HPV sequencing data, from read
+  taxonomic binning and genotype assignment through consensus generation to
+  phylogenetic trees, sublineage assignment, recombination screening and
+  single-nucleotide variant analysis.
+type: software
+authors:
+  - family-names: Gonnella
+    given-names: Giorgio
+    orcid: https://orcid.org/0000-0003-3900-5397
+    affiliation: Institut Pasteur du Cambodge
+  - family-names: Chhay
+    given-names: Sivyi
+    orcid: https://orcid.org/0009-0001-5070-1118
+    affiliation: Institut Pasteur du Cambodge
+repository-code: https://github.com/baia-ipc/kh-hivp-hpv
+license: MIT
+keywords:
+  - human papillomavirus
+  - whole-genome sequencing
+  - phylogenetics
+  - recombination
+  - Nextflow
