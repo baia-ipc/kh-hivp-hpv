@@ -119,6 +119,18 @@ params.recombination_openrdp_combined_timeout_seconds = params.containsKey('reco
 params.recombination_openrdp_method_timeout_seconds = params.containsKey('recombination_openrdp_method_timeout_seconds')
     ? params.recombination_openrdp_method_timeout_seconds
     : 14400
+params.recombination_3seq_pvalue_threshold = params.containsKey('recombination_3seq_pvalue_threshold')
+    ? params.recombination_3seq_pvalue_threshold
+    : 0.05
+params.recombination_3seq_min_segment_length = params.containsKey('recombination_3seq_min_segment_length')
+    ? params.recombination_3seq_min_segment_length
+    : 0
+params.recombination_geneconv_pvalue_threshold = params.containsKey('recombination_geneconv_pvalue_threshold')
+    ? params.recombination_geneconv_pvalue_threshold
+    : 0.05
+params.recombination_geneconv_min_segment_length = params.containsKey('recombination_geneconv_min_segment_length')
+    ? params.recombination_geneconv_min_segment_length
+    : 0
 params.recombination_3seq_timeout_seconds = params.containsKey('recombination_3seq_timeout_seconds')
     ? params.recombination_3seq_timeout_seconds
     : 14400
@@ -431,8 +443,8 @@ process RUN_3SEQ {
       --manifest-tsv "${manifest_tsv}" \\
       --analysis-group "${group_id}" \\
       --hpv-type "${hpv_type}" \\
-      --pvalue-threshold "${params.recombination_openrdp_pvalue_threshold}" \\
-      --min-segment-length "${params.recombination_openrdp_min_segment_length}" \\
+      --pvalue-threshold "${params.recombination_3seq_pvalue_threshold}" \\
+      --min-segment-length "${params.recombination_3seq_min_segment_length}" \\
       --timeout-seconds "${params.recombination_3seq_timeout_seconds}" \\
       --sanitize-ambiguity-bases \\
       --output-candidates-tsv "${group_id}.3seq.candidates.tsv" \\
@@ -463,8 +475,8 @@ process RUN_GENECONV {
       --manifest-tsv "${manifest_tsv}" \\
       --analysis-group "${group_id}" \\
       --hpv-type "${hpv_type}" \\
-      --pvalue-threshold "${params.recombination_openrdp_pvalue_threshold}" \\
-      --min-segment-length "${params.recombination_openrdp_min_segment_length}" \\
+      --pvalue-threshold "${params.recombination_geneconv_pvalue_threshold}" \\
+      --min-segment-length "${params.recombination_geneconv_min_segment_length}" \\
       --timeout-seconds "${params.recombination_geneconv_timeout_seconds}" \\
       --sanitize-ambiguity-bases \\
       --output-candidates-tsv "${group_id}.geneconv.candidates.tsv" \\
