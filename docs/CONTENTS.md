@@ -61,8 +61,3 @@
   - `developers/`: developer manual, scripts reference, step docs, and
     selected maintenance notes such as
     `developers/CENTRIFUGE_HPVC_LEGACY_FACTORY.md`
-
-- `.agents/`: coding agents-oriented documentation and skills
-  - `PROJECT.md`: compact project facts/current state for agents
-  - `WORKFLOW.md`: stable analysis step order/dependencies
-  - `skills/`: local reusable skill specifications for recurring agent tasks
