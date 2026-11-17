@@ -18,6 +18,10 @@ authors:
     affiliation: Institut Pasteur du Cambodge
 repository-code: https://github.com/baia-ipc/kh-hivp-hpv
 license: MIT
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.24305206
+    description: Archived snapshot of the version used for the reported analyses
 keywords:
   - human papillomavirus
   - whole-genome sequencing
