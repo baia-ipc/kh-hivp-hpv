@@ -41,3 +41,4 @@ Set `--iqtree_seed <number>` to make the IQ-TREE run repeatable.
 - MultiQC report: `results/reports/targeted_analysis/04_hpv16_tree.report.html`
 - Tree preview image: `outs/targeted_analysis/04.hpv16_tree/reports/phylo_tree.svg` (PNG fallback alongside)
 - MultiQC summary table: `outs/targeted_analysis/04.hpv16_tree/reports/phylo_tree_summary.multiqc.tsv`
+- Publication figure of both trees, drawn separately with `bin/targeted_analysis.figures/phylo_tree_figure.run.sh`: `results/figures/targeted_analysis/phylo_tree.pdf` and `.tiff`

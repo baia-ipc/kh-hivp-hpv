@@ -423,14 +423,19 @@ Key parameters:
 Purpose: Draw the publication figure of one or more rooted trees as stacked
 panels (PDF and TIFF). Outgroups are not drawn, sublineages get shaded bands
 with labels, study genomes are red and genomes from the highlighted country
-blue, and nodes are labelled with ultrafast bootstrap support. Not part of the
-pipeline run; see `bin/targeted_analysis.figures/phylo_tree_figure.run.sh`.
+blue, and nodes are labelled with ultrafast bootstrap support. Support labels
+are placed so that they do not touch branches, tip labels or each other
+(`scripts/phylo_tree/label_placement.py`). Band colours are defined per panel
+title in `PALETTES`. Not part of the pipeline run; see
+`bin/targeted_analysis.figures/phylo_tree_figure.run.sh`.
 Needs matplotlib, biopython and pillow.
 Key parameters:
 - `--panel LETTER TITLE TREEFILE METADATA_TSV`: one panel (repeatable); uses
   `phylo_tree.rooted.treefile` and `phylo_tree.metadata.tsv` of a tree step.
 - `--merge-lineages LETTER:LINEAGES`: one band per lineage instead of per
   sublineage in that panel (e.g. `A:B,D` gives bands `B1-4` and `D1-4`).
+- `--align-bands LETTER`: in that panel all bands start where the first band
+  starts; otherwise each band starts at the crown node of its lineage.
 - `--min-support`: hide support values below this (default 70).
 - `--out-pdf` / `--out-tiff`: output files; `--dpi` sets the TIFF resolution
   (default 600).
