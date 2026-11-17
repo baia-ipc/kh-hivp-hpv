@@ -28,5 +28,5 @@ done
 "$SCRIPTSDIR/targeted_analysis.steps/05.hpv18_tree.run.sh" "${common_args[@]}"
 "$SCRIPTSDIR/targeted_analysis.steps/03.variant_analysis.run.sh" "${common_args[@]}"
 "$SCRIPTSDIR/targeted_analysis.steps/06.recombination_screen.run.sh" "${common_args[@]}"
-"$SCRIPTSDIR/targeted_analysis.steps/07.recombination_openrdp.run.sh" "${common_args[@]}"
-"$SCRIPTSDIR/targeted_analysis.steps/08.recombination_confirmation.run.sh" "${common_args[@]}"
+"$SCRIPTSDIR/targeted_analysis.steps/07.recombination_3seq.run.sh" "${common_args[@]}"
+"$SCRIPTSDIR/targeted_analysis.steps/07.recombination_geneconv.run.sh" "${common_args[@]}"
