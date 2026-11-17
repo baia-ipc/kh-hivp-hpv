@@ -36,6 +36,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from Bio import Phylo
 from matplotlib.colors import to_rgb
+from matplotlib.transforms import ScaledTranslation
 
 from label_placement import Obstacles, place_label
 
@@ -57,6 +58,13 @@ WEAK_SUPPORT_COLOUR = "#6e6e6e"
 LEADER_FROM = 3.0  # points between node and label from which a tie line is drawn
 SAMPLE_COLOUR = "#d7191c"
 COUNTRY_COLOUR = "#1a1ad6"
+# Panel label: points from the top left of the panel, the same in every panel,
+# so that the letters of panels of different height sit on one line.
+PANEL_LABEL_X = 10.0
+PANEL_LABEL_DROP = 28.0  # top of the panel to the baseline shared by letter and genotype
+PANEL_LABEL_INDENT = 18.0  # letter to genotype
+PANEL_LETTER_SIZE = 15
+PANEL_TITLE_SIZE = 9
 OUTGROUP = "Outgroup"
 REFERENCE = "Reference"
 
@@ -295,6 +303,22 @@ def draw_scale_bar(ax, x_max, font_size):
     ax.text(length / 2, -2.0, f"{length:g}", ha="center", va="top", fontsize=font_size - 0.6)
 
 
+def draw_panel_label(ax, letter, title):
+    """Panel letter and genotype, on one baseline a fixed distance below the panel top.
+
+    Offsets are in points rather than axes fractions, so panels of different
+    height carry their label in the same place.
+    """
+    def anchor(dx: float):
+        return ax.transAxes + ScaledTranslation(dx / 72.0, -PANEL_LABEL_DROP / 72.0,
+                                                ax.figure.dpi_scale_trans)
+
+    return (ax.text(0, 1, letter, transform=anchor(PANEL_LABEL_X), fontsize=PANEL_LETTER_SIZE,
+                    fontweight="bold", ha="left", va="baseline"),
+            ax.text(0, 1, f"({title})", transform=anchor(PANEL_LABEL_X + PANEL_LABEL_INDENT),
+                    fontsize=PANEL_TITLE_SIZE, ha="left", va="baseline"))
+
+
 def draw_panel(ax, letter, title, treefile, metadata_tsv, merged, args) -> int:
     meta = read_metadata(metadata_tsv)
     tree = read_ingroup_tree(treefile, meta)
@@ -313,9 +337,11 @@ def draw_panel(ax, letter, title, treefile, metadata_tsv, merged, args) -> int:
     draw_branches(ax, tree, x, y, obstacles)
     draw_tips(ax, tree, x, y, meta, args, obstacles, renderer)
     draw_scale_bar(ax, x_max, args.tip_font_size)
-    for text in (ax.text(0.02, 0.93, letter, transform=ax.transAxes, fontsize=15, fontweight="bold", va="top"),
-                 ax.text(0.055, 0.918, f"({title})", transform=ax.transAxes, fontsize=9, va="top")):
-        obstacles.add_box(text_box(ax, text, renderer))
+    for text in draw_panel_label(ax, letter, title):
+        box = text_box(ax, text, renderer)
+        if not obstacles.is_free(box):
+            print(f"Warning: the label of panel {letter} overlaps the tree", file=sys.stderr)
+        obstacles.add_box(box)
     return draw_support(ax, tree, x, y, args, obstacles)
 
 
