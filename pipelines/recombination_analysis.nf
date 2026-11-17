@@ -97,6 +97,9 @@ params.recombination_gard_model = params.recombination_gard_model ?: "012345"
 params.recombination_gard_rate_classes = params.containsKey('recombination_gard_rate_classes') ? params.recombination_gard_rate_classes : 3
 params.recombination_gard_max_breakpoints = params.containsKey('recombination_gard_max_breakpoints') ? params.recombination_gard_max_breakpoints : 10
 params.recombination_gard_confidence = params.recombination_gard_confidence ?: "low"
+params.recombination_enable_gard = params.containsKey('recombination_enable_gard')
+    ? params.recombination_enable_gard
+    : false
 
 params.recombination_enable_openrdp = params.containsKey('recombination_enable_openrdp')
     ? params.recombination_enable_openrdp
@@ -194,8 +197,10 @@ if (params.recombination_stage == "screen") {
         checkPath(params.recombination_exclude_samples_tsv as String, 'Recombination exclude samples list')
     }
     checkPath(params.prepare_sequences_script as String, 'Prepare sequences script')
-    checkPath(params.gard_runner_script as String, 'GARD runner script')
-    checkPath(params.gard_parser_script as String, 'GARD parser script')
+    if (params.recombination_enable_gard) {
+        checkPath(params.gard_runner_script as String, 'GARD runner script')
+        checkPath(params.gard_parser_script as String, 'GARD parser script')
+    }
     checkPath(params.plot_script as String, 'Recombination plot script')
     checkPath(params.screen_summary_script as String, 'Recombination screen summary script')
     checkPath(params.recombination_hpv16_background_fasta as String, 'HPV16 background FASTA')
@@ -339,6 +344,28 @@ process GARD_BREAKPOINTS {
       --output-warnings-tsv "${group_id}.gard.warnings.tsv" \\
       --analysis-group "${group_id}" \\
       --hpv-type "${hpv_type}"
+    """
+}
+
+process SKIP_GARD {
+    tag { group_id }
+    conda params.conda_env
+    publishDir { "${params.outdir}/gard" }, mode: 'copy', pattern: "${group_id}.gard.*"
+
+    input:
+    tuple val(group_id), val(hpv_type), path(alignment), path(manifest_tsv), path(duplicate_map_tsv), path(representative_ids_tsv), path(group_summary_json), val(sample_count), val(reference_count)
+
+    output:
+    tuple val(group_id), val(hpv_type), path(alignment), path(manifest_tsv), path(duplicate_map_tsv), path(representative_ids_tsv), path(group_summary_json), val(sample_count), val(reference_count), path("${group_id}.gard.json"), path("${group_id}.gard.breakpoints.tsv"), path("${group_id}.gard.summary.json"), path("${group_id}.gard.warnings.tsv"), path("${group_id}.gard.log")
+
+    script:
+    """
+    : > "${group_id}.gard.json"
+    : > "${group_id}.gard.breakpoints.tsv"
+    : > "${group_id}.gard.warnings.tsv"
+    echo "GARD was not run (recombination_enable_gard=false)." > "${group_id}.gard.log"
+    printf '{\\n  "analysis_group": "%s",\\n  "hpv_type": "%s",\\n  "status": "not_run",\\n  "n_breakpoints": 0\\n}\\n' \\
+      "${group_id}" "${hpv_type}" > "${group_id}.gard.summary.json"
     """
 }
 
@@ -607,6 +634,7 @@ process SCREEN_SUMMARY {
     def summaryArgs = gard_summaries.collect { "\"${it}\"" }.join(' ')
     def warningArgs = gard_warnings.collect { "\"${it}\"" }.join(' ')
     def plotFlag = params.recombination_enable_similarity_plot ? "--similarity-plot-enabled" : ""
+    def gardFlag = params.recombination_enable_gard ? "--gard-enabled" : ""
     """
     python3 "${params.screen_summary_script}" \\
       --groups-tsv "${groups_tsv}" \\
@@ -617,7 +645,7 @@ process SCREEN_SUMMARY {
       --gard-summaries ${summaryArgs} \\
       --gard-warnings ${warningArgs} \\
       --step-outdir "${params.outdir}" \\
-      ${plotFlag} \\
+      ${plotFlag} ${gardFlag} \\
       --output-type-overview-tsv "recombination_screen_type_overview.multiqc.tsv" \\
       --output-input-groups-tsv "recombination_screen_input_groups.multiqc.tsv" \\
       --output-breakpoint-support-tsv "recombination_screen_breakpoint_support.multiqc.tsv" \\
@@ -869,7 +897,7 @@ workflow {
         if (params.recombination_enable_similarity_plot) {
             SIMILARITY_PLOTS(aligned)
         }
-        def gard = GARD_BREAKPOINTS(aligned)
+        def gard = params.recombination_enable_gard ? GARD_BREAKPOINTS(aligned) : SKIP_GARD(aligned)
         def screenSummary = SCREEN_SUMMARY(
             prepared.groups_tsv,
             prepared.summary_json,

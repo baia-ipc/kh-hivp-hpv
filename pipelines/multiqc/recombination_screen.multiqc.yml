@@ -9,9 +9,9 @@ custom_data:
       <ul>
         <li><strong>Input preparation:</strong> metadata-driven sample selection, split by HPV type, with tree-selected same-type background references.</li>
         <li><strong>Alignment:</strong> MAFFT full alignment per HPV type.</li>
-        <li><strong>Screening:</strong> optional pairwise identity visualization and HyPhy GARD breakpoint inference.</li>
+        <li><strong>Screening:</strong> optional pairwise identity visualization and optional HyPhy GARD breakpoint inference.</li>
       </ul>
-      <p><strong>Policy:</strong> this stage reports input composition and alignment-level GARD signal only. It does not make sample-level recombinant calls.</p>
+      <p><strong>Policy:</strong> this stage reports input composition and, when GARD is enabled, alignment-level GARD signal. It does not make sample-level recombinant calls.</p>
   output_locations:
     plot_type: "html"
     section_name: "Output locations"
@@ -31,7 +31,7 @@ custom_data:
       <ul>
         <li><strong>Type overview:</strong> one row per HPV type with sample/background composition and GARD signal strength.</li>
         <li><strong>Input groups:</strong> per-type manifest, alignment, and representative-sequence audit.</li>
-        <li><strong>Breakpoint support:</strong> GARD breakpoint positions and support classes.</li>
+        <li><strong>Breakpoint support:</strong> GARD breakpoint positions and support classes; empty when GARD is not enabled.</li>
         <li><strong>Similarity plots:</strong> links to pairwise identity heatmap artifacts when enabled.</li>
         <li><strong>Duplicate map:</strong> exact-sequence collapsing applied before downstream confirmation.</li>
       </ul>

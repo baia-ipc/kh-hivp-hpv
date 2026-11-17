@@ -28,11 +28,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--input-summary-json", required=True)
     parser.add_argument("--duplicate-map-tsv", required=True)
     parser.add_argument("--excluded-samples-tsv", required=True)
-    parser.add_argument("--gard-breakpoints", nargs="+", required=True)
-    parser.add_argument("--gard-summaries", nargs="+", required=True)
-    parser.add_argument("--gard-warnings", nargs="+", required=True)
+    parser.add_argument("--gard-breakpoints", nargs="*", default=[])
+    parser.add_argument("--gard-summaries", nargs="*", default=[])
+    parser.add_argument("--gard-warnings", nargs="*", default=[])
     parser.add_argument("--step-outdir", required=True)
     parser.add_argument("--similarity-plot-enabled", action="store_true")
+    parser.add_argument("--gard-enabled", action="store_true")
     parser.add_argument("--output-type-overview-tsv", required=True)
     parser.add_argument("--output-input-groups-tsv", required=True)
     parser.add_argument("--output-breakpoint-support-tsv", required=True)
@@ -69,7 +70,15 @@ def build_markdown(
     groups: list[dict[str, str]],
     summaries: dict[str, dict[str, Any]],
     input_summary: dict[str, Any],
+    gard_enabled: bool,
 ) -> str:
+    gard_sentence = (
+        "This stage performs input preparation, exact-sequence collapsing, alignment, "
+        "optional pairwise identity plots, and GARD breakpoint screening only."
+        if gard_enabled
+        else "This stage performs input preparation, exact-sequence collapsing, alignment, "
+        "and optional pairwise identity plots only. GARD breakpoint screening was not run."
+    )
     lines = [
         "# Recombination Screening Summary",
         "",
@@ -79,18 +88,25 @@ def build_markdown(
         f"- Excluded sample FASTA rows: {input_summary.get('excluded_rows', 'NA')}",
         "",
         "## Interpretation",
-        "This stage performs input preparation, exact-sequence collapsing, alignment, optional pairwise identity plots, and GARD breakpoint screening only.",
+        gard_sentence,
         "No sample-level recombinant call is made at this stage.",
         "",
         "## Groups",
     ]
     for row in sorted(groups, key=lambda item: item["analysis_group"]):
         summary = summaries.get(row["analysis_group"], {})
+        base = (
+            f"- {row['hpv_type']}: samples={row['sample_count']}, "
+            f"background={row['reference_count']}"
+        )
+        if not gard_enabled:
+            lines.append(f"{base}, gard=not_run")
+            continue
         delta = parse_float(summary.get("delta_aicc_vs_no_breakpoint"))
         strength = classify_global_strength(delta)
         lines.append(
-            f"- {row['hpv_type']}: samples={row['sample_count']}, background={row['reference_count']}, "
-            f"breakpoints={summary.get('n_breakpoints', 0)}, delta_aicc={summary.get('delta_aicc_vs_no_breakpoint', 'NA')}, "
+            f"{base}, breakpoints={summary.get('n_breakpoints', 0)}, "
+            f"delta_aicc={summary.get('delta_aicc_vs_no_breakpoint', 'NA')}, "
             f"strength={strength}"
         )
     lines.append("")
@@ -337,7 +353,7 @@ def main() -> int:
         ],
     )
     Path(args.output_summary_md).write_text(
-        build_markdown(groups, gard_summaries, input_summary) + "\n",
+        build_markdown(groups, gard_summaries, input_summary, args.gard_enabled) + "\n",
         encoding="utf-8",
     )
     return 0
