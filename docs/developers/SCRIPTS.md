@@ -391,6 +391,38 @@ Key parameters:
 - `--treefile`: Newick tree file.
 - `--output`: TSV output path.
 
+### `scripts/phylo_tree/rotate_to_reference_origin.py`
+Purpose: Rotate circular genomes so that they all start where the type
+reference starts. Database records of HPV genomes do not all begin at the same
+position, and an aligner cannot wrap a sequence. Called by
+`pipelines/phylo_tree.nf` on the renamed lineage reference and selected NCBI
+FASTA files; the rotated files are also the background set of the
+recombination analysis. No base is added, removed or changed.
+Key parameters:
+- `--reference`: FASTA containing the type reference (e.g. the PaVE FASTA).
+- `--reference-name`: header prefix of the reference record (e.g. `HPV16REF`).
+- `--input` / `--output`: unaligned input FASTA and rotated output FASTA.
+- `--report`: optional TSV listing the rotated sequences and the number of
+  bases moved to the front.
+
+### `scripts/phylo_tree/render_publication_tree.py`
+Purpose: Draw the publication figure of one or more rooted trees as stacked
+panels (PDF and TIFF). Outgroups are not drawn, sublineages get shaded bands
+with labels, study genomes are red and genomes from the highlighted country
+blue, and nodes are labelled with ultrafast bootstrap support. Not part of the
+pipeline run; see `bin/targeted_analysis.figures/phylo_tree_figure.run.sh`.
+Needs matplotlib, biopython and pillow.
+Key parameters:
+- `--panel LETTER TITLE TREEFILE METADATA_TSV`: one panel (repeatable); uses
+  `phylo_tree.rooted.treefile` and `phylo_tree.metadata.tsv` of a tree step.
+- `--merge-lineages LETTER:LINEAGES`: one band per lineage instead of per
+  sublineage in that panel (e.g. `A:B,D` gives bands `B1-4` and `D1-4`).
+- `--min-support`: hide support values below this (default 70).
+- `--out-pdf` / `--out-tiff`: output files; `--dpi` sets the TIFF resolution
+  (default 600).
+- `--sample-prefix`, `--highlight-country`, `--width-mm`, `--row-mm`,
+  `--tip-font-size`: labelling and size controls.
+
 ## Lineage SNP calling and comparisons
 
 ### `scripts/variants/lineage_snps_from_fasta.py`
@@ -518,6 +550,28 @@ Key parameters:
 - `--pvalue-threshold`: corrected p-value threshold for retained candidates.
 - `--min-segment-length`: minimum recombinant segment length.
 
+### `scripts/recombination/run_3seq.py`
+Purpose: Execute 3SEQ on an aligned FASTA and parse the triplet scan output into
+candidate rows with corrected p-values and breakpoint intervals.
+Key parameters:
+- `--alignment`: aligned FASTA input.
+- `--manifest-tsv`: sequence manifest with sample/background roles.
+- `--pvalue-threshold`: corrected p-value threshold for eligible sample candidates.
+- `--min-segment-length`: minimum mosaic segment length, in alignment columns.
+- `--sanitize-ambiguity-bases`: replace ambiguity codes with `N` before the scan.
+- `--timeout-seconds`: wall-clock limit for the scan.
+
+### `scripts/recombination/run_geneconv.py`
+Purpose: Execute GENECONV on an aligned FASTA and parse the fragment list into
+candidate rows with corrected p-values and fragment coordinates.
+Key parameters:
+- `--alignment`: aligned FASTA input.
+- `--manifest-tsv`: sequence manifest with sample/background roles.
+- `--pvalue-threshold`: corrected p-value threshold for eligible sample candidates.
+- `--min-segment-length`: minimum fragment length, in alignment columns.
+- `--sanitize-ambiguity-bases`: replace ambiguity codes with `N` before the scan.
+- `--timeout-seconds`: wall-clock limit for the scan.
+
 ### `scripts/recombination/confirm_breakpoint_trees.py`
 Purpose: Build breakpoint-window IQ-TREE phylogenies for OpenRDP candidates and
 test whether parent affinity switches across the inferred breakpoint.
@@ -542,15 +596,16 @@ Key parameters:
 - `--min-major-af`: minimum major-allele fraction at informative sites.
 
 ### `scripts/recombination/summarize_recombination_screen.py`
-Purpose: Merge preparation and GARD screening outputs into stage-06 overview
-tables, warnings, markdown summary, duplicate-map export, and the published
-`recombination_screen_groups.tsv` handoff for stage 07.
+Purpose: Merge preparation and optional GARD screening outputs into stage-06
+overview tables, warnings, markdown summary, duplicate-map export, and the
+published `recombination_screen_groups.tsv` handoff for stage 07.
 Key parameters:
 - `--groups-tsv`: preparation manifest from `prepare_recombination_inputs.py`.
 - `--input-summary-json`: aggregate preparation summary.
 - `--duplicate-map-tsv`: aggregate duplicate-collapse audit table.
 - `--excluded-samples-tsv`: excluded-input audit table.
-- `--gard-breakpoints` / `--gard-summaries` / `--gard-warnings`: per-type GARD outputs.
+- `--gard-breakpoints` / `--gard-summaries` / `--gard-warnings`: per-type GARD outputs, empty when GARD did not run.
+- `--gard-enabled`: report GARD results; without it the summary states that GARD was not run.
 - `--step-outdir`: published stage-06 outdir used to construct stable handoff paths.
 - `--similarity-plot-enabled`: include expected similarity-plot outputs in the handoff.
 
@@ -561,6 +616,24 @@ handoff for stage 08.
 Key parameters:
 - `--screen-groups-tsv`: published stage-06 handoff manifest.
 - `--openrdp-candidates` / `--openrdp-summaries` / `--openrdp-logs` / `--openrdp-csvs`: per-type OpenRDP outputs.
+- `--step-outdir`: published stage-07 outdir used to construct stable handoff paths.
+
+### `scripts/recombination/summarize_recombination_3seq.py`
+Purpose: Merge per-type 3SEQ outputs into stage-07 overview tables, candidate
+tables, method-status tables, markdown summary, and the published
+`recombination_3seq_groups.tsv` handoff.
+Key parameters:
+- `--screen-groups-tsv`: published stage-06 handoff manifest.
+- `--candidates` / `--summaries` / `--logs` / `--recs`: per-type 3SEQ outputs.
+- `--step-outdir`: published stage-07 outdir used to construct stable handoff paths.
+
+### `scripts/recombination/summarize_recombination_geneconv.py`
+Purpose: Merge per-type GENECONV outputs into stage-07 overview tables, candidate
+tables, method-status tables, markdown summary, and the published
+`recombination_geneconv_groups.tsv` handoff.
+Key parameters:
+- `--screen-groups-tsv`: published stage-06 handoff manifest.
+- `--candidates` / `--summaries` / `--logs` / `--frags`: per-type GENECONV outputs.
 - `--step-outdir`: published stage-07 outdir used to construct stable handoff paths.
 
 ### `scripts/recombination/summarize_recombination.py`

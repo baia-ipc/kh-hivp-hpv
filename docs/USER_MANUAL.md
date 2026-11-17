@@ -132,11 +132,19 @@ present in the PAVE FASTA (`refdata/pave/pave_hsa.fas`).
 
 ### Recombination analysis metadata inputs
 
-The recombination workflow now runs as three targeted-analysis steps:
+The recombination workflow runs as a screening step followed by one step per
+detection method:
 
 - step 06: `recombination_screen`
-- step 07: `recombination_openrdp`
-- step 08: `recombination_confirmation`
+- step 07: `recombination_3seq`
+- step 07: `recombination_geneconv`
+
+Two further steps are available but are not part of the standard run:
+`recombination_openrdp` (step 07), which adds the RDP, Bootscan, SiScan and
+Chimaera scans, and `recombination_confirmation` (step 08), which checks
+OpenRDP candidates against breakpoint-window trees and mapped reads. The
+confirmation step needs the GARD breakpoints, so enable GARD in step 06
+(`recombination_enable_gard = true`) before running them.
 
 Step 06 uses metadata-driven sample FASTA input (`metadata_fasta` mode), then
 automatically augments each HPV type with same-type tree-selected background
@@ -161,20 +169,21 @@ The automated recombination workflow then:
 
 - splits HPV16 and HPV18 into separate analyses
 - adds same-type background references from the tree step outputs
-- screens each type-specific alignment with GARD in step 06
-- scans candidate mosaic intervals with OpenRDP in step 07
-- checks breakpoint-window topology switches with IQ-TREE in step 08
-- validates suspicious candidates against mapped reads from step 02 in step 08
+- aligns each type-specific set with MAFFT in step 06
+- scans each alignment for recombinant triplets with 3SEQ in step 07
+- scans each alignment for converted fragments with GENECONV in step 07
 
-Stage 06 is a screening step only. Final candidate recombinant calls are made
-only after the step-08 confirmation workflow.
+Step 06 prepares and aligns the input only; it makes no recombinant call. Each
+step-07 method reports its own candidates, and a sample is reported as a
+candidate only when its corrected p-value passes the threshold for that method
+(0.05 by default).
 
 ## User configuration file
 
 The user pipeline configuration file is `config/user.config`.
 The only values which the user might want to change are the number of threads
-to use, phylogenetic tree parameters, and recombination parameters (MAFFT/GARD
-settings and filtering behavior).
+to use, phylogenetic tree parameters, and recombination parameters (MAFFT
+settings, method p-value thresholds, and filtering behavior).
 
 ## Run the analyses
 
@@ -217,9 +226,31 @@ bin/targeted_analysis.steps/03.variant_analysis.run.sh
 bin/targeted_analysis.steps/04.hpv16_tree.run.sh
 bin/targeted_analysis.steps/05.hpv18_tree.run.sh
 bin/targeted_analysis.steps/06.recombination_screen.run.sh
+bin/targeted_analysis.steps/07.recombination_3seq.run.sh
+bin/targeted_analysis.steps/07.recombination_geneconv.run.sh
+```
+
+The optional recombination steps are run the same way:
+
+```
 bin/targeted_analysis.steps/07.recombination_openrdp.run.sh
 bin/targeted_analysis.steps/08.recombination_confirmation.run.sh
 ```
+
+### Tree figure for publication
+
+After steps 04 and 05, the combined HPV16 (A) and HPV18 (B) tree figure can be
+drawn as PDF and 600 dpi TIFF:
+
+```
+bin/targeted_analysis.figures/phylo_tree_figure.run.sh
+```
+
+The files are written to `results/figures/targeted_analysis/`. The script needs
+Python with matplotlib, biopython and pillow (for example the environment in
+`pipelines/conda_env/recombination.env.yml`); set `PYTHON` to choose the
+interpreter. Support values below 70 are hidden; add `--min-support 0` to show
+all of them.
 
 ## Troubleshooting
 
