@@ -439,6 +439,8 @@ Key parameters:
   starts; otherwise each band starts at the crown node of its lineage.
 - `--min-support`: label only nodes with ultrafast bootstrap of at least this
   (default 70).
+- `--min-alrt`: also require SH-aLRT of at least this (default 50); this hides
+  the SH-aLRT 0 values of near-zero-length branches.
 - `--support-labels`: `pair` (default) prints SH-aLRT/UFBoot, `ufboot` prints
   the ultrafast bootstrap only.
 - `--strong-support` / `--strong-alrt`: a clade counts as reliable with

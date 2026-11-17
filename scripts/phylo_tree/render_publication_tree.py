@@ -8,8 +8,8 @@ metadata table written by build_figtree_nexus.py:
   * outgroup tips are used for rooting only and are not drawn
   * each sublineage gets a shaded band and a label at the right margin
   * study genomes and genomes from the highlighted country are coloured
-  * internal nodes with ultrafast bootstrap >= --min-support are labelled
-    with SH-aLRT/UFBoot; reliable clades (SH-aLRT >= --strong-alrt and
+  * internal nodes with ultrafast bootstrap >= --min-support and SH-aLRT >=
+    --min-alrt are labelled with SH-aLRT/UFBoot; reliable clades (SH-aLRT >= --strong-alrt and
     UFBoot >= --strong-support) are bold black, the others grey
 
 Example:
@@ -72,6 +72,9 @@ def parse_args() -> argparse.Namespace:
                    help="In this panel all bands start where the first band starts")
     p.add_argument("--min-support", type=float, default=70,
                    help="Hide ultrafast bootstrap values below this (default: 70)")
+    p.add_argument("--min-alrt", type=float, default=50,
+                   help="Also hide labels with SH-aLRT below this, e.g. the zero values of "
+                        "near-zero-length branches (default: 50)")
     p.add_argument("--support-labels", choices=["pair", "ufboot"], default="pair",
                    help="Label nodes with SH-aLRT/UFBoot pairs or with UFBoot only (default: pair)")
     p.add_argument("--strong-support", type=float, default=95,
@@ -247,7 +250,8 @@ def text_width(text: str, size: float, bold: bool) -> float:
 def draw_support(ax, tree, x, y, args, obstacles) -> int:
     """Label nodes with branch support; return how many labels found no free place.
 
-    A label is shown when the ultrafast bootstrap reaches --min-support. It is
+    A label is shown when the ultrafast bootstrap reaches --min-support and
+    the SH-aLRT, if present, reaches --min-alrt. It is
     bold black when the clade is reliable (ultrafast bootstrap >= --strong-support
     and, if present, SH-aLRT >= --strong-alrt) and grey otherwise. A label that
     only fits away from its node is tied to it with a thin line.
@@ -256,7 +260,9 @@ def draw_support(ax, tree, x, y, args, obstacles) -> int:
     height = 0.74 * size
     parent = {child: clade for clade in tree.find_clades() for child in clade.clades}
     support = {c: support_values(c) for c in tree.get_nonterminals() if c is not tree.root}
-    labelled = [c for c, (_, ufb) in support.items() if ufb is not None and ufb >= args.min_support]
+    labelled = [c for c, (alrt, ufb) in support.items()
+                if ufb is not None and ufb >= args.min_support
+                and (alrt is None or alrt >= args.min_alrt)]
     unplaced = 0
     for clade in sorted(labelled, key=lambda c: x[c] - x[parent[c]]):  # shortest branches first
         alrt, ufb = support[clade]
