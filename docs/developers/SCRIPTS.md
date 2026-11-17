@@ -391,6 +391,20 @@ Key parameters:
 - `--treefile`: Newick tree file.
 - `--output`: TSV output path.
 
+### `scripts/phylo_tree/lineage_assignment_table.py`
+Purpose: Assign each study genome to the sublineage of its nearest sublineage
+reference (patristic distance on the tree) and report the evidence: nearest and
+next-nearest reference, p-distance to the nearest reference on the untrimmed
+alignment, number of positions compared, and support of the node joining the
+genome to that reference.
+Key parameters:
+- `<treefile>`: maximum-likelihood tree (Newick).
+- `<alignment>`: untrimmed whole-genome alignment (FASTA).
+- `<refs_tsv>`: sublineage name to reference tip label (e.g. `hpv16_lineage_refs.tsv`).
+- `<samples_fasta>`: FASTA with the study genomes.
+- `--outgroups`: list of outgroup tips used to root the tree.
+- `--output`: output TSV (default: standard output).
+
 ### `scripts/phylo_tree/rotate_to_reference_origin.py`
 Purpose: Rotate circular genomes so that they all start where the type
 reference starts. Database records of HPV genomes do not all begin at the same
