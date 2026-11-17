@@ -8,7 +8,9 @@ metadata table written by build_figtree_nexus.py:
   * outgroup tips are used for rooting only and are not drawn
   * each sublineage gets a shaded band and a label at the right margin
   * study genomes and genomes from the highlighted country are coloured
-  * internal nodes are labelled with ultrafast bootstrap support
+  * internal nodes are labelled with ultrafast bootstrap support: values
+    from --min-support upwards are shown, and values from --strong-support
+    upwards are printed in bold black, the others in grey
 
 Example:
   render_publication_tree.py \\
@@ -51,6 +53,7 @@ PALETTES = {
 }
 FALLBACK_COLOURS = ["#fbd9d9", "#e9fbd9", "#d9e3fb", "#d9fafb", "#f6d9fb", "#fff6d5"]
 LINE_WIDTH = 0.45
+WEAK_SUPPORT_COLOUR = "#6e6e6e"
 SAMPLE_COLOUR = "#d7191c"
 COUNTRY_COLOUR = "#1a1ad6"
 OUTGROUP = "Outgroup"
@@ -68,6 +71,8 @@ def parse_args() -> argparse.Namespace:
                    help="In this panel all bands start where the first band starts")
     p.add_argument("--min-support", type=float, default=70,
                    help="Hide ultrafast bootstrap values below this (default: 70)")
+    p.add_argument("--strong-support", type=float, default=95,
+                   help="Print values from this upwards in bold black, lower ones in grey (default: 95)")
     p.add_argument("--sample-prefix", default="KHCA", help="Tip name prefix of study genomes")
     p.add_argument("--highlight-country", default="Cambodia")
     p.add_argument("--width-mm", type=float, default=190)
@@ -237,7 +242,8 @@ def draw_support(ax, tree, x, y, args, obstacles) -> int:
     unplaced = 0
     for clade in sorted(labelled, key=lambda c: x[c] - x[parent[c]]):  # shortest branches first
         text = f"{ufboot(clade):.0f}"
-        width = 0.66 * size * len(text)
+        strong = ufboot(clade) >= args.strong_support
+        width = (0.72 if strong else 0.66) * size * len(text)
         nx, ny = to_points(ax, x[clade], y[clade])
         stem = nx - to_points(ax, x[parent[clade]], y[clade])[0]
         spot = place_label(obstacles, nx, ny, stem, width, height)
@@ -245,7 +251,9 @@ def draw_support(ax, tree, x, y, args, obstacles) -> int:
             unplaced += 1
             spot = (nx - 0.7 - width, ny + 0.7)
         xd, yd = from_points(ax, *spot)
-        ax.text(xd, yd, text, ha="left", va="baseline", fontsize=size, color="#333333", zorder=3)
+        ax.text(xd, yd, text, ha="left", va="baseline", fontsize=size, zorder=3,
+                color="black" if strong else WEAK_SUPPORT_COLOUR,
+                fontweight="bold" if strong else "normal")
     return unplaced
 
 

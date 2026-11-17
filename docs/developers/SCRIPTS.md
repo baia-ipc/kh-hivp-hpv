@@ -437,6 +437,8 @@ Key parameters:
 - `--align-bands LETTER`: in that panel all bands start where the first band
   starts; otherwise each band starts at the crown node of its lineage.
 - `--min-support`: hide support values below this (default 70).
+- `--strong-support`: values from this upwards are printed in bold black, lower
+  ones in grey (default 95).
 - `--out-pdf` / `--out-tiff`: output files; `--dpi` sets the TIFF resolution
   (default 600).
 - `--sample-prefix`, `--highlight-country`, `--width-mm`, `--row-mm`,

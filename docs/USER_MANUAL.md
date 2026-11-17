@@ -249,8 +249,9 @@ bin/targeted_analysis.figures/phylo_tree_figure.run.sh
 The files are written to `results/figures/targeted_analysis/`. The script needs
 Python with matplotlib, biopython and pillow (for example the environment in
 `pipelines/conda_env/recombination.env.yml`); set `PYTHON` to choose the
-interpreter. Support values below 70 are hidden; add `--min-support 0` to show
-all of them.
+interpreter. Ultrafast bootstrap values from 70 are shown; values of 95 or more
+are printed in bold black and lower ones in grey. Use `--min-support` and
+`--strong-support` to change the two limits.
 
 ## Troubleshooting
 
