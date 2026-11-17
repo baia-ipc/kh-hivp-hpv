@@ -8,9 +8,9 @@ metadata table written by build_figtree_nexus.py:
   * outgroup tips are used for rooting only and are not drawn
   * each sublineage gets a shaded band and a label at the right margin
   * study genomes and genomes from the highlighted country are coloured
-  * internal nodes are labelled with ultrafast bootstrap support: values
-    from --min-support upwards are shown, and values from --strong-support
-    upwards are printed in bold black, the others in grey
+  * internal nodes with ultrafast bootstrap >= --min-support are labelled
+    with SH-aLRT/UFBoot; reliable clades (SH-aLRT >= --strong-alrt and
+    UFBoot >= --strong-support) are bold black, the others grey
 
 Example:
   render_publication_tree.py \\
@@ -27,7 +27,7 @@ import csv
 import sys
 from io import BytesIO, StringIO
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 
 import matplotlib
 
@@ -54,6 +54,7 @@ PALETTES = {
 FALLBACK_COLOURS = ["#fbd9d9", "#e9fbd9", "#d9e3fb", "#d9fafb", "#f6d9fb", "#fff6d5"]
 LINE_WIDTH = 0.45
 WEAK_SUPPORT_COLOUR = "#6e6e6e"
+LEADER_FROM = 3.0  # points between node and label from which a tie line is drawn
 SAMPLE_COLOUR = "#d7191c"
 COUNTRY_COLOUR = "#1a1ad6"
 OUTGROUP = "Outgroup"
@@ -71,8 +72,12 @@ def parse_args() -> argparse.Namespace:
                    help="In this panel all bands start where the first band starts")
     p.add_argument("--min-support", type=float, default=70,
                    help="Hide ultrafast bootstrap values below this (default: 70)")
+    p.add_argument("--support-labels", choices=["pair", "ufboot"], default="pair",
+                   help="Label nodes with SH-aLRT/UFBoot pairs or with UFBoot only (default: pair)")
     p.add_argument("--strong-support", type=float, default=95,
-                   help="Print values from this upwards in bold black, lower ones in grey (default: 95)")
+                   help="Ultrafast bootstrap from which a clade counts as reliable (default: 95)")
+    p.add_argument("--strong-alrt", type=float, default=80,
+                   help="SH-aLRT from which a clade counts as reliable (default: 80)")
     p.add_argument("--sample-prefix", default="KHCA", help="Tip name prefix of study genomes")
     p.add_argument("--highlight-country", default="Cambodia")
     p.add_argument("--width-mm", type=float, default=190)
@@ -101,15 +106,16 @@ def read_ingroup_tree(path: str, meta: Dict[str, Dict[str, str]]):
     return tree
 
 
-def ufboot(clade) -> Optional[float]:
-    """Ultrafast bootstrap from an 'SH-aLRT/UFBoot' or plain support label."""
+def support_values(clade) -> Tuple[Optional[float], Optional[float]]:
+    """(SH-aLRT, ultrafast bootstrap) from an 'SH-aLRT/UFBoot' or plain support label."""
     label = clade.name if clade.name else clade.confidence
     if label is None or clade.is_terminal():
-        return None
+        return None, None
     try:
-        return float(str(label).split("/")[-1])
+        values = [float(v) for v in str(label).split("/")]
     except ValueError:
-        return None
+        return None, None
+    return (values[0], values[-1]) if len(values) > 1 else (None, values[0])
 
 
 def layout(tree):
@@ -232,28 +238,48 @@ def draw_tips(ax, tree, x, y, meta, args, obstacles, renderer):
         obstacles.add_box(text_box(ax, label, renderer))
 
 
+def text_width(text: str, size: float, bold: bool) -> float:
+    """Width in points of a label made of digits and '/' in DejaVu Sans."""
+    digit, slash = (0.70, 0.37) if bold else (0.64, 0.34)
+    return size * sum(slash if ch == "/" else digit for ch in text)
+
+
 def draw_support(ax, tree, x, y, args, obstacles) -> int:
-    """Label nodes with ultrafast bootstrap support; return how many found no free place."""
+    """Label nodes with branch support; return how many labels found no free place.
+
+    A label is shown when the ultrafast bootstrap reaches --min-support. It is
+    bold black when the clade is reliable (ultrafast bootstrap >= --strong-support
+    and, if present, SH-aLRT >= --strong-alrt) and grey otherwise. A label that
+    only fits away from its node is tied to it with a thin line.
+    """
     size = args.tip_font_size - 1.3
     height = 0.74 * size
     parent = {child: clade for clade in tree.find_clades() for child in clade.clades}
-    labelled = [c for c in tree.get_nonterminals()
-                if c is not tree.root and ufboot(c) is not None and ufboot(c) >= args.min_support]
+    support = {c: support_values(c) for c in tree.get_nonterminals() if c is not tree.root}
+    labelled = [c for c, (_, ufb) in support.items() if ufb is not None and ufb >= args.min_support]
     unplaced = 0
     for clade in sorted(labelled, key=lambda c: x[c] - x[parent[c]]):  # shortest branches first
-        text = f"{ufboot(clade):.0f}"
-        strong = ufboot(clade) >= args.strong_support
-        width = (0.72 if strong else 0.66) * size * len(text)
+        alrt, ufb = support[clade]
+        pair = args.support_labels == "pair" and alrt is not None
+        text = f"{alrt:.0f}/{ufb:.0f}" if pair else f"{ufb:.0f}"
+        strong = ufb >= args.strong_support and (alrt is None or alrt >= args.strong_alrt)
+        width = text_width(text, size, strong)
         nx, ny = to_points(ax, x[clade], y[clade])
         stem = nx - to_points(ax, x[parent[clade]], y[clade])[0]
         spot = place_label(obstacles, nx, ny, stem, width, height)
         if spot is None:
             unplaced += 1
             spot = (nx - 0.7 - width, ny + 0.7)
+        colour = "black" if strong else WEAK_SUPPORT_COLOUR
         xd, yd = from_points(ax, *spot)
         ax.text(xd, yd, text, ha="left", va="baseline", fontsize=size, zorder=3,
-                color="black" if strong else WEAK_SUPPORT_COLOUR,
-                fontweight="bold" if strong else "normal")
+                color=colour, fontweight="bold" if strong else "normal")
+        # nearest point of the label box to the node
+        px = min(max(nx, spot[0]), spot[0] + width)
+        py = min(max(ny, spot[1]), spot[1] + height)
+        if ((px - nx) ** 2 + (py - ny) ** 2) ** 0.5 > LEADER_FROM:
+            ax.plot(*zip(from_points(ax, nx, ny), from_points(ax, px, py)),
+                    color=WEAK_SUPPORT_COLOUR, linewidth=0.2, zorder=2.5)
     return unplaced
 
 
