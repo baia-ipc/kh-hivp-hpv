@@ -70,11 +70,11 @@ def parse_args() -> argparse.Namespace:
                    help="Draw one band per lineage instead of per sublineage, e.g. A:B,D")
     p.add_argument("--align-bands", action="append", default=[], metavar="LETTER",
                    help="In this panel all bands start where the first band starts")
-    p.add_argument("--min-support", type=float, default=70,
-                   help="Hide ultrafast bootstrap values below this (default: 70)")
+    p.add_argument("--min-support", type=float, default=50,
+                   help="Label only nodes with ultrafast bootstrap of at least this (default: 50)")
     p.add_argument("--min-alrt", type=float, default=50,
-                   help="Also hide labels with SH-aLRT below this, e.g. the zero values of "
-                        "near-zero-length branches (default: 50)")
+                   help="Label only nodes with SH-aLRT of at least this; this also hides the "
+                        "zero values of near-zero-length branches (default: 50)")
     p.add_argument("--support-labels", choices=["pair", "ufboot"], default="pair",
                    help="Label nodes with SH-aLRT/UFBoot pairs or with UFBoot only (default: pair)")
     p.add_argument("--strong-support", type=float, default=95,

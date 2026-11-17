@@ -249,8 +249,8 @@ bin/targeted_analysis.figures/phylo_tree_figure.run.sh
 The files are written to `results/figures/targeted_analysis/`. The script needs
 Python with matplotlib, biopython and pillow (for example the environment in
 `pipelines/conda_env/recombination.env.yml`); set `PYTHON` to choose the
-interpreter. Nodes with ultrafast bootstrap of at least 70 and SH-aLRT of at
-least 50 are labelled with SH-aLRT/UFBoot. Reliable clades (SH-aLRT of at least 80 and ultrafast bootstrap
+interpreter. Nodes with SH-aLRT and ultrafast bootstrap of at least 50 are
+labelled with SH-aLRT/UFBoot. Reliable clades (SH-aLRT of at least 80 and ultrafast bootstrap
 of at least 95) are printed in bold black, the others in grey. The limits can
 be changed with `--min-support`, `--min-alrt`, `--strong-alrt` and `--strong-support`; add
 `--support-labels ufboot` to print the ultrafast bootstrap only.
