@@ -33,6 +33,8 @@ rotated to start where the PaVE HPV16 reference starts
 listed in `lineages_ref_rotated.tsv` and `selected_rotated.tsv` in the derived
 inputs directory.
 
+Set `--iqtree_seed <number>` to make the IQ-TREE run repeatable.
+
 ## Outputs
 
 - Tree outputs and intermediate artifacts under `outs/targeted_analysis/04.hpv16_tree/`

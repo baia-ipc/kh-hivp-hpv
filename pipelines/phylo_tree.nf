@@ -229,6 +229,8 @@ def iqtreeBootstrap = params.iqtree_bootstrap ?: 1000
 
 def iqtreeAlrt = params.iqtree_alrt ?: 1000
 
+def iqtreeSeed = params.containsKey('iqtree_seed') ? params.iqtree_seed : null
+
 // Circular genomes are rotated to start where the type reference starts.
 def rotateToOrigin = { String inFasta, String outFasta, String report ->
     def refName = params.ref_name ? "--reference-name \"${params.ref_name}\" " : ""
@@ -501,8 +503,9 @@ process IQTREE {
 
     script:
     def outgroupsArg = iqtreeOutgroupsParam ? "-o ${iqtreeOutgroupsParam}" : ""
+    def seedArg = iqtreeSeed ? "-seed ${iqtreeSeed} " : ""
     """
-    iqtree -s "${trimal_fasta}" ${outgroupsArg} -m ${iqtreeModel} -nt ${iqtreeThreads} -bb ${iqtreeBootstrap} -alrt ${iqtreeAlrt}
+    iqtree -s "${trimal_fasta}" ${seedArg}${outgroupsArg} -m ${iqtreeModel} -nt ${iqtreeThreads} -bb ${iqtreeBootstrap} -alrt ${iqtreeAlrt}
     """
 }
 
