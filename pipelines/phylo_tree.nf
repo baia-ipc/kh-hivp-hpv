@@ -171,6 +171,9 @@ if (!params.outgroups_fasta) {
     params.outgroups_fasta = params.ncbi_fasta
 }
 checkPath(params.outgroups_fasta as String, 'Outgroups FASTA')
+def originReferenceFasta = (params.containsKey('origin_reference_fasta') && params.origin_reference_fasta) ? params.origin_reference_fasta : params.outgroups_fasta
+checkPath(originReferenceFasta as String, 'Origin reference FASTA')
+checkPath("${params.scripts_dir}/phylo_tree/rotate_to_reference_origin.py", 'Rotation script')
 checkPath(params.samples_tsv as String, 'Samples TSV')
 checkDir(params.mapping_outdir as String, 'Mapping output')
 checkPath(params.sample_prep_script as String, 'Sample prep script')
@@ -226,6 +229,14 @@ def iqtreeBootstrap = params.iqtree_bootstrap ?: 1000
 
 def iqtreeAlrt = params.iqtree_alrt ?: 1000
 
+// Circular genomes are rotated to start where the type reference starts.
+def rotateToOrigin = { String inFasta, String outFasta, String report ->
+    def refName = params.ref_name ? "--reference-name \"${params.ref_name}\" " : ""
+    """python3 "${params.scripts_dir}/phylo_tree/rotate_to_reference_origin.py" \\
+      --reference "${originReferenceFasta}" ${refName}\\
+      --input "${inFasta}" --output "${outFasta}" --report "${report}\""""
+}
+
 def multiqc_config_file = file(params.multiqc_config)
 if (!multiqc_config_file.exists()) {
     error "MultiQC config not found: ${params.multiqc_config}"
@@ -243,6 +254,7 @@ process PREP_LINEAGES {
     output:
     path "lineages_ref.fasta", emit: ref
     path "lineages_ref_renamed.fasta", emit: renamed
+    path "lineages_ref_rotated.tsv", emit: rotated
 
     script:
     """
@@ -254,7 +266,9 @@ process PREP_LINEAGES {
     python3 "${params.scripts_dir}/phylo_tree/rename_lineages.py" \\
       "${lineages_tsv}" 6 4 \\
       lineages_ref.fasta \\
-      lineages_ref_renamed.fasta
+      lineages_ref_named.fasta
+
+    ${rotateToOrigin('lineages_ref_named.fasta', 'lineages_ref_renamed.fasta', 'lineages_ref_rotated.tsv')}
     """
 }
 
@@ -294,6 +308,7 @@ process PREP_SELECTED {
     output:
     path "selected.fasta", emit: selected
     path "selected_renamed.fasta", emit: renamed
+    path "selected_rotated.tsv", emit: rotated
     path accCountryOut, emit: acc_country, optional: true
 
     script:
@@ -312,7 +327,9 @@ process PREP_SELECTED {
       "${ncbi_fasta}" \\
       "${selected_tsv}" \\
       selected.fasta \\
-      selected_renamed.fasta
+      selected_named.fasta
+
+    ${rotateToOrigin('selected_named.fasta', 'selected_renamed.fasta', 'selected_rotated.tsv')}
     """
 }
 

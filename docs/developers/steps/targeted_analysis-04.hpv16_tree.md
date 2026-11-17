@@ -26,6 +26,13 @@ Raw inputs are expected under `refdata/hpv16_tree/`. The pipeline derives
 than the raw inputs (no manual preparation commands required).
 The selected NCBI accessions are listed in `metadata/hpv16_tree/hpv16_tree_db_selection.txt`.
 
+HPV genomes are circular and database records do not all start at the same
+position. The lineage reference and selected NCBI sequences are therefore
+rotated to start where the PaVE HPV16 reference starts
+(`scripts/phylo_tree/rotate_to_reference_origin.py`). The rotated sequences are
+listed in `lineages_ref_rotated.tsv` and `selected_rotated.tsv` in the derived
+inputs directory.
+
 ## Outputs
 
 - Tree outputs and intermediate artifacts under `outs/targeted_analysis/04.hpv16_tree/`
