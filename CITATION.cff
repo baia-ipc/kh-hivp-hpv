@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 message: If you use this software, please cite it using these metadata.
-title: "kh-hivp-hpv: a reproducible workflow for whole-genome HPV sequencing analysis"
+title: "KH:HIV+/HPV — a reproducible workflow for whole-genome HPV sequencing analysis"
 abstract: >-
   Nextflow workflow for the analysis of HPV sequencing data, from read
   taxonomic binning and genotype assignment through consensus generation to

@@ -1,4 +1,4 @@
-# Kh_HIVp_HPV
+# KH:HIV+/HPV
 
 This repository contains a reproducible workflow used for HPV sequencing analysis.
 
